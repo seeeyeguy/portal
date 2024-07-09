@@ -1,0 +1,66 @@
+include:
+    - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/cache/caches.docker-compose.yml
+
+x-logging-settings: &logging-settings
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "256k"
+            max-file: "3"
+
+services:
+    api:
+        image: ${APP_NAME}-production-api:${DOCKER_COMPOSE_API_BUILD_TAG}
+        build:
+            context: ${DOCKER_COMPOSE_PROJECT_ROOT}/api/
+            dockerfile: Dockerfile
+            target: ${DOCKER_COMPOSE_API_BUILD_TARGET}
+            args:
+                APP_NAME: ${APP_NAME}
+                USER: ${USER}
+                UID: ${UID}
+                PASSWORD: ${PASSWORD}
+            tags:
+                - ${APP_NAME}-production-api:${DOCKER_COMPOSE_API_BUILD_TAG}
+        restart: unless-stopped
+        container_name: ${APP_NAME}-api-${USER}
+        depends_on:
+            - cache
+            - channel
+        <<: *logging-settings
+        environment:
+            APP_NAME: ${APP_NAME}
+            BUILD: ${BUILD}
+            SCHEME: ${SCHEME}
+            SERVER_HOST: ${SERVER_HOST}
+            SERVER_PORT: ${SERVER_PORT}
+            WEB_HOST: ${WEB_HOST}
+            WEB_PORT: ${WEB_PORT}
+            POSTGRES_NAME: ${POSTGRES_NAME}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_HOST: ${POSTGRES_HOST}
+            POSTGRES_PORT: ${POSTGRES_PORT}
+            POSTGRES_ATOMIC_REQUESTS: ${POSTGRES_ATOMIC_REQUESTS}
+            REDIS_CACHE_PASSWORD: ${REDIS_CACHE_PASSWORD}
+            REDIS_CACHE_HOST: ${REDIS_CACHE_HOST}
+            REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
+            REDIS_CHANNEL_PASSWORD: ${REDIS_CHANNEL_PASSWORD}
+            REDIS_CHANNEL_HOST: ${REDIS_CHANNEL_HOST}
+            REDIS_CHANNEL_PORT: ${REDIS_CHANNEL_PORT}
+            ADMINS: ${ADMINS}
+            DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
+            LANGUAGE_CODE: ${LANGUAGE_CODE}
+            SECRET_KEY: ${SECRET_KEY}
+            SERVER_LOG_LEVEL: ${SERVER_LOG_LEVEL}
+            SERVER_SECURE_SSL_REDIRECT: ${SERVER_SECURE_SSL_REDIRECT}
+            SERVER_TIME_ZONE: ${SERVER_TIME_ZONE}
+            LDAP_SEARCH_ENDPOINT: ${LDAP_SEARCH_ENDPOINT}
+            SSO_ORIGIN: ${SSO_ORIGIN}
+            SSO_SERVICE_ENCRYPTION_KEY: ${SSO_SERVICE_ENCRYPTION_KEY}
+        ports:
+            - ${SERVER_PORT}:8080
+        volumes:
+            - /apps/pmx/app/storage:/manager/storage
+            # This volume is for fixing SSL CA Certs inside the container.
+            - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro

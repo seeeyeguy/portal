@@ -1,0 +1,6 @@
+services:
+    queue:
+        extends:
+            file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/cache/caches.docker-compose.yml
+            service: cache
+        container_name: ${APP_NAME}-queue-${USER}

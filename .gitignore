@@ -1,0 +1,58 @@
+### Environment (.env) Files ###
+.env
+.env.*
+!.env.example
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### Python Bytecode ###
+**/__pycache__/
+*.pyc
+
+### Pytest ###
+.pytest_cache/
+.pytest_cache/*
+
+## Jupyter Notebooks ##
+*.ipynb
+*.trashinfo
+notebook.log
+
+## Static Files ##
+### js
+**/storage/static/**/*.js
+!**/storage/static/lhx/**/*.js
+### css
+**/storage/static/**/*.css
+!**/storage/static/lhx/**/*.css
+### png
+**/storage/static/**/*.png
+!**/storage/static/lhx/**/*.png
+### jpeg
+**/storage/static/**/*.jpeg
+!**/storage/static/lhx/**/*.jpeg
+
+## Media Files ##
+storage/media/
+!storage/media/.gitkeep
+
+
+### Other Root Ignores ###
+.cache
+.mypy_cache
+.pylint/*
+.venv
+api/bin
+api/lib
+api/lib64
+api/pyvenv.cfg
+build
+devscript_*
+db.sqlite3
+node_modules
+web/package-lock.json

@@ -1,0 +1,20 @@
+{
+    "python.pythonPath": "api/.venv/bin/python",
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+        "--rcfile=api/.pylintrc",
+        "--load-plugins=pylint_django"
+    ],
+    "files.exclude": {
+        "**/.mypy_cache": true
+    },
+    "python.testing.pytestArgs": ["api/src/"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "eslint.workingDirectories": ["web"],
+    "python.analysis.extraPaths": ["./api/src"]
+}

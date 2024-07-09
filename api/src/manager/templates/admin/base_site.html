@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block title %}
+{% comment %} 
+    Using with and context processor, assign template variables.
+{% endcomment %}
+{% with app=app_name %}
+    {{ app }}
+{% endwith %}
+{% endblock title %}
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'lhx/css/admin-theme.css' %}">
+<link rel="icon" type="image/png" href="{% static 'lhx/images/icons/l3harrislogo.png' %}"> 
+{% endblock extrastyle %}
+{% block branding %}
+    {% comment %} 
+        Using with and context processor, assign template variables.
+    {% endcomment %}
+    {% with site_header=company_name app=app_name %}
+        <img src="{% static 'lhx/images/icons/l3harrislogo.png' %}" width="40" height="25" style="margin-right:0.5rem;margin-top:0.3rem" alt="L3Harris Logo"> 
+        <div id="site-name">
+            <a href="{% url 'admin:index' %}">
+                {{ site_header|default:_('Django administration') }}</a>
+                <div style="text-align:center">{{ app }}</div>
+        </div>
+        {% if user.is_anonymous %}
+            {% include "admin/color_theme_toggle.html" %}
+        {% endif %}
+    {% endwith %}
+{% endblock branding %}

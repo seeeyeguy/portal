@@ -1,0 +1,24 @@
+x-logging-settings: &logging-settings
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "256k"
+            max-file: "3"
+
+services:
+    cache:
+        image: redis:7.0.0-bullseye
+        restart: unless-stopped
+        container_name: ${APP_NAME}-cache-${USER}
+        command: redis-server --port ${REDIS_CACHE_PORT} --requirepass ${REDIS_CACHE_PASSWORD}
+        <<: *logging-settings
+        ports:
+            - ${REDIS_CACHE_PORT}
+    channel:
+        image: redis:7.0.0-bullseye
+        restart: unless-stopped
+        container_name: ${APP_NAME}-channel-${USER}
+        command: redis-server --port ${REDIS_CHANNEL_PORT} --requirepass ${REDIS_CHANNEL_PASSWORD}
+        <<: *logging-settings
+        ports:
+            - ${REDIS_CHANNEL_PORT}

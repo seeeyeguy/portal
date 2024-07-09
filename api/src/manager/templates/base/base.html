@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block extrameta %} {% endblock %}
+        {% block mainstyles %} {% endblock %}
+        {% block extrastyles %} {% endblock %}
+        </head>
+    <body>
+        {% block content %}
+        {% endblock %}
+        {% block extrascripts %} {% endblock %}
+        <script type="text/javascript">
+            {% block mainscript %} {% endblock %}
+            </script>
+        </body>
+    </html>

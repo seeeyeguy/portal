@@ -1,0 +1,35 @@
+# Include base requirements.
+-r requirements.txt
+
+# The uncompromising Python code formatter.
+black==22.3.0
+
+# The code coverage tool for Python.
+coverage==7.5.3
+
+# PEP-484 stubs for Django.
+django-stubs==5.0.2
+
+# Optional static typing for Python.
+mypy==1.10.0
+
+# A static code analyser for Python 2 or 3. 
+pylint==3.0.0
+
+# A Pylint plugin for improving code analysis
+# when analysing code using Django.
+pylint_django==2.5.5
+
+# The pytest framework makes it easy to write
+# small tests, yet scales to support complex
+# functional testing.
+pytest==8.2.2
+
+# A plugin for pytest that provides a set of
+# useful tools for testing Django applications
+# and projects.
+pytest-django==4.8.0
+
+# A plugin that enables you to set environment
+# variables in a pytest.ini or pyproject.toml file.
+pytest-env==1.1.3

@@ -1,0 +1,108 @@
+# A collection of tools for internationalizing
+# Python applications.
+Babel==2.15.0
+# Developer-friendly asynchrony for Django.
+channels==4.1.0
+# Redis-backed ASGI channel layer implementation.
+channels-redis==4.1.0 
+# A carefully curated collection of Root Certificates
+# for validating the trustworthiness of SSL certificates
+# while verifying the identity of TLS hosts.
+certifi==2024.6.2
+# A package which provides cryptographic recipes
+# and primitives to Python developers. We use this
+# package to encrypt/decrypt data packets from our
+# ADFS sso service. 
+cryptography==42.0.8
+# A high-level Python web framework that encourages
+# rapid development and clean, pragmatic design.
+Django==5.0.2
+# A configurable set of panels that display various debug
+# information about the current request/response.
+# https://fly.io/django-beats/caching-in-django-with-redis/
+django-debug-toolbar==4.4.2
+# A collection of custom extensions for the Django Framework.
+# Adds useful commands for manage.py such as shell_ps which
+# load all models into the shell environment.
+# https://django-extensions.readthedocs.io/en/latest/command_extensions.html
+django-extensions==3.2.3
+# A module to help you type hint your django project
+# to work with different IDEs (VSCode, PyCharm, etc).
+django_hint==0.3.2
+# A powerful and flexible toolkit for building Web APIs.
+djangorestframework==3.15.2
+# A simple app that provides django integration for
+# RQ (Redis Queue).
+django-rq==2.10.1
+# Gunicorn ‘Green Unicorn’ is a Python WSGI HTTP Server for UNIX.
+gunicorn==22.0.0
+# A robust, fast, expressive, extensible templating engine.
+Jinja2==3.1.4
+# More routines for operating on iterables, beyond itertools.
+more-itertools==10.3.0
+# An interactive notebook environment to test code snippets.
+# python manage.py shell_plus --notebook
+notebook==6.2.0 
+# The fundamental package for scientific computing with Python.
+numpy==2.0.0
+# A Python library to read/write Excel 2010 xlsx/xlsm/xltx/xltm files.
+openpyxl==3.0.10
+# Flexible and powerful data analysis / manipulation library
+# for Python, providing labeled data structures similar to
+# R data.frame objects, statistical functions, and much more.
+pandas==2.2.2
+# Python Imaging Library. Requirement to store images with Django.
+pillow==9.5.0
+# Dataframes powered by a multithreaded, vectorized query engine,
+# written in Rust. An alternative to pandas.
+polars==1.0.0
+# The most popular PostgreSQL database adapter for the Python
+# programming language.
+psycopg2-binary==2.9.9
+# Python bindings for the Enchant spellchecking system.
+pyenchant==3.2.2
+# Python interface to Graphviz. Can be used with django_extensions
+# to generate an ERD with the `graph_models` command.
+pygraphviz==1.13
+# A module provides powerful extensions to the standard datetime
+# module, available in Python.
+python-dateutil==2.9.0
+# A Python library for creating, reading, and updating
+# PowerPoint (.pptx) files.
+python-pptx==0.6.23
+# Redis Python client.
+redis[hiredis]
+# An Open Source Python library for generating PDFs and graphics.
+reportlab==4.2.0
+# A simple, yet elegant, HTTP library.
+requests==2.32.3
+# A small package that adds job scheduling capabilities to RQ,
+# a Redis based Python queuing library.
+rq-scheduler==0.13.1
+# The Database Toolkit for Python.
+SQLAlchemy==2.0.31
+# Types for Requests module.
+types-requests==2.32.0.20240622
+# Backported and experimental type hints for Python.
+typing-extensions==4.12.2
+# Uvicorn is an ASGI web server implementation for Python.
+uvicorn==0.30.1
+uvicorn-worker==0.2.0
+# A full-featured Python package for parsing and creating iCalendar and vCard files.
+# Useful for the `export_emails` django extensions command. 
+vobject==0.9.7
+# Simple, modern and high performance file watching and code reload in python.
+watchfiles==0.22.0
+# A library for building WebSocket servers and clients in Python
+# with a focus on correctness, simplicity, robustness, and performance.
+websockets==12.0.0
+# The comprehensive WSGI web application library.
+Werkzeug==3.0.3
+# Radically simplified static file serving for WSGI applications.
+whitenoise==6.7.0
+# A library for reading data and formatting information from
+# Excel files in the historical .xls format.
+xlrd==2.0.1
+# A Python module for writing files in the Excel 2007+ XLSX
+# file format.
+xlsxwriter==3.2.0

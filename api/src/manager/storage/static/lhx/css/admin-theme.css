@@ -1,0 +1,71 @@
+:root {
+    /* L3harris Theme Colors */
+    --color-vibrant-red: #ff000a;
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-stealth: #172430;
+    --color-data-blue: #a4e3e4;
+    --color-titanium: #283030;
+    --color-medium-grey: #737373;
+    --color-light-grey: #ededed;
+
+    --color-stealth-light: #293642;
+    --color-stealth-lighter: #3b4854;
+    --color-stealth-lightest: #4d5a66;
+    --color-titanium-light: #3a4242;
+    --color-titanium-lighter: #4c5454;
+    --color-titanium-lightest: #5e6666;
+
+    --color-data-blue-light: #b6f5f6;
+    --color-data-blue-lighter: #c8ffff;
+    --color-data-blue-lightest: #daffff;
+    --color-data-blue-dark: #92d1d2;
+    --color-data-blue-darker: #80bfc0;
+    --color-data-blue-darkest: #6eadae;
+
+    --color-vibrant-red-light: #ff121c;
+    --color-vibrant-red-lighter: #ff242e;
+    --color-vibrant-red-lightest: #ff3640;
+}
+
+html[data-theme="light"],
+html[data-theme="dark"],
+:root {
+    --secondary: var(--color-vibrant-red-light);
+
+    /* Headers Elements */
+    --accent: var(--color-white);
+    --header-bg: var(--color-stealth);
+    --header-color: var(--color-white);
+
+    /* Breadcumbs below headers */
+    --breadcrumbs-fg: var(--color-stealth);
+    --breadcrumbs-link-fg: var(--color-white);
+    --breadcrumbs-bg: var(--color-vibrant-red);
+
+    /* Background for active row, left panel */
+    --selected-row: var(--color-vibrant-red);
+
+    /* Buttons for form */
+    --button-bg: var(--color-vibrant-red);
+    --default-button-bg: var(--color-vibrant-red);
+    --button-hover-bg: var(--color-stealth-light);
+    --default-button-hover-bg: var(--color-stealth-light);
+    --delete-button-bg: var(--color-vibrant-red);
+    --delete-button-hover-bg: var(--color-stealth-light);
+}
+
+html[data-theme="light"],
+:root {
+    /* Links */
+    --link-fg: var(--color-stealth);
+    --link-hover-color: var(--color-stealth-lightest);
+    --link-selected-fg: var(--color-vibrant-red);
+}
+
+html[data-theme="dark"] {
+    /* Links */
+    --link-fg: var(--color-white);
+    --link-hover-color: var(--color-vibrant-red);
+    --link-selected-fg: var(--color-vibrant-red);
+}
