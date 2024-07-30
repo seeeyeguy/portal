@@ -25,6 +25,19 @@ class Profile(models.Model):
 
     user: User = cast(User, models.OneToOneField(User, on_delete=models.CASCADE))
 
+    # User id data.
+    uid: models.CharField = models.CharField(max_length=10, blank=True, default="")
+
+    # User name data.
+    middle_initial: models.CharField = models.CharField(
+        max_length=10, blank=True, default=""
+    )
+
+    # User UNIX login data.
+    unix_name: models.CharField = models.CharField(
+        max_length=15, blank=True, default=""
+    )
+
     # Job data.
     job_title: models.CharField = models.CharField(
         max_length=256, blank=True, default=""

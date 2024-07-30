@@ -1,4 +1,5 @@
-"""Error/Exception Module for Application Services
+"""
+Error/Exception Module for Application Services.
 """
 
 from manager.settings import ApplicationServices

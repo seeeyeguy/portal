@@ -1,2 +1,3 @@
 include:
     - ./docker/services/task_queue/rq/development/api.withrq.docker-compose.yml
+    - ./docker/services/swagger/common/swagger.docker-compose.yml
