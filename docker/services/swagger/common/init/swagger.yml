@@ -1,0 +1,9 @@
+openapi: 3.0.0
+info:
+  title: "Enter info title here."
+  version: "1.0"
+servers:
+  - url: "Enter server URL here."
+tags:
+  - name: "Enter tag name here."
+  - description: "Enter description here."
