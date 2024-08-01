@@ -121,6 +121,9 @@ class Profile(models.Model):
 
         LOGGER.info("Updating user profile...")
 
+        self.uid = user_info.get("uid", "")
+        self.middle_initial = user_info.get("middleInitial", "")
+        self.unix_name = user_info.get("unixName", "")
         self.job_title = user_info.get("title", "")
         self.job_function = user_info.get("jobFunction", "")
         self.job_family = user_info.get("jobFamily", "")
