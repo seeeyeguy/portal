@@ -47,6 +47,7 @@ storage/media/
 .mypy_cache
 .pylint/*
 .venv
+.vite
 api/bin
 api/lib
 api/lib64
@@ -56,3 +57,4 @@ devscript_*
 db.sqlite3
 node_modules
 web/package-lock.json
+web/ui/coverage*
