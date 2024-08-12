@@ -11,9 +11,9 @@ from manager.settings import ApplicationServices
 
 urlpatterns = [
     path(
-        f"{ApplicationServices.SERVICE_PATH_PREFIX}/sso/<str:auth>",
-        view=views.Login.as_view(),
-        name="sso-login",
+        f"{ApplicationServices.SERVICE_PATH_PREFIX}/sso/user",
+        view=views.AuthenticatedUser.as_view(),
+        name="sso-fetch-user",
     ),
     path(
         f"{ApplicationServices.SERVICE_PATH_PREFIX}/sso/logout",
@@ -21,8 +21,8 @@ urlpatterns = [
         name="sso-logout",
     ),
     path(
-        f"{ApplicationServices.SERVICE_PATH_PREFIX}/sso/user",
-        view=views.AuthenticatedUser.as_view(),
-        name="sso-fetch-user",
+        f"{ApplicationServices.SERVICE_PATH_PREFIX}/sso/<str:auth>",
+        view=views.Login.as_view(),
+        name="sso-login",
     ),
 ]

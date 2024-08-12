@@ -289,6 +289,8 @@ LDAP_SEARCH_ENDPOINT = os.getenv("LDAP_SEARCH_ENDPOINT", DEFAULT_LDAP_SEARCH_END
 WEB_APP_ORIGIN = f"{SCHEME}://{WEB_HOST}:{WEB_PORT}"
 # Add local, l3harris, and frontend web app domains.
 ALLOWED_HOSTS = [
+    "api",
+    "web",
     "localhost",
     "127.0.0.1",
     "0.0.0.0",
