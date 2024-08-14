@@ -1,16 +1,15 @@
 """
-Segment model module. Segment provides data
-validation for profile data, aligning with the
-different business segments of L3Harris Technologies.
-Model serves to ensure that only a valid segment is
-listed under a user's profile.segment.
+`Segment` provides data validation for profile data,
+aligning with the different business segments of
+L3Harris Technologies. Model serves to ensure that
+only a valid segment is listed under a user's
+profile.segment.
 """
 
 import inspect
 from typing import Iterable
 
 from django.db import models
-from rest_framework import serializers
 
 # SEGMENT REFERENCES
 SAS = (1, "SAS", "SPACE & AIRBORNE SYSTEMS")
@@ -74,13 +73,3 @@ class Segment(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
-
-
-class SegmentSerializer(serializers.ModelSerializer):
-    """Serializer for segments."""
-
-    class Meta:
-        """Meta class for serializer."""
-
-        model = Segment
-        fields = "__all__"
