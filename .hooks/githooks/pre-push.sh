@@ -118,7 +118,7 @@ echo -e "$GREEN[pre-push] API Test Suite Passed.$RESET"
 
 # Run Pylint.
 echo -e "$GREEN[pre-push] Running Pylint...$RESET"
-PYLINT_REPORT_COMMAND=$(git diff --diff-filter=dr --name-only origin/dev HEAD | grep ".py$" | awk -vT=$PROJECT_BASE_DIR/ '{ print T$0 }' | xargs pylint --rcfile $PROJECT_BASE_DIR/api/.pylintrc --load-plugins pylint_django)
+PYLINT_REPORT_COMMAND=$(git diff --diff-filter=dr --name-only origin/dev HEAD | grep ".py$" | grep -v ".*migrations.*.py$" | awk -vT=$PROJECT_BASE_DIR/ '{ print T$0 }' | xargs pylint --rcfile $PROJECT_BASE_DIR/api/.pylintrc --load-plugins pylint_django)
 if [[ $? != 0 && $? != 123 ]]; then
     echo -e "$RED[pre-push] Pylint failed to run. Please resolve issues.$RESET"
     exit 1

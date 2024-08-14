@@ -61,6 +61,6 @@ services:
         ports:
             - ${SERVER_PORT}:8080
         volumes:
-            - /apps/pmx/app/storage:/manager/storage
+            - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src/manager/storage:/manager/storage
             # This volume is for fixing SSL CA Certs inside the container.
             - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro

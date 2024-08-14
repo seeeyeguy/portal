@@ -1,6 +1,6 @@
 """ 
-Profile model module. Profile extends the User
-model with insightful data queried from LDAP. 
+`Profile` extends the `User` model with
+insightful data queried from LDAP. 
 """
 
 from typing import cast
@@ -15,7 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from manager.services.ldap.provider.utils import fetch_employee_record_from_ldap
-from users.models.Segment import Segment
+from users.models.Segment.Segment import Segment
 
 LOGGER = logging.getLogger(__name__)
 
