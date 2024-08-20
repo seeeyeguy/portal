@@ -123,7 +123,7 @@ if [[ $? != 0 && $? != 123 ]]; then
     echo -e "$RED[pre-push] Pylint failed to run. Please resolve issues.$RESET"
     exit 1
 fi
-if [[ $PYLINT_REPORT_COMMAND == *"Your code has been rated at 10"* ]];
+if [[ $PYLINT_REPORT_COMMAND == *"Your code has been rated at 10"* || $PYLINT_REPORT_COMMAND == "No files to lint"* || $? == 0 ]];
 then
 	echo -e "$GREEN*** Code rated at 10/10, PASS. ***$RESET"
 else

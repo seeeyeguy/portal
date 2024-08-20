@@ -8,10 +8,9 @@ import json
 import logging
 
 from django import http
+from django.views import View
 from django.utils.decorators import method_decorator
 from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from manager.services.ldap import provider
 from manager.services.ldap.views import serializers
@@ -21,13 +20,13 @@ from manager.utils.decorators import with_serializer
 LOGGER = logging.getLogger(__name__)
 
 
-class LDAPSearch(APIView):
+class LDAPSearch(View):
     """LDAP Search RESTful endpoints."""
 
     @method_decorator(
         with_serializer(serializer_class=serializers.LDAPSearchRequestSerializer)
     )
-    def post(self, _: http.HttpRequest, body: dict) -> Response:
+    def post(self, _: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/svc/ldap."""
 
         try:
@@ -36,6 +35,8 @@ class LDAPSearch(APIView):
             results = provider.search_ldap(body=body)
             search_response = json.loads(results.content)
 
-            return Response(search_response, status=status.HTTP_200_OK)
+            return http.JsonResponse(
+                search_response, status=status.HTTP_200_OK, safe=False
+            )
         except LDAPServiceError as err:
-            return Response(data=err.message, status=err.status)
+            return http.JsonResponse(data=err.message, status=err.status, safe=False)
