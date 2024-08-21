@@ -11,6 +11,10 @@
 7. Encryption Key for `SECRET_KEY`
 8. .env file with contents outlined in .env.example
 
+## Dev Dependencies
+
+1. Python 3.11+
+
 ## Installation
 
 1. Ensure host satisfies requirements
