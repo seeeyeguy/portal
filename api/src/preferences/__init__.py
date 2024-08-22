@@ -1,0 +1,3 @@
+"""
+BI Portal `Preferences` app.
+"""
