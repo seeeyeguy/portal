@@ -148,3 +148,23 @@ else
     echo "$MYPY_COMMAND"
     exit 1
 fi
+
+# Run Vitest.
+echo -e "$GREEN[pre-push] Running Web Test Suite...$RESET"
+VITEST_COMMAND=$(npm --prefix $PROJECT_BASE_DIR/web/ui run test)
+if [[ $? != 0 ]]; then
+    echo -e "$RED[pre-push] Web Test Suite Failed. Please fix tests.$RESET"
+    echo "$VITEST_COMMAND"
+    exit 1
+fi
+echo -e "$GREEN[pre-push] Web Test Suite Passed.$RESET"
+
+# Run Eslint.
+echo -e "$GREEN[pre-push] Running Eslint...$RESET"
+ESLINT_COMMAND=$(npm --prefix $PROJECT_BASE_DIR/web/ui run lint)
+if [[ $? != 0 ]]; then
+    echo -e "$RED*** Issues found, FAIL. ***$RESET"
+    echo "$ESLINT_COMMAND"
+    exit 1
+fi
+echo -e "$GREEN*** No issues found, PASS. ***$RESET"

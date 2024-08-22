@@ -1,0 +1,39 @@
+include:
+    - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/task_queue/rq/production/api.withrq.docker-compose.yml
+
+x-logging-settings: &logging-settings
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "256k"
+            max-file: "3"
+
+services:
+    web:
+        image: ${APP_NAME}-production-web:${DOCKER_COMPOSE_BUILD_TAG}
+        build:
+            context: ${DOCKER_COMPOSE_PROJECT_ROOT}/web/
+            dockerfile: Dockerfile
+            target: ${DOCKER_COMPOSE_WEB_BUILD_TARGET}
+            tags:
+                - ${APP_NAME}-production-web:${DOCKER_COMPOSE_BUILD_TAG}
+            args:
+                APP_NAME: ${APP_NAME}
+        restart: unless-stopped
+        container_name: ${APP_NAME}-web-${USER}
+        depends_on:
+            - api
+        <<: *logging-settings
+        environment:
+            APP_NAME: ${APP_NAME}
+            DANGEROUSLY_DISABLE_HOST_CHECK: true
+            SSL_CERT: ${SSL_CERT}
+            SSL_KEY: ${SSL_KEY}
+            SSL_PASS: ${SSL_PASS}
+            TIMEOUT_SECONDS: ${TIMEOUT_SECONDS}
+            WDS_SOCKET_PORT: ${WEB_PORT}
+        ports:
+            - ${WEB_PORT}:443
+        volumes:
+            - ${SSL_DIRECTORY}:/etc/nginx/ssl/
+            - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro

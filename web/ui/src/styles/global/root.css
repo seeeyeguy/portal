@@ -1,0 +1,31 @@
+@import url("colors.css");
+html {
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 0.4em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--color-light-gray);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-medium-gray);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-gray);
+}

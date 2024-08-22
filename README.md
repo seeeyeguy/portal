@@ -14,6 +14,7 @@
 ## Dev Dependencies
 
 1. Python 3.11+
+2. Node 20.17.0+
 
 ## Installation
 
@@ -23,8 +24,9 @@
 4. Create python virtual environment with `python -m venv api/.venv`
 5. Activate python virtual environment with `source api/.venv/bin/activate`
 6. Install project python dependencies with `pip install -r requirements.dev.txt`
-7. Create `.env` in project root with environment variables outlined in `.env.example`
-8. Install githooks with `.hooks/install-hooks.sh`
+7. Navigate to `web/ui` and install project node dependencies with `npm i`
+8. Create `.env` in project root with environment variables outlined in `.env.example`
+9. Install githooks with `.hooks/install-hooks.sh`
 
 ## DESCRIPTION
 
@@ -32,44 +34,43 @@ This repo provides all the required infrastructure source files to deploy a full
 various features & services i.e.: websockets support, django-rq jobs, redis cache, Jupyter Notebook, LDAP support, SSO support,
 githooks (for pre-push verification), pytest, pylint checker, mypy, Swagger (for development deployments only) and others.
 
-
 ## DEPLOYMENT
 
 Once you have set all the required environment variables in your project's `.env`. You
 can proceed to deploy your application by running the following commands:
 
-1. Build the containers:  `docker compose build`
+1. Build the containers: `docker compose build`
 2. Run the containers: `docker compose up -d`
 3. Optionally you can exectute 1 & 2 one line with: `docker compose up -d --build`
 
 ### DEVELOPMENT
 
-* For the `development` deployment, ensure you set `BUILD` & `DOCKER_COMPOSE_API_BUILD_TARGET` to the correct development values:
+-   For the `development` deployment, ensure you set `BUILD` & `DOCKER_COMPOSE_API_BUILD_TARGET` to the correct development values:
 
-    * `BUILD=development | demo`
-    * `DOCKER_COMPOSE_API_BUILD_TARGET=wsgi-development | asgi-development`
+    -   `BUILD=development | demo`
+    -   `DOCKER_COMPOSE_API_BUILD_TARGET=wsgi-development | asgi-development`
 
-* Proceed to deploy the application using the `demo.docker-compose.yml` or `docker-compose.yml` files
-by running:
+-   Proceed to deploy the application using the `demo.docker-compose.yml` or `docker-compose.yml` files
+    by running:
 
-    * Using `demo.docker-compose.yml`.
-        * `docker compose -f  demo.docker-compose.yml build`.
-        * `docker compose -f  demo.docker-compose.yml up -d`.
-    * Using the default `docker-compose.yml`.
-        * `docker compose build`.
-        * `docker compose up -d`.
+        * Using `demo.docker-compose.yml`.
+            * `docker compose -f  demo.docker-compose.yml build`.
+            * `docker compose -f  demo.docker-compose.yml up -d`.
+        * Using the default `docker-compose.yml`.
+            * `docker compose build`.
+            * `docker compose up -d`.
 
 ### PRODUCTION
 
-* For the `production` deployment, ensure you set the `BUILD` & `DOCKER_COMPOSE_API_BUILD_TARGET` to the correct production values:
+-   For the `production` deployment, ensure you set the `BUILD` & `DOCKER_COMPOSE_API_BUILD_TARGET` to the correct production values:
 
-    * `BUILD=production | staging`
-    * `DOCKER_COMPOSE_API_BUILD_TARGET=wsgi-production | asgi-production`
+    -   `BUILD=production | staging`
+    -   `DOCKER_COMPOSE_API_BUILD_TARGET=wsgi-production | asgi-production`
 
-* Proceed to deploy the application using the `production.docker-compose.yml` file by running:
+-   Proceed to deploy the application using the `production.docker-compose.yml` file by running:
 
-    * `docker compose -f production.docker-compose.yml build`.
-    * `docker compose -f production.docker-compose.yml up -d`.
+    -   `docker compose -f production.docker-compose.yml build`.
+    -   `docker compose -f production.docker-compose.yml up -d`.
 
 ### Contributors
 

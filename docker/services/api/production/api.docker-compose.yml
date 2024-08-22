@@ -10,7 +10,7 @@ x-logging-settings: &logging-settings
 
 services:
     api:
-        image: ${APP_NAME}-production-api:${DOCKER_COMPOSE_API_BUILD_TAG}
+        image: ${APP_NAME}-production-api:${DOCKER_COMPOSE_BUILD_TAG}
         build:
             context: ${DOCKER_COMPOSE_PROJECT_ROOT}/api/
             dockerfile: Dockerfile
@@ -21,7 +21,7 @@ services:
                 UID: ${UID}
                 PASSWORD: ${PASSWORD}
             tags:
-                - ${APP_NAME}-production-api:${DOCKER_COMPOSE_API_BUILD_TAG}
+                - ${APP_NAME}-production-api:${DOCKER_COMPOSE_BUILD_TAG}
         restart: unless-stopped
         container_name: ${APP_NAME}-api-${USER}
         depends_on:

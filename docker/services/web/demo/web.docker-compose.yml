@@ -1,0 +1,8 @@
+include:
+    - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/task_queue/rq/development/api.withrq.docker-compose.yml
+
+services:
+    web:
+        extends:
+            file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/web/production/web.docker-compose.yml
+            service: web

@@ -1,2 +1,2 @@
 include:
-    - ./docker/services/task_queue/rq/development/api.withrq.docker-compose.yml
+    - ./docker/services/web/demo/web.docker-compose.yml
