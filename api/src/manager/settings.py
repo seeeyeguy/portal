@@ -306,7 +306,7 @@ ALLOWED_HOSTS = [
 ############################
 
 # Set all custom django apps here.
-CUSTOM_APPS: list[str] = ["users"]
+CUSTOM_APPS: list[str] = ["users", "directory", "analytics", "preferences", "request"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",

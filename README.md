@@ -1,4 +1,4 @@
-# PROJECT TITLE
+# BI PORTAL
 
 ## REQUIREMENTS
 
@@ -30,9 +30,7 @@
 
 ## DESCRIPTION
 
-This repo provides all the required infrastructure source files to deploy a fully featured Docker containerized Django backend application with
-various features & services i.e.: websockets support, django-rq jobs, redis cache, Jupyter Notebook, LDAP support, SSO support,
-githooks (for pre-push verification), pytest, pylint checker, mypy, Swagger (for development deployments only) and others.
+BI Portal is a web application that aggregates tools and resources owned, maintained, or designed across the SAS Segment which may be available for program use, or used by functional teams.
 
 ## DEPLOYMENT
 
@@ -41,7 +39,7 @@ can proceed to deploy your application by running the following commands:
 
 1. Build the containers: `docker compose build`
 2. Run the containers: `docker compose up -d`
-3. Optionally you can exectute 1 & 2 one line with: `docker compose up -d --build`
+3. Optionally you can execute 1 & 2 one line with: `docker compose up -d --build`
 
 ### DEVELOPMENT
 
@@ -74,5 +72,4 @@ can proceed to deploy your application by running the following commands:
 
 ### Contributors
 
--   Michael C. Mullings (michael.c.mullings@l3harris.com)
--   Luis Ruelas Lisboa (luis.ruelaslisboa@l3harris.com)
+-   Advanced Data Applications and Services team
