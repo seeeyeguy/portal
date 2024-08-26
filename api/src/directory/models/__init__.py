@@ -16,4 +16,4 @@ from directory.models.EmployeeLevel import EmployeeLevel
 from directory.models.Function import Function
 from directory.models.SubFunction import SubFunction
 from directory.models.Tag import Tag
-from directory.models.Resource import Resource
+from directory.models.Resource import Resource, thumbnail_path
