@@ -131,7 +131,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
         ordering = ["name", "-created"]
         constraints = [
             models.UniqueConstraint(
-                fields=["uid", "revision_number"], name="resource_revision"
+                fields=["uid", "revision_number"], name="resource_revision_id"
             )
         ]
         verbose_name = "resource"

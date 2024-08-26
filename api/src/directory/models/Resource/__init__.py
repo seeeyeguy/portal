@@ -8,4 +8,4 @@ will be displayed as UI components on BI Portal's web app, allowing
 users to browse, search, filter, and navigate to these internal tools.
 """
 
-from directory.models.Resource.Resource import Resource
+from directory.models.Resource.Resource import Resource, thumbnail_path
