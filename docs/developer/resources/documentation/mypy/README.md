@@ -1,9 +1,11 @@
 # MyPy
 
 ## Description:
-MyPy is static type checker tool for Python files. By using this tool, along with static typing in our Python code, we make it easier to understand and less prone to introducing bugs.
+
+MyPy is a static type checker tool for Python files. By using this tool, along with static typing in our Python code, we make it easier to understand and less prone to introducing bugs.
 
 ## Documentation:
+
 For more details on MyPy, please refer to the [official documentation](
 https://mypy.readthedocs.io/en/stable/).
 

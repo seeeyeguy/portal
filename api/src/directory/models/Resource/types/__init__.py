@@ -15,13 +15,13 @@ class ResourceModelType:
 
     id: int
     uid: models.UUIDField
-    prevision_revision: models.ForeignKey
+    previous_revision: models.ForeignKey
     revision_number: models.PositiveIntegerField
     name: models.CharField
     description: models.TextField
     url: models.URLField
     thumbnail: models.ImageField
-    levels: models.ManyToManyField
+    employee_levels: models.ManyToManyField
     subfunctions: models.ManyToManyField
     tags: models.ManyToManyField
     type: models.CharField

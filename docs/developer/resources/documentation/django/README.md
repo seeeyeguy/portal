@@ -1,10 +1,12 @@
 # Django
 
 ## Description:
+
 Django is a Python web framework that enables rapid development of secure and maintainable sites. It comes with read-to-use features like login system, database connection, Object Relational Mapping (ORM) to make it easier to work with databases, CRUD (Create Read Update Delete) operations and much more. This document will cover some helpful Django commands (runserver, makemigrations, etc.).
 
 
 ## Documentation:
+
 For more details on the Django framework, please refer to the [official documentation](https://docs.djangoproject.com/en/5.0/).
 
 

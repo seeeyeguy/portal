@@ -12,7 +12,7 @@ from rest_framework.serializers import Serializer
 LOGGER = logging.getLogger(__name__)
 
 
-def with_serializer(serializer_class: Type[Serializer]) -> Callable:
+def with_serializer(serializer_class: Type[Serializer], many: bool = False) -> Callable:
     """Coerce the HTTP POST body or GET params into a form specified
     via `serializer_class`. The body becomes available as the second
     parameter to the view function as an OrderedDict containing keys
@@ -29,14 +29,16 @@ def with_serializer(serializer_class: Type[Serializer]) -> Callable:
             # empty dict for json.loads to parse.
             body = json.loads(request.body or b"{}")
             # Parse the params, if GET request.
-            if request.method == "GET":
+            if request.method in {"GET", "DELETE"}:
                 body = request.GET
-            req = serializer_class(data=body)
+            req = serializer_class(data=body, many=many)
 
             # Verify the parameters.
             if not req.is_valid():
                 LOGGER.debug(f"Invalid request: {str(req.errors)}")
-                return http.JsonResponse(req.errors, status=status.HTTP_400_BAD_REQUEST)
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
             return view_handler(request, req.validated_data, *args, **kwargs)
 
         return wrapper

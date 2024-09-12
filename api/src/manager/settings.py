@@ -300,6 +300,10 @@ ALLOWED_HOSTS = [
     WEB_APP_ORIGIN,
 ]
 
+if BUILD in {ApplicationBuild.DEVELOPMENT, ApplicationBuild.TEST}:
+    ALLOWED_HOSTS += [
+        "testserver",
+    ]
 
 ############################
 ## APPLICATION DEFINITION ##
