@@ -1,9 +1,11 @@
 # Django-RQ
 
 ## Description:
+
 Django-RQ is library that combines Django with RQ(Redis Queue) that allows for the configuration of queues (to run jobs) within Django's `settings.py`. This document goes over some useful commands and how to write custom jobs and using the scheduler.
 
 ## Documentation:
+
 For more details on Django-RQ, please refer to the [official project repo](https://github.com/rq/django-rq).
 
 ## Commands:
@@ -26,7 +28,7 @@ Note: These commands assume the use of the `default` queue defined in `settings.
 
 ## Writing Custom Jobs:
 
-* When writing custom jobs, you need to use the `@job` decortator provided from the `django-rq` library.
+* When writing custom jobs, you need to use the `@job` decorator provided from the `django-rq` library.
 
     * Example:
         ```

@@ -38,6 +38,10 @@ django-rq==2.10.1
 gunicorn==22.0.0
 # A robust, fast, expressive, extensible templating engine.
 Jinja2==3.1.4
+# The latest web-based interactive development environment for
+# notebooks, code, and data.
+jupyterlab==4.0.0
+jupyter==1.1.0
 # More routines for operating on iterables, beyond itertools.
 more-itertools==10.3.0
 # An interactive notebook environment to test code snippets.
@@ -79,6 +83,9 @@ requests==2.32.3
 # A small package that adds job scheduling capabilities to RQ,
 # a Redis based Python queuing library.
 rq-scheduler==0.13.1
+# A fully-featured, actively-maintained, and stable library designed
+# to facilitate packaging Python projects.
+setuptools==74.1.2
 # The Database Toolkit for Python.
 SQLAlchemy==2.0.31
 # Types for Requests module.

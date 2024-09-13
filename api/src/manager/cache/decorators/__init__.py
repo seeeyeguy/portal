@@ -9,6 +9,7 @@ request that involved fetching data from the
 API.
 """
 
+import hashlib
 from functools import wraps
 from typing import Callable, Union
 
@@ -25,7 +26,7 @@ def cache_request(timeout: int) -> Callable:
     built-in `cache_page` decorator does not support
     `POST` requests, and although generally we would only
     cache a `GET` request due its idempotent nature, we
-    occassionly use the `POST` request method to fetch
+    occasionally use the `POST` request method to fetch
     data from the server when necessary.
     """
 
@@ -45,7 +46,10 @@ def cache_request(timeout: int) -> Callable:
 
             # Use the path and request params to form a
             # unique key for the request.
-            cache_key = f"{full_path}?params={body}"
+            url_params = str(body).replace(" ", "")
+            cache_key = hashlib.md5(
+                f"{full_path}?params={url_params}".encode()
+            ).hexdigest()
 
             # Check the cache for the response.
             response: Union[HttpResponseBase, None] = cache.get(key=cache_key)

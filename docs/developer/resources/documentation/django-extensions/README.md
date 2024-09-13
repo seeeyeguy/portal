@@ -1,11 +1,13 @@
 # Django Extensions
 
 ## Description:
+
 Django Extensions is a library that provides a collection of extensions for the Django framework. Some of these
 extensions include admin extensions, model extensions and command extensions. This document focuses on covering
 some useful command extensions and how to execute them in the terminal.
 
-## Documentation: 
+## Documentation:
+
 For more details on the extensions provided by the library including examples, caveats, utilities, please
 refer to the [official documentation](https://django-extensions.readthedocs.io/en/latest/).
 

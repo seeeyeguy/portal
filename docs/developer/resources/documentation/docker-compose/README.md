@@ -1,9 +1,11 @@
 # Docker Compose
 
 ## Description:
+
 Docker Compose is a tool that aids in defining and running multi-container applications. This document goes over some helpful commands.
 
 ## Documentation:
+
 For more details on Docker Compose, please refer to the [official documentation](https://docs.docker.com/compose/).
 
 ## Commands:
@@ -18,7 +20,7 @@ For more details on Docker Compose, please refer to the [official documentation]
     * Example: `docker-compose up`.
     * Note: As with the `build` command you can use a different YAML configuration file by using the `-f` flag, i.e.: `docker-compose -f production.docker-compose.yml up`.
     * Note: By default this command runs and shows the logs for all your defined containers in STDOUT. Using the `-d` flag (for "detached" mode) allows you to run your containers in the background, i.e.: `docker-compose up -d`.
-    * Note: You can use the `--build` flag to build and start your servirces in one line, i.e.: `docker-compose up -d --build`.
+    * Note: You can use the `--build` flag to build and start your services in one line, i.e.: `docker-compose up -d --build`.
 
 * `down`: Stops and removes your containers & networks.
 

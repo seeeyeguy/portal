@@ -28,6 +28,8 @@ server {
         ssl_certificate_key /etc/nginx/ssl/${SSL_KEY};
         ssl_password_file  /etc/nginx/ssl/${SSL_PASS};
 
+        error_page 497 301 =307 https://$host:${WDS_SOCKET_PORT}$request_uri;
+
         location ~* ^(/api)?/v1/(svc|static|media)/([\S\s]+)$ {
             rewrite ^/api(.*)$ $1 break;
             proxy_pass http://api;

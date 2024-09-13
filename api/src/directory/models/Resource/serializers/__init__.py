@@ -15,9 +15,9 @@ from directory.models.Tag.serializers import TagSerializer
 class ResourceSerializer(serializers.ModelSerializer):
     """Model Base Serializer for `Resource`."""
 
-    levels = EmployeeLevelSerializer(many=True, read_only=True)
+    employee_levels = EmployeeLevelSerializer(many=True, read_only=True)
     subfunctions = SubFunctionSerializer(many=True, read_only=True)
-    Tag = TagSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         """Meta for `Resource` serializer."""

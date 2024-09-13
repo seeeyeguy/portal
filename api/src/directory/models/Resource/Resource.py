@@ -42,8 +42,8 @@ def thumbnail_path(instance: ResourceModelType, filename: str) -> str:
         * (str): A path to the thumbnail file, where it will be saved.
     """
 
-    # file will be uploaded to MEDIA_ROOT/.../<revision_id>/<revision_number>/<filename>
-    return f"resources/thumbnails/{instance.uid}/{instance.revision_number}/{filename}"
+    # file will be uploaded to MEDIA_ROOT/.../<revision_id>/<id>/<filename>
+    return f"resources/thumbnails/{instance.uid}/{instance.id}/{filename}"
 
 
 class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
@@ -56,7 +56,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     A `Resource` includes:
         * id (int): An auto-generated number managed by the database.
         * uid (models.UUIDField): A shared id for all revisions of the same resource.
-        * prevision_revision (directory.models.Resource): A reference to its previous
+        * previous_revision (directory.models.Resource): A reference to its previous
             revision.
         * revision_number (models.PositiveIntegerField): A number that
             uniquely identifies a resource amongst its revisions.
@@ -66,13 +66,13 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
         * url (models.URLField): The web address of a resource.
         * thumbnail (models.ImageField): An icon to display as a thumbnail for the
             resource.
-        * levels (models.ManyToManyField[directory.models.EmployeeLevel]): A set
-            of `EmployeeLevel`s that relate to this `Resource`. EmployeeLevel helps
-            to classify a resource, and provide metadata.
-        * subfunctions (models.ManyToManyField[directory.models.SubFunction]) A set
+        * employee_levels (models.ManyToManyField[directory.models.EmployeeLevel]):
+            A set of `EmployeeLevel`s that relate to this `Resource`. EmployeeLevel
+            helps to classify a resource, and provide metadata.
+        * subfunctions (models.ManyToManyField[directory.models.SubFunction]): A set
             of `SubFunction`s that relate to this `Resource`. SubFunction helps to
             classify a resource, and provide metadata.
-        * tags (models.ManyToManyField[directory.models.Tag]) A set of `Tag`s that
+        * tags (models.ManyToManyField[directory.models.Tag]): A set of `Tag`s that
             relate to this `Resource`. Tag helps to classify a resource, and
             provide metadata.
         * type (models.CharField): A source for a `Resource`. Where the content may be
@@ -93,7 +93,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     thumbnail: models.ImageField = models.ImageField(
         upload_to=thumbnail_path, null=True
     )
-    levels: models.ManyToManyField = models.ManyToManyField(
+    employee_levels: models.ManyToManyField = models.ManyToManyField(
         "directory.EmployeeLevel", db_table="directory_resource_employeelevels"
     )
     subfunctions: models.ManyToManyField = models.ManyToManyField(
@@ -146,12 +146,15 @@ def update_uid_for_revision(
     sender: Resource, instance: Resource, **kwargs: dict
 ) -> None:
     """When a `Resource` object is saved, ensure that it
-    shares the same uid as its prevision revision."""
+    shares the same uid as its previous revision."""
 
     try:
-        if instance.previous_revision:
+        if (
+            instance.previous_revision
+            and instance.uid != instance.previous_revision.uid
+        ):
             LOGGER.info("Assigning `Resource` uid...")
-            instance.uid = instance.prevision_revision.uid  # type: ignore[attr-defined]
+            instance.uid = instance.previous_revision.uid
             instance.save()
     except (AttributeError, DatabaseError) as exc:
         error_message = "Assigning `Resource` uid failed."

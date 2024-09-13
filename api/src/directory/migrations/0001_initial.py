@@ -228,7 +228,7 @@ class Migration(migrations.Migration):
                 ("download", models.BooleanField(default=False)),
                 ("active", models.BooleanField(default=False)),
                 (
-                    "levels",
+                    "employee_levels",
                     models.ManyToManyField(
                         db_table="directory_resource_employeelevels",
                         to="directory.employeelevel",
@@ -269,7 +269,7 @@ class Migration(migrations.Migration):
                     A `Resource` includes:
                         * id (int): An auto-generated number managed by the database.
                         * uid (models.UUIDField): A shared id for all revisions of the same resource.
-                        * prevision_revision (directory.models.Resource): A reference to its previous
+                        * previous_revision (directory.models.Resource): A reference to its previous
                             revision.
                         * revision_number (models.PositiveIntegerField): A number that
                             uniquely identifies a resource amongst its revisions.
@@ -279,9 +279,9 @@ class Migration(migrations.Migration):
                         * url (models.URLField): The web address of a resource.
                         * thumbnail (models.ImageField): An icon to display as a thumbnail for the
                             resource.
-                        * levels (models.ManyToManyField[directory.models.EmployeeLevel]): A set
-                            of `EmployeeLevel`s that relate to this `Resource`. EmployeeLevel helps
-                            to classify a resource, and provide metadata.
+                        * employee_levels (models.ManyToManyField[directory.models.EmployeeLevel]): 
+                            A set of `EmployeeLevel`s that relate to this `Resource`. EmployeeLevel
+                            helps to classify a resource, and provide metadata.
                         * subfunctions (models.ManyToManyField[directory.models.SubFunction]) A set
                             of `SubFunction`s that relate to this `Resource`. SubFunction helps to
                             classify a resource, and provide metadata.
