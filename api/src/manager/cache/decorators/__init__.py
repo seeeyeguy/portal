@@ -11,11 +11,13 @@ API.
 
 import hashlib
 from functools import wraps
-from typing import Callable, Union
+from typing import Callable, cast, Union
 
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponseBase
 from rest_framework import status
+
+from manager.settings import CACHES
 
 ACCEPTED_METHODS = ("POST", "GET")
 
@@ -71,3 +73,6 @@ def cache_request(timeout: int) -> Callable:
         return wrapper
 
     return decorator
+
+
+DEFAULT_TIMEOUT = cast(int, CACHES["default"]["TIMEOUT"])

@@ -22,7 +22,7 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     if [[ $BUILD != $PRODUCTION && $BUILD != $STAGING ]]; then
         python manage.py flush --no-input
         python manage.py shell_plus --notebook &> notebook.log &
-        sleep 3
+        sleep 6
         sed -i "s/127.0.0.1/$SERVER_HOST/g" notebook.log 
     fi
     python manage.py migrate
