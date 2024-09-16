@@ -1,7 +1,7 @@
 """
 `Resource` represents a link to an internal tool within L3Harris
 technologies. These tools may be web applications, data services,
-downloadable files, etc that provide employees a valueable resource
+downloadable files, etc that provide employees a valuable resource
 that they may use to help complete their tasking, or garner
 important information. A `Resource` may be created by any user with
 admin access, submitting a `Request` that moves through the request workflow
