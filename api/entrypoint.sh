@@ -20,7 +20,10 @@ echo "PostgreSQL started"
 
 if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     if [[ $BUILD != $PRODUCTION && $BUILD != $STAGING ]]; then
-        python manage.py flush --no-input
+        # Flush the database.
+        python manage.py flush --no-input       
+        
+        # Deploy Jupyter Notebook.
         python manage.py shell_plus --notebook &> notebook.log &
         sleep 6
         sed -i "s/127.0.0.1/$SERVER_HOST/g" notebook.log 

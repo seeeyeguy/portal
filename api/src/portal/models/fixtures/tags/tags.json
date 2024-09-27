@@ -1,0 +1,74 @@
+[
+  {
+    "model": "directory.tag",
+    "pk": 1,
+    "fields": {
+      "label": "filter::site:Melbourne",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 2,
+    "fields": {
+      "label": "filter::site:Rochester",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 3,
+    "fields": {
+      "label": "restricted::department:GeoSpatial",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 4,
+    "fields": {
+      "label": "restricted::department:Imaging",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 5,
+    "fields": {
+      "label": "Engineering Tag",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 6,
+    "fields": {
+      "label": "Operations Tag",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 7,
+    "fields": {
+      "label": "Finance Tag",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.tag",
+    "pk": 8,
+    "fields": {
+      "label": "Human Resources Tag",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "model": "directory.function",
+    "pk": 1,
+    "fields": {
+      "name": "Human Resources",
+      "description": "Function 1.",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.function",
+    "pk": 2,
+    "fields": {
+      "name": "Engineering",
+      "description": "Function 2.",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.function",
+    "pk": 3,
+    "fields": {
+      "name": "Finance",
+      "description": "Function 3.",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.function",
+    "pk": 4,
+    "fields": {
+      "name": "Operations",
+      "description": "Function 4.",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  }
+]

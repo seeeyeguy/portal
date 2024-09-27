@@ -17,7 +17,6 @@ type ApiSearchResourceRequest = {
   tags: number[];
   download: boolean;
   structure: "default" | "functree";
-  serialize: boolean;
 };
 
 type ApiSearchResourceRequestOptional = {

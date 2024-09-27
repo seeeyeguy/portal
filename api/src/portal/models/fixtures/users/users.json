@@ -1,0 +1,35 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "May.Parker@harris.com",
+            "first_name": "May",
+            "last_name": "Parker",
+            "email": "May.Parker@harris.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "Peter.Parker@harris.com",
+            "first_name": "Peter",
+            "last_name": "Parker",
+            "email": "Peter.Parker@harris.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 3,
+        "fields": {
+            "username": "Tony.Stark@harris.com",
+            "first_name": "Tony",
+            "last_name": "Stark",
+            "email": "Tony.Stark@harris.com",
+            "is_superuser": false
+        }
+    }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "model": "users.access",
+    "pk": 1,
+    "fields": {
+      "user": "Tony.Stark@harris.com",
+      "role": 1,
+      "access_granted_date": "2024-08-27T16:00:00Z",
+      "access_revoked_date": null,
+      "stage": [2, 3]
+    }
+  },
+  {
+    "model": "users.access",
+    "pk": 2,
+    "fields": {
+      "user": "Peter.Parker@harris.com",
+      "role": 2,
+      "access_granted_date": "2024-08-27T16:00:00Z",
+      "access_revoked_date": null,
+      "stage": [2]
+    }
+  },
+  {
+    "model": "users.access",
+    "pk": 3,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "role": 3,
+      "access_granted_date": "2024-08-27T16:00:00Z",
+      "access_revoked_date": null,
+      "stage": []
+    }
+  }
+]

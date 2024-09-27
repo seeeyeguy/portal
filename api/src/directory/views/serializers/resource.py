@@ -23,11 +23,10 @@ class ResourceSearchRequest(serializers.Serializer):
     tags = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, default=[]
     )
-    download = serializers.BooleanField(default=False)
+    download = serializers.BooleanField(allow_null=True, default=None)
     structure = serializers.ChoiceField(
         choices=["default", "functree"], default="default"
     )
-    serialize = serializers.BooleanField(default=False)
 
 
 class ResourceSearchQueryParams(serializers.Serializer):

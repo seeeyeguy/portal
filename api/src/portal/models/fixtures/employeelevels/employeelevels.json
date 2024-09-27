@@ -1,0 +1,35 @@
+[
+  {
+    "model": "directory.employeelevel",
+    "pk": 1,
+    "fields": {
+      "name": "Employee",
+      "description": "Employee Level 1.",
+      "level": 1,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.employeelevel",
+    "pk": 2,
+    "fields": {
+      "name": "Manager",
+      "description": "Manager Level 1.",
+      "level": 2,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.employeelevel",
+    "pk": 3,
+    "fields": {
+      "name": "Executive",
+      "description": "Executive Level 1.",
+      "level": 3,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  }
+]

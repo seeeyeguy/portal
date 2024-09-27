@@ -1,0 +1,82 @@
+[
+  {
+    "model": "preferences.favorite",
+    "pk": 1,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 2,
+      "rank": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 2,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 4,
+      "rank": 2,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 3,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 6,
+      "rank": 3,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 4,
+    "fields": {
+      "user": "Peter.Parker@harris.com",
+      "resource": 2,
+      "rank": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 5,
+    "fields": {
+      "user": "Peter.Parker@harris.com",
+      "resource": 5,
+      "rank": 2,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 6,
+    "fields": {
+      "user": "Tony.Stark@harris.com",
+      "resource": 4,
+      "rank": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }, 
+  {
+    "model": "preferences.favorite",
+    "pk": 7,
+    "fields": {
+      "user": "Tony.Stark@harris.com",
+      "resource": 6,
+      "rank": 2,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 8,
+    "fields": {
+      "user": "Tony.Stark@harris.com",
+      "resource": 7,
+      "rank": 3,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]
