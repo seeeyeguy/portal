@@ -1,0 +1,32 @@
+[
+  {
+    "model": "users.role",
+    "pk": 1,
+    "fields": {
+      "name": "Superuser",
+      "description": "Superuser.",
+      "level": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 2,
+    "fields": {
+      "name": "Business Process Owner",
+      "description": "Business Process Owner.",
+      "level": 2,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "users.role",
+    "pk": 3,
+    "fields": {
+      "name": "Data Steward",
+      "description": "Data Steward.",
+      "level": 3,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]

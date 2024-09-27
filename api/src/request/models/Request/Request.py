@@ -36,6 +36,12 @@ class Request(DateTimeAbstractModel):
             last modified.
     """
 
+    # pylint: disable=too-few-public-methods
+    class RequestStatus:
+        """Supported statuses for `Request`s."""
+
+        APPROVED = "APPROVED"
+
     resource: models.OneToOneField = models.OneToOneField(
         "directory.Resource", on_delete=models.CASCADE
     )

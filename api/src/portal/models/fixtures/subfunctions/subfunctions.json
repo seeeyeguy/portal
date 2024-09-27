@@ -1,0 +1,90 @@
+[
+  {
+    "model": "directory.subfunction",
+    "pk": 1,
+    "fields": {
+      "name": "Training",
+      "description": "Function 1 SubFunction 1.",
+      "function": 1,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 2,
+    "fields": {
+      "name": "Recruiting",
+      "description": "Function 1 SubFunction 2.",
+      "function": 1,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 3,
+    "fields": {
+      "name": "Software Engineering",
+      "description": "Function 2 SubFunction 1.",
+      "function": 2,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 4,
+    "fields": {
+      "name": "Mechanical Engineering",
+      "description": "Function 2 SubFunction 2.",
+      "function": 2,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 5,
+    "fields": {
+      "name": "Capital",
+      "description": "Function 3 SubFunction 1.",
+      "function": 3,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 6,
+    "fields": {
+      "name": "Cost Planning",
+      "description": "Function 3 SubFunction 2.",
+      "function": 3,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 7,
+    "fields": {
+      "name": "Quality",
+      "description": "Function 4 SubFunction 1.",
+      "function": 4,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.subfunction",
+    "pk": 8,
+    "fields": {
+      "name": "General",
+      "description": "Function 4 SubFunction 2.",
+      "function": 4,
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "model": "request.stage",
+    "pk": 1,
+    "fields": {
+      "name": "Draft",
+      "description": "A resource was created.",
+      "level": 1
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 2,
+    "fields": {
+      "name": "Submitted",
+      "description": "A resource was submitted.",
+      "level": 2
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 3,
+    "fields": {
+      "name": "Approved by Business Process Owner",
+      "description": "A resource was approved by the Business Process Owner.",
+      "level": 3
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 4,
+    "fields": {
+      "name": "Revise",
+      "description": "An edit to the draft was requested.",
+      "level": 4
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 5,
+    "fields": {
+      "name": "Rejected by Business Process Owner",
+      "description": "A resource was rejected by the Business Process Owner.",
+      "level": 5
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 6,
+    "fields": {
+      "name": "Approved by Superuser",
+      "description": "A resource was approved by a Superuser.",
+      "level": 99
+    }
+  },
+  {
+    "model": "request.stage",
+    "pk": 7,
+    "fields": {
+      "name": "Rejected by Superuser",
+      "description": "A resource was rejected by a Superuser.",
+      "level": 100
+    }
+  }
+]

@@ -319,6 +319,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "debug_toolbar",
     "django_extensions",
     "django_rq",
@@ -401,13 +402,7 @@ DATABASES = {
 }
 
 if BUILD == ApplicationBuild.TEST:
-    DATABASES = {
-        "default": {
-            "ENGINE": db.config.TEST.ENGINE,
-            "NAME": db.config.TEST.NAME,
-        }
-    }
-    MIGRATION_MODULES = {app: None for app in CUSTOM_APPS}
+    MIGRATE = False
     FIXTURE_DIRS = (BASE_DIR,)
 
 # Set the list of database routers with path.to.router

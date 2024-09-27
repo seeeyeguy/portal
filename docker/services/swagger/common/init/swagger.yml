@@ -7,3 +7,240 @@ servers:
 tags:
   - name: "Enter tag name here."
   - description: "Enter description here."
+
+paths:
+  /directory/resources/search?page={page_number}&limit={search_limit}:
+    post:
+      tags:
+        - "directory.resources.search"
+      summary: "Search for Resources."
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Resource` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Resource` records to return.
+        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceSearchRequest"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ResourceSearchFunctreeStructureSerializedResponse"
+                  - $ref: "#/components/schemas/ResourceSearchDefaultStructureResponse"
+                 
+        "400":
+          description: "Missing parameter or invalid parameter."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResonse"
+                  - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
+                    
+       
+components:
+  schemas:
+    ResourceSearchRequest:
+      title: "`Resource` search request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the `Resource`.
+          default: ''         
+        description:
+          type: string
+          description: Description of the `Resource`.
+          default: ''
+        functions:
+          type: array[int]          
+          description:
+            A list of `Function` ids related to `SubFunction`s related to a `Resource`.
+          default: []
+        subfunctions:
+          type: array[int]
+          description:
+            A list of `SubFunction` ids related to a `Resource`.
+          default: []
+        employee_levels:
+          type: array[int]
+          default: []
+          description:
+            A list of `EmployeeLevel` ids related to a `Resource`.
+        tags:
+          type: array[int]
+          description:
+            A list of `Tag` ids related to a `Resource`.
+          default: []
+        download:
+          type: boolean
+          description:
+            Indicates whether a `Resource` should be downloadable
+            or not.
+          default: null
+        structure:
+          type: string
+          description:
+            "Indicates the structure of the search response.
+            Accepted values: default, functree."
+          default: default       
+    ResourceSearchDefaultStructureResponse:
+      title: "`Resource` search response with `default` structure."
+      type: object
+      properties:
+        data:
+          type: array
+          description: A collection of serialized `Resource`s that match the search criteria.
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "uid": "00000000-0000-0000-0000-000000000000",
+                "previous_revision": null,
+                "revision_number": 0,
+                "name": "Resource 1 Name",
+                "description": "Resource 1 Description.",
+                "url": "www.example.com",
+                "thumbnail": "/path/to/resource/thumbnail",
+                "employee_levels": [
+                  {
+                    "id": 1,
+                    "name": "Employee Level 1 Name",
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                  },
+                  ...
+                ],
+                "subfunctions": [
+                  {
+                    "id": 1,                   
+                    "name": "Function 1 SubFunction 1 Name",
+                    "description": "Function 1 SubFunction 1 Description.",
+                    "function": {
+                      "id": 1,
+                      "name": "Function 1 Name",
+                      "description": "Function 1 Description.",
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "modified": "1970-01-01T12:00:00-04:00",
+                    },
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                  },
+                  ...
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                    "label": "filter::site:Test",
+                  },
+                  ...
+                ],
+                "type": "Resource Type 1",
+                "download": False,
+                "active": True,
+                "created": "1970-01-01T12:00:00-04:00",
+              },
+              ...
+            ]
+    ResourceSearchFunctreeStructureSerializedResponse:
+      title: "`Resource` search response with `functree` structure and serialized `Resource`s."
+      type: object
+      properties:
+        data:
+          type: object
+          description: 
+            A collection of serialized `Resource`s grouped by their `SubFunction`s and their
+            respective parent `Function`s.         
+          example:           
+              {
+                "Function 1 Name":{
+                  "Function 1 SubFunction 1 Name": [
+                    {
+                      "id": 1,
+                      "uid": "00000000-0000-0000-0000-000000000000",
+                      "previous_revision": null,
+                      "revision_number": 0,
+                      "name": "Resource 1 Name",
+                      "description": "Resource 1 Description.",
+                      "url": "www.example.com",
+                      "thumbnail": "/path/to/resource/thumbnail",
+                      "employee_levels": [
+                        {
+                          "id": 1,
+                          "name": "Employee Level 1 Name",
+                          "created": "1970-01-01T12:00:00-04:00",
+                          "modified": "1970-01-01T12:00:00-04:00",
+                        },
+                        ...
+                      ],
+                      "subfunctions": [
+                        {
+                          "id": 1,                        
+                          "name": "Function 1 SubFunction 1 Name",
+                          "description": "Function 1 SubFunction 1 Description.",
+                          "function": {
+                            "id": 1,
+                            "name": "Function 1 Name",
+                            "description": "Function 1 Description.",
+                            "created": "1970-01-01T12:00:00-04:00",
+                            "modified": "1970-01-01T12:00:00-04:00",
+                          },
+                          "created": "1970-01-01T12:00:00-04:00",
+                          "modified": "1970-01-01T12:00:00-04:00",
+                        },
+                        ...
+                      ],
+                      "tags": [
+                        {
+                          "id": 1,
+                          "created": "1970-01-01T12:00:00-04:00",
+                          "modified": "1970-01-01T12:00:00-04:00",
+                          "label": "filter::site:Test",
+                        },
+                        ...
+                      ],
+                      "type": "Resource Type 1",
+                      "download": False,
+                      "active": True,
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "favorited_by": ["Some.User@harris.com", "Test.User@harris.com", ...],
+                      "site": ["Location 1", "Location 2", ...],
+                      "restricted": {"department": ["Department 1",...], ...}
+                    },
+                    ...
+                  ],
+                  ...
+                },
+                ...
+              }
+    ResourceSearchMissingParameterErrorResonse:
+      title: "`Resource` search error response due to a missing parameter."      
+      example: "Missing parameter: `name` from search parameters."
+
+    ResourceSearchInvalidParameterErrorResponse:
+      title: "`Resource` search error response due to an invalid parameter."
+      example: "Incorrect value given for a search parameter."
+            
+
+          
+
+
+
