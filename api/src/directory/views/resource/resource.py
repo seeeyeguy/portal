@@ -88,7 +88,7 @@ class ResourceSearch(View):
             search_results = ResourceSearchController.search(search_params)
             # If the structure of the search is `functree` then assign
             # `search_results` directly to data else apply the `Resource`
-            # searializer to the results and assign its data.
+            # serializer to the results and assign its data.
             data = (
                 search_results
                 if structure == FUNCTREE_STRUCTURE

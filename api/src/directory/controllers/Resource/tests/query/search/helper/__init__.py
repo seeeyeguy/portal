@@ -40,7 +40,7 @@ class TestCaseUtility(TestCase):
             * serialized_resource (dict]): A serialized version of the `Resource` in
                 the form of a dict.
             * properties_to_verify (dict): Properties of the `Resource`
-                that will be vefified.
+                that will be verified.
             * serialized_search (bool): Indicates if the search is serialized.
         Returns:
             * None
@@ -57,7 +57,7 @@ class TestCaseUtility(TestCase):
         for prop, value in properties_to_test.items():
             self.assertIn(prop, serialized_resource)
             # If the instance of `value` is not a list
-            # then we'll peform an assertEqual(...), else
+            # then we'll perform an assertEqual(...), else
             # we'll use the list specific assertion:
             # assertCountEqual(...).
             if not isinstance(value, list):

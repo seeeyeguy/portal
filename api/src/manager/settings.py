@@ -320,7 +320,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
-    "debug_toolbar",
     "django_extensions",
     "django_rq",
     "rest_framework",
@@ -328,7 +327,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -341,6 +339,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
 ]
+
+ENABLE_DEBUG_TOOLBAR = ApplicationBuild.TEST not in sys.argv
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS = ["debug_toolbar", *INSTALLED_APPS]
+    MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware", *MIDDLEWARE]
 
 ROOT_URLCONF = "manager.urls"
 
@@ -448,8 +451,8 @@ def show_django_debug_toolbar(request: HttpRequest) -> bool:
     return False
 
 
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": "manager.settings.show_django_debug_toolbar"
+DEBUG_TOOLBAR_CONFIG: dict = {
+    "SHOW_TOOLBAR_CALLBACK": "manager.settings.show_django_debug_toolbar",
 }
 
 ####################
