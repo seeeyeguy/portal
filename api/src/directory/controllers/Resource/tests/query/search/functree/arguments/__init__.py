@@ -3,7 +3,7 @@ Arguments to be used in Resource's search controller
 function pytests for the `functree` structure.
 """
 
-# pylint: disable=line-too-long
+# pylint: disable=duplicate-code,line-too-long
 from typing import List
 
 from directory.controllers.Resource.Resource import SearchParams

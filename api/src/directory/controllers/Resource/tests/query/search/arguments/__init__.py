@@ -1,6 +1,6 @@
 """
 Arguments to be shared for Resource's search
-controller pytests for both default and functree
+controller pytests for both `default` and `functree`
 structures.
 """
 
