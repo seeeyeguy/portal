@@ -11,3 +11,12 @@ class CreateQueryRequest(serializers.Serializer):
 
     user = serializers.EmailField()
     search_term = serializers.CharField(max_length=512)
+
+
+class FetchQueryRequest(serializers.Serializer):
+    """Request serializer for GET /v1/analytics/queries."""
+
+    id = serializers.IntegerField(allow_null=True, default=None)
+    user = serializers.EmailField(allow_blank=True, default="")
+    page = serializers.IntegerField(allow_null=True, default=None)
+    limit = serializers.IntegerField(allow_null=True, default=None)

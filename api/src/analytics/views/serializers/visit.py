@@ -11,3 +11,13 @@ class CreateVisitRequest(serializers.Serializer):
 
     user = serializers.EmailField()
     resource = serializers.IntegerField()
+
+
+class FetchVisitRequest(serializers.Serializer):
+    """Request serializer for GET /v1/analytics/visits."""
+
+    id = serializers.IntegerField(allow_null=True, default=None)
+    user = serializers.EmailField(allow_blank=True, default="")
+    resource = serializers.IntegerField(allow_null=True, default=None)
+    page = serializers.IntegerField(allow_null=True, default=None)
+    limit = serializers.IntegerField(allow_null=True, default=None)

@@ -4,4 +4,4 @@ additions/modifications/queries to users, profiles, accesses, roles,
 and segments.
 """
 
-from .profile import Profile
+from .profile.profile import Profile
