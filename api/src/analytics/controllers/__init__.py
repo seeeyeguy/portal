@@ -3,3 +3,6 @@
 modification, deletion, fetching, and processing of data. `Analytics`
 tracks valuable user data, such as searches and visits. 
 """
+
+from .Query import Query
+from .Visit import Visit

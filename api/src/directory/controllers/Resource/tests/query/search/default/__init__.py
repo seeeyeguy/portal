@@ -1,5 +1,5 @@
 """
 `Resource` Controllers Test module. These tests
-are specifically designed for the `default` structure
-of resource search i.e. QuerySets.
+are specifically designed for the `default` results
+structure of resource search i.e. QuerySets.
 """

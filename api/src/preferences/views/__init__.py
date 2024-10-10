@@ -5,5 +5,5 @@ we promote an improved user experience as users can save their favorite
 resources and preferred initial state of the application.
 """
 
-from .favorite import Favorite
-from .query_filter_state import QueryFilterState
+from .favorite.favorite import Favorite
+from .query_filter_state.query_filter_state import QueryFilterState

@@ -1,7 +1,7 @@
 """
 `Function` represents a primary
 organizational unit that encompasses a broad area
-of expertise and responsibility within the organization.
+of expertise and responsibilities within the organization.
 `Function`s are strictly defined, consisting of name(str),
 and description(str). A `Function` can be related to many
 `SubFunction`s, however, a `SubFunction` can only relate to
@@ -18,7 +18,7 @@ from portal.models import BasicInformationAbstractModel, DateTimeAbstractModel
 class Function(BasicInformationAbstractModel, DateTimeAbstractModel):
     """
     `Function` represents a primary organizational unit that encompasses
-    a broad area of expertise and responsibility within the organization.
+    a broad area of expertise and responsibilities within the organization.
     Functions help to classify a resource, and provide metadata. Functions
     are a strictly defined set created by a superuser.
 

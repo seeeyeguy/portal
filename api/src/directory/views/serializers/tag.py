@@ -10,6 +10,8 @@ class FetchTagRequest(serializers.Serializer):
     """Request serializer for GET /v1/directory/tags."""
 
     id = serializers.IntegerField(allow_null=True, default=None)
+    page = serializers.IntegerField(allow_null=True, default=None)
+    limit = serializers.IntegerField(allow_null=True, default=None)
 
 
 class TagSearchRequest(serializers.Serializer):
