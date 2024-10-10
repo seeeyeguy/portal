@@ -7,6 +7,8 @@ from typing import List
 from django.test import tag, TestCase
 from django.urls import reverse
 
+from portal.models.fixtures import COMMON_FIXTURES
+
 
 @tag(
     "users",
@@ -21,16 +23,7 @@ class TestFetchProfile(TestCase):
     Tests for GET /v1/users/profile endpoint.
     """
 
-    fixtures: List[str] = [
-        "portal/models/fixtures/employeelevels/employeelevels.json",
-        "portal/models/fixtures/functions/functions.json",
-        "portal/models/fixtures/subfunctions/subfunctions.json",
-        "portal/models/fixtures/tags/tags.json",
-        "portal/models/fixtures/stages/stages.json",
-        "portal/models/fixtures/users/users.json",
-        "portal/models/fixtures/roles/roles.json",
-        "portal/models/fixtures/accesses/accesses.json",
-    ]
+    fixtures: List[str] = [*COMMON_FIXTURES]
 
     url: str = reverse("users.profile")
 

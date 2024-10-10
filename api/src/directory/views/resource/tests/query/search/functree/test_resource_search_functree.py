@@ -17,6 +17,7 @@ from directory.controllers.Resource.tests.query.search.functree import (
 from directory.controllers.Resource.tests.query.search.helper import (
     TestCaseUtility,
 )
+from portal.models.fixtures import COMMON_FIXTURES
 
 
 @tag(
@@ -34,14 +35,7 @@ class TestResourceSearchFunctree(TestCaseUtility):
     """
 
     fixtures: List[str] = [
-        "portal/models/fixtures/employeelevels/employeelevels.json",
-        "portal/models/fixtures/functions/functions.json",
-        "portal/models/fixtures/subfunctions/subfunctions.json",
-        "portal/models/fixtures/tags/tags.json",
-        "portal/models/fixtures/stages/stages.json",
-        "portal/models/fixtures/users/users.json",
-        "portal/models/fixtures/roles/roles.json",
-        "portal/models/fixtures/accesses/accesses.json",
+        *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/search/functree/fixtures/resources.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/requests.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/visits.json",

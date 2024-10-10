@@ -220,7 +220,7 @@ module-naming-style=snake_case
 
 # Regular expression matching correct module names. Overrides module-naming-
 # style. If left empty, module names will be checked with the set naming style.
-module-rgx=\b[a-z]+(_[a-z]+)*\b|\b([A-Z][a-z]+)+\b|jinja2
+module-rgx=\b[a-z]+(_[a-z]+)*\b|\b([A-Z][a-z]+)+\b|test_([A-Z][a-z]+)+|jinja2
 
 # Colon-delimited sets of names that determine each other's naming style when
 # the name regexes allow several styles.

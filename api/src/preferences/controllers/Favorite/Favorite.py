@@ -59,6 +59,7 @@ class Favorite:
         """
 
         log_msg = (
+            # pylint: disable=line-too-long
             f"Ranking Favorites (ids: {[instance['id'] for instance in ranked_favorites]}) "
             f"for User: {user}."
         )
@@ -67,18 +68,18 @@ class Favorite:
         return []  # type: ignore[return-value]
 
     @staticmethod
-    def delete_favorite(id: int) -> int:
+    def delete_favorite(favorite_id: int) -> int:
         """
         Delete the `Favorite` record with the given id.
 
         Accepts:
-            * id (int): The id of the `Favorite` record being deleted.
+            * favorite_id (int): The id of the `Favorite` record being deleted.
 
         Returns:
             rows_affected (int): Number of rows removed.
         """
 
-        LOGGER.info(f"Deleting Favorite instance with id: {id}.")
+        LOGGER.info(f"Deleting Favorite instance with id: {favorite_id}.")
         return 1
 
     @staticmethod

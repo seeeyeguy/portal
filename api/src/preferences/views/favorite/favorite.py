@@ -3,6 +3,7 @@
 create, fetch, update, and delete records within the `Favorite`
 table. `Favorite` represents a preferred `Resource` for a user.
 """
+
 # Remove pylint disable in implementation story.
 # pylint: disable=unused-argument
 import logging
@@ -65,7 +66,7 @@ class Favorite(LoginRequiredMixin, View):
 
         LOGGER.info(f"DELETE /v1/preferences/favorites?id={body['id']}.")
 
-        rows_affected = controllers.Favorite.delete_favorite(id=body["id"])
+        rows_affected = controllers.Favorite.delete_favorite(favorite_id=body["id"])
         return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchFavoriteRequest))

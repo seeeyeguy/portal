@@ -4,7 +4,7 @@ using `functree` structure and non-serialized collection
 of `Resource`s.
 """
 
-# pylint: disable=duplicate-code,invalid-name,line-too-long,too-many-public-methods,wrong-import-order
+# pylint: disable=duplicate-code,line-too-long,too-many-public-methods,wrong-import-order
 import pytest
 from typing import List
 
@@ -20,6 +20,7 @@ from directory.controllers.Resource.tests.query.search.helper import (
     TestCaseUtility,
 )
 from directory.exceptions import DirectoryError
+from portal.models.fixtures import COMMON_FIXTURES
 
 
 @tag(
@@ -37,14 +38,7 @@ class TestResourceSearchFunctreeNonSerialized(TestCaseUtility):
     """
 
     fixtures: List[str] = [
-        "portal/models/fixtures/employeelevels/employeelevels.json",
-        "portal/models/fixtures/functions/functions.json",
-        "portal/models/fixtures/subfunctions/subfunctions.json",
-        "portal/models/fixtures/tags/tags.json",
-        "portal/models/fixtures/stages/stages.json",
-        "portal/models/fixtures/users/users.json",
-        "portal/models/fixtures/roles/roles.json",
-        "portal/models/fixtures/accesses/accesses.json",
+        *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/search/functree/fixtures/resources.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/requests.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/visits.json",
