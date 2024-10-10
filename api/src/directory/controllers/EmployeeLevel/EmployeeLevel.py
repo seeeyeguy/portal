@@ -11,7 +11,7 @@ from typing import Union
 
 from django.db.models import QuerySet
 
-from directory import models
+from directory import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,12 +38,33 @@ class EmployeeLevel:
                 id or all `EmployeeLevel` objects in the database.
 
         Returns:
-            * employee_levels (Union[models.EmployeeLevel, QuerySet[models.EmployeeLevel]]):
+            * employee_levels (
+                    Union[
+                        models.EmployeeLevel,
+                        QuerySet[models.EmployeeLevel]
+                    ]
+                ):
                 Either one `EmployeeLevel` instance with the specified id
                 or a QuerySet of all `EmployeeLevel` instances.
         """
 
-        optional_args = f" with id: {employee_level_id}" if employee_level_id else "s"
-        LOGGER.info(f"Fetching EmployeeLevel{optional_args}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            optional_args = (
+                f" with id: {employee_level_id}" if employee_level_id else "s"
+            )
+            LOGGER.info(f"Fetching EmployeeLevel{optional_args}.")
+
+            # If an employee level id is given, fetch the corresponding
+            # `EmployeeLevel` record, else all `EmployeeLevel` records.
+            employee_levels: Union[
+                models.EmployeeLevel, QuerySet[models.EmployeeLevel]
+            ] = (
+                models.EmployeeLevel.objects.get(id=employee_level_id)
+                if employee_level_id
+                else models.EmployeeLevel.objects.all()
+            )
+            return employee_levels
+        except models.EmployeeLevel.DoesNotExist as exc:
+            err_msg = f"Employee Level (id={employee_level_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
