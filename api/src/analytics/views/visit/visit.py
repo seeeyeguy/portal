@@ -4,6 +4,7 @@ create, fetch, update, and delete records within the `Visit`
 table. `Visit` provides insights into users' behavior,
 particularly in regards to the use of resources.
 """
+
 # Remove pylint disable in implementation story.
 # pylint: disable=unused-argument
 import logging
@@ -55,6 +56,7 @@ class Visit(LoginRequiredMixin, View):
             else request_params
         )
         request_params = (
+            # pylint: disable=line-too-long
             f"{request_params}{'&' if body['user'] or body['resource'] else '?'}page={body['page']}"
             if body["page"]
             else request_params

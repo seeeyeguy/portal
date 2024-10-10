@@ -6,6 +6,8 @@ from typing import List
 
 from django.test import tag, TestCase
 
+from portal.models.fixtures import COMMON_FIXTURES
+
 
 @tag(
     "controllers",
@@ -18,16 +20,7 @@ from django.test import tag, TestCase
 class TestCreateQueryFilterState(TestCase):
     """Test suite for QueryFilterState's create controller."""
 
-    fixtures: List[str] = [
-        "portal/models/fixtures/employeelevels/employeelevels.json",
-        "portal/models/fixtures/functions/functions.json",
-        "portal/models/fixtures/subfunctions/subfunctions.json",
-        "portal/models/fixtures/tags/tags.json",
-        "portal/models/fixtures/stages/stages.json",
-        "portal/models/fixtures/users/users.json",
-        "portal/models/fixtures/roles/roles.json",
-        "portal/models/fixtures/accesses/accesses.json",
-    ]
+    fixtures: List[str] = [*COMMON_FIXTURES]
 
     @tag("controllers.queryfilterstate.create_query_filter_state")
     def test_create_query_filter_state(self) -> None:

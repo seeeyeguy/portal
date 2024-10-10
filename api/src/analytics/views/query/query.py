@@ -4,6 +4,7 @@ create, fetch, update, and delete records within the `Query`
 table. `Query` provides insights into users' behavior,
 particularly in regards to committed searches.
 """
+
 # Remove pylint disable in implementation story.
 # pylint: disable=unused-argument
 import logging
@@ -55,6 +56,7 @@ class Query(LoginRequiredMixin, View):
             else request_params
         )
         request_params = (
+            # pylint: disable=line-too-long
             f"{request_params}{'&' if body['user'] or body['page'] else '?'}limit={body['limit']}"
             if body["limit"]
             else request_params
