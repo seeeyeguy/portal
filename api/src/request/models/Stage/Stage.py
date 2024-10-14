@@ -16,7 +16,7 @@ class Stage(BasicInformationAbstractModel):
     `Stage` represents a single phase in the resource request
     workflow. These stages help to determine the progression
     of a `Resource` through that workflow, and thus along
-    with `Transition`s permis a `Resource` to be added,
+    with `Transition`s permits a `Resource` to be added,
     modified or potentially deleted.
 
     A `Stage` includes:

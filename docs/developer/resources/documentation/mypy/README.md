@@ -13,4 +13,4 @@ https://mypy.readthedocs.io/en/stable/).
  
 1. Set `PYTHONPATH` on your bash terminal to `./api/src` by running the command: `export PYTHONPATH=./api/src`.
 2. Verify the value of `PYTHONPATH` by running: `echo $PYTHONPATH`.
-3. Run the mypy command: `mypy api/src --config=api/mypy.ini`.
+3. Run the mypy command: `mypy --no-incremental --config=api/mypy.ini api/src`.

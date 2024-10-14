@@ -36,7 +36,7 @@ def structure_resources(resources: QuerySet[Resource], serialize: bool = False) 
 
     def construct_serialized_resource_data(resource: Resource) -> dict:
         """
-        Constructs a dictonary containing the serialized data, including
+        Constructs a dictionary containing the serialized data, including
         additional meta fields, for the given `Resource`.
 
         Accepts:
