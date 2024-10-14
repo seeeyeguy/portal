@@ -6,13 +6,16 @@ represented by labels.
 """
 
 import logging
+from typing import List
 
 from django import http
+from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from directory import controllers
+from directory import controllers, models
+from directory.models.Tag.serializers import TagSerializer
 from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
@@ -63,5 +66,9 @@ class TagSearch(View):
 
         LOGGER.info(f"GET /v1/directory/tags/search?label={body['label']}")
 
-        tags = controllers.Tag.search_tags(label=body["label"])
-        return http.JsonResponse(tags, status=status.HTTP_200_OK, safe=False)
+        # Search for `Tag`s that start with the given label.
+        search_tag_results: QuerySet[
+            models.Tag, models.Tag
+        ] = controllers.Tag.search_tags(label=body["label"])
+        data: List[dict] = TagSerializer(search_tag_results, many=True).data
+        return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
