@@ -116,9 +116,12 @@ if [[ -n "$PYTEST_CHECK" ]]; then
 fi
 echo -e "$GREEN[pre-push] API Test Suite Passed.$RESET"
 
+# Capture changed Python files from git diff.
+FILES_TO_CHECK=$(git diff --diff-filter=dr --name-only origin/dev HEAD | grep ".py$" | grep -v ".*migrations.*.py$" | awk -vT=$PROJECT_BASE_DIR/ '{ print T$0 }')
+
 # Run Pylint.
 echo -e "$GREEN[pre-push] Running Pylint...$RESET"
-PYLINT_REPORT_COMMAND=$(git diff --diff-filter=dr --name-only origin/dev HEAD | grep ".py$" | grep -v ".*migrations.*.py$" | awk -vT=$PROJECT_BASE_DIR/ '{ print T$0 }' | xargs pylint --rcfile $PROJECT_BASE_DIR/api/.pylintrc --load-plugins pylint_django)
+PYLINT_REPORT_COMMAND=$(echo $FILES_TO_CHECK | xargs pylint --rcfile $PROJECT_BASE_DIR/api/.pylintrc --load-plugins pylint_django)
 if [[ $? != 0 && $? != 123 ]]; then
     echo -e "$RED[pre-push] Pylint failed to run. Please resolve issues.$RESET"
     exit 1
@@ -135,8 +138,8 @@ fi
 # Run MyPy.
 echo -e "$GREEN[pre-push] Running MyPy...$RESET"
 export PYTHONPATH=$API_SRC_PATH
-MYPY_COMMAND=$(mypy $API_SRC_PATH --config=$PROJECT_BASE_DIR/api/mypy.ini)
-if [[ $? != 0 && $? != 1 ]]; then
+MYPY_COMMAND=$(echo $FILES_TO_CHECK | xargs mypy --no-incremental --config=$PROJECT_BASE_DIR/api/mypy.ini 2>/dev/null)
+if [[ $? != 0 && $? != 1 && $? != 123 ]]; then
     echo -e "$RED[pre-push] MyPy failed to run. Please resolve issues.$RESET"
     exit 1
 fi

@@ -46,11 +46,11 @@ class SearchParams(TypedDict):
     subfunctions: List[int]
     employee_levels: List[int]
     tags: List[int]
-    download: Union[bool | None]
-    structure: Union[Literal["default"] | Literal["functree"]]
+    download: Union[bool, None]
+    structure: Union[Literal["default"], Literal["functree"]]
     serialize: bool
-    limit: Union[int | None]
-    page: Union[int | None]
+    limit: Union[int, None]
+    page: Union[int, None]
 
 
 class ResourceSearch:
@@ -60,12 +60,12 @@ class ResourceSearch:
 
     @staticmethod
     # pylint: disable=too-many-locals
-    def search(params: SearchParams) -> Union[QuerySet[Resource], dict]:
+    def search(params: SearchParams) -> Union[QuerySet[Resource, Resource], dict]:
         """
         Searches for `Resource`s that meet the search criteria given.
 
         Accepts:
-            * params (SearchParams): The paramaters containing the search
+            * params (SearchParams): The parameters containing the search
                 criteria.
         Returns:
             * resources (Union[QuerySet[Resource], dict]): A collection
@@ -83,14 +83,14 @@ class ResourceSearch:
             #       - That `Request` has transitioned through each
             #         stage in the request workflow, receiving all
             #         appropriate dispositions.
-            resources: QuerySet[Resource] = Resource.objects.filter(
+            resources: QuerySet[Resource, Resource] = Resource.objects.filter(
                 active=True,
                 requests__status=Request.RequestStatus.APPROVED,
             )
 
             # This query is for collecting the ids of the `Resource`s with
             # the highest revision_number for a each uid.
-            resource_ids: QuerySet[Resource] = (
+            resource_ids: QuerySet[Resource, Resource] = (
                 resources.values("uid")
                 .annotate(Max("id"), Max("revision_number"))
                 .values_list("id__max", flat=True)
@@ -147,7 +147,7 @@ class ResourceSearch:
             resources = resources[: params["limit"]] if params["limit"] else resources
 
             # Get the page number from `params`.
-            page_num: Union[int | None] = params["page"]
+            page_num: Union[int, None] = params["page"]
             if page_num:
                 # Create a Paginator to paginate the collection
                 # of `Resource`s.
@@ -155,7 +155,7 @@ class ResourceSearch:
 
                 # If `page` number supplied in the params is greater
                 # than the number of available pages, then return an
-                # empty `Resource` QueryList or dictonary depending on
+                # empty `Resource` QueryList or dictionary depending on
                 # search structure provided.
                 if page_num > paginator.num_pages:
                     return (
@@ -169,7 +169,7 @@ class ResourceSearch:
 
                 # Assigning the page's `Resource` QueryList to
                 # `resources`.
-                resources = cast(QuerySet[Resource], page.object_list)
+                resources = cast(QuerySet[Resource, Resource], page.object_list)
 
             # If the `structure` value given in `params` is
             # equal to FUNCTREE_STRUCTURE then proceed to
@@ -181,7 +181,7 @@ class ResourceSearch:
                 )
             return resources
         except KeyError as exc:
-            error_msg = f"Missing parameter: `{exc}` from search paramters."
+            error_msg = f"Missing parameter: `{exc}` from search parameters."
             LOGGER.error(error_msg)
             raise exceptions.DirectoryError(error_msg, status=400) from exc
         except TypeError as exc:
