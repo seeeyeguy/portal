@@ -69,11 +69,10 @@ class Tag:
                 `Tag` instances.
 
         Returns:
-            * tags (QuerySet[models.Tag]):
-                A QuerySet of `Tag` instances that match the provided
-                search label.
+            * (QuerySet[models.Tag]): A QuerySet of `Tag` instances
+                that match the provided search label.
         """
 
         LOGGER.info(f"Searching for Tags with label: {label}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+
+        return models.Tag.objects.filter(label__istartswith=label)
