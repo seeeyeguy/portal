@@ -48,9 +48,36 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResonse"
+                  - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResponse"
                   - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
-                    
+  /directory/employee-levels?id={employee_level_id}:
+    get:
+      tags:
+        - "directory.employeelevel.fetch"
+      summary: "Fetch EmployeeLevel(s)"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `EmployeeLevel` record
+            to fetch.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchEmployeeLevelsResponse"
+                  - $ref: "#/components/schemas/FetchEmployeeLevelByIdResponse"                 
+        "404":
+          description: "Employee Level does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchEmployeeLevelByIdDoesNotExistResponse"
        
 components:
   schemas:
@@ -154,12 +181,13 @@ components:
                   ...
                 ],
                 "type": "Resource Type 1",
-                "download": False,
-                "active": True,
+                "download": false,
+                "active": true,
                 "created": "1970-01-01T12:00:00-04:00",
               },
               ...
             ]
+
     ResourceSearchFunctreeStructureSerializedResponse:
       title: "`Resource` search response with `functree` structure and serialized `Resource`s."
       type: object
@@ -170,75 +198,126 @@ components:
             A collection of serialized `Resource`s grouped by their `SubFunction`s and their
             respective parent `Function`s.         
           example:           
-              {
-                "Function 1 Name":{
-                  "Function 1 SubFunction 1 Name": [
-                    {
-                      "id": 1,
-                      "uid": "00000000-0000-0000-0000-000000000000",
-                      "previous_revision": null,
-                      "revision_number": 0,
-                      "name": "Resource 1 Name",
-                      "description": "Resource 1 Description.",
-                      "url": "www.example.com",
-                      "thumbnail": "/path/to/resource/thumbnail",
-                      "employee_levels": [
-                        {
+            {
+              "Function 1 Name": {
+                "Function 1 SubFunction 1 Name": [
+                  {
+                    "id": 1,
+                    "uid": "00000000-0000-0000-0000-000000000000",
+                    "previous_revision": null,
+                    "revision_number": 0,
+                    "name": "Resource 1 Name",
+                    "description": "Resource 1 Description.",
+                    "url": "www.example.com",
+                    "thumbnail": "/path/to/resource/thumbnail",
+                    "employee_levels": [
+                      {
+                        "id": 1,
+                        "name": "Employee Level 1 Name",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                      },
+                      ...
+                    ],
+                    "subfunctions": [
+                      {
+                        "id": 1,                        
+                        "name": "Function 1 SubFunction 1 Name",
+                        "description": "Function 1 SubFunction 1 Description.",
+                        "function": {
                           "id": 1,
-                          "name": "Employee Level 1 Name",
+                          "name": "Function 1 Name",
+                          "description": "Function 1 Description.",
                           "created": "1970-01-01T12:00:00-04:00",
                           "modified": "1970-01-01T12:00:00-04:00",
                         },
-                        ...
-                      ],
-                      "subfunctions": [
-                        {
-                          "id": 1,                        
-                          "name": "Function 1 SubFunction 1 Name",
-                          "description": "Function 1 SubFunction 1 Description.",
-                          "function": {
-                            "id": 1,
-                            "name": "Function 1 Name",
-                            "description": "Function 1 Description.",
-                            "created": "1970-01-01T12:00:00-04:00",
-                            "modified": "1970-01-01T12:00:00-04:00",
-                          },
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        ...
-                      ],
-                      "tags": [
-                        {
-                          "id": 1,
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                          "label": "filter::site:Test",
-                        },
-                        ...
-                      ],
-                      "type": "Resource Type 1",
-                      "download": False,
-                      "active": True,
-                      "created": "1970-01-01T12:00:00-04:00",
-                      "favorited_by": ["Some.User@harris.com", "Test.User@harris.com", ...],
-                      "site": ["Location 1", "Location 2", ...],
-                      "restricted": {"department": ["Department 1",...], ...}
-                    },
-                    ...
-                  ],
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                      },
+                      ...
+                    ],
+                    "tags": [
+                      {
+                        "id": 1,
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                        "label": "filter::site:Test",
+                      },
+                      ...
+                    ],
+                    "type": "Resource Type 1",
+                    "download": false,
+                    "active": true,
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "favorited_by": ["Some.User@harris.com", "Test.User@harris.com", ...],
+                    "site": ["Location 1", "Location 2", ...],
+                    "restricted": {"department": ["Department 1",...], ...}
+                  },
                   ...
-                },
+                ],
                 ...
-              }
-    ResourceSearchMissingParameterErrorResonse:
+              },
+              ...
+            }
+  
+    ResourceSearchMissingParameterErrorResponse:
       title: "`Resource` search error response due to a missing parameter."      
       example: "Missing parameter: `name` from search parameters."
 
     ResourceSearchInvalidParameterErrorResponse:
       title: "`Resource` search error response due to an invalid parameter."
       example: "Incorrect value given for a search parameter."
-            
+    
+    FetchEmployeeLevelsResponse:
+      title: "Fetch `EmployeeLevel` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "name": "Employee Level 1 Name",
+                "description": "Employee Level 1 Description.",
+                "created": "1970-01-27T12:00:00-04:00",
+                "modified": "1970-01-27T12:00:00-04:00",
+                "level": 1
+              },
+              {
+                "id": 2,
+                "name": "Employee Level 2 Name",
+                "description": "Employee Level 2 Description.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+                "level": 2
+              },
+              ...
+            ]
+  
+    FetchEmployeeLevelByIdResponse:
+      title: "Fetch `EmployeeLevel` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+                "id": 1,
+                "name": "Employee Level 1 Name",
+                "description": "Employee Level 1 Description.",
+                "created": "1970-01-27T12:00:00-04:00",
+                "modified": "1970-01-27T12:00:00-04:00",
+                "level": 1
+            }
+      
+    FetchEmployeeLevelByIdDoesNotExistResponse:
+      title: "Fetch `EmployeeLevel` error response due to using an id that
+        does not exist."
+      example: "Employee Level (id=employee_level_id), does not exist."
+    
 
           
 
