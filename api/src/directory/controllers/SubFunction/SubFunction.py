@@ -10,7 +10,7 @@ from typing import Union
 
 from django.db.models import QuerySet
 
-from directory import models
+from directory import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +42,19 @@ class SubFunction:
                 or a QuerySet of all `SubFunction` instances.
         """
 
-        optional_args = f" with id: {subfunction_id}" if subfunction_id else "s"
-        LOGGER.info(f"Fetching SubFunction{optional_args}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            optional_args = f" with id: {subfunction_id}" if subfunction_id else "s"
+            LOGGER.info(f"Fetching SubFunction{optional_args}.")
+
+            # If a subfunction id is given, fetch the corresponding
+            # `SubFunction` record, else all `SubFunction` records.
+            subfunctions: Union[models.SubFunction, QuerySet[models.SubFunction]] = (
+                models.SubFunction.objects.get(id=subfunction_id)
+                if subfunction_id
+                else models.SubFunction.objects.all()
+            )
+            return subfunctions
+        except models.SubFunction.DoesNotExist as exc:
+            err_msg = f"SubFunction (id={subfunction_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
