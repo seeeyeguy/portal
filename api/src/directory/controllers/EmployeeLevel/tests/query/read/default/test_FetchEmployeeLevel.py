@@ -38,19 +38,20 @@ class TestFetchEmployeeLevel(TestCase):
         """Success Case: Fetch all `EmployeeLevel` records."""
 
         employee_levels = EmployeeLevel.fetch_employee_levels()
+
         self.assertIsInstance(employee_levels, QuerySet[EmployeeLevelModel])
         self.assertEqual(
             employee_levels.count(), len(arguments.VALID_EMPLOYEELEVEL_RECORDS.keys())  # type: ignore[union-attr]
         )
+
         for employee_level in employee_levels:  # type: ignore[union-attr]
             self.assertIsInstance(employee_level, EmployeeLevelModel)
-            serialized_employee_level: dict = EmployeeLevelSerializer(
-                employee_level
-            ).data
-            employee_level_id: int = serialized_employee_level["id"]
+
+            employee_level_id: int = employee_level.id
+
             self.assertIn(employee_level_id, arguments.VALID_EMPLOYEELEVEL_RECORDS)
             self.assertEqual(
-                serialized_employee_level,
+                EmployeeLevelSerializer(employee_level).data,
                 arguments.VALID_EMPLOYEELEVEL_RECORDS[employee_level_id],
             )
 
@@ -61,8 +62,11 @@ class TestFetchEmployeeLevel(TestCase):
         employee_level = EmployeeLevel.fetch_employee_levels(
             employee_level_id=arguments.FETCH_EMPLOYEELEVEL_BY_ID
         )
+
         self.assertIsInstance(employee_level, EmployeeLevelModel)
+
         employee_level_id: int = employee_level.id  # type: ignore[union-attr]
+
         self.assertIn(employee_level_id, arguments.VALID_EMPLOYEELEVEL_RECORDS)
         self.assertEqual(
             EmployeeLevelSerializer(employee_level).data,
