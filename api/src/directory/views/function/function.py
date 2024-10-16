@@ -9,14 +9,17 @@ subfunctions.
 """
 
 import logging
+from typing import List, Union
 
 from django import http
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from directory import controllers
+from directory import exceptions, controllers
+from directory.models.Function.serializers import FunctionSerializer
 from directory.views import serializers
+
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
 from manager.utils.decorators import with_serializer
@@ -37,8 +40,23 @@ class Function(View):
     def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/functions."""
 
-        request_params = f"?id={body['id']}" if body["id"] else ""
-        LOGGER.info(f"GET /v1/directory/functions{request_params}")
+        try:
+            request_params = f"?id={body['id']}" if body["id"] else ""
+            LOGGER.info(f"GET /v1/directory/functions{request_params}")
 
-        functions = controllers.Function.fetch_functions(body["id"])
-        return http.JsonResponse(functions, status=status.HTTP_200_OK, safe=False)
+            # Fetch a `Function` record given its id,
+            # else all `Function` records.
+            functions = controllers.Function.fetch_functions(body["id"])
+
+            # Set many field.
+            many: bool = body["id"] is None
+
+            # Serialize `Function`(s).
+            data: Union[dict, List[dict]] = FunctionSerializer(
+                functions, many=many
+            ).data
+
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
