@@ -7,13 +7,15 @@ of expertise.
 """
 
 import logging
+from typing import List, Union
 
 from django import http
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from directory import controllers
+from directory import controllers, exceptions
+from directory.models.SubFunction.serializers import SubFunctionSerializer
 from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
@@ -35,8 +37,21 @@ class SubFunction(View):
     def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/subfunctions."""
 
-        request_params = f"?id={body['id']}" if body["id"] else ""
-        LOGGER.info(f"GET /v1/directory/subfunctions{request_params}")
+        try:
+            request_params = f"?id={body['id']}" if body["id"] else ""
+            LOGGER.info(f"GET /v1/directory/subfunctions{request_params}")
 
-        subfunctions = controllers.SubFunction.fetch_subfunctions(body["id"])
-        return http.JsonResponse(subfunctions, status=status.HTTP_200_OK, safe=False)
+            # Fetch the `SubFunction`(s).
+            subfunctions = controllers.SubFunction.fetch_subfunctions(body["id"])
+
+            # Determine the value for `many` parameter on the serializer.
+            many: bool = body["id"] is None
+
+            # Serialize `SubFunction`(s).
+            data: Union[dict | List[dict]] = SubFunctionSerializer(
+                subfunctions, many=many
+            ).data
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
