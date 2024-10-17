@@ -6,7 +6,7 @@ represented by labels.
 """
 
 import logging
-from typing import List
+from typing import List, Union
 
 from django import http
 from django.db.models import QuerySet
@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from directory import controllers, models
+from directory import controllers, exceptions, models
 from directory.models.Tag.serializers import TagSerializer
 from directory.views import serializers
 
@@ -36,19 +36,30 @@ class Tag(View):
     def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/tags."""
 
-        request_params = f"?id={body['id']}" if body["id"] else ""
-        request_params = f"?page={body['page']}" if body["page"] else request_params
-        request_params = (
-            f"{request_params}{'&' if body['page'] else '?'}limit={body['limit']}"
-            if body["limit"]
-            else request_params
-        )
-        LOGGER.info(f"GET /v1/directory/tags{request_params}")
+        try:
+            request_params = f"?id={body['id']}" if body["id"] else ""
+            request_params = f"?page={body['page']}" if body["page"] else request_params
+            request_params = (
+                f"{request_params}{'&' if body['page'] else '?'}limit={body['limit']}"
+                if body["limit"]
+                else request_params
+            )
+            LOGGER.info(f"GET /v1/directory/tags{request_params}")
 
-        tags = controllers.Tag.fetch_tags(
-            tag_id=body["id"], page=body["page"], limit=body["limit"]
-        )
-        return http.JsonResponse(tags, status=status.HTTP_200_OK, safe=False)
+            # Fetch the `Tag`(s).
+            tags = controllers.Tag.fetch_tags(
+                tag_id=body["id"], page=body["page"], limit=body["limit"]
+            )
+
+            # Determine the value for `many` parameter on the serializer.
+            many: bool = body["id"] is None
+
+            # Serialize `Tag`(s).
+            data: Union[dict | List[dict]] = TagSerializer(tags, many=many).data
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
 
 class TagSearch(View):

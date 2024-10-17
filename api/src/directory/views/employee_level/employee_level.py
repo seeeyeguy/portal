@@ -44,9 +44,11 @@ class EmployeeLevel(View):
             employee_levels = controllers.EmployeeLevel.fetch_employee_levels(
                 body["id"]
             )
+
             # Determine the value for `many` parameter on the serializer.
             many: bool = body["id"] is None
-            # Serialize employee_levels.
+
+            # Serialize `EmployeeLevel`(s).
             data: Union[dict | List[dict]] = EmployeeLevelSerializer(
                 employee_levels, many=many
             ).data

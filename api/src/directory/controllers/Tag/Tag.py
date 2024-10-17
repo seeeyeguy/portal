@@ -6,13 +6,18 @@ by labels.
 """
 
 import logging
-from typing import Union
+from typing import cast, Union
 
+from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
 
-from directory import models
+from directory import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
+
+# Default page length used when using
+# pagination on the fetch.
+DEFAULT_PAGE_LENGTH: int = 50
 
 
 class Tag:
@@ -45,16 +50,58 @@ class Tag:
                 or a QuerySet of all `Tag` instances.
         """
 
-        optional_args = f" with id: {tag_id}" if tag_id else "s"
-        optional_args = f"{optional_args} with page: {page}" if page else optional_args
-        optional_args = (
-            f"{optional_args}{' and ' if page else ' with '}limit: {limit}"
-            if limit
-            else optional_args
-        )
-        LOGGER.info(f"Fetching Tag{optional_args}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            optional_args = f" with id: {tag_id}" if tag_id else "s"
+            optional_args = (
+                f"{optional_args} with page: {page}" if page else optional_args
+            )
+            optional_args = (
+                f"{optional_args}{' and ' if page else ' with '}limit: {limit}"
+                if limit
+                else optional_args
+            )
+            LOGGER.info(f"Fetching Tag{optional_args}.")
+
+            # If tag id is given, along with either a page
+            # or limit then throw an invalid parameters error.
+            if tag_id and (page or limit):
+                raise exceptions.DirectoryError("Invalid parameters given.", 400)
+
+            # If a tag id is given, fetch the corresponding `Tag` record,
+            # else all `Tag` records.
+            tags: Union[models.Tag, QuerySet[models.Tag]] = (
+                models.Tag.objects.get(id=tag_id)
+                if tag_id
+                else models.Tag.objects.all()
+            )
+
+            # If `limit` is given, then limit the `Tag` records.
+            tags = tags[:limit] if limit else tags  # type: ignore[index]
+
+            if page:
+                # Create a Paginator to paginate the collection
+                # of `Tag`s.
+                # pylint: disable=line-too-long
+                paginator: Paginator = Paginator(tags, DEFAULT_PAGE_LENGTH)  # type: ignore[arg-type]
+
+                # If `page` number supplied in the params is greater
+                # than the number of available pages, then return an
+                # empty `Tag` QuerySet.
+                if page > paginator.num_pages:
+                    return models.Tag.objects.none()
+
+                # Get the corresponding Page.
+                tag_page: Page = paginator.page(page)
+
+                # Assign the page's `Tag` QuerySet to
+                # `tags`.
+                tags = cast(QuerySet[models.Tag], tag_page.object_list)
+
+            return tags
+        except models.Tag.DoesNotExist as exc:
+            err_msg = f"Tag (id={tag_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def search_tags(
