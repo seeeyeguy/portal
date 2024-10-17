@@ -12,10 +12,12 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from users import controllers
+from users import controllers, exceptions
+from users.models.Profile.serializers import ProfileSerializer
 from users.views import serializers
 
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,10 +29,25 @@ class Profile(LoginRequiredMixin, View):
     """
 
     @method_decorator(with_serializer(serializers.FetchProfileRequest))
-    def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/users/profile."""
 
-        LOGGER.info(f"GET /v1/users/profile?user={body['user']}.")
+        try:
+            LOGGER.info(f"GET /v1/users/profile?user={body['user']}.")
 
-        profile = controllers.Profile.fetch_profile(user=body["user"])
-        return http.JsonResponse(profile, status=status.HTTP_200_OK, safe=False)
+            # Deny request if user does not have permissions.
+            if request.user.email != body["user"]:
+                return http.JsonResponse(
+                    "Permissions Denied.",
+                    status=status.HTTP_403_FORBIDDEN,
+                    safe=False,
+                )
+
+            # Fetch `Profile` record for the given user.
+            profile = controllers.Profile.fetch_profile(user=body["user"])
+            # Serialize `Profile`.
+            data: dict = ProfileSerializer(profile).data
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.UsersError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)

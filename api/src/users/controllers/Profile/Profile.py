@@ -6,7 +6,7 @@ offers additional information about a user.
 
 import logging
 
-from users import models
+from users import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +31,14 @@ class Profile:
                 the given user.
         """
 
-        LOGGER.info(f"Fetching Profile for user: {user}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(f"Fetching Profile for user: {user}.")
+
+            # Query the profile for the given user.
+            profile = models.Profile.objects.get(user__email__iexact=user)
+
+            return profile
+        except models.Profile.DoesNotExist as exc:
+            err_msg = f"Profile for user (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 404) from exc
