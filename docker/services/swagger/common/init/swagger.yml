@@ -54,7 +54,7 @@ paths:
     get:
       tags:
         - "directory.employeelevel.fetch"
-      summary: "Fetch EmployeeLevel(s)"
+      summary: "Fetch EmployeeLevel(s)."
       parameters:
         - in: query
           name: id
@@ -78,6 +78,34 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchEmployeeLevelByIdDoesNotExistResponse"
+  /directory/subfunctions?id={subfunction}:
+    get:
+      tags:
+        - "directory.subfunction.fetch"
+      summary: "Fetch SubFunction(s)."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `SubFunction` record
+            to fetch.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchSubFunctionsResponse"
+                  - $ref: "#/components/schemas/FetchSubFunctionByIdResponse"                 
+        "404":
+          description: "SubFunction does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchSubFunctionByIdDoesNotExistResponse"
   /directory/tags/search?label={label}:
     get:
       tags:
@@ -336,6 +364,75 @@ components:
       title: "Fetch `EmployeeLevel` error response due to using an id that
         does not exist."
       example: "Employee Level (id=employee_level_id), does not exist."
+
+    FetchSubFunctionsResponse:
+      title: "Fetch `SubFunction` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "function": {
+                  "id": 1,
+                  "name": "Function 1 Name",
+                  "description": "Function 1 Description.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00"
+                },
+                "name": "SubFunction 1 Name",
+                "description": "Function 1 SubFunction 1.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00"
+              },
+              {
+                "id": 2,
+                "function": {
+                  "id": 1,
+                  "name": "Function 1 Name",
+                  "description": "Function 1 Description.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00"
+                },
+                "name": "SubFunction 2 Name",
+                "description": "Function 1 SubFunction 2.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00"
+              },
+              ...
+            ]
+  
+    
+    FetchSubFunctionByIdResponse:
+      title: "Fetch `SubFunction` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "function": {
+                "id": 1,
+                "name": "Function 1 Name",
+                "description": "Function 1 Description.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00"
+              },
+              "name": "SubFunction 1 Name",
+              "description": "Function 1 SubFunction 1.",
+              "created": "2024-08-27T12:00:00-04:00",
+              "modified": "2024-08-27T12:00:00-04:00"
+            }
+                
+    FetchSubFunctionByIdDoesNotExistResponse:
+      title: "Fetch `SubFunction` error response due to using an id that
+        does not exist."
+      example: "SubFunction (id=subfunction_id), does not exist."
 
     SearchTagsResponse:
       title: "Search `Tag`s response."
