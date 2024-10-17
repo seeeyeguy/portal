@@ -14,5 +14,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta for `User` serializer."""
 
-    model = DjangoAuthModels.User
-    fields = ["id", "username", "email", "first_name", "last_name", "is_active"]
+        model = DjangoAuthModels.User
+        fields = ["id", "username", "email", "first_name", "last_name", "is_active"]
