@@ -15,7 +15,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from analytics import controllers
+from analytics import controllers, exceptions
+from analytics.models.Visit.serializers import VisitSerializer
 from analytics.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
@@ -35,11 +36,20 @@ class Visit(LoginRequiredMixin, View):
     def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/analytics/visits."""
 
-        LOGGER.info("POST /v1/analytics/visits.")
-        visit = controllers.Visit.create_visit(
-            user=body["user"], resource=body["resource"]
-        )
-        return http.JsonResponse(visit, status=status.HTTP_201_CREATED)
+        try:
+            LOGGER.info("POST /v1/analytics/visits.")
+
+            # Create `Visit`.
+            visit = controllers.Visit.create_visit(
+                user=body["user"], resource=body["resource"]
+            )
+
+            # Serialize Visit.
+            data: dict = VisitSerializer(visit).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED)
+        except exceptions.AnalyticsError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializer_class=serializers.FetchVisitRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))

@@ -9,8 +9,10 @@ import logging
 from typing import Union
 
 from django.db.models import QuerySet
+from django.contrib.auth import models as AuthModels
 
-from analytics import models
+from analytics import exceptions, models
+from directory import models as DirectoryModels
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,11 +39,35 @@ class Visit:
             * visit (models.Visit): The newly created `Visit` record.
         """
 
-        LOGGER.info(
-            f"Creating Visit for User: {user} and Resource with id: {resource}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Creating Visit for User: {user} and Resource with id: {resource}."
+            )
+
+            # Fetch the `User` record.
+            user_record: AuthModels.User = AuthModels.User.objects.get(
+                email__iexact=user
+            )
+
+            # Fetch the `Resource` record.
+            resource_record: DirectoryModels.Resource = (
+                DirectoryModels.Resource.objects.get(id=resource)
+            )
+
+            # Create the `Visit` record.
+            visit = models.Visit.objects.create(
+                user=user_record, resource=resource_record
+            )
+            return visit
+        except AuthModels.User.DoesNotExist as exc:
+            err_msg = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.AnalyticsError(err_msg, 404) from exc
+
+        except DirectoryModels.Resource.DoesNotExist as exc:
+            err_msg = f"Resource (id={resource}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.AnalyticsError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_visit(
