@@ -14,7 +14,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from preferences import controllers
+from preferences import controllers, exceptions
+from preferences.models.QueryFilterState.serializers import QueryFilterStateSerializer
 from preferences.views import serializers
 
 from manager.utils.decorators import with_serializer
@@ -33,16 +34,24 @@ class QueryFilterState(LoginRequiredMixin, View):
     def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/preferences/query-filter-state."""
 
-        LOGGER.info("POST /v1/preferences/query-filter-state.")
+        try:
+            LOGGER.info("POST /v1/preferences/query-filter-state.")
 
-        query_filter_state = controllers.QueryFilterState.create_query_filter_state(
-            user=body["user"],
-            search=body["search"],
-            functions=body["functions"],
-            employee_levels=body["employee_levels"],
-            tags=body["tags"],
-        )
-        return http.JsonResponse(query_filter_state, status=status.HTTP_201_CREATED)
+            # Call controller to create `QueryFilterState`.
+            query_filter_state = controllers.QueryFilterState.create_query_filter_state(
+                user=body["user"],
+                search=body["search"],
+                functions=body["functions"],
+                employee_levels=body["employee_levels"],
+                tags=body["tags"],
+            )
+
+            # Serialize `QueryFilterState`.
+            data: dict = QueryFilterStateSerializer(query_filter_state).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED)
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.UpdateQueryFilterStateRequest))
     def put(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
