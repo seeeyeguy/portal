@@ -41,6 +41,8 @@ class TestResourceSearchFunctreeNonSerialized(TestCaseUtility):
         *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/search/functree/fixtures/resources.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/requests.json",
+        "directory/controllers/Resource/tests/query/search/functree/fixtures/transitions.json",
+        "directory/controllers/Resource/tests/query/search/functree/fixtures/dispositions.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/visits.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/favorites.json",
     ]

@@ -1,0 +1,13 @@
+[
+  {
+    "model": "request.request",
+    "pk": 1,
+    "fields": {
+      "resource": 1,
+      "originator": 3,
+      "status": "APPROVED",
+      "created": "2024-10-01T16:00:00Z",
+      "modified": "2024-10-01T16:00:00Z"
+    }
+  }
+]

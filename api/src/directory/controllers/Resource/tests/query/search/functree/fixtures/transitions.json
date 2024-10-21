@@ -1,7 +1,7 @@
 [
     {
       "model": "request.transition",
-      "id": 1,
+      "pk": 1,
       "fields": {
         "request": 1,
         "stage": 1,
@@ -11,7 +11,7 @@
     },
     {
       "model": "request.transition",
-      "id": 2,
+      "pk": 2,
       "fields": {
         "request": 1,
         "stage": 2,
@@ -21,7 +21,7 @@
     },
     {
       "model": "request.transition",
-      "id": 3,
+      "pk": 3,
       "fields": {
         "request": 1,
         "stage": 3,
@@ -31,7 +31,7 @@
     },
     {
       "model": "request.transition",
-      "id": 4,
+      "pk": 4,
       "fields": {
         "request": 1,
         "stage": 6,
@@ -41,7 +41,7 @@
     },
     {
       "model": "request.transition",
-      "id": 5,
+      "pk": 5,
       "fields": {
         "request": 2,
         "stage": 1,
@@ -51,7 +51,7 @@
     },
     {
       "model": "request.transition",
-      "id": 6,
+      "pk": 6,
       "fields": {
         "request": 2,
         "stage": 2,
@@ -61,7 +61,7 @@
     },
     {
       "model": "request.transition",
-      "id": 7,
+      "pk": 7,
       "fields": {
         "request": 2,
         "stage": 3,
@@ -71,7 +71,7 @@
     },
     {
       "model": "request.transition",
-      "id": 8,
+      "pk": 8,
       "fields": {
         "request": 2,
         "stage": 6,
@@ -81,7 +81,7 @@
     },
     {
       "model": "request.transition",
-      "id": 9,
+      "pk": 9,
       "fields": {
         "request": 3,
         "stage": 1,
@@ -91,7 +91,7 @@
     },
     {
       "model": "request.transition",
-      "id": 10,
+      "pk": 10,
       "fields": {
         "request": 3,
         "stage": 2,
@@ -101,7 +101,7 @@
     },
     {
       "model": "request.transition",
-      "id": 11,
+      "pk": 11,
       "fields": {
         "request": 3,
         "stage": 3,
@@ -111,7 +111,7 @@
     },
     {
       "model": "request.transition",
-      "id": 12,
+      "pk": 12,
       "fields": {
         "request": 3,
         "stage": 6,
@@ -121,7 +121,7 @@
     },
     {
       "model": "request.transition",
-      "id": 13,
+      "pk": 13,
       "fields": {
         "request": 4,
         "stage": 1,
@@ -131,7 +131,7 @@
     },
     {
       "model": "request.transition",
-      "id": 14,
+      "pk": 14,
       "fields": {
         "request": 4,
         "stage": 2,
@@ -141,7 +141,7 @@
     },
     {
       "model": "request.transition",
-      "id": 15,
+      "pk": 15,
       "fields": {
         "request": 4,
         "stage": 3,
@@ -151,7 +151,7 @@
     },
     {
       "model": "request.transition",
-      "id": 16,
+      "pk": 16,
       "fields": {
         "request": 4,
         "stage": 6,
@@ -161,7 +161,7 @@
     },
     {
       "model": "request.transition",
-      "id": 17,
+      "pk": 17,
       "fields": {
         "request": 5,
         "stage": 1,
@@ -171,7 +171,7 @@
     },
     {
       "model": "request.transition",
-      "id": 18,
+      "pk": 18,
       "fields": {
         "request": 5,
         "stage": 2,
@@ -181,7 +181,7 @@
     },
     {
       "model": "request.transition",
-      "id": 19,
+      "pk": 19,
       "fields": {
         "request": 5,
         "stage": 3,
@@ -191,7 +191,7 @@
     },
     {
       "model": "request.transition",
-      "id": 20,
+      "pk": 20,
       "fields": {
         "request": 5,
         "stage": 6,
@@ -201,7 +201,7 @@
     },
     {
       "model": "request.transition",
-      "id": 21,
+      "pk": 21,
       "fields": {
         "request": 6,
         "stage": 1,
@@ -211,7 +211,7 @@
     },
     {
       "model": "request.transition",
-      "id": 22,
+      "pk": 22,
       "fields": {
         "request": 6,
         "stage": 2,
@@ -221,7 +221,7 @@
     },
     {
       "model": "request.transition",
-      "id": 23,
+      "pk": 23,
       "fields": {
         "request": 6,
         "stage": 3,
@@ -231,7 +231,7 @@
     },
     {
       "model": "request.transition",
-      "id": 24,
+      "pk": 24,
       "fields": {
         "request": 6,
         "stage": 6,
@@ -241,7 +241,7 @@
     },
     {
       "model": "request.transition",
-      "id": 25,
+      "pk": 25,
       "fields": {
         "request": 7,
         "stage": 1,
@@ -251,7 +251,7 @@
     },
     {
       "model": "request.transition",
-      "id": 26,
+      "pk": 26,
       "fields": {
         "request": 7,
         "stage": 2,
@@ -261,7 +261,7 @@
     },
     {
       "model": "request.transition",
-      "id": 27,
+      "pk": 27,
       "fields": {
         "request": 7,
         "stage": 3,
@@ -271,7 +271,7 @@
     },
     {
       "model": "request.transition",
-      "id": 28,
+      "pk": 28,
       "fields": {
         "request": 7,
         "stage": 6,
