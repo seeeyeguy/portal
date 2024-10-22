@@ -20,6 +20,7 @@ from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class EmployeeLevel(View):
 
     @method_decorator(with_serializer(serializers.FetchEmployeeLevelRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
-    def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/employee-levels."""
 
         try:

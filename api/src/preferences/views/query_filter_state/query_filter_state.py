@@ -19,6 +19,7 @@ from preferences.models.QueryFilterState.serializers import QueryFilterStateSeri
 from preferences.views import serializers
 
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class QueryFilterState(LoginRequiredMixin, View):
     """
 
     @method_decorator(with_serializer(serializers.CreateQueryFilterStateRequest))
-    def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/preferences/query-filter-state."""
 
         try:
@@ -39,7 +40,7 @@ class QueryFilterState(LoginRequiredMixin, View):
 
             # Call controller to create `QueryFilterState`.
             query_filter_state = controllers.QueryFilterState.create_query_filter_state(
-                user=body["user"],
+                user=request.user.email,
                 search=body["search"],
                 functions=body["functions"],
                 employee_levels=body["employee_levels"],
@@ -54,7 +55,7 @@ class QueryFilterState(LoginRequiredMixin, View):
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.UpdateQueryFilterStateRequest))
-    def put(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/preferences/query-filter-state."""
 
         req = serializers.UpdateQueryFilterStateQueryParams(data=request.GET)
@@ -79,7 +80,7 @@ class QueryFilterState(LoginRequiredMixin, View):
         return http.JsonResponse(query_filter_state, status=status.HTTP_201_CREATED)
 
     @method_decorator(with_serializer(serializers.FetchQueryFilterStateRequest))
-    def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/preferences/query-filter-state."""
 
         LOGGER.info(f"GET /v1/preferences/query-filter-state?user={body['user']}.")

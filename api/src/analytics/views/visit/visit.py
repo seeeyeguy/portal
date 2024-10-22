@@ -21,6 +21,7 @@ from analytics.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,13 +34,13 @@ class Visit(LoginRequiredMixin, View):
     """
 
     @method_decorator(with_serializer(serializer_class=serializers.CreateVisitRequest))
-    def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/analytics/visits."""
 
         try:
             LOGGER.info("POST /v1/analytics/visits.")
 
-            user_email: str = request.user.email  # type: ignore[assignment, union-attr]
+            user_email: str = request.user.email
 
             # Create `Visit`.
             visit = controllers.Visit.create_visit(
@@ -55,7 +56,7 @@ class Visit(LoginRequiredMixin, View):
 
     @method_decorator(with_serializer(serializer_class=serializers.FetchVisitRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
-    def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/analytics/visits."""
 
         request_params = f"?id={body['id']}" if body["id"] else ""
