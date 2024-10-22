@@ -19,7 +19,6 @@ CREATE_VISIT_RESOURCE_ID_DNE: int = 9999
 
 # Valid `Visit` to validate creation.
 VALID_CREATED_VISIT: dict = {
-    "id": 1,
     "resource": {
         "id": 1,
         "employee_levels": [
