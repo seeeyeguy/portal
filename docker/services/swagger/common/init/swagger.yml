@@ -9,6 +9,38 @@ tags:
   - description: "Enter description here."
 
 paths:
+  /analytics/visits:
+    post:
+      tags:
+        - "analytics.visit.create"
+      summary: "Create a Visit."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVisitRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateVisitResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateVisitUnAuthorizedResponse"              
+        "404":
+          description: "Resource does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateVisitResourceDoesNotExistErrorResponse"
   /directory/resources/search?page={page_number}&limit={search_limit}:
     post:
       tags:
@@ -128,6 +160,87 @@ paths:
        
 components:
   schemas:
+    CreateVisitRequest:
+      title: "Create `Visit` request."
+      type: object
+      properties:
+        resource:
+          type: integer
+          description: Id of the `Resource` that is being
+            visited.
+          default: 1
+    
+    CreateVisitResponse:
+      title: "Create `Visit` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: The created `Visit`.
+          example:
+            {
+              "id": 1,
+              "resource": {
+                  "id": 1,
+                  "uid": "00000000-0000-0000-0000-000000000000",
+                  "previous_revision": null,
+                  "revision_number": 0,
+                  "name": "Resource 1 Name",
+                  "description": "Resource 1 Description.",
+                  "url": "www.example.com",
+                  "thumbnail": "/path/to/resource/thumbnail",
+                  "employee_levels": [
+                    {
+                      "id": 1,
+                      "name": "Employee Level 1 Name",
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "modified": "1970-01-01T12:00:00-04:00",
+                    },
+                    ...
+                  ],
+                  "subfunctions": [
+                    {
+                      "id": 1,                   
+                      "name": "Function 1 SubFunction 1 Name",
+                      "description": "Function 1 SubFunction 1 Description.",
+                      "function": {
+                        "id": 1,
+                        "name": "Function 1 Name",
+                        "description": "Function 1 Description.",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                      },
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "modified": "1970-01-01T12:00:00-04:00",
+                    },
+                    ...
+                  ],
+                  "tags": [
+                    {
+                      "id": 1,
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "modified": "1970-01-01T12:00:00-04:00",
+                      "label": "filter::site:Test",
+                    },
+                    ...
+                  ],
+                  "type": "Resource Type 1",
+                  "download": false,
+                  "active": true,
+                  "created": "1970-01-01T12:00:00-04:00",
+                },
+              "user": "Test.User@harris.com"
+            }
+
+    CreateVisitUnAuthorizedResponse:
+      title: "Create `Visit` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    CreateVisitResourceDoesNotExistErrorResponse:
+      title: "Create `Visit` error response due to supplying an id
+        for a `Resource` that does not exist."
+      example: "Resource (id=resource_id), does not exist."
+
     ResourceSearchRequest:
       title: "`Resource` search request."
       type: object
@@ -352,12 +465,12 @@ components:
           type: object
           example:
             {
-                "id": 1,
-                "name": "Employee Level 1 Name",
-                "description": "Employee Level 1 Description.",
-                "created": "1970-01-27T12:00:00-04:00",
-                "modified": "1970-01-27T12:00:00-04:00",
-                "level": 1
+              "id": 1,
+              "name": "Employee Level 1 Name",
+              "description": "Employee Level 1 Description.",
+              "created": "1970-01-27T12:00:00-04:00",
+              "modified": "1970-01-27T12:00:00-04:00",
+              "level": 1
             }
       
     FetchEmployeeLevelByIdDoesNotExistResponse:

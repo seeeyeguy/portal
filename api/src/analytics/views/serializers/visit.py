@@ -9,7 +9,6 @@ from rest_framework import serializers
 class CreateVisitRequest(serializers.Serializer):
     """Request serializer for POST /v1/analytics/visits."""
 
-    user = serializers.EmailField()
     resource = serializers.IntegerField()
 
 

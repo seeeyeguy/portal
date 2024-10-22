@@ -51,7 +51,9 @@ class TestCreateVisit(TestCase):
         # Serialize `Visit`.
         serialized_visit: dict = VisitSerializer(visit).data
 
-        # Remove dynamic datetime field before comparison.
+        # Remove dynamic primary key and
+        # datetime fields before comparison.
+        del serialized_visit["id"]
         del serialized_visit["created"]
 
         self.assertEqual(serialized_visit, arguments.VALID_CREATED_VISIT)

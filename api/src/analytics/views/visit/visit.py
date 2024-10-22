@@ -39,9 +39,11 @@ class Visit(LoginRequiredMixin, View):
         try:
             LOGGER.info("POST /v1/analytics/visits.")
 
+            user_email: str = request.user.email  # type: ignore[assignment, union-attr]
+
             # Create `Visit`.
             visit = controllers.Visit.create_visit(
-                user=body["user"], resource=body["resource"]
+                user=user_email, resource=body["resource"]
             )
 
             # Serialize Visit.
