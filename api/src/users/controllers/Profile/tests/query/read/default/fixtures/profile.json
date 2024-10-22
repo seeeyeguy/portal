@@ -1,0 +1,25 @@
+[
+    {
+        "model": "users.profile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "uid": "618549",
+            "middle_initial": "M",
+            "unix_name": "U194879",
+            "job_title": "Sr Assoc, Software Engrg",
+            "job_function": "Engineering",
+            "job_family": "Software Engineering",
+            "job_category": "Person",
+            "job_level": 2,
+            "account_type": "Employee",
+            "status": "Active",
+            "segment": 1,
+            "division": "ESI",
+            "business_unit": "GCS",
+            "department": "SW-Image Processing",
+            "location": "FL",
+            "citizenship": "US"
+        }
+    }
+]
