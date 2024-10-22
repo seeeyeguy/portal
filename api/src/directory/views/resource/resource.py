@@ -27,6 +27,7 @@ from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ class ResourceSearch(View):
         with_serializer(serializer_class=serializers.ResourceSearchRequest)
     )
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
-    def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/resources/search."""
 
         try:

@@ -1,0 +1,24 @@
+[
+  {
+    "model": "request.disposition",
+    "pk": 1,
+    "fields": {
+      "approver": 2,
+      "disposition": "APPROVED",
+      "justification": "",
+      "transition": 2,
+      "created": "2024-10-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.disposition",
+    "pk": 2,
+    "fields": {
+      "approver": 1,
+      "disposition": "APPROVED",
+      "justification": "",
+      "transition": 3,
+      "created": "2024-10-01T16:00:00Z"
+    }
+  }
+]

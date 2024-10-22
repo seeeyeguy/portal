@@ -28,9 +28,7 @@ class QueryFilterStateBasePostRequest(serializers.Serializer):
     tags = serializers.ListField(child=serializers.IntegerField(), allow_empty=True)
 
 
-class CreateQueryFilterStateRequest(
-    QueryFilterStateBaseRequest, QueryFilterStateBasePostRequest
-):
+class CreateQueryFilterStateRequest(QueryFilterStateBasePostRequest):
     """Request serializer for POST /v1/preferences/query-filter-state."""
 
 

@@ -20,6 +20,7 @@ from analytics.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
 from manager.utils.decorators import with_serializer
+from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class Query(LoginRequiredMixin, View):
     """
 
     @method_decorator(with_serializer(serializer_class=serializers.CreateQueryRequest))
-    def post(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/analytics/queries."""
 
         LOGGER.info("POST /v1/analytics/queries.")
@@ -43,7 +44,7 @@ class Query(LoginRequiredMixin, View):
 
     @method_decorator(with_serializer(serializer_class=serializers.FetchQueryRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
-    def get(self, request: http.HttpRequest, body: dict) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/analytics/queries."""
 
         request_params = f"?id={body['id']}" if body["id"] else ""
