@@ -14,8 +14,11 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from manager.services.ldap.provider.utils import fetch_employee_record_from_ldap
 from users.models.Segment.Segment import Segment
+
+from manager.services.ldap.provider.utils import fetch_employee_record_from_ldap
+from manager.settings import ApplicationBuild, BUILD
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -155,7 +158,7 @@ def create_user_profile(
 ) -> None:
     """When a User is created, create an associated profile."""
 
-    if created:
+    if BUILD != ApplicationBuild.TEST and created:
         Profile.objects.create(user=instance)
         try:
             instance.profile.update_user_profile_ldap()
@@ -169,7 +172,8 @@ def save_user_profile(sender: User, instance: User, **kwargs: dict) -> None:
     """When a User object is saved, save the associated profile."""
 
     try:
-        instance.profile.update_user_profile_ldap()
+        if BUILD != ApplicationBuild.TEST:
+            instance.profile.update_user_profile_ldap()
     except AttributeError:
         # Fail silently.
         pass

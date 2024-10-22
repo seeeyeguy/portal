@@ -36,7 +36,7 @@ class Profile(LoginRequiredMixin, View):
             LOGGER.info(f"GET /v1/users/profile?user={body['user']}.")
 
             # Deny request if user does not have permissions.
-            if request.user.email != body["user"]:
+            if request.user.email != body["user"] or not request.user.is_superuser:
                 return http.JsonResponse(
                     "Permissions Denied.",
                     status=status.HTTP_403_FORBIDDEN,

@@ -1,0 +1,34 @@
+[
+    {
+        "model": "users.segment",
+        "pk": 1,
+        "fields": {
+            "name": "SPACE & AIRBORNE SYSTEMS",
+            "description": "Space & Airborne Systems is a provider of mission solutions."
+        }
+    },
+    {
+        "model": "users.segment",
+        "pk": 2,
+        "fields": {
+            "name": "INTEGRATED MISSION SYSTEMS",
+            "description": "Integrated Mission Systems is a leading provider of differentiated mission."
+        }
+    },
+    {
+        "model": "users.segment",
+        "pk": 3,
+        "fields": {
+            "name": "COMMUNICATION SYSTEMS",
+            "description": "Communication Systems enables warfighters across all domains with solutions."
+        }
+    },
+    {
+        "model": "users.segment",
+        "pk": 4,
+        "fields": {
+            "name": "AEROJET ROCKETDYNE",
+            "description": "Aerojet Rocketdyne is a leading provider of propulsion."
+        }
+    }
+]
