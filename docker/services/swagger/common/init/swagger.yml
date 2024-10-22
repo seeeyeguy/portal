@@ -138,6 +138,54 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchSubFunctionByIdDoesNotExistResponse"
+  /directory/tags?id={tag_id}&page={page_number}&limit={limit_number}:
+    get:
+      tags:
+        - "directory.tag.fetch"
+      summary: "Fetch Tag(s)."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Tag` record
+            to fetch.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Tag` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Tag` records to return.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchTagsResponse"
+                  - $ref: "#/components/schemas/FetchTagByIdResponse"
+        "400":
+          description: "Invalid parameters."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchTagsInvalidParametersErrorResponse"
+        "404":
+          description: "Tag does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"
+
+      
   /directory/tags/search?label={label}:
     get:
       tags:
@@ -517,8 +565,7 @@ components:
                 "modified": "2024-08-27T12:00:00-04:00"
               },
               ...
-            ]
-  
+            ]  
     
     FetchSubFunctionByIdResponse:
       title: "Fetch `SubFunction` by id response."
@@ -546,6 +593,55 @@ components:
       title: "Fetch `SubFunction` error response due to using an id that
         does not exist."
       example: "SubFunction (id=subfunction_id), does not exist."
+    
+    FetchTagsResponse:
+      title: "Fetch `Tag` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "created": "1970-01-01T12:00:00-04:00",
+                "modified": "1970-01-01T12:00:00-04:00",
+                "label": "filter::site:Location_1",
+              },
+              {
+                "id": 2,
+                "created": "1970-01-01T12:00:00-04:00",
+                "modified": "1970-01-01T12:00:00-04:00",
+                "label": "filter::site:Location_2",
+              },
+              ...
+            ]  
+    
+    FetchTagByIdResponse:
+      title: "Fetch `Tag` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "created": "1970-01-01T12:00:00-04:00",
+              "modified": "1970-01-01T12:00:00-04:00",
+              "label": "filter::site:Location",
+            }
+    
+    FetchTagsInvalidParametersErrorResponse:
+      title: "Fetch `Tag` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    FetchTagByIdDoesNotExistResponse:
+      title: "Fetch `Tag` error response due to using an id that
+        does not exist."
+      example: "Tag (id=tag_id), does not exist."
 
     SearchTagsResponse:
       title: "Search `Tag`s response."
