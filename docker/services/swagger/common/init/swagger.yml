@@ -82,6 +82,41 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResponse"
                   - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
+  /preferences/query-filter-state:
+    post:
+      tags:
+        - "preferences.queryfilterstate.create"
+      summary: "Create a QueryFilterState."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQueryFilterStateRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateUnAuthorizedResponse"              
+        "404":
+          description: "Query, Function, EmployeeLevel, or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateQueryDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateFunctionDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateTagDoesNotExistErrorResponse"
   /directory/employee-levels?id={employee_level_id}:
     get:
       tags:
@@ -535,7 +570,144 @@ components:
     ResourceSearchInvalidParameterErrorResponse:
       title: "`Resource` search error response due to an invalid parameter."
       example: "Incorrect value given for a search parameter."
-    
+
+    CreateQueryFilterStateRequest:
+      title: "Create `QueryFilterState` request."
+      type: object
+      properties:
+        search:
+          type: integer
+          description: Id of the `Query` made by the user.
+          default: null
+        functions:
+          type: array[int]
+          description: Ids of `Function`s selected by the user.
+          default: []
+        employee_levels:
+          type: array[int]
+          description: Ids of `EmployeeLevel`s selected by the user.
+          default: []
+        tags:
+          type: array[int]
+          description: Ids of `Tag`s for resources selected by the user.
+          default: []
+
+    CreateQueryFilterStateResponse:
+      title: "Create `QueryFilterState` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: A created `QueryFilterState`.
+          example:
+            {
+              "id": 1,
+              "search": {
+                "id": 1,
+                "user": {
+                  "id": 1,
+                  "username": "May.Parker@harris.com",
+                  "email": "May.Parker@harris.com",
+                  "first_name": "May",
+                  "last_name": "Parker",
+                  "is_active": True,
+                },
+                "resources": [
+                  {
+                    "id": 1,
+                    "employee_levels": [
+                      {
+                        "id": 1,
+                        "name": "Employee",
+                        "description": "Employee Level 1.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                        "level": 1,
+                      },
+                      ...
+                    ],
+                    "subfunctions": [
+                      {
+                        "id": 1,
+                        "function": {
+                          "id": 1,
+                          "name": "Function 1 Name",
+                          "description": "Function 1 Description.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                        },
+                        "name": "Function 1 SubFunction 1 Name",
+                        "description": "Function 1 SubFunction 1 Description.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      ...
+                    ],
+                    "tags": [
+                      {
+                        "id": 1,
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                        "label": "example",
+                      },
+                      ...
+                    ],
+                    "description": "Resource 1 Revision 1 description.",
+                    "created": "2024-10-01T12:00:00-04:00",
+                    "uid": "000000000000-0000000000-000000000000",
+                    "revision_number": 1,
+                    "name": "Resource 1 Revision 1",
+                    "url": "example-site.org",
+                    "thumbnail": "/path/to/thumbnail.png",
+                    "type": "Resource Type 1",
+                    "download": False,
+                    "active": True,
+                    "previous_revision": None,
+                  },
+                  ...
+                ],
+                "created": "2024-10-01T12:00:00-04:00",
+                "search_term": "Resource 1",
+              },
+              "user": {
+                "id": 1,
+                "username": "May.Parker@harris.com",
+                "email": "May.Parker@harris.com",
+                "first_name": "May",
+                "last_name": "Parker",
+                "is_active": True,
+              },
+              "functions": [1],
+              "employee_levels": [1],
+              "tags": [1],
+              "created": "2024-08-27T12:00:00-04:00",
+              "modified": "2024-08-27T12:00:00-04:00",
+            }
+
+    CreateQueryFilterStateUnAuthorizedResponse:
+      title: "Create `QueryFilterState` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreateQueryFilterStateQueryDoesNotExistErrorResponse:
+      title: "Create `QueryFilterState` error response due to supplying an id
+        for a `Query` that does not exist."
+      example: "Query (id=query_id), does not exist."
+
+    CreateQueryFilterStateFunctionDoesNotExistErrorResponse:
+      title: "Create `QueryFilterState` error response due to supplying an id
+        for a `Function` that does not exist."
+      example: "Some Functions (ids={functions}) do not exist."
+
+    CreateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse:
+      title: "Create `QueryFilterState` error response due to supplying an id
+        for an `EmployeeLevel` that does not exist."
+      example: "Some EmployeeLevels (ids={employee_levels}) do not exist."
+
+    CreateQueryFilterStateTagDoesNotExistErrorResponse:
+      title: "Create `QueryFilterState` error response due to supplying an id
+        for a `Tag` that does not exist."
+      example: "Some Tags (ids={tags}) do not exist."
+
     FetchEmployeeLevelsResponse:
       title: "Fetch `EmployeeLevel` response."
       type: object
@@ -821,8 +993,3 @@ components:
               },
               ...
             ]
-
-          
-
-
-
