@@ -4,6 +4,7 @@ create, fetch, update, and delete records within the `QueryFilterState`
 table. `QueryFilterState` represents a user's preferred state of filters
 for the `BI Portal` application.
 """
+
 # Remove pylint disable in implementation story.
 # pylint: disable=unused-argument
 import logging
@@ -58,26 +59,37 @@ class QueryFilterState(LoginRequiredMixin, View):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/preferences/query-filter-state."""
 
-        req = serializers.UpdateQueryFilterStateQueryParams(data=request.GET)
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+        try:
+            req = serializers.UpdateQueryFilterStateQueryParams(data=request.GET)
+
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            record_id = req.validated_data.get("id")
+
+            LOGGER.info(
+                f"PUT /v1/preferences/query-filter-state?id={record_id}.",
             )
 
-        record_id = req.validated_data.get("id")
+            # Update the `QueryFilterState`.
+            query_filter_state = controllers.QueryFilterState.update_query_filter_state(
+                record_id=record_id,
+                search=body["search"],
+                functions=body["functions"],
+                employee_levels=body["employee_levels"],
+                tags=body["tags"],
+                user=request.user.email,
+            )
 
-        LOGGER.info(
-            f"PUT /v1/preferences/query-filter-state?id={record_id}.",
-        )
+            # Serialize `QueryFilterState`.
+            data: dict = QueryFilterStateSerializer(query_filter_state).data
 
-        query_filter_state = controllers.QueryFilterState.update_query_filter_state(
-            record_id=record_id,
-            search=body["search"],
-            functions=body["functions"],
-            employee_levels=body["employee_levels"],
-            tags=body["tags"],
-        )
-        return http.JsonResponse(query_filter_state, status=status.HTTP_201_CREATED)
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchQueryFilterStateRequest))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
