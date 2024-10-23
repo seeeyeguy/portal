@@ -110,7 +110,35 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchEmployeeLevelByIdDoesNotExistResponse"
-  /directory/subfunctions?id={subfunction}:
+  /directory/functions?id={function_id}:
+    get:
+      tags:
+        - "directory.function.fetch"
+      summary: "Fetch Function(s)."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Function` record
+            to fetch.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFunctionsResponse"
+                  - $ref: "#/components/schemas/FetchFunctionByIdResponse"                 
+        "404":
+          description: "Function does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFunctionByIdDoesNotExistResponse"
+  /directory/subfunctions?id={subfunction_id}:
     get:
       tags:
         - "directory.subfunction.fetch"
@@ -526,6 +554,53 @@ components:
         does not exist."
       example: "Employee Level (id=employee_level_id), does not exist."
 
+    FetchFunctionsResponse:
+      title: "Fetch `Function` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {                
+                "id": 1,
+                "name": "Function 1 Name",
+                "description": "Function 1 Description.",
+                "created": "1970-01-01T12:00:00-04:00",
+                "modified": "1970-01-01T12:00:00-04:00"
+              },                
+              {               
+                "id": 2,
+                "name": "Function 2 Name",
+                "description": "Function 2 Description.",
+                "created": "1970-01-01T12:00:00-04:00",
+                "modified": "1970-01-01T12:00:00-04:00"
+              },              
+              ...
+            ]  
+    
+    FetchFunctionByIdResponse:
+      title: "Fetch `Function` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {                
+                "id": 1,
+                "name": "Function 1 Name",
+                "description": "Function 1 Description.",
+                "created": "1970-01-01T12:00:00-04:00",
+                "modified": "1970-01-01T12:00:00-04:00"
+            }
+                
+    FetchFunctionByIdDoesNotExistResponse:
+      title: "Fetch `Function` error response due to using an id that
+        does not exist."
+      example: "Function (id=function_id), does not exist."
+
     FetchSubFunctionsResponse:
       title: "Fetch `SubFunction` response."
       type: object
@@ -565,7 +640,7 @@ components:
                 "modified": "2024-08-27T12:00:00-04:00"
               },
               ...
-            ]  
+            ]
     
     FetchSubFunctionByIdResponse:
       title: "Fetch `SubFunction` by id response."
