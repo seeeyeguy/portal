@@ -8,9 +8,13 @@ regards to committed searches.
 import logging
 from typing import Union
 
+from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
 
-from analytics import models
+from analytics import exceptions, models
+from directory.controllers.Resource.Resource import ResourceSearch, SearchParams
+from directory.controllers.Resource.search.utils import DEFAULT_STRUCTURE
+from directory.models.Resource import Resource
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,9 +42,48 @@ class Query:
             * query (models.Query): The newly created `Query` record.
         """
 
-        LOGGER.info(f"Creating Query for User: {user} with search_term: {search_term}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Creating Query for User: {user} with search_term: {search_term}."
+            )
+
+            # Fetch the `User` record.
+            user_record: AuthModels.User = AuthModels.User.objects.get(
+                email__iexact=user
+            )
+
+            # Create the `Query` record.
+            query: models.Query = models.Query.objects.create(
+                user=user_record, search_term=search_term
+            )
+
+            search_params: SearchParams = {
+                "name": search_term,
+                "description": search_term,
+                "functions": [],
+                "subfunctions": [],
+                "employee_levels": [],
+                "tags": [],
+                "download": None,
+                "structure": DEFAULT_STRUCTURE,  # type: ignore
+                "serialize": False,
+                "limit": 5,
+                "page": None,
+            }
+            # Search for `Resource`s based on search_term.
+            resources: Union[
+                QuerySet[Resource, Resource], dict
+            ] = ResourceSearch.search(params=search_params)
+
+            # Add `Resource`s to `Query`.
+            query.resources.add(*resources)
+
+            return query
+
+        except AuthModels.User.DoesNotExist as exc:
+            err_msg = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.AnalyticsError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_query(

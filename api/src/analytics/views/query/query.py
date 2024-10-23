@@ -15,7 +15,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from analytics import controllers
+from analytics import controllers, exceptions
+from analytics.models.Query.serializers import QuerySerializer
 from analytics.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
@@ -36,11 +37,17 @@ class Query(LoginRequiredMixin, View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/analytics/queries."""
 
-        LOGGER.info("POST /v1/analytics/queries.")
-        query = controllers.Query.create_query(
-            user=body["user"], search_term=body["search_term"]
-        )
-        return http.JsonResponse(query, status=status.HTTP_201_CREATED)
+        try:
+            LOGGER.info("POST /v1/analytics/queries.")
+            query = controllers.Query.create_query(
+                user=request.user.email, search_term=body["search_term"]
+            )
+            # Serialize `Query`.
+            data: dict = QuerySerializer(query).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED)
+        except exceptions.AnalyticsError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializer_class=serializers.FetchQueryRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
