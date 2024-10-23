@@ -6,6 +6,9 @@ controller pytests.
 # Valid `User` email.
 VALID_PROFILE_USER_EMAIL: str = "May.Parker@harris.com"
 
+# Valid `User` email but wrong user.
+WRONG_VALID_PROFILE_USER_EMAIL: str = "Peter.Parker@harris.com"
+
 # Invalid `User` email.
 INVALID_PROFILE_USER_EMAIL: str = "DNE@harris.com"
 
