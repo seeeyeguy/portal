@@ -224,7 +224,7 @@ paths:
           name: label
           schema:
             type: string
-          description: Label that will be used to search for Tags.
+          description: "Label that will be used to search for Tags."
       responses:
         "200":
           description: "OK"
@@ -233,7 +233,39 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/SearchTagsResponse"
-       
+  /users/profile?user={user}:
+    get:
+      tags:
+        - "users.profile.fetch"
+      summary: "Fetch a user's Profile based on the given email."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related the desired profile."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfileResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfileUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfilePermissionsDeniedResponse"
 components:
   schemas:
     CreateVisitRequest:
@@ -600,6 +632,53 @@ components:
       title: "Fetch `Function` error response due to using an id that
         does not exist."
       example: "Function (id=function_id), does not exist."
+
+    FetchProfileResponse:
+      title: "Fetch `Profile` response."
+      type: object
+      properties:
+          data:
+            type: object
+            example:
+              {
+                "id": 1,
+                "user": {
+                    "id": 1,
+                    "username": "May.Parker@harris.com",
+                    "email": "May.Parker@harris.com",
+                    "first_name": "May",
+                    "last_name": "Parker",
+                    "is_active": True,
+                },
+                "segment": {
+                    "id": 1,
+                    "name": "SPACE & AIRBORNE SYSTEMS",
+                    "description": "Space & Airborne Systems is a provider of mission solutions.",
+                },
+                "uid": "618549",
+                "middle_initial": "M",
+                "unix_name": "U194879",
+                "job_title": "Sr Assoc, Software Engrg",
+                "job_function": "Engineering",
+                "job_family": "Software Engineering",
+                "job_category": "Person",
+                "job_level": 2,
+                "account_type": "Employee",
+                "status": "Active",
+                "division": "ESI",
+                "business_unit": "GCS",
+                "department": "SW-Image Processing",
+                "location": "FL",
+                "citizenship": "US",
+              }
+      
+    FetchProfileUnAuthorizedResponse:
+      title: "Fetch `Profile` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    FetchProfilePermissionsDeniedResponse:
+      title: "Fetch `Profile` Error response due to invalid permissions."
+      example: "Permissions Denied."
 
     FetchSubFunctionsResponse:
       title: "Fetch `SubFunction` response."
