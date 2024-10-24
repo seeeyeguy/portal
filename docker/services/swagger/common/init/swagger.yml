@@ -301,6 +301,58 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProfilePermissionsDeniedResponse"
+  /preferences/query-filter-state?id={query_filter_state_id}:
+    put:
+      tags:
+        - "preferences.queryfilterstate.update"
+      summary: "Update a QueryFilterState."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `QueryFilterState` record
+            to update.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateQueryFilterStateRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateForbiddenErrorResponse"
+        "404":
+          description: "QueryFilterState, Query, Function, EmployeeLevel, or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateQueryFilterStateDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateQueryDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateFunctionDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateTagDoesNotExistErrorResponse"
+
+
 components:
   schemas:
     CreateVisitRequest:
@@ -993,3 +1045,149 @@ components:
               },
               ...
             ]
+
+    UpdateQueryFilterStateRequest:
+      title: "Update `QueryFilterState` request."
+      type: object
+      properties:
+        search:
+          type: integer
+          description: Id of the `Query` made by the user.
+          default: null
+        functions:
+          type: array[int]
+          description: Ids of `Function`s selected by the user.
+          default: []
+        employee_levels:
+          type: array[int]
+          description: Ids of `EmployeeLevel`s selected by the user.
+          default: []
+        tags:
+          type: array[int]
+          description: Ids of `Tag`s for resources selected by the user.
+          default: []
+
+    UpdateQueryFilterStateResponse:
+      title: "Update `QueryFilterState` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: An updated `QueryFilterState`.
+          example:
+            {
+              "id": 1,
+              "search": {
+                "id": 1,
+                "user": {
+                  "id": 1,
+                  "username": "Test.User@harris.com",
+                  "email": "Test.User@harris.com",
+                  "first_name": "Test",
+                  "last_name": "User",
+                  "is_active": True,
+                },
+                "resources": [
+                  {
+                    "id": 1,
+                    "employee_levels": [
+                      {
+                        "id": 1,
+                        "name": "Employee",
+                        "description": "Employee Level 1.",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                        "level": 1,
+                      },
+                      ...
+                    ],
+                    "subfunctions": [
+                      {
+                        "id": 1,
+                        "function": {
+                          "id": 1,
+                          "name": "Function 1 Name",
+                          "description": "Function 1 Description.",
+                          "created": "1970-01-01T12:00:00-04:00",
+                          "modified": "1970-01-01T12:00:00-04:00",
+                        },
+                        "name": "Function 1 SubFunction 1 Name",
+                        "description": "Function 1 SubFunction 1 Description.",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                      },
+                      ...
+                    ],
+                    "tags": [
+                      {
+                        "id": 1,
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                        "label": "example",
+                      },
+                      ...
+                    ],
+                    "description": "Resource 1 Revision 1 description.",
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "uid": "000000000000-0000000000-000000000000",
+                    "revision_number": 1,
+                    "name": "Resource 1 Revision 1",
+                    "url": "example-site.org",
+                    "thumbnail": "/path/to/thumbnail.png",
+                    "type": "Resource Type 1",
+                    "download": False,
+                    "active": True,
+                    "previous_revision": None,
+                  },
+                  ...
+                ],
+                "created": "1970-01-01T12:00:00-04:00",
+                "search_term": "Resource 1",
+              },
+              "user": {
+                "id": 1,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "functions": [1],
+              "employee_levels": [1],
+              "tags": [1],
+              "created": "1970-01-01T12:00:00-04:00",
+              "modified": "1970-01-01T12:00:00-04:00",
+            }
+
+    UpdateQueryFilterStateUnAuthorizedResponse:
+      title: "Update `QueryFilterState` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateQueryFilterStateForbiddenErrorResponse:
+      title: "Update `QueryFilterState` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    UpdateQueryFilterStateQueryFilterStateDoesNotExistErrorResponse:
+      title: "Update `QueryFilterState` error response due to supplying an id
+        for a `QueryFilterState` that does not exist."
+      example: "QueryFilterState (id=query_filter_state_id) does not exist."
+
+    UpdateQueryFilterStateQueryDoesNotExistErrorResponse:
+      title: "Update `QueryFilterState` error response due to supplying an id
+        for a `Query` that does not exist."
+      example: "Query (id=query_id) does not exist."
+
+    UpdateQueryFilterStateFunctionDoesNotExistErrorResponse:
+      title: "Update `QueryFilterState` error response due to supplying an id
+        for a `Function` that does not exist."
+      example: "Some Functions (ids={functions}) do not exist."
+
+    UpdateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse:
+      title: "Update `QueryFilterState` error response due to supplying an id
+        for an `EmployeeLevel` that does not exist."
+      example: "Some EmployeeLevels (ids={employee_levels}) do not exist."
+
+    UpdateQueryFilterStateTagDoesNotExistErrorResponse:
+      title: "Update `QueryFilterState` error response due to supplying an id
+        for a `Tag` that does not exist."
+      example: "Some Tags (ids={tags}) do not exist."
