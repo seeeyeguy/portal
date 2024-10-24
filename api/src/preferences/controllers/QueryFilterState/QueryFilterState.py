@@ -250,6 +250,23 @@ class QueryFilterState:
                 record for the given user.
         """
 
-        LOGGER.info(f"Fetching QueryFilterState for user: {user}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(f"Fetching QueryFilterState for user: {user}.")
+
+            # Fetch `User` record for the given email.
+            user_record = User.objects.get(email__iexact=user)
+
+            # Fetch the corresponding `QueryFilterState` record.
+            query_filter_state: models.QueryFilterState = (
+                models.QueryFilterState.objects.get(user=user_record)
+            )
+
+            return query_filter_state
+        except User.DoesNotExist as exc:
+            err_msg = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
+        except models.QueryFilterState.DoesNotExist as exc:
+            err_msg = f"QueryFilterState (user={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc

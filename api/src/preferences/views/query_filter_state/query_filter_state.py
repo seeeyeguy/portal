@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from preferences import controllers, exceptions
+from preferences import controllers, exceptions, models
 from preferences.models.QueryFilterState.serializers import QueryFilterStateSerializer
 from preferences.views import serializers
 
@@ -95,11 +95,20 @@ class QueryFilterState(LoginRequiredMixin, View):
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/preferences/query-filter-state."""
 
-        LOGGER.info(f"GET /v1/preferences/query-filter-state?user={body['user']}.")
+        try:
 
-        query_filter_state = controllers.QueryFilterState.fetch_query_filter_state(
-            user=body["user"]
-        )
-        return http.JsonResponse(
-            query_filter_state, status=status.HTTP_200_OK, safe=False
-        )
+            request_params = f"?user={body['user']}"
+            LOGGER.info(f"GET /v1/preferences/query-filter-state{request_params}")
+
+            # Fetch a `QueryFilterState` record given a user's email.
+            query_filter_state: models.QueryFilterState = (
+                controllers.QueryFilterState.fetch_query_filter_state(user=body["user"])
+            )
+
+            # Serialize `QueryFilterState`.
+            data: dict = QueryFilterStateSerializer(query_filter_state).data
+
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
