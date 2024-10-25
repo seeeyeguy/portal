@@ -293,6 +293,40 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/SearchTagsResponse"
+  /preferences/query-filter-state?user={user}:
+    get:
+      tags:
+        - "preferences.queryfilterstate.fetch"
+      summary: "Fetch a user's QueryFilterState based on the given email."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related to the desired `QueryFilterState`."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchQueryFilterStateResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchQueryFilterStateUnAuthorizedResponse"
+        "404":
+          description: "User, or QueryFilterState does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchQueryFilterStateUserDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchQueryFilterStateQueryFilterStateForUserDoesNotExistResponse"
   /users/profile?user={user}:
     get:
       tags:
@@ -1045,6 +1079,112 @@ components:
         does not exist."
       example: "Function (id=function_id), does not exist."
 
+    FetchQueryFilterStateResponse:
+      title: "Fetch `QueryFilterState` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: A `QueryFilterState`.
+          example:
+            {
+              "id": 1,
+              "search": {
+                "id": 1,
+                "user": {
+                  "id": 1,
+                  "username": "Test.User@harris.com",
+                  "email": "Test.User@harris.com",
+                  "first_name": "Test",
+                  "last_name": "User",
+                  "is_active": True,
+                },
+                "resources": [
+                  {
+                    "id": 1,
+                    "employee_levels": [
+                      {
+                        "id": 1,
+                        "name": "Employee",
+                        "description": "Employee Level 1.",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                        "level": 1,
+                      },
+                      ...
+                    ],
+                    "subfunctions": [
+                      {
+                        "id": 1,
+                        "function": {
+                          "id": 1,
+                          "name": "Function 1 Name",
+                          "description": "Function 1 Description.",
+                          "created": "1970-01-01T12:00:00-04:00",
+                          "modified": "1970-01-01T12:00:00-04:00",
+                        },
+                        "name": "Function 1 SubFunction 1 Name",
+                        "description": "Function 1 SubFunction 1 Description.",
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                      },
+                      ...
+                    ],
+                    "tags": [
+                      {
+                        "id": 1,
+                        "created": "1970-01-01T12:00:00-04:00",
+                        "modified": "1970-01-01T12:00:00-04:00",
+                        "label": "example",
+                      },
+                      ...
+                    ],
+                    "description": "Resource 1 Revision 1 description.",
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "uid": "000000000000-0000000000-000000000000",
+                    "revision_number": 1,
+                    "name": "Resource 1 Revision 1",
+                    "url": "example-site.org",
+                    "thumbnail": "/path/to/thumbnail.png",
+                    "type": "Resource Type 1",
+                    "download": False,
+                    "active": True,
+                    "previous_revision": None,
+                  },
+                  ...
+                ],
+                "created": "1970-01-01T12:00:00-04:00",
+                "search_term": "Resource 1",
+              },
+              "user": {
+                "id": 1,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "functions": [1],
+              "employee_levels": [1],
+              "tags": [1],
+              "created": "1970-01-01T12:00:00-04:00",
+              "modified": "1970-01-01T12:00:00-04:00",
+            }
+
+    FetchQueryFilterStateUnAuthorizedResponse:
+      title: "Fetch `QueryFilterState` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    FetchQueryFilterStateUserDoesNotExistResponse:
+      title: "Fetch `QueryFilterState` error response due to using an email that
+        does not exist."
+      example: "User (email={user}) does not exist."
+
+    FetchQueryFilterStateQueryFilterStateForUserDoesNotExistResponse:
+      title: "Fetch `QueryFilterState` error response due to using an email for
+        a `User` that does not have an associated `QueryFilterState`."
+      example: "QueryFilterState (user={user}) does not exist."
+
     FetchProfileResponse:
       title: "Fetch `Profile` response."
       type: object
@@ -1083,7 +1223,7 @@ components:
                 "location": "FL",
                 "citizenship": "US",
               }
-      
+    
     FetchProfileUnAuthorizedResponse:
       title: "Fetch `Profile` error response due to unauthorized access."
       example: "Not authorized to access resource."

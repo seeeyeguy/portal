@@ -65,3 +65,13 @@ class TestFetchQueryFilterState(TestCase):
             _ = QueryFilterState.fetch_query_filter_state(
                 user=arguments.FETCH_QUERYFILTERSTATE_USER_EMAIL_DNE
             )
+
+    @tag("controllers.queryfilterstate.fetch_query_filter_state_dne")
+    def test_fetch_query_filter_state_dne(self) -> None:
+        """Fail Case: Fetch a `QueryFilterState` record with a `User`
+        that does not have an associated `QueryFilterState`."""
+
+        with pytest.raises(PreferencesError):
+            _ = QueryFilterState.fetch_query_filter_state(
+                user=arguments.FETCH_QUERYFILTERSTATE_QUERYFILTERSTATE_DNE_USER_EMAIL
+            )

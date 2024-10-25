@@ -11,6 +11,9 @@ FETCH_QUERYFILTERSTATE_USER_EMAIL: str = "May.Parker@harris.com"
 # `User` email that does not exist.
 FETCH_QUERYFILTERSTATE_USER_EMAIL_DNE: str = "Test.User.DNE@harris.com"
 
+# `User` email that does not have an associated `QueryFilterState`.
+FETCH_QUERYFILTERSTATE_QUERYFILTERSTATE_DNE_USER_EMAIL: str = "Peter.Parker@harris.com"
+
 # Valid `QueryFilterState` record.
 VALID_QUERYFILTERSTATE_RECORD: dict = {
     "id": 1,
