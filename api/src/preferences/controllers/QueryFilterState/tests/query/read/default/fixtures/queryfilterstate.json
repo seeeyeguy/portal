@@ -1,0 +1,15 @@
+[
+  {
+    "model": "preferences.queryfilterstate",
+    "pk": 1,
+    "fields": {
+      "search": 1,
+      "user": "May.Parker@harris.com",
+      "functions": [1,2],
+      "employee_levels": [3],
+      "tags": [2],
+      "created": "2024-10-01T12:00:00-04:00",
+      "modified": "2024-10-01T12:00:00-04:00"
+    }
+  }
+]
