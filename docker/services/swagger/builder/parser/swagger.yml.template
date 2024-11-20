@@ -1,13 +1,9 @@
 openapi: 3.0.0
 info:
-  title: "Enter info title here."
+  title: "{{APP_NAME}}"
   version: "1.0"
 servers:
-  - url: "Enter server URL here."
-tags:
-  - name: "Enter tag name here."
-  - description: "Enter description here."
-
+  - url: "{{SERVER_URL}}"
 paths:
   /analytics/queries:
     post:
@@ -66,83 +62,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateVisitResourceDoesNotExistErrorResponse"
-  /directory/resources/search?page={page_number}&limit={search_limit}:
-    post:
-      tags:
-        - "directory.resources.search"
-      summary: "Search for Resources."
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: Page number to select from a paginated response of
-            `Resource` records.
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: Maximum number of `Resource` records to return.
-        
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ResourceSearchRequest"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/ResourceSearchFunctreeStructureSerializedResponse"
-                  - $ref: "#/components/schemas/ResourceSearchDefaultStructureResponse"
-                 
-        "400":
-          description: "Missing parameter or invalid parameter."
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResponse"
-                  - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
-  /preferences/query-filter-state:
-    post:
-      tags:
-        - "preferences.queryfilterstate.create"
-      summary: "Create a QueryFilterState."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateQueryFilterStateRequest"
-      responses:
-        "201":
-          description: "CREATED"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/CreateQueryFilterStateResponse"
-        "401":
-          description: "UNAUTHORIZED"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/CreateQueryFilterStateUnAuthorizedResponse"              
-        "404":
-          description: "Query, Function, EmployeeLevel, or Tag does not exist."
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/CreateQueryFilterStateQueryDoesNotExistErrorResponse"
-                  - $ref: "#/components/schemas/CreateQueryFilterStateFunctionDoesNotExistErrorResponse"
-                  - $ref: "#/components/schemas/CreateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
-                  - $ref: "#/components/schemas/CreateQueryFilterStateTagDoesNotExistErrorResponse"
-  /directory/employee-levels?id={employee_level_id}:
+  /directory/employee-levels:
     get:
       tags:
         - "directory.employeelevel.fetch"
@@ -170,7 +90,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchEmployeeLevelByIdDoesNotExistResponse"
-  /directory/functions?id={function_id}:
+  /directory/functions:
     get:
       tags:
         - "directory.function.fetch"
@@ -198,7 +118,46 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchFunctionByIdDoesNotExistResponse"
-  /directory/subfunctions?id={subfunction_id}:
+  /directory/resources/search:
+    post:
+      tags:
+        - "directory.resources.search"
+      summary: "Search for Resources."
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Resource` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Resource` records to return.        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceSearchRequest"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ResourceSearchFunctreeStructureSerializedResponse"
+                  - $ref: "#/components/schemas/ResourceSearchDefaultStructureResponse"                 
+        "400":
+          description: "Missing parameter or invalid parameter."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResponse"
+                  - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
+  /directory/subfunctions:
     get:
       tags:
         - "directory.subfunction.fetch"
@@ -226,7 +185,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchSubFunctionByIdDoesNotExistResponse"
-  /directory/tags?id={tag_id}&page={page_number}&limit={limit_number}:
+  /directory/tags:
     get:
       tags:
         - "directory.tag.fetch"
@@ -271,10 +230,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"
-
-      
-  /directory/tags/search?label={label}:
+                  - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"     
+  /directory/tags/search:
     get:
       tags:
         - "directory.tag.search"
@@ -292,8 +249,42 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/SearchTagsResponse"
-  /preferences/query-filter-state?user={user}:
+                  - $ref: "#/components/schemas/SearchTagsResponse"  
+  /preferences/query-filter-state:
+    post:
+      tags:
+        - "preferences.queryfilterstate.create"
+      summary: "Create a QueryFilterState."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQueryFilterStateRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateUnAuthorizedResponse"              
+        "404":
+          description: "Query, Function, EmployeeLevel, or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateQueryFilterStateQueryDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateFunctionDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/CreateQueryFilterStateTagDoesNotExistErrorResponse"
     get:
       tags:
         - "preferences.queryfilterstate.fetch"
@@ -327,40 +318,6 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/FetchQueryFilterStateUserDoesNotExistResponse"
                   - $ref: "#/components/schemas/FetchQueryFilterStateQueryFilterStateForUserDoesNotExistResponse"
-  /users/profile?user={user}:
-    get:
-      tags:
-        - "users.profile.fetch"
-      summary: "Fetch a user's Profile based on the given email."
-      parameters:
-        - in: query
-          name: user
-          schema:
-            type: string
-          description: "User's email related the desired profile."
-      responses:
-        "200":
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/FetchProfileResponse"
-        "401":
-          description: "UNAUTHORIZED"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/FetchProfileUnAuthorizedResponse"
-        "403":
-          description: "FORBIDDEN"
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/FetchProfilePermissionsDeniedResponse"
-  /preferences/query-filter-state?id={query_filter_state_id}:
     put:
       tags:
         - "preferences.queryfilterstate.update"
@@ -409,7 +366,40 @@ paths:
                   - $ref: "#/components/schemas/UpdateQueryFilterStateQueryDoesNotExistErrorResponse"
                   - $ref: "#/components/schemas/UpdateQueryFilterStateFunctionDoesNotExistErrorResponse"
                   - $ref: "#/components/schemas/UpdateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
-                  - $ref: "#/components/schemas/UpdateQueryFilterStateTagDoesNotExistErrorResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateTagDoesNotExistErrorResponse"  
+  /users/profile:
+    get:
+      tags:
+        - "users.profile.fetch"
+      summary: "Fetch a user's Profile based on the given email."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related the desired profile."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfileResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfileUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProfilePermissionsDeniedResponse"   
 
 
 components:

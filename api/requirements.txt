@@ -17,6 +17,10 @@ cryptography==42.0.8
 # A high-level Python web framework that encourages
 # rapid development and clean, pragmatic design.
 Django==5.0.2
+# A Django App that adds Cross-Origin Resource Sharing (CORS)
+# headers to responses. This allows in-browser requests to
+# your Django application from other origins.
+django-cors-headers==4.6.0
 # A configurable set of panels that display various debug
 # information about the current request/response.
 # https://fly.io/django-beats/caching-in-django-with-redis/
