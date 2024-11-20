@@ -96,6 +96,7 @@ if SCHEME not in WebProtocols.VALID_PROTOCOLS:
     SCHEME = WebProtocols.HTTPS
 SERVER_HOST = os.getenv("SERVER_HOST", "your-server-name")
 SERVER_PORT = os.getenv("SERVER_PORT", "your-server-port")
+SWAGGER_PORT = os.getenv("SWAGGER_PORT", "your-swagger-port")
 WEB_HOST = os.getenv("WEB_HOST", "your-web-host")
 WEB_PORT = os.getenv("WEB_PORT", "your-web-port")
 
@@ -275,6 +276,11 @@ SSO_SERVICE_ENCRYPTION_KEY = os.getenv("SSO_SERVICE_ENCRYPTION_KEY", "secret-key
 # Trusted hosts for cross site requests.
 CSRF_TRUSTED_ORIGINS = [
     f"{SCHEME}://{WEB_HOST}:{WEB_PORT}",
+    f"http://{SERVER_HOST.lower()}:{SWAGGER_PORT}",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    f"http://{SERVER_HOST.lower()}:{SWAGGER_PORT}",
 ]
 
 ########################################
@@ -285,8 +291,17 @@ CSRF_TRUSTED_ORIGINS = [
 DEFAULT_LDAP_SEARCH_ENDPOINT = "http://uspby1lnhdped03:8822/ldap/employees/cac"
 LDAP_SEARCH_ENDPOINT = os.getenv("LDAP_SEARCH_ENDPOINT", DEFAULT_LDAP_SEARCH_ENDPOINT)
 
+
+############################################
+## APPLICATION HOST ENVIRONMENT VARIABLES ##
+############################################
+
 # Construct origin for frontend web app.
 WEB_APP_ORIGIN = f"{SCHEME}://{WEB_HOST}:{WEB_PORT}"
+# Construct origin for backend web app.
+SERVER_APP_ORIGIN = f"http://{SERVER_HOST}:{SERVER_HOST}"
+# Construct origin for Swagger UI web app.
+SWAGGER_APP_ORIGIN = f"http://{SERVER_HOST}:{SWAGGER_PORT}"
 # Add local, l3harris, and frontend web app domains.
 ALLOWED_HOSTS = [
     "api",
@@ -323,6 +338,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_rq",
     "rest_framework",
+    "corsheaders",
     *CUSTOM_APPS,
 ]
 
@@ -332,7 +348,9 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "manager.middleware.DevelopmentAuthenticationMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "manager.middleware.SwaggerCSRFExemptMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
