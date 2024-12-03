@@ -13,8 +13,8 @@
     "model": "users.role",
     "pk": 2,
     "fields": {
-      "name": "Business Process Owner",
-      "description": "Business Process Owner.",
+      "name": "Business Process Expert",
+      "description": "Business Process Expert.",
       "level": 2,
       "created": "2024-08-27T16:00:00Z"
     }

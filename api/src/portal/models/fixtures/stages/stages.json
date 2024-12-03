@@ -21,8 +21,8 @@
     "model": "request.stage",
     "pk": 3,
     "fields": {
-      "name": "Approved by Business Process Owner",
-      "description": "A resource was approved by the Business Process Owner.",
+      "name": "Approved by Business Process Expert",
+      "description": "A resource was approved by the Business Process Expert.",
       "level": 3
     }
   },
@@ -39,8 +39,8 @@
     "model": "request.stage",
     "pk": 5,
     "fields": {
-      "name": "Rejected by Business Process Owner",
-      "description": "A resource was rejected by the Business Process Owner.",
+      "name": "Rejected by Business Process Expert",
+      "description": "A resource was rejected by the Business Process Expert.",
       "level": 5
     }
   },
