@@ -57,7 +57,7 @@ class TestFetchFunction(TestCase):
         """Success Case: Fetch a `Function` record given an id."""
 
         function: Union[
-            FunctionModel, QuerySet[FunctionModel]
+            FunctionModel, QuerySet[FunctionModel, FunctionModel]
         ] = Function.fetch_functions(function_id=arguments.FETCH_FUNCTION_BY_ID)
 
         self.assertIsInstance(function, FunctionModel)

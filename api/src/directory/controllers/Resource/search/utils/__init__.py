@@ -16,7 +16,9 @@ FUNCTREE_STRUCTURE = "functree"
 DEFAULT_STRUCTURE = "default"
 
 
-def structure_resources(resources: QuerySet[Resource], serialize: bool = False) -> dict:
+def structure_resources(
+    resources: QuerySet[Resource, Resource], serialize: bool = False
+) -> dict:
     """
     Returns a dictionary with a custom structure for grouping
     `Resource`s by subfunctions and their parent functions.
@@ -64,7 +66,7 @@ def structure_resources(resources: QuerySet[Resource], serialize: bool = False) 
         serialized_resource_data["favorited_by"] = resource_favorited_by
 
         # Get associated `Tag`s for this `Resource`.
-        resource_tags: QuerySet[Tag] = resource.tags.all()
+        resource_tags: QuerySet[Tag, Tag] = resource.tags.all()
 
         # Filter `resource_tags` for entries where the `label` starts with
         # `filter::site:` prefix.
@@ -117,8 +119,8 @@ def structure_resources(resources: QuerySet[Resource], serialize: bool = False) 
     for resource in resources:
         # Get the QuerySet of `SubFunction`s for the `Resource`
         # and loop through them.
-        subfunctions: QuerySet[SubFunction] = cast(
-            QuerySet[SubFunction], resource.subfunctions.all()
+        subfunctions: QuerySet[SubFunction, SubFunction] = cast(
+            QuerySet[SubFunction, SubFunction], resource.subfunctions.all()
         )
 
         for subfunction in cast(List[SubFunction], subfunctions):

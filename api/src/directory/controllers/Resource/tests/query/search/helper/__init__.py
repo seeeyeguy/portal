@@ -67,7 +67,7 @@ class TestCaseUtility(TestCase):
 
     def _verify_collection_of_resources(
         self,
-        resources: Union[QuerySet[Resource], dict, List[dict]],
+        resources: Union[QuerySet[Resource, Resource], dict, List[dict]],
         resource_map: dict,
         resource_ids: List[int],
         serialized_search: bool = False,
@@ -91,7 +91,7 @@ class TestCaseUtility(TestCase):
 
         self.assertEqual(len(resources), len(resource_ids))
         resource_collection_class_type = (
-            QuerySet[Resource] if not serialized_search else List
+            QuerySet[Resource, Resource] if not serialized_search else List
         )
         self.assertIsInstance(resources, resource_collection_class_type)
         resource_class_type = Resource if not serialized_search else dict
@@ -149,7 +149,7 @@ class TestCaseUtility(TestCase):
             )
             for subfunction_name, resource_ids in subfunction_collection.items():
                 search_results_resources_for_subfunction: Union[
-                    QuerySet[Resource], List[dict]
+                    QuerySet[Resource, Resource], List[dict]
                 ] = search_results[function_name][subfunction_name]
                 self._verify_collection_of_resources(
                     resources=search_results_resources_for_subfunction,
