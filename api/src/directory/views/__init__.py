@@ -7,6 +7,6 @@ internal departments within L3Harris Technologies.
 
 from .employee_level.employee_level import EmployeeLevel
 from .function.function import Function
-from .resource.resource import ResourceSearch
+from .resource.resource import Resource, ResourceSearch
 from .subfunction.subfunction import SubFunction
 from .tag.tag import Tag, TagSearch

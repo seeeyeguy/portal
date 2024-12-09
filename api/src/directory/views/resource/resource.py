@@ -11,13 +11,17 @@ content served by `BI Portal`.
 import logging
 
 from django import http
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
 from directory.controllers.Resource.Resource import (
+    CreateResourceParams,
+    Resource as ResourceController,
     ResourceSearch as ResourceSearchController,
     SearchParams,
+    UpdateResourceParams,
 )
 from directory.controllers.Resource.search.utils import FUNCTREE_STRUCTURE
 from directory.exceptions import DirectoryError
@@ -30,6 +34,86 @@ from manager.utils.decorators import with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
+
+
+class Resource(View):
+    """
+    Handle user requests to create, fetch, update, and delete `Resource`
+    records for `BI Portal`. `Resource` represents a link to an internal
+    tool within L3Harris technologies.
+    """
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.CreateResourceRequest))
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for POST /v1/directory/resources."""
+
+        LOGGER.info(f"POST /v1/directory/resources.")
+
+        create_params: CreateResourceParams = CreateResourceParams(
+            name=body["name"],
+            description=body["description"],
+            previous_revision=body["previous_revision"],
+            url=body["url"],
+            thumbnail=body["thumbnail"],
+            employee_levels=body["employee_levels"],
+            subfunctions=body["subfunctions"],
+            tags=body["tags"],
+            type=body["type"],
+            download=body["download"],
+        )
+        resource = ResourceController.create_resource(params=create_params)
+        return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.UpdateResourceRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/directory/resources."""
+
+        req = serializers.UpdateResourceRequestQueryParams(data=request.GET)
+        if not req.is_valid():
+            return http.JsonResponse(
+                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            )
+
+        resource_id = req.validated_data.get("id")
+
+        LOGGER.info(f"PUT /v1/directory/resources?id={resource_id}.")
+
+        update_params: UpdateResourceParams = UpdateResourceParams(
+            resource_id=resource_id,
+            name=body["name"],
+            description=body["description"],
+            url=body["url"],
+            thumbnail=body["thumbnail"],
+            employee_levels=body["employee_levels"],
+            subfunctions=body["subfunctions"],
+            tags=body["tags"],
+            type=body["type"],
+            download=body["download"],
+        )
+        resource = ResourceController.update_resource(params=update_params)
+        return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(with_serializer(serializers.FetchResourceRequest))
+    @method_decorator(cache_request(DEFAULT_TIMEOUT))
+    def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for GET /v1/directory/resources."""
+
+        request_params = f"?id={body['id']}" if body["id"] else ""
+        request_params = f"?page={body['page']}" if body["page"] else request_params
+        request_params = (
+            f"{request_params}{'&' if body['page'] else '?'}limit={body['limit']}"
+            if body["limit"]
+            else request_params
+        )
+
+        LOGGER.info(f"GET /v1/directory/resources{request_params}.")
+
+        resources = ResourceController.fetch_resources(
+            resource_id=body["id"], page=body["page"], limit=body["limit"]
+        )
+        return http.JsonResponse(resources, status=status.HTTP_200_OK, safe=False)
 
 
 class ResourceSearch(View):

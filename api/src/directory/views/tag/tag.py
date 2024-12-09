@@ -9,6 +9,7 @@ import logging
 from typing import List, Union
 
 from django import http
+from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -32,6 +33,45 @@ class Tag(View):
     keywords to better help users search and filter resource records.
     """
 
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.CreateTagRequest))
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for POST /v1/directory/tags."""
+
+        LOGGER.info("POST /v1/directory/tags.")
+
+        tag = controllers.Tag.create_tag(label=body["label"])
+        return http.JsonResponse(tag, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.UpdateTagRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/directory/tags."""
+
+        req = serializers.UpdateTagRequestQueryParams(data=request.GET)
+
+        if not req.is_valid():
+            return http.JsonResponse(
+                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            )
+
+        tag_id: int = req.validated_data.get("id")
+
+        LOGGER.info(f"PUT /v1/directory/tags?id={tag_id}.")
+
+        tag = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
+        return http.JsonResponse(tag, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.DeleteTagRequest))
+    def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/directory/tags."""
+
+        LOGGER.info(f"DELETE /v1/directory/tags?id={body['id']}.")
+
+        rows_affected = controllers.Tag.delete_tag(tag_id=body["id"])
+        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+
     @method_decorator(with_serializer(serializers.FetchTagRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
@@ -45,7 +85,7 @@ class Tag(View):
                 if body["limit"]
                 else request_params
             )
-            LOGGER.info(f"GET /v1/directory/tags{request_params}")
+            LOGGER.info(f"GET /v1/directory/tags{request_params}.")
 
             # Fetch the `Tag`(s).
             tags = controllers.Tag.fetch_tags(
@@ -76,7 +116,7 @@ class TagSearch(View):
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/tags/search."""
 
-        LOGGER.info(f"GET /v1/directory/tags/search?label={body['label']}")
+        LOGGER.info(f"GET /v1/directory/tags/search?label={body['label']}.")
 
         # Search for `Tag`s that start with the given label.
         search_tag_results: QuerySet[

@@ -10,6 +10,7 @@ import logging
 from typing import List, Union
 
 from django import http
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -33,6 +34,60 @@ class SubFunction(View):
     area of expertise.
     """
 
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.CreateSubFunctionRequest))
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for POST /v1/directory/subfunctions."""
+
+        LOGGER.info("POST /v1/directory/subfunctions.")
+
+        subfunction = controllers.SubFunction.create_subfunction(
+            name=body["name"],
+            description=body["description"],
+            function=body["function"],
+        )
+        return http.JsonResponse(
+            subfunction, status=status.HTTP_201_CREATED, safe=False
+        )
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.UpdateSubFunctionRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/directory/subfunctions."""
+
+        req = serializers.UpdateSubFunctionRequestQueryParams(data=request.GET)
+
+        if not req.is_valid():
+            return http.JsonResponse(
+                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            )
+
+        subfunction_id: int = req.validated_data.get("id")
+
+        LOGGER.info(f"PUT /v1/directory/subfunctions?id={subfunction_id}.")
+
+        subfunction = controllers.SubFunction.update_subfunction(
+            subfunction_id=subfunction_id,
+            name=body["name"],
+            description=body["description"],
+            function=body["function"],
+        )
+        return http.JsonResponse(
+            subfunction, status=status.HTTP_201_CREATED, safe=False
+        )
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.DeleteSubFunctionRequest))
+    def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/directory/subfunctions."""
+
+        LOGGER.info(f"DELETE /v1/directory/subfunctions?id={body['id']}.")
+
+        rows_affected = controllers.SubFunction.delete_subfunction(
+            subfunction_id=body["id"]
+        )
+        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+
     @method_decorator(with_serializer(serializers.FetchSubFunctionRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
@@ -40,7 +95,7 @@ class SubFunction(View):
 
         try:
             request_params = f"?id={body['id']}" if body["id"] else ""
-            LOGGER.info(f"GET /v1/directory/subfunctions{request_params}")
+            LOGGER.info(f"GET /v1/directory/subfunctions{request_params}.")
 
             # Fetch the `SubFunction`(s).
             subfunctions = controllers.SubFunction.fetch_subfunctions(body["id"])

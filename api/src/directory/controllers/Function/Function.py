@@ -18,11 +18,71 @@ LOGGER = logging.getLogger(__name__)
 
 class Function:
     """
-    Container class for functions related to retrieving `Function`
-    records. `Function` helps to classify a resource within a primary
-    organizational unit that encompasses a broad area of expertise
-    and responsibilities within the organization.
+    Container class for functions related to creating, updating, deleting,
+    and retrieving `Function` records. `Function` helps to classify a
+    resource within a primary organizational unit that encompasses a broad
+    area of expertise and responsibilities within the organization.
     """
+
+    @staticmethod
+    def create_function(name: str, description: str) -> models.Function:
+        """
+        Create a `Function` record with the given name and description.
+
+        Accepts:
+            * name (str): The name of the `Function`.
+            * description (str): A short/detailed description of what
+                this `Function` is.
+
+        Returns:
+            * function (models.Function): The `Function` record created.
+        """
+
+        LOGGER.info(
+            f"Creating Function with name: {name} and description: {description}."
+        )
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def update_function(
+        function_id: int, name: str, description: str
+    ) -> models.Function:
+        """
+        Update a `Function` record for the given id with the given
+        name and description.
+
+        Accepts:
+            * function_id (int): The id of the record to be updated.
+            * name (str): The name of the `Function`.
+            * description (str): A short/detailed description of what
+                this `Function` is.
+
+        Returns:
+            * function (models.Function): The `Function` record updated.
+        """
+
+        LOGGER.info(
+            f"Updating Function with id: {function_id} with name: {name} "
+            f"and description: {description}."
+        )
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def delete_function(function_id: int) -> int:
+        """
+        Delete the `Function` record with the given id.
+
+        Accepts:
+            * function_id (int): The id of the record to be deleted.
+
+        Returns:
+            * rows_affected (int): The number of rows removed.
+        """
+
+        LOGGER.info(f"Deleting Function with id: {function_id}.")
+        return 1
 
     @staticmethod
     def fetch_functions(

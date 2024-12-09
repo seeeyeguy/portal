@@ -12,6 +12,7 @@ import logging
 from typing import List, Union
 
 from django import http
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -36,6 +37,49 @@ class Function(View):
     and responsibilities within the organization.
     """
 
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.CreateFunctionRequest))
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for POST /v1/directory/functions."""
+
+        LOGGER.info("POST /v1/directory/functions.")
+
+        function = controllers.Function.create_function(
+            name=body["name"], description=body["description"]
+        )
+        return http.JsonResponse(function, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.UpdateFunctionRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/directory/functions."""
+
+        req = serializers.UpdateFunctionRequestQueryParams(data=request.GET)
+
+        if not req.is_valid():
+            return http.JsonResponse(
+                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            )
+
+        function_id: int = req.validated_data.get("id")
+
+        LOGGER.info(f"PUT /v1/directory/functions?id={function_id}.")
+
+        function = controllers.Function.update_function(
+            function_id=function_id, name=body["name"], description=body["description"]
+        )
+        return http.JsonResponse(function, status=status.HTTP_201_CREATED, safe=False)
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.DeleteFunctionRequest))
+    def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/directory/functions."""
+
+        LOGGER.info(f"DELETE /v1/directory/functions?id={body['id']}.")
+
+        rows_affected = controllers.Function.delete_function(function_id=body["id"])
+        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+
     @method_decorator(with_serializer(serializers.FetchFunctionRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
@@ -43,7 +87,7 @@ class Function(View):
 
         try:
             request_params = f"?id={body['id']}" if body["id"] else ""
-            LOGGER.info(f"GET /v1/directory/functions{request_params}")
+            LOGGER.info(f"GET /v1/directory/functions{request_params}.")
 
             # Fetch a `Function` record given its id,
             # else all `Function` records.
