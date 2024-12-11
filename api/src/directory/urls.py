@@ -16,6 +16,7 @@ urlpatterns: urlconfig.PathPatternList = [
         view=views.ResourceSearch.as_view(),
         name="directory.resource.search",
     ),
+    path("resources", view=views.Resource.as_view(), name="directory.resource"),
     path(
         "employee-levels",
         view=views.EmployeeLevel.as_view(),

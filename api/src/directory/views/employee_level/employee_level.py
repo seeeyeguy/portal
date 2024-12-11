@@ -10,6 +10,7 @@ import logging
 from typing import List, Union
 
 from django import http
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -32,6 +33,57 @@ class EmployeeLevel(View):
     within an organization hierarchial level of concern.
     """
 
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.CreateEmployeeLevelRequest))
+    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for POST /v1/directory/employee-levels."""
+
+        LOGGER.info("POST /v1/directory/employee-levels.")
+
+        employee_level = controllers.EmployeeLevel.create_employee_level(
+            name=body["name"], description=body["description"]
+        )
+        return http.JsonResponse(
+            employee_level, status=status.HTTP_201_CREATED, safe=False
+        )
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.UpdateEmployeeLevelRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/directory/employee-levels."""
+
+        req = serializers.UpdateEmployeeLevelRequestQueryParams(data=request.GET)
+
+        if not req.is_valid():
+            return http.JsonResponse(
+                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            )
+
+        employee_level_id: int = req.validated_data.get("id")
+
+        LOGGER.info(f"PUT /v1/directory/employee-levels?id={employee_level_id}.")
+
+        employee_level = controllers.EmployeeLevel.update_employee_level(
+            employee_level_id=employee_level_id,
+            name=body["name"],
+            description=body["description"],
+        )
+        return http.JsonResponse(
+            employee_level, status=status.HTTP_201_CREATED, safe=False
+        )
+
+    @method_decorator(login_required)
+    @method_decorator(with_serializer(serializers.DeleteEmployeeLevelRequest))
+    def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/directory/employee-levels."""
+
+        LOGGER.info(f"DELETE /v1/directory/employee-levels?id={body['id']}.")
+
+        rows_affected = controllers.EmployeeLevel.delete_employee_level(
+            employee_level_id=body["id"]
+        )
+        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+
     @method_decorator(with_serializer(serializers.FetchEmployeeLevelRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
@@ -39,7 +91,7 @@ class EmployeeLevel(View):
 
         try:
             request_params: str = f"?id={body['id']}" if body["id"] else ""
-            LOGGER.info(f"GET /v1/directory/employee-levels{request_params}")
+            LOGGER.info(f"GET /v1/directory/employee-levels{request_params}.")
 
             # Fetch the `EmployeeLevel`(s).
             employee_levels = controllers.EmployeeLevel.fetch_employee_levels(

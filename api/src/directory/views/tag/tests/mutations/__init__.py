@@ -1,5 +1,5 @@
 """
 Mutation test module. These tests validate the functionality
-of controllers that create, modify or delete `Resource` data
+of views that create, modify or delete `Tag` data
 from the database.
 """

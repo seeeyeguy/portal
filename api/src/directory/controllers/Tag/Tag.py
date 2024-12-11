@@ -22,10 +22,59 @@ DEFAULT_PAGE_LENGTH: int = 50
 
 class Tag:
     """
-    Container class for functions related to retrieving and
-    searching `Tag` records. `Tag` helps to categorize resources
-    through keywords represented by labels.
+    Container class for functions related to creating, updating,
+    deleting, retrieving, and searching `Tag` records. `Tag`
+    helps to categorize resources through keywords represented
+    by labels.
     """
+
+    @staticmethod
+    def create_tag(label: str) -> models.Tag:
+        """
+        Create a `Tag` record with the given label.
+
+        Accepts:
+            * label (str): An arbitrary keyword, created by an admin.
+
+        Returns:
+            * tag (models.Tag): The `Tag` record created.
+        """
+
+        LOGGER.info(f"Creating Tag with label: {label}.")
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def update_tag(tag_id: int, label: str) -> models.Tag:
+        """
+        Update a `Tag` record for the given id with the given label.
+
+        Accepts:
+            * tag_id (int): The id of the record to be updated.
+            * label (str): An arbitrary keyword, created by an admin.
+
+        Returns:
+            * tag (models.Tag): The `Tag` record updated.
+        """
+
+        LOGGER.info(f"Updating Tag with id: {tag_id} with label: {label}.")
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def delete_tag(tag_id: int) -> int:
+        """
+        Delete a `Tag` record with the given id.
+
+        Accepts:
+            * tag_id (int): The id of the record to be deleted.
+
+        Returns:
+            * rows_affected (int): The number of rows removed.
+        """
+
+        LOGGER.info(f"Deleting Tag with id: {tag_id}.")
+        return 1
 
     @staticmethod
     def fetch_tags(

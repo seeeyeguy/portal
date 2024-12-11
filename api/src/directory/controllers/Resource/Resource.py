@@ -6,7 +6,9 @@ L3Harris technologies. `Resource` is the primary content served
 by `BI Portal`.
 """
 
+# pylint: disable=wrong-import-order
 import logging
+from PIL import Image
 from typing import cast, List, Literal, TypedDict, Union
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
@@ -15,7 +17,7 @@ from django.db.models import Count, Max, QuerySet
 
 from directory import exceptions
 from directory.controllers.Resource.search import utils
-from directory.models import Resource
+from directory.models import Resource as ResourceModel
 from request.models import Request
 
 LOGGER = logging.getLogger(__name__)
@@ -53,6 +55,131 @@ class SearchParams(TypedDict):
     page: Union[int, None]
 
 
+class BaseResourceParams(TypedDict):
+    """
+    Base type annotation used by create and update Resource
+    controller function params.
+    """
+
+    name: str
+    description: str
+    url: str
+    thumbnail: Image.Image
+    employee_levels: List[int]
+    subfunctions: List[int]
+    tags: List[int]
+    type: str
+    download: bool
+
+
+class CreateResourceParams(BaseResourceParams):
+    """
+    Type annotation for create Resource controller
+    function params.
+    """
+
+    previous_revision: int | None
+
+
+class UpdateResourceParams(BaseResourceParams):
+    """
+    Type annotation for update Resource controller
+    function params.
+    """
+
+    resource_id: int
+
+
+class Resource:
+    """
+    Container class for functions related to creating, updating, and
+    retrieving `Resource` records. `Resource` represents a link to an
+    internal tool within L3Harris technologies. `Resource` is the primary
+    content served by `BI Portal`.
+    """
+
+    @staticmethod
+    def create_resource(params: CreateResourceParams) -> ResourceModel:
+        """
+        Create a `Resource` record with the given params.
+
+        Accepts:
+            * params (CreateResourceParams): The parameters used to create
+                a `Resource` record.
+
+        Returns:
+            * resource (ResourceModel): The `Resource` record created.
+        """
+
+        LOGGER.info(
+            f"Creating Resource with name: {params['name']}, description: "
+            f"{params['description']}, previous revision: {params['previous_revision']}, "
+            f"url: {params['url']}, employee levels: {params['employee_levels']}, "
+            f"subfunctions: {params['subfunctions']}, tags: {params['tags']}, type: "
+            f"{params['type']}, and download: {params['download']}."
+        )
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def update_resource(params: UpdateResourceParams) -> ResourceModel:
+        """
+        Update a `Resource` record for the given id with the given params.
+
+        Accepts:
+            * params (UpdateResourceParams): The parameters used to update
+                a `Resource` record.
+
+        Returns:
+            * resource (ResourceModel): The `Resource` record updated.
+        """
+
+        LOGGER.info(
+            f"Updating Resource with id: {params['resource_id']}, name: "
+            f"{params['name']}, description: {params['description']}, url: "
+            f"{params['url']}, employee levels: {params['employee_levels']}, "
+            f"subfunctions: {params['subfunctions']}, tags: {params['tags']}, "
+            f"type: {params['type']}, and download: {params['download']}."
+        )
+        # Please remove the ignore after implementation.
+        return {}  # type: ignore[return-value]
+
+    @staticmethod
+    def fetch_resources(
+        resource_id: int | None, page: int | None, limit: int | None
+    ) -> Union[ResourceModel, QuerySet[ResourceModel]]:
+        """
+        Fetch a `Resource` record from the database with the given
+        id or if no id is specified return all `Resource` records.
+        If page is specified, return that page of records. If
+        limit is specified, return up to `limit` number of records.
+
+        Accepts:
+            * resource_id (int | None): Optional parameter to either return a
+                single `Resource` record with the specified id or all
+                `Resource` records in the database.
+            * page (int | None): The page of `Resource` records to return.
+            * limit (int | None): The limit of `Resource` records to return.
+
+        Returns:
+            * resources (Union[ResourceModel, QuerySet[ResourceModel]]):
+                Either one `Resource` instance with the specified id
+                or a QuerySet of all `Resource` instances in accordance with
+                the page and limit.
+        """
+
+        optional_args = f" with id: {resource_id}" if resource_id else "s"
+        optional_args = f"{optional_args} with page: {page}" if page else optional_args
+        optional_args = (
+            f"{optional_args}{' and ' if page else ' with '}limit: {limit}"
+            if limit
+            else optional_args
+        )
+        LOGGER.info(f"Fetching Resource{optional_args}.")
+        # Please remove the ignore after implementation.
+        return []  # type: ignore[return-value]
+
+
 class ResourceSearch:
     """
     Container class for searching `Resource` records.
@@ -60,7 +187,9 @@ class ResourceSearch:
 
     @staticmethod
     # pylint: disable=too-many-locals
-    def search(params: SearchParams) -> Union[QuerySet[Resource, Resource], dict]:
+    def search(
+        params: SearchParams,
+    ) -> Union[QuerySet[ResourceModel, ResourceModel], dict]:
         """
         Searches for `Resource`s that meet the search criteria given.
 
@@ -68,13 +197,23 @@ class ResourceSearch:
             * params (SearchParams): The parameters containing the search
                 criteria.
         Returns:
-            * resources (Union[QuerySet[Resource], dict]): A collection
+            * resources (Union[QuerySet[ResourceModel], dict]): A collection
                 of `Resources` that meet the search criteria in the form
-                of either a QuerySet[Resource] or a dictionary which contains
+                of either a QuerySet[ResourceModel] or a dictionary which contains
                 the `Resource`s in structured form.
         """
 
         try:
+
+            LOGGER.info(
+                f"Searching for Resources with name: {params['name']}, description: "
+                f"{params['description']}, functions: {params['functions']}, subfunctions: "
+                f"{params['subfunctions']}, employee levels: {params['employee_levels']}, "
+                f"tags: {params['tags']}, download: {params['download']}, structure: "
+                f"{params['structure']}, serialize: {params['serialize']}, limit: "
+                f"{params['limit']}, and page: {params['page']}."
+            )
+
             # Fetch `Resource`s that:
             #  1. Are active.
             #       - The url points to an active site.
@@ -83,14 +222,16 @@ class ResourceSearch:
             #       - That `Request` has transitioned through each
             #         stage in the request workflow, receiving all
             #         appropriate dispositions.
-            resources: QuerySet[Resource, Resource] = Resource.objects.filter(
+            resources: QuerySet[
+                ResourceModel, ResourceModel
+            ] = ResourceModel.objects.filter(
                 active=True,
                 requests__status=Request.RequestStatus.APPROVED,
             )
 
             # This query is for collecting the ids of the `Resource`s with
             # the highest revision_number for a each uid.
-            resource_ids: QuerySet[Resource, Resource] = (
+            resource_ids: QuerySet[ResourceModel, ResourceModel] = (
                 resources.values("uid")
                 .annotate(Max("id"), Max("revision_number"))
                 .values_list("id__max", flat=True)
@@ -159,7 +300,7 @@ class ResourceSearch:
                 # search structure provided.
                 if page_num > paginator.num_pages:
                     return (
-                        Resource.objects.none()
+                        ResourceModel.objects.none()
                         if params["structure"] == utils.DEFAULT_STRUCTURE
                         else {}
                     )
@@ -169,7 +310,9 @@ class ResourceSearch:
 
                 # Assigning the page's `Resource` QueryList to
                 # `resources`.
-                resources = cast(QuerySet[Resource, Resource], page.object_list)
+                resources = cast(
+                    QuerySet[ResourceModel, ResourceModel], page.object_list
+                )
 
             # If the `structure` value given in `params` is
             # equal to FUNCTREE_STRUCTURE then proceed to

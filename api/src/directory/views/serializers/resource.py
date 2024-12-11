@@ -6,6 +6,50 @@ validation for request parameters.
 from rest_framework import serializers
 
 
+class BaseResourceRequest(serializers.Serializer):
+    """Base serializer used for POST and PUT /v1/directory/resources requests."""
+
+    name = serializers.CharField(max_length=512)
+    description = serializers.CharField(max_length=8192)
+    url = serializers.URLField()
+    thumbnail = serializers.ImageField(allow_null=True)
+    employee_levels = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=True, default=[]
+    )
+    subfunctions = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=True, default=[]
+    )
+    tags = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=True, default=[]
+    )
+    type = serializers.CharField(max_length=512)
+    download = serializers.BooleanField()
+
+
+class CreateResourceRequest(BaseResourceRequest):
+    """Request serializer for POST /v1/directory/resources"""
+
+    previous_revision = serializers.IntegerField(allow_null=True, default=None)
+
+
+class UpdateResourceRequest(BaseResourceRequest):
+    """Request serializer for PUT /v1/directory/resources"""
+
+
+class UpdateResourceRequestQueryParams(serializers.Serializer):
+    """Request serializer for PUT /v1/directory/resources query params."""
+
+    id = serializers.IntegerField()
+
+
+class FetchResourceRequest(serializers.Serializer):
+    """Request serializer for GET /v1/directory/resources."""
+
+    id = serializers.IntegerField(allow_null=True, default=None)
+    page = serializers.IntegerField(allow_null=True, default=None)
+    limit = serializers.IntegerField(allow_null=True, default=None)
+
+
 class ResourceSearchRequest(serializers.Serializer):
     """Request serializer for POST /v1/directory/resources/search."""
 
