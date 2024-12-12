@@ -4,6 +4,7 @@ import transformFavoriteRecord, {
   ApiFavorite,
 } from "routes/api/helpers/transforms/portal/response/preferences/Favorite";
 import api from "state/query/api";
+
 import Favorite from "state/types/portal/preferences/Favorite";
 
 type ApiFavoriteResponse = {
@@ -11,9 +12,9 @@ type ApiFavoriteResponse = {
   status: number | undefined;
 };
 
-type ApiFavoriteRequest = { user: string; resource: number };
+export type ApiFavoriteRequest = { resource: number };
 
-type ApiFavoriteOrderRequest = { id: number; rank: number }[];
+export type ApiFavoriteOrderRequest = { id: number; rank: number }[];
 
 const favoriteApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -50,10 +51,10 @@ const favoriteApi = api.injectEndpoints({
     }),
     orderFavorites: builder.mutation<
       ApiFavoriteResponse,
-      { body: ApiFavoriteOrderRequest } & { user: string }
+      ApiFavoriteOrderRequest
     >({
-      query: ({ body, user }) => ({
-        url: endpoints.PORTAL.PREFERENCES.FAVORITES(user),
+      query: (body: ApiFavoriteOrderRequest) => ({
+        url: endpoints.PORTAL.PREFERENCES.FAVORITES(),
         method: PUT,
         body: body,
       }),

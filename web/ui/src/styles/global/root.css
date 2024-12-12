@@ -1,13 +1,15 @@
 @import url("colors.css");
 html {
-  overflow-y: auto;
   height: 100%;
+  overflow-y: auto;
   width: 100%;
 }
 
 body {
-  margin: 0;
+  background: var(--color-light-gray);
+  font-family: sans-serif;
   height: 100%;
+  margin: 0;
   width: 100%;
 }
 

@@ -1,6 +1,7 @@
 import endpoints from "routes/api/endpoints";
 import { ApiEmployeeLevel } from "routes/api/helpers/transforms/portal/response/directory/EmployeeLevel";
 import api from "state/query/api";
+
 import EmployeeLevel from "state/types/portal/directory/EmployeeLevel";
 
 type ApiEmployeeLevelResponse = {

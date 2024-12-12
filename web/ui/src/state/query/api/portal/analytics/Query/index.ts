@@ -4,11 +4,12 @@ import transformQueryRecord, {
   ApiQuery,
 } from "routes/api/helpers/transforms/portal/response/analytics/Query";
 import api from "state/query/api";
+
 import Query from "state/types/portal/analytics/Query";
 
 type ApiQueryResponse = { data: Query; status: number | undefined };
 
-type ApiQueryRequest = { user: string; searchTerm: number };
+export type ApiQueryRequest = { searchTerm: string };
 
 const queryApi = api.injectEndpoints({
   endpoints: (builder) => ({

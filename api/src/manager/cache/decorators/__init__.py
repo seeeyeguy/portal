@@ -9,15 +9,16 @@ request that involved fetching data from the
 API.
 """
 
-import hashlib
+import xxhash
 from functools import wraps
 from typing import Callable, cast, Union
 
+from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponseBase
 from rest_framework import status
 
-from manager.settings import CACHES
+from manager.settings import ApplicationBuild, CACHES
 
 ACCEPTED_METHODS = ("POST", "GET")
 
@@ -37,7 +38,10 @@ def cache_request(timeout: int) -> Callable:
         def wrapper(
             request: HttpRequest, body: dict, *args: tuple, **kwargs: dict
         ) -> HttpResponseBase:
-            if request.method not in ACCEPTED_METHODS:
+            if (
+                request.method not in ACCEPTED_METHODS
+                or settings.BUILD == ApplicationBuild.TEST
+            ):
                 response: HttpResponseBase = view_handler(
                     request, body, *args, **kwargs
                 )
@@ -49,7 +53,7 @@ def cache_request(timeout: int) -> Callable:
             # Use the path and request params to form a
             # unique key for the request.
             url_params = str(body).replace(" ", "")
-            cache_key = hashlib.md5(
+            cache_key = xxhash.xxh64(
                 f"{full_path}?params={url_params}".encode()
             ).hexdigest()
 

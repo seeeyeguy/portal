@@ -3,6 +3,7 @@ import transformProfileRecord, {
   ApiProfile,
 } from "routes/api/helpers/transforms/portal/response/users/Profile";
 import api from "state/query/api";
+
 import Profile from "state/types/portal/users/Profile";
 
 type ApiProfileResponse = { data: Profile; status: number | undefined };

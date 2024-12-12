@@ -3,7 +3,7 @@ import SubFunction from "state/types/portal/directory/SubFunction";
 import Tag from "state/types/portal/directory/Tag";
 
 interface Restricted {
-  [key: string]: string;
+  [key: string]: string[];
 }
 
 export default interface Resource {
@@ -26,3 +26,9 @@ export default interface Resource {
   restricted?: Restricted;
   site: string[];
 }
+
+export interface ResourceFunctree {
+  [key: string]: Resource[] | ResourceFunctree;
+}
+
+export type ResourceRecords = ResourceFunctree | Resource[];

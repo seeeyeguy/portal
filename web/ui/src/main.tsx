@@ -10,6 +10,7 @@ import store from "state/store";
 import { toastContainerConfig } from "utils/packages/react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import "styles/global/colors.css";
 import "styles/global/root.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -17,6 +18,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <HelmetProvider>
       <Helmet>
         <title>{__APP_NAME__}</title>
+        <meta name="og:title" content="L3Harris BI Portal" />
+        <meta
+          name="og:description"
+          content="A directory of helpful services and resources."
+        />
+        <meta name="og:image" content="/icon/l3harrislogo.png" />
       </Helmet>
     </HelmetProvider>
     <Provider store={store}>

@@ -43,7 +43,7 @@ class DevelopmentAuthenticationMiddleware:
 
     def login_dev_user(self, request: DjangoHttpRequest) -> None:
         """
-        If and only if the application is in a `development`, or `test`
+        If and only if the application is in a `development`
         environment, login the user specified by the developer.
 
         Accepts:
@@ -53,16 +53,13 @@ class DevelopmentAuthenticationMiddleware:
             * None
         """
 
-        if settings.BUILD not in (
-            settings.ApplicationBuild.DEVELOPMENT,
-            settings.ApplicationBuild.TEST,
-        ):
+        if settings.BUILD not in (settings.ApplicationBuild.DEVELOPMENT,):
             return None
 
-        email = (
-            f"{settings.SSO_DEVELOPMENT_USER['first_name']}"
-            f".{settings.SSO_DEVELOPMENT_USER['last_name']}@l3harris.com"
-        )
+        first_name = settings.SSO_DEVELOPMENT_USER["first_name"]
+        last_name = settings.SSO_DEVELOPMENT_USER["last_name"]
+        email = f"{first_name}.{last_name}@l3harris.com"
+
         if settings.SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY in request.headers:
             try:
                 dev_user_from_request = json.loads(
@@ -71,17 +68,16 @@ class DevelopmentAuthenticationMiddleware:
                 first_name = dev_user_from_request["first_name"]
                 last_name = dev_user_from_request["last_name"]
                 email = dev_user_from_request["email"]
-
-                if not User.objects.filter(email=email).exists():
-                    User.objects.create(
-                        username=email,
-                        email=email,
-                        first_name=first_name,
-                        last_name=last_name,
-                    )
             except (json.decoder.JSONDecodeError, KeyError):
                 pass  # fail silently, login dev user.
 
+        if not User.objects.filter(email=email).exists():
+            User.objects.create_superuser(
+                username=email,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+            )
         try:
             development_user = User.objects.get(email=email)
             login(request=request, user=development_user)

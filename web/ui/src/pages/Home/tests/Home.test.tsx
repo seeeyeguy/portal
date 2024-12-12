@@ -14,8 +14,8 @@ describe("`Home` Page Tests", () => {
     };
     const router = createTestRouter("/", <Home />, loader, () => null);
     render(<RouterProvider router={router} />);
-    await waitFor(() => screen.getByText("Hello, App!"));
-    const element = screen.getByText("Hello, App!");
+    await waitFor(() => screen.getByText("Function"));
+    const element = screen.getByText("Function");
     expect(element).toBeInTheDocument();
   });
 });

@@ -5,13 +5,21 @@ import logger from "redux-logger";
 import api from "state/query/api";
 import AppReducers from "state/slices";
 
+import { inDevelopment } from "utils/constants/environments";
+
+const middleware = [api.middleware];
+
+if (inDevelopment()) {
+  middleware.push(logger);
+}
+
 const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     ...AppReducers,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([api.middleware, logger]),
+    getDefaultMiddleware().concat(middleware),
 });
 
 export default store;

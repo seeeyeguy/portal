@@ -49,6 +49,7 @@ storage/media/
 .venv
 .vite
 api/bin
+api/CloudServicesRootCA.crt
 api/lib
 api/lib64
 api/pyvenv.cfg

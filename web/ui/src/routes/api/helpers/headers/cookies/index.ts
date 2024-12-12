@@ -1,3 +1,5 @@
+import { inTest } from "utils/constants/environments";
+
 type Cookies = { [key: string]: string };
 
 export function getCookies() {
@@ -22,7 +24,9 @@ export function getCookie(cookie: string) {
     }
     return cookies[cookie];
   } catch (error) {
-    console.error(error);
+    if (!inTest()) {
+      console.error(error);
+    }
     return "";
   }
 }

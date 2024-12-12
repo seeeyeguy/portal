@@ -17,6 +17,7 @@ from rest_framework import status
 
 from preferences import controllers
 from preferences.views import serializers
+from preferences.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
 from manager.utils.decorators import with_serializer
 from manager.utils.types.request import DjangoHttpRequest
@@ -77,4 +78,9 @@ class Favorite(LoginRequiredMixin, View):
         LOGGER.info(f"GET /v1/preferences/favorites?user={body['user']}.")
 
         favorites = controllers.Favorite.fetch_favorites(user=body["user"])
-        return http.JsonResponse(favorites, status=status.HTTP_200_OK, safe=False)
+        return http.JsonResponse(
+            favorites,
+            status=status.HTTP_200_OK,
+            headers={**CACHE_CONTROL_NO_CACHE},
+            safe=False,
+        )
