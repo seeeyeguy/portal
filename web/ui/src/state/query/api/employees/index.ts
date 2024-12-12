@@ -1,6 +1,7 @@
 import endpoints from "routes/api/endpoints";
 import { POST } from "routes/api/helpers/headers/init";
 import api from "state/query/api";
+
 import * as types from "state/types/services/ldap";
 
 type EmployeesApiResponse = {

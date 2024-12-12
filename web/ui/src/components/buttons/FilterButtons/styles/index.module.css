@@ -1,0 +1,11 @@
+.filter-buttons-row {
+  display: flex;
+  gap: 2rem;
+}
+
+.filter-buttons-row button {
+  background: var(--color-white);
+  color: var(--color-stealth);
+  font-size: 100%;
+  margin: 0.25rem 0.5rem;
+}

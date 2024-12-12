@@ -18,6 +18,7 @@ from rest_framework import status
 from preferences import controllers, exceptions, models
 from preferences.models.QueryFilterState.serializers import QueryFilterStateSerializer
 from preferences.views import serializers
+from preferences.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
 from manager.utils.decorators import with_serializer
 from manager.utils.types.request import DjangoHttpRequest
@@ -108,7 +109,12 @@ class QueryFilterState(LoginRequiredMixin, View):
             # Serialize `QueryFilterState`.
             data: dict = QueryFilterStateSerializer(query_filter_state).data
 
-            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+            return http.JsonResponse(
+                data,
+                status=status.HTTP_200_OK,
+                headers={**CACHE_CONTROL_NO_CACHE},
+                safe=False,
+            )
         except exceptions.PreferencesError as exc:
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)

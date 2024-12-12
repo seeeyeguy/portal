@@ -13,6 +13,9 @@ const ResourceSearchSlice = createSlice({
   name: "directoryResourceSearch",
   initialState,
   reducers: {
+    clearDirectoryResourceSearch: () => ({
+      ...initialState,
+    }),
     clearEmployeeLevels: (state) => ({
       ...state,
       employeeLevels: initialState.employeeLevels,
@@ -32,6 +35,9 @@ const ResourceSearchSlice = createSlice({
     clearTags: (state) => ({
       ...state,
       tags: initialState.tags,
+    }),
+    loadDirectoryResourceSearch: (_, action: PayloadAction<SearchParams>) => ({
+      ...action.payload,
     }),
     toggleEmployeeLevels: (state, action: PayloadAction<number>) => {
       const employeeLevelsSet = new Set(state.employeeLevels);
@@ -80,11 +86,13 @@ const ResourceSearchSlice = createSlice({
 });
 
 export const {
+  clearDirectoryResourceSearch,
   clearEmployeeLevels,
   clearFilters,
   clearFunctions,
   clearSearch,
   clearTags,
+  loadDirectoryResourceSearch,
   toggleEmployeeLevels,
   toggleFunctions,
   toggleTags,

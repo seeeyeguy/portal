@@ -1,0 +1,46 @@
+.function-buttons {
+  height: fit-content;
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.function-buttons header {
+  color: var(--color-stealth);
+}
+
+.function-buttons + hr {
+  margin: 0.5rem 1rem;
+}
+
+.role-buttons {
+  background-image: url("/banner/bi_portal_controls_banner.svg");
+  background-size: cover;
+  height: 25rem;
+  position: relative;
+}
+
+.role-buttons div[class*="filter-buttons-row"] {
+  left: 1.5rem;
+  position: absolute;
+  top: 50%;
+}
+
+.role-buttons header {
+  color: var(--color-white);
+}
+
+.role-buttons header + div {
+  margin-left: 3rem;
+}
+
+@media screen and (min-width: 530px) {
+  .role-buttons {
+    height: 17rem;
+  }
+}
+
+@media screen and (min-width: 714px) {
+  .role-buttons {
+    height: 10rem;
+  }
+}

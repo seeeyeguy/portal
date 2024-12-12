@@ -1,6 +1,7 @@
 import endpoints from "routes/api/endpoints";
 import { ApiFunction } from "routes/api/helpers/transforms/portal/response/directory/Function";
 import api from "state/query/api";
+
 import PortalFunction from "state/types/portal/directory/Function";
 
 type ApiFunctionResponse = {

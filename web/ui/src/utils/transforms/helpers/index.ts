@@ -33,7 +33,7 @@ function caseTransformFunction(
       return item;
     });
   }
-  return Object.entries(data).reduce((acc, tuple) => {
+  return lodash.entries(data).reduce((acc, tuple) => {
     let value = tuple[1];
     if (lodash.isArray(value) || lodash.isPlainObject(value)) {
       value = caseTransformFunction(value as Dictionary, caseType);

@@ -1,17 +1,69 @@
+import React from "react";
 import { useLoaderData } from "react-router";
 
-import endpoints from "routes/api/endpoints";
+import Controls from "containers/Controls";
+import Results from "containers/Results";
+import SessionControls from "containers/SessionControls";
+
+import { loadDirectoryResourceSearchState } from "state/actions/portal/directory/Resource/Search";
+import { useSearchTagsQuery } from "state/query/api/portal/directory/Tag";
+import { useGetFavoritesQuery } from "state/query/api/portal/preferences/Favorite";
+import { useGetProfileUserQuery } from "state/query/api/portal/users/Profile";
+import { useAppDispatch } from "state/store";
+
+import Tag from "state/types/portal/directory/Tag";
+import Favorite from "state/types/portal/preferences/Favorite";
+import Profile from "state/types/portal/users/Profile";
 import type { User } from "state/types/services/sso";
+
+const FILTER_PREFIX = "filter::";
 
 export default function Home() {
   const loaderData = useLoaderData() as { user: User };
-  if (loaderData.user) {
-    return (
-      <>
-        <div>Hello, {loaderData.user.firstName}!</div>
-        <a href={endpoints.SERVICE.SSO.LOGOUT}>Logout</a>
-      </>
-    );
+
+  const dispatch = useAppDispatch();
+
+  const filterData = React.useRef<{ [key: string]: string[] }>(
+    JSON.parse(localStorage.getItem("filterData") ?? "{}")
+  );
+
+  const { data: profileApiResponse } = useGetProfileUserQuery(
+    loaderData.user.email
+  );
+  const profile = (profileApiResponse?.data ?? {
+    user: {
+      firstName: loaderData.user.firstName,
+      lastName: loaderData.user.lastName,
+      email: loaderData.user.email,
+    },
+    jobTitle: "UNKNOWN",
+    citizenship: "UNKNOWN",
+  }) as Profile;
+
+  const { data: favoritesApiResponse } = useGetFavoritesQuery(
+    loaderData.user.email
+  );
+  const favorites = (favoritesApiResponse?.data ?? []) as Favorite[];
+
+  const { data: tagsApiResponse } = useSearchTagsQuery(FILTER_PREFIX);
+  const filterTags = (tagsApiResponse?.data ?? []) as Tag[];
+
+  dispatch(loadDirectoryResourceSearchState(loaderData.user.email));
+
+  if (!loaderData.user.email) {
+    return <div>:x: 404</div>;
   }
-  return <div>:x: 404</div>;
+
+  return (
+    <>
+      <Controls profile={profile} />
+      <SessionControls filterData={filterData} filterTags={filterTags} />
+      <Results
+        favorites={favorites}
+        filterData={filterData}
+        filterTags={filterTags}
+        profile={profile}
+      />
+    </>
+  );
 }

@@ -2,7 +2,9 @@ import { ApiResource } from "routes/api/helpers/transforms/portal/response/direc
 import transformUserRecord, {
   ApiUser,
 } from "routes/api/helpers/transforms/portal/response/users/User";
+
 import Query from "state/types/portal/analytics/Query";
+
 import { snakeCaseToCamelCase } from "utils/transforms/helpers";
 
 export interface ApiQuery {

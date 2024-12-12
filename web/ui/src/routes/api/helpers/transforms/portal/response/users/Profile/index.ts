@@ -2,7 +2,9 @@ import { ApiSegment } from "routes/api/helpers/transforms/portal/response/users/
 import transformUserRecord, {
   ApiUser,
 } from "routes/api/helpers/transforms/portal/response/users/User";
+
 import Profile from "state/types/portal/users/Profile";
+
 import { snakeCaseToCamelCase } from "utils/transforms/helpers";
 
 export interface ApiProfile {

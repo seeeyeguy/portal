@@ -54,13 +54,13 @@ notebook==6.2.0
 # The fundamental package for scientific computing with Python.
 numpy==2.0.0
 # A Python library to read/write Excel 2010 xlsx/xlsm/xltx/xltm files.
-openpyxl==3.0.10
+openpyxl==3.1.0
 # Flexible and powerful data analysis / manipulation library
 # for Python, providing labeled data structures similar to
 # R data.frame objects, statistical functions, and much more.
 pandas==2.2.2
 # Python Imaging Library. Requirement to store images with Django.
-pillow==9.5.0
+pillow==10.4.0
 # Dataframes powered by a multithreaded, vectorized query engine,
 # written in Rust. An alternative to pandas.
 polars==1.0.0
@@ -84,6 +84,11 @@ redis[hiredis]
 reportlab==4.2.0
 # A simple, yet elegant, HTTP library.
 requests==2.32.3
+# RQ (Redis Queue) is a simple Python library for queueing jobs and
+# processing them in the background with workers. It is backed by
+# Redis and it is designed to have a low barrier to entry. It should
+# be integrated in your web stack easily.
+rq==1.16.1
 # A small package that adds job scheduling capabilities to RQ,
 # a Redis based Python queuing library.
 rq-scheduler==0.13.1
@@ -117,3 +122,5 @@ xlrd==2.0.1
 # A Python module for writing files in the Excel 2007+ XLSX
 # file format.
 xlsxwriter==3.2.0
+# Python Binding for xxHash.
+xxhash==3.5.0

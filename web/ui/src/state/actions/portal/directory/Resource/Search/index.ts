@@ -1,8 +1,8 @@
 import lodash from "lodash";
 
-import Query from "state/types/portal/analytics/Query";
-
+import queryFilterStateApi from "state/query/api/portal/preferences/QueryFilterState";
 import {
+  loadDirectoryResourceSearch,
   toggleEmployeeLevels,
   toggleFunctions,
   toggleTags,
@@ -10,6 +10,36 @@ import {
   updateSearchTerm,
 } from "state/slices/portal/directory/Resource/Search";
 import { AppDispatch } from "state/store";
+
+import Query from "state/types/portal/analytics/Query";
+import { SearchParams } from "state/types/portal/directory/Resource/Search";
+
+import { DEFAULT_API_ERROR_MESSAGE } from "utils/constants/errors";
+
+export const loadDirectoryResourceSearchState =
+  (user: string) => async (dispatch: AppDispatch) => {
+    const promise = dispatch(
+      queryFilterStateApi.endpoints.getQueryFilterState.initiate(user)
+    );
+    const { data: response, error, isSuccess, isError } = await promise;
+    const payload: SearchParams = {
+      search: {
+        term: response?.data.search?.searchTerm ?? "",
+        record: response?.data.search?.id ?? null,
+      },
+      functions: response?.data.functions ?? [],
+      employeeLevels: response?.data.employeeLevels ?? [],
+      tags: response?.data.tags ?? [],
+    };
+    if (isSuccess) {
+      dispatch(loadDirectoryResourceSearch(payload));
+    }
+    if (isError && error) {
+      const message =
+        "data" in error ? (error.data as string) : DEFAULT_API_ERROR_MESSAGE;
+      console.error(message);
+    }
+  };
 
 export const toggleEmployeeLevel = (id: number) => (dispatch: AppDispatch) => {
   if (!lodash.isInteger(id)) {
@@ -41,9 +71,9 @@ export const updateSearchStateRecord =
       "resources",
       "created",
     ];
-    const isQueryRecord = !(
-      lodash.difference(lodash.keys(record), queryRecordFields).length === 0
-    );
+    const isQueryRecord =
+      lodash.difference(lodash.keys(record), queryRecordFields).length === 0;
+
     if (!(lodash.isPlainObject(record) && isQueryRecord)) {
       return;
     }

@@ -2,7 +2,9 @@ import { ApiResource } from "routes/api/helpers/transforms/portal/response/direc
 import transformUserRecord, {
   ApiUser,
 } from "routes/api/helpers/transforms/portal/response/users/User";
+
 import Favorite from "state/types/portal/preferences/Favorite";
+
 import { snakeCaseToCamelCase } from "utils/transforms/helpers";
 
 export interface ApiFavorite {

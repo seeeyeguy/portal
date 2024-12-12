@@ -48,6 +48,7 @@ class SwaggerCSRFExemptMiddleware:
 
         if (
             settings.BUILD != settings.ApplicationBuild.DEVELOPMENT
+            or "Origin" not in request.headers
             or request.headers["Origin"].lower() != settings.SWAGGER_APP_ORIGIN.lower()
         ):
             return None

@@ -4,6 +4,7 @@ import transformQueryFilterStateRecord, {
   ApiQueryFilterState,
 } from "routes/api/helpers/transforms/portal/response/preferences/QueryFilterState";
 import api from "state/query/api";
+
 import QueryFilterState from "state/types/portal/preferences/QueryFilterState";
 
 type ApiQueryFilterStateResponse = {
@@ -13,9 +14,8 @@ type ApiQueryFilterStateResponse = {
 
 type ApiQueryFilterStateRequest = string;
 
-type ApiQueryFilterStateMutationRequest = {
-  user: string;
-  search: number;
+export type ApiQueryFilterStateMutationRequest = {
+  search: number | null;
   functions: number[];
   employeeLevels: number[];
   tags: number[];
@@ -39,7 +39,7 @@ const queryFilterStateApi = api.injectEndpoints({
       ApiQueryFilterStateResponse,
       { body: ApiQueryFilterStateMutationRequest } & {
         post: boolean;
-        id: number | null;
+        id: number | null | undefined;
       }
     >({
       query: ({ body, post = true, id = null }) => ({

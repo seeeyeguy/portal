@@ -2,7 +2,9 @@ import { ApiQuery } from "routes/api/helpers/transforms/portal/response/analytic
 import transformUserRecord, {
   ApiUser,
 } from "routes/api/helpers/transforms/portal/response/users/User";
+
 import QueryFilterState from "state/types/portal/preferences/QueryFilterState";
+
 import { snakeCaseToCamelCase } from "utils/transforms/helpers";
 
 export interface ApiQueryFilterState {

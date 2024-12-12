@@ -1,21 +1,27 @@
 import endpoints from "routes/api/endpoints";
 import { POST } from "routes/api/helpers/headers/init";
-import transformResourceRecord, {
+import {
+  transformResourceRecords,
   ApiResource,
+  ApiResourceFunctreeResponse,
 } from "routes/api/helpers/transforms/portal/response/directory/Resource";
 import api from "state/query/api";
-import Resource from "state/types/portal/directory/Resource";
 
-type ApiResourceResponse = { data: Resource[]; status: number | undefined };
+import { ResourceRecords } from "state/types/portal/directory/Resource";
 
-type ApiSearchResourceRequest = {
+type ApiResourceResponse = {
+  data: ResourceRecords;
+  status: number | undefined;
+};
+
+export type ApiSearchResourceRequest = {
   name: string;
   description: string;
   functions: number[];
   subfunctions: number[];
   employeeLevels: number[];
   tags: number[];
-  download: boolean;
+  download: boolean | null;
   structure: "default" | "functree";
 };
 
@@ -38,8 +44,11 @@ const resourceApi = api.injectEndpoints({
           employee_levels: body.employeeLevels,
         },
       }),
-      transformResponse: (response: ApiResource[], meta) => ({
-        data: response.map((resource) => transformResourceRecord(resource)),
+      transformResponse: (
+        response: ApiResourceFunctreeResponse | ApiResource[],
+        meta
+      ) => ({
+        data: transformResourceRecords(response) as unknown as ResourceRecords,
         status: meta?.response?.status,
       }),
     }),

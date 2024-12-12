@@ -312,7 +312,7 @@ ALLOWED_HOSTS = [
     ".cs.myharris.net",
     ".gcsd.harris.com",
     ".rootforest.com",
-    WEB_APP_ORIGIN,
+    WEB_HOST,
 ]
 
 if BUILD in {ApplicationBuild.DEVELOPMENT, ApplicationBuild.TEST}:

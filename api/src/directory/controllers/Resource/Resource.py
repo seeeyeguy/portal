@@ -224,7 +224,9 @@ class ResourceSearch:
             #         appropriate dispositions.
             resources: QuerySet[
                 ResourceModel, ResourceModel
-            ] = ResourceModel.objects.filter(
+            ] = ResourceModel.objects.prefetch_related(
+                "employee_levels", "subfunctions", "subfunctions__function", "tags"
+            ).filter(
                 active=True,
                 requests__status=Request.RequestStatus.APPROVED,
             )

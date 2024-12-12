@@ -4,11 +4,12 @@ import transformVisitRecord, {
   ApiVisit,
 } from "routes/api/helpers/transforms/portal/response/analytics/Visit";
 import api from "state/query/api";
+
 import Visit from "state/types/portal/analytics/Visit";
 
 type ApiVisitResponse = { data: Visit; status: number | undefined };
 
-type ApiVisitRequest = { user: string; resource: number };
+export type ApiVisitRequest = { resource: number };
 
 const visitApi = api.injectEndpoints({
   endpoints: (builder) => ({
