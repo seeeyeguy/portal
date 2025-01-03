@@ -9,7 +9,9 @@ such as employee, manager, or executive.
 import logging
 from typing import Union
 
+from django.db import transaction
 from django.db.models import QuerySet
+from django.db.utils import IntegrityError
 
 from directory import exceptions, models
 
@@ -64,12 +66,39 @@ class EmployeeLevel:
                 record updated.
         """
 
-        LOGGER.info(
-            f"Updating EmployeeLevel with id: {employee_level_id} "
-            f"with name: {name} and description: {description}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Updating EmployeeLevel with id: {employee_level_id} "
+                f"with name: {name} and description: {description}."
+            )
+
+            # Query `EmployeeLevel` for the instance id given.
+            employee_level_record: models.EmployeeLevel = (
+                models.EmployeeLevel.objects.get(id=employee_level_id)
+            )
+
+            # If there's no field to update, do not hit the database and
+            # return existing record.
+            if (
+                employee_level_record.name == name
+                and employee_level_record.description == description
+            ):
+                return employee_level_record
+
+            # Update `EmployeeLevel` record with the given name and description.
+            employee_level_record.name = name
+            employee_level_record.description = description
+            employee_level_record.save()
+
+            return employee_level_record
+        except models.EmployeeLevel.DoesNotExist as exc:
+            err_msg: str = f"EmployeeLevel (id={employee_level_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
+        except IntegrityError as exc:
+            err_msg: str = "Invalid parameters given."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400) from exc
 
     @staticmethod
     def delete_employee_level(employee_level_id: int) -> int:
