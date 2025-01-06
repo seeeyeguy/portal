@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from preferences import controllers
+from preferences import controllers, exceptions
 from preferences.views import serializers
 from preferences.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
@@ -66,10 +66,16 @@ class Favorite(LoginRequiredMixin, View):
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/preferences/favorites."""
 
-        LOGGER.info(f"DELETE /v1/preferences/favorites?id={body['id']}.")
+        try:
+            LOGGER.info(f"DELETE /v1/preferences/favorites?id={body['id']}.")
 
-        rows_affected = controllers.Favorite.delete_favorite(favorite_id=body["id"])
-        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+            rows_affected = controllers.Favorite.delete_favorite(favorite_id=body["id"])
+            return http.JsonResponse(
+                rows_affected, status=status.HTTP_200_OK, safe=False
+            )
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(data=exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchFavoriteRequest))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:

@@ -10,7 +10,7 @@ from typing import List
 
 from django.db.models import QuerySet
 
-from preferences import models
+from preferences import models, exceptions
 
 LOGGER = logging.getLogger(__name__)
 
@@ -79,8 +79,20 @@ class Favorite:
             rows_affected (int): Number of rows removed.
         """
 
-        LOGGER.info(f"Deleting Favorite instance with id: {favorite_id}.")
-        return 1
+        try:
+            LOGGER.info(f"Deleting Favorite instance with id: {favorite_id}.")
+
+            # Fetch `Favorite` record to be deleted.
+            favorite_record: models.Favorite = models.Favorite.objects.get(
+                id=favorite_id
+            )
+            # Delete `Favorite` record.
+            rows_affected, _ = favorite_record.delete()
+            return rows_affected
+        except models.Favorite.DoesNotExist as exc:
+            err_msg: str = f"Favorite (id={favorite_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_favorites(user: str) -> QuerySet[models.Favorite]:
