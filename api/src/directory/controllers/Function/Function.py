@@ -81,8 +81,22 @@ class Function:
             * rows_affected (int): The number of rows removed.
         """
 
-        LOGGER.info(f"Deleting Function with id: {function_id}.")
-        return 1
+        try:
+            LOGGER.info(f"Deleting Function with id: {function_id}.")
+
+            # Fetch the corresponding `Function` record.
+            function_record: models.Function = models.Function.objects.get(
+                id=function_id
+            )
+
+            # Delete `Function` record.
+            rows_affected, _ = function_record.delete()
+
+            return rows_affected
+        except models.Function.DoesNotExist as exc:
+            err_msg = f"Function (id={function_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_functions(

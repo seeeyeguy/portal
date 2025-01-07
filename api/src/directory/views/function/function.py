@@ -74,11 +74,16 @@ class Function(View):
     @method_decorator(with_serializer(serializers.DeleteFunctionRequest))
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/functions."""
+        try:
+            LOGGER.info(f"DELETE /v1/directory/functions?id={body['id']}.")
+            rows_affected = controllers.Function.delete_function(function_id=body["id"])
 
-        LOGGER.info(f"DELETE /v1/directory/functions?id={body['id']}.")
-
-        rows_affected = controllers.Function.delete_function(function_id=body["id"])
-        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+            return http.JsonResponse(
+                rows_affected, status=status.HTTP_200_OK, safe=False
+            )
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchFunctionRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
