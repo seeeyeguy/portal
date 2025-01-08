@@ -18,7 +18,7 @@ class FavoriteBaseRequestByUser(serializers.Serializer):
     user = serializers.EmailField()
 
 
-class CreateFavoriteRequest(FavoriteBaseRequestByUser):
+class CreateFavoriteRequest(serializers.Serializer):
     """Request serializer for POST /v1/preferences/favorites."""
 
     resource = serializers.IntegerField()
