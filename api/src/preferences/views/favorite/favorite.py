@@ -16,6 +16,7 @@ from django.views import View
 from rest_framework import status
 
 from preferences import controllers, exceptions
+from preferences.models.Favorite.serializers import FavoriteSerializer
 from preferences.views import serializers
 from preferences.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
@@ -36,12 +37,20 @@ class Favorite(LoginRequiredMixin, View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/preferences/favorites."""
 
-        LOGGER.info("POST /v1/preferences/favorites.")
+        try:
+            LOGGER.info("POST /v1/preferences/favorites.")
 
-        favorite = controllers.Favorite.create_favorite(
-            user=body["user"], resource=body["resource"]
-        )
-        return http.JsonResponse(favorite, status=status.HTTP_201_CREATED)
+            # Call controller to create `Favorite`.
+            favorite = controllers.Favorite.create_favorite(
+                user=request.user.email, resource=body["resource"]
+            )
+
+            # Serialize `Favorite`.
+            data: dict = FavoriteSerializer(favorite).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.RankFavoriteRequest, many=True))
     def put(self, request: DjangoHttpRequest, body: List[dict]) -> http.JsonResponse:

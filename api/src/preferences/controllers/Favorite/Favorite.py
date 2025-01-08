@@ -8,9 +8,11 @@ for a user.
 import logging
 from typing import List
 
-from django.db.models import QuerySet
+from django.contrib.auth.models import User
+from django.db.models import Max, QuerySet
 
-from preferences import models, exceptions
+from directory.models import Resource
+from preferences import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,8 +40,48 @@ class Favorite:
         """
 
         LOGGER.info(f"Creating Favorite for User: {user} and Resource: {resource}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+
+        try:
+            # Fetch `User` record.
+            user_record: User = User.objects.only("username").get(email__iexact=user)
+            # Fetch `Resource` record.
+            resource_record: Resource = Resource.objects.only("id").get(
+                id=resource, active=True
+            )
+
+            # Ensure `Favorite` record doesn't already exist for the given `User`
+            # and `Resource`.
+            if models.Favorite.objects.filter(
+                user_id=user_record.username, resource_id=resource_record.id
+            ).exists():
+                err_msg = f"Favorite already exists for User: {user} and Resource id: {resource}."
+                LOGGER.error(err_msg)
+                raise exceptions.PreferencesError(err_msg, 400)
+
+            # Determine rank for the `Favorite` record being created.
+            rank_aggregate: dict = models.Favorite.objects.filter(
+                user_id=user_record.username
+            ).aggregate(Max("rank"))
+            rank: int = (
+                rank_aggregate["rank__max"] + 1 if rank_aggregate["rank__max"] else 1
+            )
+
+            # Create `Favorite` record for the given `User` and `Resource`
+            # with max rank.
+            favorite_record: models.Favorite = models.Favorite.objects.create(
+                user_id=user_record.username, resource_id=resource_record.id, rank=rank
+            )
+
+            return favorite_record
+
+        except User.DoesNotExist as exc:
+            err_msg = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
+        except Resource.DoesNotExist as exc:
+            err_msg = f"Resource (id={resource}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
 
     @staticmethod
     def rank_favorites(
