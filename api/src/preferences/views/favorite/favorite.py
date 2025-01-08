@@ -56,20 +56,26 @@ class Favorite(LoginRequiredMixin, View):
     def put(self, request: DjangoHttpRequest, body: List[dict]) -> http.JsonResponse:
         """Endpoint for PUT /v1/preferences/favorites."""
 
-        req = serializers.RankFavoriteQueryParams(data=request.GET)
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+        try:
+            req = serializers.RankFavoriteQueryParams(data=request.GET)
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            user = req.validated_data.get("user")
+
+            LOGGER.info(f"PUT /v1/preferences/favorites?user={user}.")
+
+            instances = controllers.Favorite.rank_favorites(
+                user=user, ranked_favorites=body
             )
-
-        user = req.validated_data.get("user")
-
-        LOGGER.info(f"PUT /v1/preferences/favorites?user={user}.")
-
-        instances = controllers.Favorite.rank_favorites(
-            user=user, ranked_favorites=body
-        )
-        return http.JsonResponse(instances, status=status.HTTP_201_CREATED, safe=False)
+            # Serialize `Favorite` instances.
+            data: dict = FavoriteSerializer(instances, many=True).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(data=exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.DeleteFavoriteRequest))
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
