@@ -52,25 +52,32 @@ class EmployeeLevel(View):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/employee-levels."""
 
-        req = serializers.UpdateEmployeeLevelRequestQueryParams(data=request.GET)
+        try:
 
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            req = serializers.UpdateEmployeeLevelRequestQueryParams(data=request.GET)
+
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            employee_level_id: int = req.validated_data.get("id")
+
+            LOGGER.info(f"PUT /v1/directory/employee-levels?id={employee_level_id}.")
+
+            employee_level = controllers.EmployeeLevel.update_employee_level(
+                employee_level_id=employee_level_id,
+                name=body["name"],
+                description=body["description"],
             )
 
-        employee_level_id: int = req.validated_data.get("id")
+            # Serialize `EmployeeLevel`.
+            data: dict = EmployeeLevelSerializer(employee_level).data
 
-        LOGGER.info(f"PUT /v1/directory/employee-levels?id={employee_level_id}.")
-
-        employee_level = controllers.EmployeeLevel.update_employee_level(
-            employee_level_id=employee_level_id,
-            name=body["name"],
-            description=body["description"],
-        )
-        return http.JsonResponse(
-            employee_level, status=status.HTTP_201_CREATED, safe=False
-        )
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required)
     @method_decorator(with_serializer(serializers.DeleteEmployeeLevelRequest))
