@@ -90,12 +90,19 @@ class Favorite(LoginRequiredMixin, View):
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/preferences/favorites."""
 
-        LOGGER.info(f"GET /v1/preferences/favorites?user={body['user']}.")
+        try:
+            LOGGER.info(f"GET /v1/preferences/favorites?user={body['user']}.")
 
-        favorites = controllers.Favorite.fetch_favorites(user=body["user"])
-        return http.JsonResponse(
-            favorites,
-            status=status.HTTP_200_OK,
-            headers={**CACHE_CONTROL_NO_CACHE},
-            safe=False,
-        )
+            favorites = controllers.Favorite.fetch_favorites(user=body["user"])
+
+            # Serialize `Favorite` instances.
+            data: dict = FavoriteSerializer(favorites, many=True).data
+            return http.JsonResponse(
+                data,
+                status=status.HTTP_200_OK,
+                headers={**CACHE_CONTROL_NO_CACHE},
+                safe=False,
+            )
+        except exceptions.PreferencesError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(data=exc.message, status=exc.status, safe=False)

@@ -149,6 +149,19 @@ class Favorite:
                 records for the given user.
         """
 
-        LOGGER.info(f"Fetching Favorites for user: {user}")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            LOGGER.info(f"Fetching Favorites for user: {user}")
+
+            # Fetch `User` record.
+            user_record: User = User.objects.get(email__iexact=user)
+
+            # Query `Favorite` records of active `Resource`s for the user
+            # and order the results by rank (ascending).
+            favorites: QuerySet[models.Favorite] = models.Favorite.objects.filter(
+                user=user_record, resource__active=True
+            ).order_by("rank")
+            return favorites
+        except User.DoesNotExist as exc:
+            err_msg: str = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
