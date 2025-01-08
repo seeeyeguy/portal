@@ -9,7 +9,9 @@ import logging
 from typing import List
 
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Max, QuerySet
+from django.db.utils import IntegrityError
 
 from directory.models import Resource
 from preferences import exceptions, models
@@ -96,18 +98,62 @@ class Favorite:
                 for favorites in the form {"id": int, "rank": int}.
 
         Returns:
-            * records (QuerySet[models.Favorite]): The `Favorite` records once
+            * favorite_records (QuerySet[models.Favorite]): The `Favorite` records once
                 they have been ranked for the given user.
         """
 
-        log_msg = (
-            # pylint: disable=line-too-long
-            f"Ranking Favorites (ids: {[instance['id'] for instance in ranked_favorites]}) "
-            f"for User: {user}."
-        )
-        LOGGER.info(log_msg)
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            log_msg: str = (
+                # pylint: disable=line-too-long
+                f"Ranking Favorites (ids: {[instance['id'] for instance in ranked_favorites]}) "
+                f"for User: {user}."
+            )
+            LOGGER.info(log_msg)
+
+            # Fetch `User` record.
+            user_record: User = User.objects.get(email__iexact=user)
+
+            # Create a list of `Favorite` ids from `ranked_favorites`
+            favorite_ids: List[int] = [favorite["id"] for favorite in ranked_favorites]
+
+            # Query `Favorite` records for the instance ids and user given.
+            favorite_records: QuerySet[
+                models.Favorite
+            ] = models.Favorite.objects.filter(user=user_record, id__in=favorite_ids)
+
+            # Verify the number of records queried match the number
+            # of favorites to update, else raise an exception.
+            if favorite_records.count() != len(ranked_favorites):
+                user_favorite_record_ids: List[int] = list(
+                    favorite_records.values_list("id", flat=True)
+                )
+                invalid_favorite_ids: List[int] = [
+                    favorite_id
+                    for favorite_id in favorite_ids
+                    if favorite_id not in user_favorite_record_ids
+                ]
+                err_msg: str = (
+                    f"Favorite ids given: {invalid_favorite_ids}"
+                    f" do not exist for the User (email: {user})."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.PreferencesError(err_msg, 404)
+
+            # Update the `Favorite` records.
+            with transaction.atomic():
+                for favorite in ranked_favorites:
+                    rank: int = favorite["rank"]
+                    favorite_records.filter(id=favorite["id"]).update(rank=rank)
+
+            return favorite_records
+        except User.DoesNotExist as exc:
+            err_msg: str = f"User (email={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 404) from exc
+        except (KeyError, IntegrityError) as exc:
+            err_msg: str = "Invalid parameters given."
+            LOGGER.error(err_msg)
+            raise exceptions.PreferencesError(err_msg, 400) from exc
 
     @staticmethod
     def delete_favorite(favorite_id: int) -> int:
