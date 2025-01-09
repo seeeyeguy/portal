@@ -84,12 +84,19 @@ class EmployeeLevel(View):
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/employee-levels."""
 
-        LOGGER.info(f"DELETE /v1/directory/employee-levels?id={body['id']}.")
+        try:
+            LOGGER.info(f"DELETE /v1/directory/employee-levels?id={body['id']}.")
 
-        rows_affected = controllers.EmployeeLevel.delete_employee_level(
-            employee_level_id=body["id"]
-        )
-        return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
+            rows_affected = controllers.EmployeeLevel.delete_employee_level(
+                employee_level_id=body["id"]
+            )
+
+            return http.JsonResponse(
+                rows_affected, status=status.HTTP_200_OK, safe=False
+            )
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchEmployeeLevelRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
