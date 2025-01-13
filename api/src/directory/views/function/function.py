@@ -54,21 +54,30 @@ class Function(View):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/functions."""
 
-        req = serializers.UpdateFunctionRequestQueryParams(data=request.GET)
+        try:
+            req = serializers.UpdateFunctionRequestQueryParams(data=request.GET)
 
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            function_id: int = req.validated_data.get("id")
+
+            LOGGER.info(f"PUT /v1/directory/functions?id={function_id}.")
+
+            function, _ = controllers.Function.update_function(
+                function_id=function_id,
+                name=body["name"],
+                description=body["description"],
             )
 
-        function_id: int = req.validated_data.get("id")
+            data: dict = FunctionSerializer(function).data
 
-        LOGGER.info(f"PUT /v1/directory/functions?id={function_id}.")
-
-        function = controllers.Function.update_function(
-            function_id=function_id, name=body["name"], description=body["description"]
-        )
-        return http.JsonResponse(function, status=status.HTTP_201_CREATED, safe=False)
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required)
     @method_decorator(with_serializer(serializers.DeleteFunctionRequest))

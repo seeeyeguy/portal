@@ -7,9 +7,10 @@ within the organization.
 """
 
 import logging
-from typing import Union
+from typing import Tuple, Union
 
 from django.db.models import QuerySet
+from django.db.utils import IntegrityError
 
 from directory import exceptions, models
 
@@ -47,7 +48,7 @@ class Function:
     @staticmethod
     def update_function(
         function_id: int, name: str, description: str
-    ) -> models.Function:
+    ) -> Tuple[models.Function, int]:
         """
         Update a `Function` record for the given id with the given
         name and description.
@@ -60,14 +61,39 @@ class Function:
 
         Returns:
             * function (models.Function): The `Function` record updated.
+            * rows_affected (int): The number of records updated.
         """
 
         LOGGER.info(
             f"Updating Function with id: {function_id} with name: {name} "
             f"and description: {description}."
         )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+
+        try:
+            # Fetch the corresponding `Function` record.
+            function_record: models.Function = models.Function.objects.get(
+                id=function_id
+            )
+
+            if (
+                models.Function.objects.filter(name=name)
+                .exclude(id=function_id)
+                .exists()
+            ):
+                raise exceptions.DirectoryError(
+                    f"Function name({name}) is duplicate.", 400
+                )
+
+            rows_affected = models.Function.objects.filter(id=function_id).update(
+                name=name, description=description
+            )
+            function_record.refresh_from_db()
+
+            return function_record, rows_affected
+        except models.Function.DoesNotExist as exc:
+            err_msg = f"Function (id={function_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def delete_function(function_id: int) -> int:
