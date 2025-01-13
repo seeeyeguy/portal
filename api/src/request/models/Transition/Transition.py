@@ -41,9 +41,13 @@ class Transition(DateTimeAbstractModel):
     def __str__(self) -> str:
         """String Representation of `Transition`."""
 
+        previous_stage = (
+            self.previous_transition.stage.name if self.previous_transition else None
+        )
+
         return (
             f"Transition(id={self.id}, request={self.request}, stage={self.stage.name},"
-            f" previous_stage={self.previous_transition.stage.name})"
+            f" previous_stage={previous_stage})"
         )
 
     @property
