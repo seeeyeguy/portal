@@ -13,10 +13,13 @@
 }
 
 .role-buttons {
+  position: relative;
+}
+
+.role-buttons-background {
   background-image: url("/banner/bi_portal_controls_banner.svg");
   background-size: cover;
-  height: 25rem;
-  position: relative;
+  height: 10rem;
 }
 
 .role-buttons div[class*="filter-buttons-row"] {
@@ -33,14 +36,17 @@
   margin-left: 3rem;
 }
 
-@media screen and (min-width: 530px) {
-  .role-buttons {
-    height: 17rem;
+@media screen and (max-width: 530px) {
+  .role-buttons-background {
+    height: 14rem;
+  }
+  .role-buttons div[class*="filter-buttons-row"] {
+    top: 1rem;
   }
 }
 
-@media screen and (min-width: 714px) {
-  .role-buttons {
-    height: 10rem;
+@media screen and (max-width: 714px) {
+  .role-buttons div[class*="filter-buttons-row"] {
+    top: 1rem;
   }
 }

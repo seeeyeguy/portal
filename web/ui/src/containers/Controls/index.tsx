@@ -1,7 +1,4 @@
 import FilterButtons from "components/buttons/FilterButtons";
-import NavBar from "components/nav/NavBar";
-
-import { ControlsProps } from "containers/Controls/types";
 
 import {
   toggleEmployeeLevel,
@@ -16,7 +13,7 @@ import Function from "state/types/portal/directory/Function";
 
 import styles from "containers/Controls/styles/index.module.css";
 
-export default function Controls({ profile }: ControlsProps) {
+export default function Controls() {
   const { employeeLevels: employeeLevelIds, functions: functionIds } =
     useTypedSelector((state) => state.ResourceSearch);
 
@@ -29,11 +26,14 @@ export default function Controls({ profile }: ControlsProps) {
 
   return (
     <>
-      <NavBar profile={profile} />
       <div
         className={styles["role-buttons"]}
         aria-description="container for role filter buttons"
       >
+        <div
+          className={styles["role-buttons-background"]}
+          aria-description="container for the background of the role filter buttons"
+        />
         <FilterButtons
           title="Role"
           records={employeeLevels}
