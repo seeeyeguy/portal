@@ -1,7 +1,7 @@
 @import url("colors.css");
 html {
   height: 100%;
-  overflow-y: auto;
+  overflow-y: hidden;
   width: 100%;
 }
 
@@ -11,6 +11,19 @@ body {
   height: 100%;
   margin: 0;
   width: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#page-content {
+  overflow-y: auto;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 ::-webkit-scrollbar {

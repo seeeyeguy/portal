@@ -1,6 +1,7 @@
 import React from "react";
 import { useLoaderData } from "react-router";
 
+import NavBar from "components/nav/NavBar";
 import Controls from "containers/Controls";
 import Results from "containers/Results";
 import SessionControls from "containers/SessionControls";
@@ -56,14 +57,17 @@ export default function Home() {
 
   return (
     <>
-      <Controls profile={profile} />
-      <SessionControls filterData={filterData} filterTags={filterTags} />
-      <Results
-        favorites={favorites}
-        filterData={filterData}
-        filterTags={filterTags}
-        profile={profile}
-      />
+      <NavBar profile={profile} />
+      <div id="page-content">
+        <Controls />
+        <SessionControls filterData={filterData} filterTags={filterTags} />
+        <Results
+          favorites={favorites}
+          filterData={filterData}
+          filterTags={filterTags}
+          profile={profile}
+        />
+      </div>
     </>
   );
 }
