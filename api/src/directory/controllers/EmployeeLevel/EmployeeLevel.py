@@ -116,7 +116,9 @@ class EmployeeLevel:
             LOGGER.info(f"Deleting EmployeeLevel with id: {employee_level_id}.")
 
             # Delete the corresponding `EmployeeLevel` record.
-            employee_level_record: models.EmployeeLevel = models.EmployeeLevel.objects.get(id=employee_level_id)
+            employee_level_record: models.EmployeeLevel = (
+                models.EmployeeLevel.objects.get(id=employee_level_id)
+            )
 
             rows_affected, _ = employee_level_record.delete()
 

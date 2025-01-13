@@ -49,6 +49,7 @@ storage/media/
 .venv
 .vite
 api/bin
+api/ca-bundle.crt
 api/CloudServicesRootCA.crt
 api/lib
 api/lib64
@@ -57,5 +58,6 @@ build
 devscript_*
 db.sqlite3
 node_modules
+san.cnf
 web/package-lock.json
 web/ui/coverage*

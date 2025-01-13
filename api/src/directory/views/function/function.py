@@ -42,12 +42,18 @@ class Function(View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/functions."""
 
-        LOGGER.info("POST /v1/directory/functions.")
+        try:
+            LOGGER.info("POST /v1/directory/functions.")
 
-        function = controllers.Function.create_function(
-            name=body["name"], description=body["description"]
-        )
-        return http.JsonResponse(function, status=status.HTTP_201_CREATED, safe=False)
+            function = controllers.Function.create_function(
+                name=body["name"], description=body["description"]
+            )
+
+            data: dict = FunctionSerializer(function).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required)
     @method_decorator(with_serializer(serializers.UpdateFunctionRequest))

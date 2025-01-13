@@ -42,8 +42,20 @@ class Function:
         LOGGER.info(
             f"Creating Function with name: {name} and description: {description}."
         )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+
+        function_query: QuerySet[models.Function] = models.Function.objects.filter(
+            name=name
+        )
+        if function_query.exists():
+            err_msg = f"Function (name={name}) already exists."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400)
+
+        function_record: models.Function = models.Function.objects.create(
+            name=name, description=description
+        )
+
+        return function_record
 
     @staticmethod
     def update_function(
