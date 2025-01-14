@@ -1,0 +1,22 @@
+[
+  {
+    "model": "preferences.favorite",
+    "pk": 1,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 1,
+      "rank": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "preferences.favorite",
+    "pk": 2,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 2,
+      "rank": 2,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]
