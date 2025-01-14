@@ -249,7 +249,47 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/SearchTagsResponse"  
+                  - $ref: "#/components/schemas/SearchTagsResponse"
+  /preferences/favorites:
+    post:
+      tags:
+        - "preferences.favorite.create"
+      summary: "Create a Favorite."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFavoriteRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFavoriteResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFavoriteBadRequestResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFavoriteUnAuthorizedResponse"              
+        "404":
+          description: "User or Resource does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFavoriteUserDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateFavoriteResourceDoesNotExistResponse"
   /preferences/query-filter-state:
     post:
       tags:
@@ -834,6 +874,141 @@ components:
     ResourceSearchInvalidParameterErrorResponse:
       title: "`Resource` search error response due to an invalid parameter."
       example: "Incorrect value given for a search parameter."
+
+    CreateFavoriteRequest:
+      title: "Create `Favorite` request."
+      type: object
+      properties:
+        resource:
+          type: integer
+          description: Id of the `Resource` being favorited.
+          default: 1
+
+    CreateFavoriteResponse:
+      title: "Create `Favorite` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: A created `Favorite`.
+          example:
+            {
+              "id": 1,
+              "user": {
+                  "id": 1,
+                  "username": "May.Parker@harris.com",
+                  "email": "May.Parker@harris.com",
+                  "first_name": "May",
+                  "last_name": "Parker",
+                  "is_active": True
+              },
+              "resource": {
+                  "id": 3,
+                  "employee_levels": [
+                      {
+                          "id": 1,
+                          "name": "Employee",
+                          "description": "Employee Level 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "level": 1
+                      },
+                      {
+                          "id": 2,
+                          "name": "Manager",
+                          "description": "Manager Level 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "level": 2
+                      },
+                      {
+                          "id": 3,
+                          "name": "Executive",
+                          "description": "Executive Level 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "level": 3
+                      },
+                      ...
+                  ],
+                  "subfunctions": [
+                      {
+                          "id": 2,
+                          "function": {
+                              "id": 1,
+                              "name": "Human Resources",
+                              "description": "Function 1.",
+                              "created": "2024-08-27T12:00:00-04:00",
+                              "modified": "2024-08-27T12:00:00-04:00"
+                          },
+                          "name": "Recruiting",
+                          "description": "Function 1 SubFunction 2.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00"
+                      },
+                      {
+                          "id": 1,
+                          "function": {
+                              "id": 1,
+                              "name": "Human Resources",
+                              "description": "Function 1.",
+                              "created": "2024-08-27T12:00:00-04:00",
+                              "modified": "2024-08-27T12:00:00-04:00"
+                          },
+                          "name": "Training",
+                          "description": "Function 1 SubFunction 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00"
+                      },
+                      ...
+                  ],
+                  "tags": [
+                      {
+                          "id": 1,
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "label": "filter::site:Melbourne"
+                      },
+                      {
+                          "id": 2,
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "label": "filter::site:Rochester"
+                      },
+                      ...
+                  ],
+                  "description": "Resource 3 description.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "uid": "a157e2a8-1db7-4ef2-adc1-90e109af0557",
+                  "revision_number": 1,
+                  "name": "Resource 3",
+                  "url": "example-3.org",
+                  "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/3/resource_3.png",
+                  "type": "Resource Type 3",
+                  "download": false,
+                  "active": true,
+                  "previous_revision": null
+              },
+              "created": "2025-01-14T10:26:59.958472-05:00",
+              "rank": 1
+            }
+    CreateFavoriteBadRequestResponse:
+      title: "Create `Favorite` error response due to bad request parameters."
+      example: "Favorite already exists for User: {user} and Resource id: {resource}."
+
+    CreateFavoriteUnAuthorizedResponse:
+      title: "Create `Favorite` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreateFavoriteUserDoesNotExistResponse:
+      title: "Create `Favorite` error response due to using an email for a user that
+        does not exist."
+      example: "User (email={user}) does not exist."
+
+    CreateFavoriteResourceDoesNotExistResponse:
+      title: "Create `Favorite` error response due to using an id for a `Resource` that
+        does not exist."
+      example: "An active Resource (id={resource}) does not exist."
 
     CreateQueryFilterStateRequest:
       title: "Create `QueryFilterState` request."

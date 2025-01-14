@@ -81,7 +81,7 @@ class Favorite:
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except Resource.DoesNotExist as exc:
-            err_msg = f"Resource (id={resource}) does not exist."
+            err_msg = f"An active Resource (id={resource}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
 

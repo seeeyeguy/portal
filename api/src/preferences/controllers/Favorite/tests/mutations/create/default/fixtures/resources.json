@@ -1,0 +1,82 @@
+[
+  {
+    "model": "directory.Resource",
+    "pk": 1,
+    "fields": {
+      "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 1",
+      "description": "Resource 1 description.",
+      "url": "example.org",
+      "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/1/resource_1.png",
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": true,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 2,
+    "fields": {
+      "uid": "4c2c333e-68e9-4dca-8507-ce58cefde072",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 2",
+      "description": "Resource 2 description.",
+      "url": "example-2.org",
+      "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/2/resource_2.png",
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 2",
+      "download": false,
+      "active": true,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 3,
+    "fields": {
+      "uid": "a157e2a8-1db7-4ef2-adc1-90e109af0557",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 3",
+      "description": "Resource 3 description.",
+      "url": "example-3.org",
+      "thumbnail": "resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/3/resource_3.png",
+      "employee_levels": [1, 2, 3],
+      "subfunctions": [1, 2],
+      "tags": [1, 2],
+      "type": "Resource Type 3",
+      "download": false,
+      "active": true,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 4,
+    "fields": {
+      "uid": "0e8ec5b9-11b5-44b6-9b16-6a4d69067d46",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 4",
+      "description": "Resource 4 description.",
+      "url": "example-4.org",
+      "thumbnail": "resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/4/resource_4.png",
+      "employee_levels": [2],
+      "subfunctions": [7, 8],
+      "tags": [3, 4, 7],
+      "type": "Resource Type 4",
+      "download": false,
+      "active": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]
