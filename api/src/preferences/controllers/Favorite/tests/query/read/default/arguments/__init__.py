@@ -72,8 +72,8 @@ VALID_FAVORITES: List[dict] = [
             "active": True,
             "previous_revision": None,
         },
-        "created": "2025-01-02T11:00:00-05:00",
         "rank": 1,
+        "created": "2025-01-02T11:00:00-05:00",
     },
     {
         "id": 2,
@@ -133,7 +133,7 @@ VALID_FAVORITES: List[dict] = [
             "active": True,
             "previous_revision": None,
         },
-        "created": "2024-01-02T11:00:00-05:00",
         "rank": 2,
+        "created": "2024-01-02T11:00:00-05:00",
     },
 ]
