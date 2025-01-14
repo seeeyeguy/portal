@@ -101,6 +101,7 @@ export default function ResourceLink({
       callback={onLinkClick}
       buttonCallback={debouncedUpdateFavorites.current}
       buttonErrorCallback={onButtonClickError}
+      maxLineHeight={2}
     />
   );
 }

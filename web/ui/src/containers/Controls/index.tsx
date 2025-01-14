@@ -1,4 +1,10 @@
+import React from "react";
+import { useLoaderData } from "react-router";
+import lodash from "lodash";
+
 import FilterButtons from "components/buttons/FilterButtons";
+
+import { ControlsProps } from "containers/Controls/types";
 
 import {
   toggleEmployeeLevel,
@@ -6,14 +12,16 @@ import {
 } from "state/actions/portal/directory/Resource/Search";
 import { useGetEmployeeLevelsQuery } from "state/query/api/portal/directory/EmployeeLevel";
 import { useGetFunctionsQuery } from "state/query/api/portal/directory/Function";
+import { useGetQueryFilterStateQuery } from "state/query/api/portal/preferences/QueryFilterState";
 import { useTypedSelector } from "state/store";
 
 import EmployeeLevel from "state/types/portal/directory/EmployeeLevel";
 import Function from "state/types/portal/directory/Function";
+import { User } from "state/types/services/sso";
 
 import styles from "containers/Controls/styles/index.module.css";
 
-export default function Controls() {
+export default function Controls({ filterData, filterTags }: ControlsProps) {
   const { employeeLevels: employeeLevelIds, functions: functionIds } =
     useTypedSelector((state) => state.ResourceSearch);
 
@@ -23,6 +31,21 @@ export default function Controls() {
   const employeeLevels = (rtkEmployeeLevelsQuery.data?.data ??
     []) as EmployeeLevel[];
   const functions = (rtkFunctionsQuery.data?.data ?? []) as Function[];
+
+  const loaderData = useLoaderData() as { user: User };
+
+  const { data: queryFilterStateApiResponse } = useGetQueryFilterStateQuery(
+    loaderData.user.email
+  );
+  const queryFilterStateId = queryFilterStateApiResponse?.data.id;
+
+  const filterDataValues = React.useMemo(
+    () =>
+      lodash
+        .values(filterData.current)
+        .reduce((acc, filters) => [...acc, ...filters], []),
+    [filterData]
+  );
 
   return (
     <>
@@ -38,7 +61,14 @@ export default function Controls() {
           title="Role"
           records={employeeLevels}
           activeFilters={employeeLevelIds}
-          toggleAction={toggleEmployeeLevel}
+          toggleAction={toggleEmployeeLevel(
+            functionIds,
+            employeeLevelIds,
+            filterTags,
+            filterData,
+            filterDataValues,
+            queryFilterStateId
+          )}
         />
       </div>
       <div
@@ -49,10 +79,16 @@ export default function Controls() {
           title="Function"
           records={functions}
           activeFilters={functionIds}
-          toggleAction={toggleFunction}
+          toggleAction={toggleFunction(
+            functionIds,
+            employeeLevelIds,
+            filterTags,
+            filterData,
+            filterDataValues,
+            queryFilterStateId
+          )}
         />
       </div>
-      <hr />
     </>
   );
 }

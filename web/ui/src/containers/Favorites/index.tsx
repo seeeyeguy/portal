@@ -8,10 +8,6 @@ import { FavoritesProps } from "containers/Favorites/types";
 import styles from "containers/Favorites/styles/index.module.css";
 
 export default function Favorites({ favorites, profile }: FavoritesProps) {
-  if (lodash.isEmpty(favorites)) {
-    return <></>;
-  }
-
   const favoriteResources = favorites.map((item) => item.resource);
 
   return (
@@ -32,11 +28,20 @@ export default function Favorites({ favorites, profile }: FavoritesProps) {
               className={styles["favorites-resource-links-container"]}
               aria-description="container for favorite resource links"
             >
-              <ResourceLinks
-                resources={favoriteResources}
-                favorites={favorites}
-                profile={profile}
-              />
+              {lodash.isEmpty(favorites) ? (
+                <div
+                  aria-description="empty container for favorite resource links"
+                  className={styles["favorites-no-resources"]}
+                >
+                  No Favorites Selected
+                </div>
+              ) : (
+                <ResourceLinks
+                  resources={favoriteResources}
+                  favorites={favorites}
+                  profile={profile}
+                />
+              )}
             </div>
           )}
         </RecursiveAccordion>
