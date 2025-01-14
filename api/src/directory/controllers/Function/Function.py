@@ -10,7 +10,6 @@ import logging
 from typing import Tuple, Union
 
 from django.db.models import QuerySet
-from django.db.utils import IntegrityError
 
 from directory import exceptions, models
 
@@ -119,22 +118,17 @@ class Function:
             * rows_affected (int): The number of rows removed.
         """
 
-        try:
-            LOGGER.info(f"Deleting Function with id: {function_id}.")
+        LOGGER.info(f"Deleting Function with id: {function_id}.")
 
-            # Fetch the corresponding `Function` record.
-            function_record: models.Function = models.Function.objects.get(
-                id=function_id
-            )
+        # Query the corresponding `Function` record with the given id.
+        function_query: QuerySet[models.Function] = models.Function.objects.filter(
+            id=function_id
+        )
 
-            # Delete `Function` record.
-            rows_affected, _ = function_record.delete()
+        # Delete `Function` record.
+        rows_affected, _ = function_query.delete()
 
-            return rows_affected
-        except models.Function.DoesNotExist as exc:
-            err_msg = f"Function (id={function_id}) does not exist."
-            LOGGER.error(err_msg)
-            raise exceptions.DirectoryError(err_msg, 404) from exc
+        return rows_affected
 
     @staticmethod
     def fetch_functions(
