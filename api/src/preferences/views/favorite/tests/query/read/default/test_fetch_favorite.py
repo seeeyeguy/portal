@@ -2,10 +2,13 @@
 
 from typing import List
 
+from django.contrib.auth import models as AuthModels
 from django.test import tag, TestCase
 from django.urls import reverse
+from rest_framework import status
 
 from portal.models.fixtures import COMMON_FIXTURES
+from preferences.controllers.Favorite.tests.query.read.default import arguments
 
 
 @tag(
@@ -21,7 +24,20 @@ class TestFetchFavorite(TestCase):
     Tests for GET /v1/preferences/favorites endpoint.
     """
 
-    fixtures: List[str] = [*COMMON_FIXTURES]
+    def setUp(self) -> None:
+
+        super().setUp()
+        user = AuthModels.User.objects.get(email=arguments.FETCH_FAVORITE_USER_EMAIL)
+        self.client.force_login(user=user)
+
+    fixtures: List[str] = [
+        *COMMON_FIXTURES,
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/requests.json",
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/transitions.json",
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/dispositions.json",
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/favorites.json",
+    ]
 
     url: str = reverse("preferences.favorite")
 
@@ -30,7 +46,17 @@ class TestFetchFavorite(TestCase):
         """Success Case: Fetch all `Favorite` records for
         the given user."""
 
+        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL}"
+        response = self.client.get(request_url)
+        favorites = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertListEqual(favorites, arguments.VALID_FAVORITES)
+
     @tag("views.favorite.fetch_favorites_by_user_dne")
     def test_fetch_favorites_by_user_dne(self) -> None:
         """Fail Case: Fetch all `Favorite` records for
         a `User` that does not exist."""
+
+        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL_DNE}"
+        response = self.client.get(request_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
