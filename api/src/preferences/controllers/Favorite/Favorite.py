@@ -116,14 +116,22 @@ class Favorite:
             # Create a list of `Favorite` ids from `ranked_favorites`
             favorite_ids: List[int] = [favorite["id"] for favorite in ranked_favorites]
 
-            # Query `Favorite` records for the instance ids and user given.
-            favorite_records: QuerySet[
-                models.Favorite
-            ] = models.Favorite.objects.filter(user=user_record, id__in=favorite_ids)
+            # Create a list of ranks from `ranked_favorites`.
+            favorite_ranks: List[int] = [
+                favorite["rank"] for favorite in ranked_favorites
+            ]
+
+            # Query `Favorite` records for the user given.
+            favorite_records: QuerySet[models.Favorite] = (
+                models.Favorite.objects.filter(user=user_record)
+            ).order_by("rank")
+
+            # Get the number of existing `Favorite` records.
+            favorites_count: int = favorite_records.count()
 
             # Verify the number of records queried match the number
             # of favorites to update, else raise an exception.
-            if favorite_records.count() != len(ranked_favorites):
+            if favorites_count != len(ranked_favorites):
                 user_favorite_record_ids: List[int] = list(
                     favorite_records.values_list("id", flat=True)
                 )
@@ -139,11 +147,38 @@ class Favorite:
                 LOGGER.error(err_msg)
                 raise exceptions.PreferencesError(err_msg, 404)
 
-            # Update the `Favorite` records.
+            # Verify ranks match the ones in the `Favorite` records.
+            if (
+                favorites_count
+                != favorite_records.filter(rank__in=favorite_ranks).count()
+            ):
+                err_msg: str = (
+                    f"Ranks given: {favorite_ranks}, do not match existing ranks."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.PreferencesError(err_msg, 400)
+
+            # Get the max rank of existing favorites and add 1
+            max_rank: int = favorite_records.last().rank + 1  # type: ignore[union-attr,operator]
+
+            # Construct map of `Favorite` instance ids with their corresponding
+            # new rank.
+            favorite_rank_map: dict = {}
+            for ranked_favorite in ranked_favorites:
+                favorite_rank_map[ranked_favorite["id"]] = ranked_favorite["rank"]
+
             with transaction.atomic():
-                for favorite in ranked_favorites:
-                    rank: int = favorite["rank"]
-                    favorite_records.filter(id=favorite["id"]).update(rank=rank)
+                # Temporarily update the ranks of the existing
+                # `Favorite` records.
+                for favorite in favorite_records:
+                    favorite.rank = max_rank
+                    max_rank += 1
+                models.Favorite.objects.bulk_update(favorite_records, ["rank"])
+
+                # Update the `Favorite` records.
+                for favorite in favorite_records:
+                    favorite.rank = favorite_rank_map[favorite.id]
+                models.Favorite.objects.bulk_update(favorite_records, ["rank"])
 
             return favorite_records
         except User.DoesNotExist as exc:
