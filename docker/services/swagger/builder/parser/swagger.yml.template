@@ -90,6 +90,58 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchEmployeeLevelByIdDoesNotExistResponse"
+    put:
+      tags:
+        - "directory.employeelevel.update"
+      summary: "Update an EmployeeLevel."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `EmployeeLevel` record
+            to update.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmployeeLevelRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelResponse"
+        "400":
+          description: "EmployeeLevel name is a duplicate."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelDuplicateNameErrorResponse" 
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelForbiddenErrorResponse"
+        "404":
+          description: "EmployeeLevel does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelByIdDoesNotExistErrorResponse" 
   /directory/functions:
     get:
       tags:
@@ -1879,6 +1931,54 @@ components:
               },
               ...
             ]
+    
+    UpdateEmployeeLevelRequest:
+      title: "Update `EmployeeLevel` request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the `EmployeeLevel`.
+          default: null
+        description:
+          type: string
+          description: Description of the `EmployeeLevel`.
+          default: null
+
+    UpdateEmployeeLevelResponse:
+      title: "Update `EmployeeLevel` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: An updated `EmployeeLevel`.
+          example:
+            {
+              "id": 1,
+              "name": "Employee Level 1 Name",
+              "description": "Employee Level 1 Description.",
+              "level": 1,
+              "created": "1970-01-01T12:00:00-04:00",
+              "modified": "1970-01-01T12:00:00-04:00",
+            }
+    
+    UpdateEmployeeLevelDuplicateNameErrorResponse:
+      title: "Update `EmployeeLevel` error response due to providing a name
+        that is already used by another EmployeeLevel."
+      example: "EmployeeLevel name({name}) is a duplicate."
+
+    UpdateEmployeeLevelUnAuthorizedResponse:
+      title: "Update `EmployeeLevel` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateEmployeeLevelForbiddenErrorResponse:
+      title: "Update `EmployeeLevel` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    UpdateEmployeeLevelByIdDoesNotExistErrorResponse:
+      title: "Update `EmployeeLevel` error response due to supplying an id
+        for an `EmployeeLevel` that does not exist."
+      example: "EmployeeLevel (id=employee_level_id) does not exist."
 
     UpdateQueryFilterStateRequest:
       title: "Update `QueryFilterState` request."

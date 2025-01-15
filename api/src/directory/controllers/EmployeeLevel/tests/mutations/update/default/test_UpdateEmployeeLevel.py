@@ -60,7 +60,7 @@ class TestUpdateEmployeeLevel(TestCase):
         with pytest.raises(DirectoryError):
             _ = EmployeeLevel.update_employee_level(
                 employee_level_id=arguments.UPDATE_EMPLOYEELEVEL_DNE,
-                name=arguments.UPDATE_EMPLOYEELEVEL_NAME,
+                name=arguments.UPDATE_EMPLOYEELEVEL_NAME_DNE,
                 description=arguments.UPDATE_EMPLOYEELEVEL_DESCRIPTION,
             )
 
