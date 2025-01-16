@@ -1,0 +1,22 @@
+[
+  {
+    "model": "directory.resource",
+    "pk": 1,
+    "fields": {
+      "uid": "e760a300-e489-425f-9375-a10ff0e432a9",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 1 Revision 1",
+      "description": "Test Resource 1.",
+      "url": "example-resource-1.org",
+      "thumbnail": "resources/thumbnails/e760a300-e489-425f-9375-a10ff0e432a9/1/resource_1.png",
+      "employee_levels": [3],
+      "subfunctions": [4],
+      "tags": [5],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": true,
+      "created": "2025-01-01T16:00:00Z"
+    }
+  }
+]
