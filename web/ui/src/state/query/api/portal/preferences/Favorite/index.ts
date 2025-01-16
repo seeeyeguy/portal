@@ -8,7 +8,7 @@ import api from "state/query/api";
 import Favorite from "state/types/portal/preferences/Favorite";
 
 type ApiFavoriteResponse = {
-  data: Favorite | Favorite[];
+  data: Favorite | Favorite[] | number;
   status: number | undefined;
 };
 
@@ -35,8 +35,8 @@ const favoriteApi = api.injectEndpoints({
         url: endpoints.PORTAL.PREFERENCES.FAVORITES(id),
         method: DELETE,
       }),
-      transformResponse: (response: ApiFavorite, meta) => ({
-        data: transformFavoriteRecord(response),
+      transformResponse: (response: number, meta) => ({
+        data: response,
         status: meta?.response?.status,
       }),
       invalidatesTags: ["Favorite"],

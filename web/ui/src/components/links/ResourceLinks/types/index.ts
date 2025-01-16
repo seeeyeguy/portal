@@ -7,3 +7,7 @@ export interface ResourceLinksProps {
   favorites: Favorite[];
   profile: Profile;
 }
+
+export type ResourceFavoriteMap = {
+  [key: string]: { id: string; favoriteId: number | null };
+};
