@@ -118,6 +118,25 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchFunctionByIdDoesNotExistResponse"
+    delete:
+      tags:
+        - "directory.function.delete"
+      summary: "Delete Function."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Function` record
+            to be deleted.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFunctionResponse"
   /directory/resources/search:
     post:
       tags:
@@ -1513,6 +1532,11 @@ components:
       title: "Fetch `Function` error response due to using an id that
         does not exist."
       example: "Function (id=function_id), does not exist."
+
+    DeleteFunctionResponse:
+      title: "Delete `Function` response."
+      type: integer
+      example: 1
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
