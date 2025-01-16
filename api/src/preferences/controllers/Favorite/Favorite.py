@@ -131,7 +131,7 @@ class Favorite:
 
             # Verify the number of records queried match the number
             # of favorites to update, else raise an exception.
-            if favorites_count != len(ranked_favorites):
+            if favorites_count != favorite_records.filter(id__in=favorite_ids).count():
                 user_favorite_record_ids: List[int] = list(
                     favorite_records.values_list("id", flat=True)
                 )
