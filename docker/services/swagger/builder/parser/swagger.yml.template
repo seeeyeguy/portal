@@ -315,6 +315,47 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchFavoritesUserDoesNotExistResponse"
+    put:
+      tags:
+        - "preferences.favorite.rank"
+      summary: "Update the ranks for a user's Favorites based on the given email
+        and supplied rankings."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related to the `Favorite`s that will be
+            updated."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RankFavoritesRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RankFavoritesResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RankFavoritesInvalidParametersResponse"                  
+                  - $ref: "#/components/schemas/RankFavoritesInvalidRanksResponse"
+        "404":
+          description: "User does not exist or missing user Favorite ids."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RankFavoritesUserDoesNotExistResponse"
+                  - $ref: "#/components/schemas/RankFavoritesMissingUserFavoritesResponse"
   /preferences/query-filter-state:
     post:
       tags:
@@ -1114,6 +1155,128 @@ components:
     
     FetchFavoritesUserDoesNotExistResponse:
       title: "Fetch user's `Favorite`s error response due to using an email
+        for a user that does not exist."
+      example: "User (email={user}) does not exist."
+
+    RankFavoritesRequest:
+      title: "Rank user `Favorite`s request."
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: int
+            description: "Id of the user `Favorite`."
+          rank:
+            type: int
+            description: "Rank to be set on the user `Favorite`."      
+      example:
+        [
+          {
+            "id": 1,
+            "rank": 1
+          },
+          {
+            "id": 2,
+            "rank": 2
+          }
+        ]
+
+    RankFavoritesResponse:
+      title: "Rank user `Favorite`s response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: Collection of updated user `Favorite`s.
+          example:
+            [ 
+              {
+                "id": 1,
+                "user": {             
+                  "id": 1,
+                  "username": "May.Parker@harris.com",
+                  "email": "May.Parker@harris.com",
+                  "first_name": "May",
+                  "last_name": "Parker",           
+                  "is_active": True,
+                },
+                "resource": {                
+                  "id": 1,
+                  "employee_levels": [
+                    {
+                      "id": 1,
+                      "name": "Employee",
+                      "description": "Employee Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 1,
+                    },
+                    ...
+                  ],
+                  "subfunctions": [
+                    {
+                      "id": 1,
+                      "function": {
+                        "id": 1,
+                        "name": "Function 1 Name",
+                        "description": "Function 1 Description.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      "name": "Function 1 SubFunction 1 Name",
+                      "description": "Function 1 SubFunction 1 Description.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    ...
+                  ],
+                  "tags": [
+                    {
+                      "id": 1,
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "label": "example",
+                    },
+                    ...
+                  ],
+                  "description": "Resource 1 Revision 1 description.",
+                  "created": "2024-10-01T12:00:00-04:00",
+                  "uid": "000000000000-0000000000-000000000000",
+                  "revision_number": 1,
+                  "name": "Resource 1 Revision 1",
+                  "url": "example-site.org",
+                  "thumbnail": "/path/to/thumbnail.png",
+                  "type": "Resource Type 1",
+                  "download": False,
+                  "active": True,
+                  "previous_revision": None,
+                },
+                "rank": 1,
+                "created": "2025-01-02T11:00:00-05:00",
+              },
+              ...      
+            ]
+
+    RankFavoritesInvalidParametersResponse:
+      title: "Rank user's `Favorite`s error response due to giving invalid
+        parameters."
+      example: "Invalid parameters given."   
+    
+    RankFavoritesInvalidRanksResponse:
+      title: "Rank user's `Favorite`s error response due to giving invalid
+        ranks in the request body."
+      example: "Ranks given: [rank_for_favorite_1,rank_for_favorite_2, ...],
+        do not match existing ranks."
+
+    RankFavoritesMissingUserFavoritesResponse:
+      title: "Rank user's `Favorite`s error response due to not supplying all
+        of the user's `Favorite`s ids in the request body."
+      example: "Favorite ids given: [id_1,id_2,...] do not exist for the
+        User (email={user})."
+    
+    RankFavoritesUserDoesNotExistResponse:
+      title: "Rank user's `Favorite`s error response due to using an email
         for a user that does not exist."
       example: "User (email={user}) does not exist."
 
