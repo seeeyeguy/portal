@@ -375,6 +375,39 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/RankFavoritesUserDoesNotExistResponse"
                   - $ref: "#/components/schemas/RankFavoritesMissingUserFavoritesResponse"
+    delete:
+      tags:
+        - "preferences.favorite.delete"
+      summary: "Delete an existing Favorite by the given id."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: "Primary key of the `Favorite` record to be deleted."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFavoriteResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFavoriteUnAuthorizedResponse"    
+        "404":
+          description: "Favorite does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFavoriteFavoriteDoesNotExistResponse"
+
   /preferences/query-filter-state:
     post:
       tags:
@@ -1298,6 +1331,20 @@ components:
       title: "Rank user's `Favorite`s error response due to using an email
         for a user that does not exist."
       example: "User (email={user}) does not exist."
+
+    DeleteFavoriteResponse:
+      title: "Delete `Favorite` response."
+      type: integer
+      example: 1
+
+    DeleteFavoriteUnAuthorizedResponse:
+      title: "Delete `Favorite` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    DeleteFavoriteFavoriteDoesNotExistResponse:
+      title: "Delete `Favorite` error response due to using an id for
+        a `Favorite` that does not exist."
+      example: "Favorite (id={favorite_id}) does not exist."
 
     CreateQueryFilterStateRequest:
       title: "Create `QueryFilterState` request."

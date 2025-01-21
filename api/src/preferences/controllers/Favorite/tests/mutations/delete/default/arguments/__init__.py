@@ -11,3 +11,7 @@ DELETE_FAVORITE_FAVORITE_ID_DNE: int = 9999
 
 # Number of deleted `Favorite` rows.
 DELETE_FAVORITE_DELETED_ROWS: int = 1
+
+# `User` email used for login on the delete `Favorite`
+# view tests.
+DELETE_FAVORITE_USER_EMAIL: str = "Peter.Parker@harris.com"

@@ -2,10 +2,13 @@
 
 from typing import List
 
+from django.contrib.auth import models as AuthModels
 from django.test import tag, TestCase
 from django.urls import reverse
+from rest_framework import status
 
 from portal.models.fixtures import COMMON_FIXTURES
+from preferences.controllers.Favorite.tests.mutations.delete.default import arguments
 
 
 @tag(
@@ -21,10 +24,38 @@ class TestDeleteFavorite(TestCase):
     Tests for DELETE /v1/preferences/favorites endpoint.
     """
 
-    fixtures: List[str] = [*COMMON_FIXTURES]
+    def setUp(self) -> None:
+
+        super().setUp()
+        user = AuthModels.User.objects.get(email=arguments.DELETE_FAVORITE_USER_EMAIL)
+        self.client.force_login(user=user)
+
+    fixtures: List[str] = [
+        *COMMON_FIXTURES,
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/requests.json",
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/transitions.json",
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/dispositions.json",
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/favorites.json",
+    ]
 
     url: str = reverse("preferences.favorite")
 
     @tag("views.favorite.delete_favorite")
     def test_delete_favorite(self) -> None:
         """Success Case: Delete `Favorite` record with given id."""
+
+        request_url: str = f"{self.url}?id={arguments.DELETE_FAVORITE_FAVORITE_ID}"
+        response = self.client.delete(request_url)
+        rows_deleted = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(rows_deleted, arguments.DELETE_FAVORITE_DELETED_ROWS)
+
+    @tag("views.favorite.delete_favorite_dne")
+    def test_delete_favorite_dne(self) -> None:
+        """Fail Case: Delete `Favorite` record when a Favorite
+        does not exist for the given id."""
+
+        request_url: str = f"{self.url}?id={arguments.DELETE_FAVORITE_FAVORITE_ID_DNE}"
+        response = self.client.delete(request_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
