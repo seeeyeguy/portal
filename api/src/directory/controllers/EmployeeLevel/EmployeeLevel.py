@@ -9,9 +9,7 @@ such as employee, manager, or executive.
 import logging
 from typing import cast, Union
 
-from django.db import transaction
 from django.db.models import QuerySet
-from django.db.utils import IntegrityError
 
 from directory import exceptions, models
 
