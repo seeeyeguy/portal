@@ -201,6 +201,51 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchFunctionByIdDoesNotExistResponse"
+    put:
+      tags:
+        - "preferences.function.update"
+      summary: "Update a Function."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Function` record
+            to update.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFunctionRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateFunctionResponse"
+        "400":
+          description: "Function name is a duplicate."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateFunctionDuplicateNameResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateFunctionUnAuthorizedResponse"
+        "404":
+          description: "Function does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateFunctionDoesNotExistResponse"
     delete:
       tags:
         - "directory.function.delete"
@@ -1696,6 +1741,48 @@ components:
       title: "Fetch `Function` error response due to using an id that
         does not exist."
       example: "Function (id=function_id), does not exist."
+
+    UpdateFunctionRequest:
+      title: "Update `Function` request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name to be applied to the `Function` being updated.
+          default: "Update Function 1"
+        description:
+          type: string
+          description: New description to be applied to the `Function` being updated.
+          default: "Function description 1."
+
+    UpdateFunctionResponse:
+      title: "Update `Function` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: An updated `Function`.
+          example:
+            {
+              "id": 1,
+              "name": "Update Function",
+              "description": "Update Function Level 1.",
+              "created": "2024-08-27T12:00:00-04:00",
+              "modified": "2024-08-27T12:00:00-04:00",
+            }
+
+    UpdateFunctionDoesNotExistResponse:
+      title: "Update `Function` error response due to using an id for a `Function` that
+        does not exist."
+      example: "Function (id={function_id}), does not exist."
+
+    UpdateFunctionUnAuthorizedResponse:
+      title: "Update `Function` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateFunctionDuplicateNameResponse:
+      title: "Update `Function` error response due to using a duplicate name."
+      example: "Function name({name}) is duplicate."
 
     DeleteFunctionResponse:
       title: "Delete `Function` response."
