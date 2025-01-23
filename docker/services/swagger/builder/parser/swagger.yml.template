@@ -143,6 +143,37 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/UpdateEmployeeLevelByIdDoesNotExistErrorResponse" 
   /directory/functions:
+    post:
+      tags:
+        - "directory.function.create"
+      summary: "Create Function."
+      requestBody:
+          content:
+            application/json: 
+              schema:
+                $ref: "#/components/schemas/CreateFunctionRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFunctionResponse"
+        "400":
+          description: "Function name is a duplicate."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFunctionDuplicateNameErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFunctionUnAuthorizedResponse"
     get:
       tags:
         - "directory.function.fetch"
@@ -1584,6 +1615,40 @@ components:
       title: "Fetch `EmployeeLevel` error response due to using an id that
         does not exist."
       example: "Employee Level (id=employee_level_id), does not exist."
+
+    CreateFunctionRequest:
+      title: "Create `Function` request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: "New name to be applied to the `Function` being created."
+          default: "Create Function 1"
+        description:
+          type: string
+          description: "New description to be applied to the `Function` being created."
+          default: "Function description 1"
+
+    CreateFunctionResponse:
+      title: "Create `Function` response."
+      type: object
+      description: A created `Function`.
+      example:
+          {
+            "id": 1,
+            "name": "Create Function",
+            "description": "Create Function Level 1.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+          }
+
+    CreateFunctionDuplicateNameErrorResponse:
+      title: "Create `Function` error response due to using a duplicate name."
+      example: "Function name({name}) is duplicate."
+
+    CreateFunctionUnAuthorizedResponse:
+      title: "Create `Function` error response due to unauthorized access."
+      example: "Not authorized to access resource."
 
     FetchFunctionsResponse:
       title: "Fetch `Function` response."
