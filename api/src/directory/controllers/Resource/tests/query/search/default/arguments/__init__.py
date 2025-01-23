@@ -51,7 +51,7 @@ SEARCH_NON_DOWNLOADABLE_RESOURCE_IDS: List[int] = [2, 4, 6]
 
 # Arguments used for search by name tests.
 SEARCH_BY_NAME: str = "Resource 2 Revision 2"
-SEARCH_BY_NAME_RESOURCE_IDS: List[int] = [2, 4]
+SEARCH_BY_NAME_RESOURCE_IDS: List[int] = [4]
 
 # Arguments used for search by description tests.
 SEARCH_BY_DESCRIPTION: str = "popstick."
@@ -60,7 +60,7 @@ SEARCH_BY_DESCRIPTION_RESOURCE_IDS: List[int] = [2]
 # Arguments used for search by name & description tests.
 SEARCH_BY_NAME_AND_DESCRIPTION_NAME_STRING: str = "Resource 1"
 SEARCH_BY_NAME_AND_DESCRIPTION_DESCRIPTION_STRING: str = "ice cream."
-SEARCH_BY_NAME_AND_DESCRIPTION_RESOURCE_IDS: List[int] = [2, 5, 6, 7]
+SEARCH_BY_NAME_AND_DESCRIPTION_RESOURCE_IDS: List[int] = [2, 7]
 
 # Arguments used for search by functions tests.
 SEARCH_BY_FUNCTION_IDS: List[int] = [1, 2]
