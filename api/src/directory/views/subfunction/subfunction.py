@@ -86,6 +86,7 @@ class SubFunction(View):
         rows_affected = controllers.SubFunction.delete_subfunction(
             subfunction_id=body["id"]
         )
+
         return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchSubFunctionRequest))

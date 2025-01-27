@@ -90,7 +90,11 @@ class SubFunction:
         """
 
         LOGGER.info(f"Deleting SubFunction with id: {subfunction_id}.")
-        return 1
+
+        # Delete `SubFunction` record.
+        rows_affected, _ = models.SubFunction.objects.filter(id=subfunction_id).delete()
+
+        return rows_affected
 
     @staticmethod
     def fetch_subfunctions(
