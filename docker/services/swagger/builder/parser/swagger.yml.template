@@ -142,6 +142,32 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/UpdateEmployeeLevelByIdDoesNotExistErrorResponse" 
+    delete:
+      tags:
+        - "directory.employeelevel.delete"
+      summary: "Delete EmployeeLevel."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `EmployeeLevel` record
+            to delete.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteEmployeeLevelResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteEmployeeLevelUnAuthorizedResponse"
   /directory/functions:
     post:
       tags:
@@ -2131,6 +2157,15 @@ components:
       title: "Update `EmployeeLevel` error response due to supplying an id
         for an `EmployeeLevel` that does not exist."
       example: "EmployeeLevel (id=employee_level_id) does not exist."
+
+    DeleteEmployeeLevelResponse:
+      title: "Delete `EmployeeLevel` response."
+      type: integer
+      example: 1
+
+    DeleteEmployeeLevelUnAuthorizedResponse:
+      title: "Delete `EmployeeLevel` error response due to unauthorized access."
+      example: "Not authorized to access resource."
 
     UpdateQueryFilterStateRequest:
       title: "Update `QueryFilterState` request."

@@ -106,22 +106,16 @@ class EmployeeLevel:
             * rows_affected (int): The number of rows removed.
         """
 
-        try:
-            LOGGER.info(f"Deleting EmployeeLevel with id: {employee_level_id}.")
+        LOGGER.info(f"Deleting EmployeeLevel with id: {employee_level_id}.")
 
-            # Delete the corresponding `EmployeeLevel` record.
-            employee_level_record: models.EmployeeLevel = (
-                models.EmployeeLevel.objects.get(id=employee_level_id)
-            )
+        # Delete the corresponding `EmployeeLevel` record.
+        employee_level_record: QuerySet[
+            models.EmployeeLevel, models.EmployeeLevel
+        ] = models.EmployeeLevel.objects.filter(id=employee_level_id)
 
-            rows_affected, _ = employee_level_record.delete()
+        rows_affected, _ = employee_level_record.delete()
 
-            return rows_affected
-
-        except models.EmployeeLevel.DoesNotExist as exc:
-            err_msg = f"Employee Level (id={employee_level_id}) does not exist."
-            LOGGER.error(err_msg)
-            raise exceptions.DirectoryError(err_msg, 404) from exc
+        return rows_affected
 
     @staticmethod
     def fetch_employee_levels(
