@@ -70,6 +70,7 @@ class Tag(View):
         LOGGER.info(f"DELETE /v1/directory/tags?id={body['id']}.")
 
         rows_affected = controllers.Tag.delete_tag(tag_id=body["id"])
+
         return http.JsonResponse(rows_affected, status=status.HTTP_200_OK, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchTagRequest))
