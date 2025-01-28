@@ -74,7 +74,14 @@ class Tag:
         """
 
         LOGGER.info(f"Deleting Tag with id: {tag_id}.")
-        return 1
+
+        # Query the corresponding `Tag` record with the given id.
+        tag_query: QuerySet[models.Tag] = models.Tag.objects.filter(id=tag_id)
+
+        # Delete `Tag` record.
+        rows_affected, _ = tag_query.delete()
+
+        return rows_affected
 
     @staticmethod
     def fetch_tags(
