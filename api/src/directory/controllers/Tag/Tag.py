@@ -41,8 +41,14 @@ class Tag:
         """
 
         LOGGER.info(f"Creating Tag with label: {label}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+
+        if models.Tag.objects.filter(label=label).exists():
+            err_msg = f"A Tag with the given label: ({label}) already exists."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400)
+
+        tag_record = models.Tag.objects.create(label=label)
+        return tag_record
 
     @staticmethod
     def update_tag(tag_id: int, label: str) -> models.Tag:
