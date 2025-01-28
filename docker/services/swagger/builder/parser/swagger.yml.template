@@ -358,6 +358,32 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchSubFunctionByIdDoesNotExistResponse"
+    delete:
+      tags:
+        - "directory.subfunction.delete"
+      summary: "Delete SubFunction."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `SubFunction` record
+            to be deleted.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteSubFunctionResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteSubFunctionUnAuthorizedResponse"
   /directory/tags:
     get:
       tags:
@@ -2023,6 +2049,15 @@ components:
       title: "Fetch `SubFunction` error response due to using an id that
         does not exist."
       example: "SubFunction (id=subfunction_id), does not exist."
+
+    DeleteSubFunctionResponse:
+      title: "Delete `SubFunction` response."
+      type: integer
+      example: 1
+
+    DeleteSubFunctionUnAuthorizedResponse:
+      title: "Delete `SubFunction` error response due to unauthorized access."
+      example: "Not authorized to access resource."
     
     FetchTagsResponse:
       title: "Fetch `Tag` response."
