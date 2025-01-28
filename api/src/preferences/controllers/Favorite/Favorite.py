@@ -199,23 +199,14 @@ class Favorite:
             * favorite_id (int): The id of the `Favorite` record being deleted.
 
         Returns:
-            rows_affected (int): Number of rows removed.
+            * rows_affected (int): Number of rows removed.
         """
 
-        try:
-            LOGGER.info(f"Deleting Favorite instance with id: {favorite_id}.")
+        LOGGER.info(f"Deleting Favorite instance with id: {favorite_id}.")
 
-            # Fetch `Favorite` record to be deleted.
-            favorite_record: models.Favorite = models.Favorite.objects.get(
-                id=favorite_id
-            )
-            # Delete `Favorite` record.
-            rows_affected, _ = favorite_record.delete()
-            return rows_affected
-        except models.Favorite.DoesNotExist as exc:
-            err_msg: str = f"Favorite (id={favorite_id}) does not exist."
-            LOGGER.error(err_msg)
-            raise exceptions.PreferencesError(err_msg, 404) from exc
+        # Delete `Favorite` record.
+        rows_affected, _ = models.Favorite.objects.filter(id=favorite_id).delete()
+        return rows_affected
 
     @staticmethod
     def fetch_favorites(user: str) -> QuerySet[models.Favorite]:
