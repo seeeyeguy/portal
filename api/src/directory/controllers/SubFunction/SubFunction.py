@@ -6,7 +6,7 @@ helps to classify a resource within a specialized division within a
 """
 
 import logging
-from typing import Union
+from typing import Tuple, Union
 
 from django.db.models import QuerySet
 
@@ -53,7 +53,7 @@ class SubFunction:
     @staticmethod
     def update_subfunction(
         subfunction_id: int, name: str, description: str, function: int
-    ) -> models.SubFunction:
+    ) -> Tuple[models.SubFunction, int]:
         """
         Update a `SubFunction` record for the given id with the given
         name, description, and `Function`.
@@ -68,14 +68,50 @@ class SubFunction:
 
         Returns:
             * subfunction (models.SubFunction): The updated `SubFunction` record.
+            * rows_affected (int): The number of `SubFunction` records updated.
         """
 
-        LOGGER.info(
-            f"Updating SubFunction with id: {subfunction_id} with name: {name}, "
-            f"description: {description}, and Function id: {function}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Updating SubFunction with id: {subfunction_id} with name: {name}, "
+                f"description: {description}, and Function id: {function}."
+            )
+
+            # Fetch `Function` record by id.
+            function_record: models.Function = models.Function.objects.get(id=function)
+
+            # Fetch `SubFunction` record by id.
+            subfunction: models.SubFunction = models.SubFunction.objects.get(
+                id=subfunction_id
+            )
+
+            # Check for existing `SubFunction` with given name, excluding
+            # the target `SubFunction`.
+            if (
+                models.SubFunction.objects.filter(name=name)
+                .exclude(id=subfunction_id)
+                .exists()
+            ):
+                err_msg = f"SubFunction with name: {name} already exists."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Update the `SubFunction` record.
+            rows_affected: int = models.SubFunction.objects.filter(
+                id=subfunction_id
+            ).update(name=name, description=description, function=function_record)
+
+            subfunction.refresh_from_db()
+
+            return subfunction, rows_affected
+        except models.Function.DoesNotExist as exc:
+            err_msg = f"Function (id={function}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
+        except models.SubFunction.DoesNotExist as exc:
+            err_msg = f"SubFunction (id={subfunction_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def delete_subfunction(subfunction_id: int) -> int:

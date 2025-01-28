@@ -55,26 +55,34 @@ class SubFunction(View):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/subfunctions."""
 
-        req = serializers.UpdateSubFunctionRequestQueryParams(data=request.GET)
+        try:
+            req = serializers.UpdateSubFunctionRequestQueryParams(data=request.GET)
 
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            subfunction_id: int = req.validated_data.get("id")
+
+            LOGGER.info(f"PUT /v1/directory/subfunctions?id={subfunction_id}.")
+
+            # Update the target `SubFunction`.
+            subfunction, _ = controllers.SubFunction.update_subfunction(
+                subfunction_id=subfunction_id,
+                name=body["name"],
+                description=body["description"],
+                function=body["function"],
             )
 
-        subfunction_id: int = req.validated_data.get("id")
-
-        LOGGER.info(f"PUT /v1/directory/subfunctions?id={subfunction_id}.")
-
-        subfunction = controllers.SubFunction.update_subfunction(
-            subfunction_id=subfunction_id,
-            name=body["name"],
-            description=body["description"],
-            function=body["function"],
-        )
-        return http.JsonResponse(
-            subfunction, status=status.HTTP_201_CREATED, safe=False
-        )
+            # Serialize `SubFunction`.
+            data: dict = SubFunctionSerializer(subfunction).data
+            return http.JsonResponse(
+                data=data, status=status.HTTP_201_CREATED, safe=False
+            )
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(data=exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required)
     @method_decorator(with_serializer(serializers.DeleteSubFunctionRequest))
