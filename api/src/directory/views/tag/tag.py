@@ -38,10 +38,16 @@ class Tag(View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/tags."""
 
-        LOGGER.info("POST /v1/directory/tags.")
+        try:
+            LOGGER.info("POST /v1/directory/tags.")
 
-        tag = controllers.Tag.create_tag(label=body["label"])
-        return http.JsonResponse(tag, status=status.HTTP_201_CREATED, safe=False)
+            tag = controllers.Tag.create_tag(label=body["label"])
+
+            data: dict = TagSerializer(tag).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required)
     @method_decorator(with_serializer(serializers.UpdateTagRequest))
