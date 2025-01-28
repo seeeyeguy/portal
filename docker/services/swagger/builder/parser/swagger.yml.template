@@ -553,14 +553,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteFavoriteUnAuthorizedResponse"    
-        "404":
-          description: "Favorite does not exist."
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/components/schemas/DeleteFavoriteFavoriteDoesNotExistResponse"
+                  - $ref: "#/components/schemas/DeleteFavoriteUnAuthorizedResponse"
 
   /preferences/query-filter-state:
     post:
@@ -1494,11 +1487,6 @@ components:
     DeleteFavoriteUnAuthorizedResponse:
       title: "Delete `Favorite` error response due to unauthorized access."
       example: "Not authorized to access resource."
-    
-    DeleteFavoriteFavoriteDoesNotExistResponse:
-      title: "Delete `Favorite` error response due to using an id for
-        a `Favorite` that does not exist."
-      example: "Favorite (id={favorite_id}) does not exist."
 
     CreateQueryFilterStateRequest:
       title: "Create `QueryFilterState` request."

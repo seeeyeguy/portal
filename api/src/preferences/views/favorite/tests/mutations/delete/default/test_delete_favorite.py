@@ -50,12 +50,3 @@ class TestDeleteFavorite(TestCase):
         rows_deleted = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(rows_deleted, arguments.DELETE_FAVORITE_DELETED_ROWS)
-
-    @tag("views.favorite.delete_favorite_dne")
-    def test_delete_favorite_dne(self) -> None:
-        """Fail Case: Delete `Favorite` record when a Favorite
-        does not exist for the given id."""
-
-        request_url: str = f"{self.url}?id={arguments.DELETE_FAVORITE_FAVORITE_ID_DNE}"
-        response = self.client.delete(request_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
