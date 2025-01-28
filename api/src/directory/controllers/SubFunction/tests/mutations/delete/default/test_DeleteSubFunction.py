@@ -6,6 +6,9 @@ from typing import List
 
 from django.test import tag, TestCase
 
+from directory.controllers.SubFunction.SubFunction import SubFunction
+from directory.controllers.SubFunction.tests.mutations.delete.default import arguments
+
 
 @tag(
     "controllers",
@@ -26,3 +29,9 @@ class TestDeleteSubFunction(TestCase):
     @tag("controllers.subfunction.delete_subfunction")
     def test_delete_subfunction(self) -> None:
         """Success Case: Delete a `SubFunction` record."""
+
+        rows_affected = SubFunction.delete_subfunction(
+            subfunction_id=arguments.DELETE_SUBFUNCTION_SUBFUNCTION_ID
+        )
+
+        self.assertEqual(rows_affected, arguments.DELETE_SUBFUNCTION_ROWS_AFFECTED)
