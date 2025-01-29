@@ -10,7 +10,6 @@ for the `BI Portal` application.
 import logging
 
 from django import http
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -20,19 +19,20 @@ from preferences.models.QueryFilterState.serializers import QueryFilterStateSeri
 from preferences.views import serializers
 from preferences.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
 
-class QueryFilterState(LoginRequiredMixin, View):
+class QueryFilterState(View):
     """
     Handle user requests to create, fetch, update, and delete `QueryFilterState`
     records for `BI Portal`. `QueryFilterState` represents a user's preferred state
     of filters for the `BI Portal` application.
     """
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.CreateQueryFilterStateRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/preferences/query-filter-state."""
@@ -56,6 +56,7 @@ class QueryFilterState(LoginRequiredMixin, View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.UpdateQueryFilterStateRequest))
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/preferences/query-filter-state."""
@@ -92,6 +93,7 @@ class QueryFilterState(LoginRequiredMixin, View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.FetchQueryFilterStateRequest))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/preferences/query-filter-state."""

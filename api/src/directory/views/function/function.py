@@ -12,7 +12,6 @@ import logging
 from typing import List, Union
 
 from django import http
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -23,7 +22,7 @@ from directory.views import serializers
 
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import admin_required, login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
@@ -37,7 +36,8 @@ class Function(View):
     and responsibilities within the organization.
     """
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.CreateFunctionRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/functions."""
@@ -55,7 +55,8 @@ class Function(View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.UpdateFunctionRequest))
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/functions."""
@@ -85,7 +86,8 @@ class Function(View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.DeleteFunctionRequest))
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/functions."""

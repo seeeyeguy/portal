@@ -168,6 +168,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteEmployeeLevelUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteEmployeeLevelForbiddenErrorResponse"
   /directory/functions:
     post:
       tags:
@@ -200,6 +207,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateFunctionForbiddenErrorResponse"
     get:
       tags:
         - "directory.function.fetch"
@@ -229,7 +243,7 @@ paths:
                   - $ref: "#/components/schemas/FetchFunctionByIdDoesNotExistResponse"
     put:
       tags:
-        - "preferences.function.update"
+        - "directory.function.update"
       summary: "Update a Function."
       parameters:
         - in: query
@@ -265,6 +279,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/UpdateFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateFunctionForbiddenErrorResponse"
         "404":
           description: "Function does not exist."
           content:
@@ -291,6 +312,20 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteFunctionResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteFunctionForbiddenErrorResponse"
   /directory/resources/search:
     post:
       tags:
@@ -384,6 +419,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteSubFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteSubFunctionForbiddenErrorResponse"
   /directory/tags:
     get:
       tags:
@@ -507,6 +549,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchFavoritesResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFavoriteUnAuthorizedResponse"
         "404":
           description: "User does not exist."
           content:
@@ -547,6 +596,13 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/RankFavoritesInvalidParametersResponse"                  
                   - $ref: "#/components/schemas/RankFavoritesInvalidRanksResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RankFavoritesUnAuthorizedResponse"
         "404":
           description: "User does not exist or missing user Favorite ids."
           content:
@@ -1377,7 +1433,11 @@ components:
               },
               ...      
             ]
-    
+
+    FetchFavoriteUnAuthorizedResponse:
+      title: "Fetch `Favorite` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
     FetchFavoritesUserDoesNotExistResponse:
       title: "Fetch user's `Favorite`s error response due to using an email
         for a user that does not exist."
@@ -1493,6 +1553,10 @@ components:
         ranks in the request body."
       example: "Ranks given: [rank_for_favorite_1,rank_for_favorite_2, ...],
         do not match existing ranks."
+    
+    RankFavoritesUnAuthorizedResponse:
+      title: "Rank user's `Favorite`s error response due to unauthorized access."
+      example: "Not authorized to access resource."
 
     RankFavoritesMissingUserFavoritesResponse:
       title: "Rank user's `Favorite`s error response due to not supplying all
@@ -1734,6 +1798,10 @@ components:
     CreateFunctionUnAuthorizedResponse:
       title: "Create `Function` error response due to unauthorized access."
       example: "Not authorized to access resource."
+    
+    CreateFunctionForbiddenErrorResponse:
+      title: "Create `Function` error response due to forbidden access."
+      example: "Permissions Denied."
 
     FetchFunctionsResponse:
       title: "Fetch `Function` response."
@@ -1811,23 +1879,35 @@ components:
               "modified": "2024-08-27T12:00:00-04:00",
             }
 
-    UpdateFunctionDoesNotExistResponse:
-      title: "Update `Function` error response due to using an id for a `Function` that
-        does not exist."
-      example: "Function (id={function_id}), does not exist."
+    UpdateFunctionDuplicateNameResponse:
+      title: "Update `Function` error response due to using a duplicate name."
+      example: "Function name({name}) is duplicate."
 
     UpdateFunctionUnAuthorizedResponse:
       title: "Update `Function` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
-    UpdateFunctionDuplicateNameResponse:
-      title: "Update `Function` error response due to using a duplicate name."
-      example: "Function name({name}) is duplicate."
+    UpdateFunctionForbiddenErrorResponse:
+      title: "Update `Function` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    UpdateFunctionDoesNotExistResponse:
+      title: "Update `Function` error response due to using an id for a `Function` that
+        does not exist."
+      example: "Function (id={function_id}), does not exist."
 
     DeleteFunctionResponse:
       title: "Delete `Function` response."
       type: integer
       example: 1
+
+    DeleteFunctionUnAuthorizedResponse:
+      title: "Delete `Function` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    DeleteFunctionForbiddenErrorResponse:
+      title: "Delete `Function` error response due to forbidden access."
+      example: "Permissions Denied."
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
@@ -2058,6 +2138,10 @@ components:
     DeleteSubFunctionUnAuthorizedResponse:
       title: "Delete `SubFunction` error response due to unauthorized access."
       example: "Not authorized to access resource."
+
+    DeleteSubFunctionForbiddenErrorResponse:
+      title: "Delete `SubFunction` Error response due to forbidden access."
+      example: "Permissions Denied."
     
     FetchTagsResponse:
       title: "Fetch `Tag` response."
@@ -2189,6 +2273,10 @@ components:
     DeleteEmployeeLevelUnAuthorizedResponse:
       title: "Delete `EmployeeLevel` error response due to unauthorized access."
       example: "Not authorized to access resource."
+
+    DeleteEmployeeLevelForbiddenErrorResponse:
+      title: "Delete `EmployeeLevel` error response due to forbidden access."
+      example: "Permissions Denied."
 
     UpdateQueryFilterStateRequest:
       title: "Update `QueryFilterState` request."

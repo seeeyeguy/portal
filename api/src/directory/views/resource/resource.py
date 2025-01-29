@@ -11,7 +11,6 @@ content served by `BI Portal`.
 import logging
 
 from django import http
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -30,7 +29,7 @@ from directory.models.Resource.serializers import ResourceSerializer
 from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ class Resource(View):
     tool within L3Harris technologies.
     """
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.CreateResourceRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/resources."""
@@ -65,7 +64,7 @@ class Resource(View):
         resource = ResourceController.create_resource(params=create_params)
         return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.UpdateResourceRequest))
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/resources."""

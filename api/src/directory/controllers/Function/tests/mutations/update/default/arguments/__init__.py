@@ -4,7 +4,7 @@ controller pytests.
 """
 
 # User for updating the `Function` record.
-UPDATE_FUNCTION_USER_EMAIL: str = "May.Parker@harris.com"
+UPDATE_FUNCTION_USER_EMAIL: str = "Tony.Stark@harris.com"
 
 # Arguments for successfully updating `Function` record.
 UPDATE_FUNCTION_ID: int = 1

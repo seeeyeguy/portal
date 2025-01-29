@@ -9,7 +9,6 @@ import logging
 from typing import List, Union
 
 from django import http
-from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -20,7 +19,7 @@ from directory.models.Tag.serializers import TagSerializer
 from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
@@ -33,7 +32,7 @@ class Tag(View):
     keywords to better help users search and filter resource records.
     """
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.CreateTagRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/tags."""
@@ -49,7 +48,7 @@ class Tag(View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.UpdateTagRequest))
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/tags."""
@@ -68,7 +67,7 @@ class Tag(View):
         tag = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
         return http.JsonResponse(tag, status=status.HTTP_201_CREATED, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.DeleteTagRequest))
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/tags."""

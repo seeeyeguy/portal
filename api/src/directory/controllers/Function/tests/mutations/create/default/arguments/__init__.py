@@ -8,7 +8,7 @@ CREATE_FUNCTION_NAME: str = "Create Function"
 CREATE_FUNCTION_DESCRIPTION: str = "Create Function Level 1."
 
 # `User` email used for testing create `Function`.
-CREATE_FUNCTION_USER_EMAIL: str = "May.Parker@harris.com"
+CREATE_FUNCTION_USER_EMAIL: str = "Tony.Stark@harris.com"
 
 # Duplicate `Function` name for testing failure case.
 CREATE_FUNCTION_DUPLICATE_NAME: str = "Engineering"

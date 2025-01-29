@@ -8,7 +8,7 @@ controller pytests.
 DELETE_FUNCTION_BY_ID: int = 1
 
 # `User` email used for testing delete `Function` record.
-DELETE_FUNCTION_USER_EMAIL: str = "May.Parker@harris.com"
+DELETE_FUNCTION_USER_EMAIL: str = "Tony.Stark@harris.com"
 
 # Valid `Function` record dictionary.
 VALID_FUNCTION_RECORDS: dict = {
