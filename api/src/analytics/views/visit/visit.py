@@ -10,7 +10,6 @@ particularly in regards to the use of resources.
 import logging
 
 from django import http
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -20,19 +19,20 @@ from analytics.models.Visit.serializers import VisitSerializer
 from analytics.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Visit(LoginRequiredMixin, View):
+class Visit(View):
     """
     Handle user requests to create, fetch, update, and delete `Visit`
     records for `BI Portal`. `Visit` stores and tracks resource
     utilization data for users.
     """
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializer_class=serializers.CreateVisitRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/analytics/visits."""
@@ -54,6 +54,7 @@ class Visit(LoginRequiredMixin, View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializer_class=serializers.FetchVisitRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:

@@ -7,7 +7,6 @@ table. `Profile` offers additional information about a user.
 import logging
 
 from django import http
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -16,18 +15,19 @@ from users import controllers, exceptions
 from users.models.Profile.serializers import ProfileSerializer
 from users.views import serializers
 
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Profile(LoginRequiredMixin, View):
+class Profile(View):
     """
     Handle user requests to fetch `Profile` records for `BI Portal`.
     `Profile` offers additional information about a user.
     """
 
+    @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.FetchProfileRequest))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/users/profile."""

@@ -10,7 +10,6 @@ import logging
 from typing import List, Union
 
 from django import http
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -20,7 +19,7 @@ from directory.models.SubFunction.serializers import SubFunctionSerializer
 from directory.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.utils.decorators import with_serializer
+from manager.utils.decorators import admin_required, login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
@@ -34,7 +33,8 @@ class SubFunction(View):
     area of expertise.
     """
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.CreateSubFunctionRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/subfunctions."""
@@ -50,7 +50,8 @@ class SubFunction(View):
             subfunction, status=status.HTTP_201_CREATED, safe=False
         )
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.UpdateSubFunctionRequest))
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/subfunctions."""
@@ -84,7 +85,8 @@ class SubFunction(View):
             LOGGER.error(exc.message)
             return http.JsonResponse(data=exc.message, status=exc.status, safe=False)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.DeleteSubFunctionRequest))
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/subfunctions."""

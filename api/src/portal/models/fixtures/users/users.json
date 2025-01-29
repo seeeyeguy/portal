@@ -29,7 +29,7 @@
             "first_name": "Tony",
             "last_name": "Stark",
             "email": "Tony.Stark@harris.com",
-            "is_superuser": false
+            "is_superuser": true
         }
     }
 ]
