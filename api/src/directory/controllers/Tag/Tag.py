@@ -10,6 +10,7 @@ from typing import cast, Union
 
 from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from directory import exceptions, models
 
@@ -63,9 +64,34 @@ class Tag:
             * tag (models.Tag): The `Tag` record updated.
         """
 
-        LOGGER.info(f"Updating Tag with id: {tag_id} with label: {label}.")
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(f"Updating Tag with id: {tag_id} with label: {label}.")
+
+            # Fetch `Tag` record by id.
+            tag_record: models.Tag = models.Tag.objects.get(id=tag_id)
+
+            # Check for existing `Tag` with given label, excluding
+            # the target `Tag`.
+            if (
+                models.Tag.objects.filter(label__iexact=label)
+                .exclude(id=tag_id)
+                .exists()
+            ):
+                raise exceptions.DirectoryError(
+                    f"Tag with label {label} already exists.", 400
+                )
+
+            # Update the `Tag` record.
+            rows_affected = models.Tag.objects.filter(id=tag_id).update(
+                label=label, modified=timezone.now()
+            )
+            tag_record.refresh_from_db()
+
+            return tag_record
+        except models.Tag.DoesNotExist as exc:
+            err_msg = f"Tag (id={tag_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def delete_tag(tag_id: int) -> int:

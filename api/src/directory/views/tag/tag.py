@@ -53,19 +53,27 @@ class Tag(View):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/tags."""
 
-        req = serializers.UpdateTagRequestQueryParams(data=request.GET)
+        try:
+            req = serializers.UpdateTagRequestQueryParams(data=request.GET)
 
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
-            )
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
 
-        tag_id: int = req.validated_data.get("id")
+            tag_id: int = req.validated_data.get("id")
 
-        LOGGER.info(f"PUT /v1/directory/tags?id={tag_id}.")
+            LOGGER.info(f"PUT /v1/directory/tags?id={tag_id}.")
 
-        tag = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
-        return http.JsonResponse(tag, status=status.HTTP_201_CREATED, safe=False)
+            tag = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
+
+            # Serialize 'Tag'.
+            data: dict = TagSerializer(tag).data
+
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.DeleteTagRequest))
