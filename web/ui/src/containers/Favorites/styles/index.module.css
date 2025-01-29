@@ -1,0 +1,14 @@
+.favorites {
+  > section {
+    margin: 0 2.5rem;
+  }
+
+  .favorites-resource-links-container {
+    background: var(--color-white);
+    padding: 1rem;
+  }
+
+  .favorite-accordion summary div {
+    color: var(--color-data-blue);
+  }
+}

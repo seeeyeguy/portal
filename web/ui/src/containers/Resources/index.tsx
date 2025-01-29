@@ -42,6 +42,7 @@ export default function Resources({
       page: null,
       limit: null,
     });
+
   const resources = (ResourceSearchApiResource?.data ?? {}) as ResourceFunctree;
 
   if (!(resources && !lodash.isEmpty(resources) && resources[title])) {

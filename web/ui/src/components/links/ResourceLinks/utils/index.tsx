@@ -2,8 +2,9 @@ import lodash from "lodash";
 
 import ResourceLink from "components/links/ResourceLink";
 
+import { ResourceFavoriteMap } from "components/links/ResourceLinks/types";
+
 import Resource from "state/types/portal/directory/Resource";
-import Favorite from "state/types/portal/preferences/Favorite";
 import Profile from "state/types/portal/users/Profile";
 import Segment from "state/types/portal/users/Segment";
 import { User } from "state/types/services/sso";
@@ -37,14 +38,14 @@ function getThumbnailPath(resource: Resource) {
 /**
  * Create resource links, given a collection of resource records.
  * @param resources A collection of resource records, typically from an Api.
- * @param favorites A collection of favorite records, used to determine the
+ * @param resourceFavoriteMap A map of records and their favorites, used to determine the
  * state of a ResourceLink's favorite button.
  * @param profile A profile record, used to determine a user's access to a resource.
  * @returns {ResourceLink[]} A collection of resource links.
  */
 export const createResourceCollection = (
   resources: Resource[],
-  favorites: Favorite[],
+  resourceFavoriteMap: ResourceFavoriteMap,
   profile: Profile
 ) =>
   resources
@@ -61,7 +62,7 @@ export const createResourceCollection = (
         return true;
       })
     )
-    .map((resource, index) => (
+    .map((resource) => (
       <ResourceLink
         id={resource.id}
         name={resource.name}
@@ -69,9 +70,7 @@ export const createResourceCollection = (
         url={resource.url}
         thumbnail={getThumbnailPath(resource)}
         download={resource.download}
-        favoriteId={
-          favorites.find((favorite) => favorite.resource.id === resource.id)?.id
-        }
-        key={index}
+        favoriteId={resourceFavoriteMap[resource.id].favoriteId}
+        key={resourceFavoriteMap[resource.id].id}
       />
     ));

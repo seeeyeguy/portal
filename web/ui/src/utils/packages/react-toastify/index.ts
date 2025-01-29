@@ -1,4 +1,4 @@
-import { ToastPosition } from "react-toastify/dist/types";
+import { ToastPosition } from "react-toastify";
 
 export const toastContainerConfig = {
   position: "top-center" as ToastPosition,

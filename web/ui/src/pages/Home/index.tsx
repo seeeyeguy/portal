@@ -3,6 +3,7 @@ import { useLoaderData } from "react-router";
 
 import NavBar from "components/nav/NavBar";
 import Controls from "containers/Controls";
+import Favorites from "containers/Favorites";
 import Results from "containers/Results";
 import SessionControls from "containers/SessionControls";
 
@@ -61,6 +62,7 @@ export default function Home() {
       <div id="page-content">
         <Controls />
         <SessionControls filterData={filterData} filterTags={filterTags} />
+        <Favorites favorites={favorites} profile={profile} />
         <Results
           favorites={favorites}
           filterData={filterData}

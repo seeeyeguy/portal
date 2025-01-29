@@ -1,10 +1,12 @@
 import React from "react";
 import { toast } from "react-toastify";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { FavoriteThumbnailLink } from "adas-react-components";
+import lodash from "lodash";
 
 import { ResourceLinkProps } from "components/links/ResourceLink/types";
 
-import { CREATED, OK } from "routes/api/helpers/headers/status-codes";
+import { SERVER_ERROR } from "routes/api/helpers/headers/status-codes";
 import visitApi, {
   ApiVisitRequest,
 } from "state/query/api/portal/analytics/Visit";
@@ -28,38 +30,45 @@ export default function ResourceLink({
 }: ResourceLinkProps) {
   const dispatch = useAppDispatch();
 
+  // Reduce errors if the button is pressed rapidly.
+  const debouncedUpdateFavorites = React.useRef(
+    lodash.debounce(() => updateFavorites(), 200, { leading: true })
+  );
+
   const [isButtonActive, setIsButtonActive] =
     React.useState<boolean>(!!favoriteId);
 
-  const onButtonClick = React.useCallback(async () => {
-    if (isButtonActive) {
+  const updateFavorites = React.useCallback(async () => {
+    if (!isButtonActive) {
       const body: ApiFavoriteRequest = { resource: id };
       const promise = dispatch(
         favoriteApi.endpoints.addFavorite.initiate(body)
       );
-      const { data, error } = await promise;
-      if (error) {
+      const { error } = await promise;
+
+      // Handle the addFavorite API error.
+      if (error && (error as FetchBaseQueryError).status === SERVER_ERROR) {
         const message =
           "data" in error ? (error.data as string) : DEFAULT_API_ERROR_MESSAGE;
+        setIsButtonActive(false);
         throw new Error(message);
       }
-      const { status } = data ?? {};
-      setIsButtonActive(status === CREATED);
     } else {
       if (favoriteId) {
         const promise = dispatch(
           favoriteApi.endpoints.removeFavorite.initiate(favoriteId)
         );
-        const { data, error } = await promise;
-        if (error) {
+        const { error } = await promise;
+
+        // Handle the removeFavorite API error.
+        if (error && (error as FetchBaseQueryError).status === SERVER_ERROR) {
           const message =
             "data" in error
               ? (error.data as string)
               : DEFAULT_API_ERROR_MESSAGE;
+          setIsButtonActive(true);
           throw new Error(message);
         }
-        const { status } = data ?? {};
-        setIsButtonActive(status !== OK);
       }
     }
   }, [favoriteId, id, isButtonActive, dispatch, setIsButtonActive]);
@@ -76,6 +85,7 @@ export default function ResourceLink({
 
   return (
     <FavoriteThumbnailLink
+      className={styles["favorite-link"]}
       name={name}
       description={description}
       url={url}
@@ -86,10 +96,10 @@ export default function ResourceLink({
       rel="noreferrer"
       target="_blank"
       isButtonActive={isButtonActive}
-      isButtonDisabled={true}
-      buttonClassName={styles["hidden-favorite-button"]}
+      isButtonDisabled={false}
+      buttonClassName={styles["favorite-button"]}
       callback={onLinkClick}
-      buttonCallback={onButtonClick}
+      buttonCallback={debouncedUpdateFavorites.current}
       buttonErrorCallback={onButtonClickError}
     />
   );
