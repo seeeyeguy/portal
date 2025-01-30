@@ -10,6 +10,7 @@ from typing import Tuple, Union
 
 from django.db.models import QuerySet
 
+from directory.models import Function
 from directory import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
@@ -43,12 +44,35 @@ class SubFunction:
             * subfunction (models.SubFunction): The `SubFunction` record created.
         """
 
-        LOGGER.info(
-            f"Creating SubFunction with name: {name}, description: {description}, "
-            f"and Function id: {function}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Creating SubFunction with name: {name}, description: {description}, "
+                f"and Function id: {function}."
+            )
+
+            subfunction_query: QuerySet[
+                models.SubFunction
+            ] = models.SubFunction.objects.filter(name__iexact=name)
+
+            if subfunction_query.exists():
+                err_msg = f"SubFunction (name={name}) already exists."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch `Function` record.
+            function_record: Function = Function.objects.get(id=function)
+
+            subfunction: models.SubFunction = models.SubFunction.objects.create(
+                name=name.title(),
+                description=description,
+                function=function_record,
+            )
+
+            return subfunction
+        except Function.DoesNotExist as exc:
+            err_msg = f"The Function (id={function}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
     @staticmethod
     def update_subfunction(

@@ -39,16 +39,20 @@ class SubFunction(View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/subfunctions."""
 
-        LOGGER.info("POST /v1/directory/subfunctions.")
+        try:
+            LOGGER.info("POST /v1/directory/subfunctions.")
 
-        subfunction = controllers.SubFunction.create_subfunction(
-            name=body["name"],
-            description=body["description"],
-            function=body["function"],
-        )
-        return http.JsonResponse(
-            subfunction, status=status.HTTP_201_CREATED, safe=False
-        )
+            subfunction = controllers.SubFunction.create_subfunction(
+                name=body["name"],
+                description=body["description"],
+                function=body["function"],
+            )
+
+            data: dict = SubFunctionSerializer(subfunction).data
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required())
     @method_decorator(admin_required())
