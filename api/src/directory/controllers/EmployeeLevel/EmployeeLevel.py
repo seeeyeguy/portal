@@ -10,6 +10,7 @@ import logging
 from typing import cast, Union
 
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from directory import exceptions, models
 
@@ -72,7 +73,9 @@ class EmployeeLevel:
         # Query `EmployeeLevel` to ensure name is not a duplicate.
         employee_level_duplicate_name_query: QuerySet[
             models.EmployeeLevel
-        ] = models.EmployeeLevel.objects.filter(name=name).exclude(id=employee_level_id)
+        ] = models.EmployeeLevel.objects.filter(name__iexact=name).exclude(
+            id=employee_level_id
+        )
 
         if employee_level_duplicate_name_query.exists():
             err_msg: str = f"EmployeeLevel name({name}) is a duplicate."
@@ -85,7 +88,9 @@ class EmployeeLevel:
         ] = models.EmployeeLevel.objects.filter(id=employee_level_id)
 
         # Update `EmployeeLevel` record with the given name and description.
-        rows_affected = employee_level_query.update(name=name, description=description)
+        rows_affected = employee_level_query.update(
+            name=name.title(), description=description, modified=timezone.now()
+        )
 
         if not rows_affected:
             err_msg: str = f"EmployeeLevel (id={employee_level_id}) does not exist."

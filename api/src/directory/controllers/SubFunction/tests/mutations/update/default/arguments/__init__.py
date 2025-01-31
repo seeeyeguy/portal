@@ -36,7 +36,7 @@ VALID_SUBFUNCTION: dict = {
         "created": "2024-08-27T12:00:00-04:00",
         "modified": "2024-08-27T12:00:00-04:00",
     },
-    "name": "Test Update SubFunction Name",
+    "name": "Test Update Subfunction Name",
     "description": "Test Update SubFunction Description.",
     "created": "2024-08-27T12:00:00-04:00",
 }

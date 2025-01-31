@@ -113,7 +113,7 @@ class SubFunction:
             # Check for existing `SubFunction` with given name, excluding
             # the target `SubFunction`.
             if (
-                models.SubFunction.objects.filter(name=name)
+                models.SubFunction.objects.filter(name__iexact=name)
                 .exclude(id=subfunction_id)
                 .exists()
             ):
@@ -125,7 +125,7 @@ class SubFunction:
             rows_affected: int = models.SubFunction.objects.filter(
                 id=subfunction_id
             ).update(
-                name=name,
+                name=name.title(),
                 description=description,
                 function=function_record,
                 modified=timezone.now(),

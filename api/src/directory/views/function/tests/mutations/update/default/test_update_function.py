@@ -59,6 +59,9 @@ class TestUpdateFunction(TestCase):
 
         data = response.json()
 
+        # Remove dynamic datetime field before comparison.
+        del data["modified"]
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsInstance(data, dict)
         self.assertDictEqual(data, arguments.UPDATE_FUNCTION_EXPECTED_VALUES)

@@ -44,6 +44,9 @@ class TestUpdateFunction(TestCase):
         # Serialize `Function`.
         serialized_function = FunctionSerializer(function_record).data
 
+        # Remove dynamic datetime field before comparison.
+        del serialized_function["modified"]
+
         self.assertEqual(serialized_function, arguments.UPDATE_FUNCTION_EXPECTED_VALUES)
 
     @tag("controllers.function.update_function_record_dne")
