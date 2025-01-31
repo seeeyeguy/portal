@@ -26,5 +26,4 @@ UPDATE_FUNCTION_EXPECTED_VALUES: dict = {
     "name": "Update Function",
     "description": "Update Function Level 1.",
     "created": "2024-08-27T12:00:00-04:00",
-    "modified": "2024-08-27T12:00:00-04:00",
 }
