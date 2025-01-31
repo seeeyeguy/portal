@@ -16,6 +16,8 @@ class BasePostEmployeeLevelRequest(serializers.Serializer):
 class CreateEmployeeLevelRequest(BasePostEmployeeLevelRequest):
     """Request serializer for POST /v1/directory/employee-levels."""
 
+    level = serializers.IntegerField(min_value=1)
+
 
 class UpdateEmployeeLevelRequest(BasePostEmployeeLevelRequest):
     """Request serializer for PUT /v1/directory/employee-levels."""
