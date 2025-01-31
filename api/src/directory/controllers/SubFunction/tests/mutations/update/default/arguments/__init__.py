@@ -3,6 +3,10 @@ Arguments to be shared for SubFunction's update
 controller pytests.
 """
 
+# `User` email used for testing login verification on views
+# when updating `SubFunction` record.
+UPDATE_SUBFUNCTION_USER_EMAIL: str = "Tony.Stark@harris.com"
+
 # Arguments used for testing the successful update of a `SubFunction` record.
 UPDATE_SUBFUNCTION_ID: int = 1
 UPDATE_SUBFUNCTION_NAME: str = "Test Update SubFunction Name"
@@ -35,5 +39,4 @@ VALID_SUBFUNCTION: dict = {
     "name": "Test Update SubFunction Name",
     "description": "Test Update SubFunction Description.",
     "created": "2024-08-27T12:00:00-04:00",
-    "modified": "2024-08-27T12:00:00-04:00",
 }

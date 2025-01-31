@@ -50,6 +50,9 @@ class TestUpdateSubFunction(TestCase):
         # Serialize `SubFunction` instance.
         serialized_subfunction: dict = SubFunctionSerializer(subfunction).data
 
+        # Remove dynamic datetime field before comparison.
+        del serialized_subfunction["modified"]
+
         self.assertDictEqual(serialized_subfunction, arguments.VALID_SUBFUNCTION)
 
     @tag("controllers.subfunction.update_subfunction_record_dne")

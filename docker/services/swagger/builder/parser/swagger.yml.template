@@ -393,6 +393,59 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchSubFunctionByIdDoesNotExistResponse"
+    put:
+      tags:
+        - "directory.subfunction.update"
+      summary: "Update SubFunction."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `SubFunction` record
+            to update.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubFunctionRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateSubFunctionResponse"
+        "400":
+          description: "SubFunction name is a duplicate."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateSubFunctionDuplicateNameResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateSubFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateSubFunctionForbiddenErrorResponse"
+        "404":
+          description: "SubFunction or Function does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateSubFunctionSubFunctionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/UpdateSubFunctionFunctionDoesNotExistResponse"
     delete:
       tags:
         - "directory.subfunction.delete"
@@ -2129,6 +2182,69 @@ components:
       title: "Fetch `SubFunction` error response due to using an id that
         does not exist."
       example: "SubFunction (id=subfunction_id), does not exist."
+
+    UpdateSubFunctionRequest:
+      title: "Update `SubFunction` request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name to be applied to the `SubFunction` being updated.
+          default: "Update SubFunction Name"
+        description:
+          type: string
+          description: New description to be applied to the `SubFunction` being updated.
+          default: "Update SubFunction Description."
+        function:
+          type: integer
+          description: Primary key of the `Function` to be linked to the `SubFunction`
+            being updated.
+          default: 2
+  
+    UpdateSubFunctionResponse:
+      title: "Update `SubFunction` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: An updated `SubFunction`.
+          example:
+            {
+              "id": 1,
+              "function": {
+                "id": 2,
+                "name": "Function 2",
+                "description": "Function 2 Description.",
+                "created": "2025-01-01T12:00:00-04:00",
+                "modified": "2025-01-01T12:00:00-04:00",
+              },
+              "name": "Update SubFunction Name",
+              "description": "Update SubFunction Description.",
+              "created": "2025-01-01T12:00:00-04:00",
+              "modified": "2025-01-01T12:00:00-04:00",
+            }
+
+    UpdateSubFunctionDuplicateNameResponse:
+      title: "Update `SubFunction` error response due to using a duplicate name."
+      example: "SubFunction with name: {name} already exists."
+
+    UpdateSubFunctionUnAuthorizedResponse:
+      title: "Update `SubFunction` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    UpdateSubFunctionForbiddenErrorResponse:
+      title: "Update `SubFunction` error response due to forbidden access."
+      example: "Permissions Denied."
+    
+    UpdateSubFunctionSubFunctionDoesNotExistResponse:
+      title: "Update `SubFunction` error response due to using an id for a `SubFunction` that
+        does not exist."
+      example: "SubFunction (id={subfunction_id}) does not exist."    
+
+    UpdateSubFunctionFunctionDoesNotExistResponse:
+      title: "Update `SubFunction` error response due to using an id for a `Function` that
+        does not exist."
+      example: "Function (id={function}) does not exist."    
 
     DeleteSubFunctionResponse:
       title: "Delete `SubFunction` response."

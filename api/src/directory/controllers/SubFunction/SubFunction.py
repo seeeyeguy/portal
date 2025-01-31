@@ -9,6 +9,7 @@ import logging
 from typing import Tuple, Union
 
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from directory.models import Function
 from directory import exceptions, models
@@ -123,7 +124,12 @@ class SubFunction:
             # Update the `SubFunction` record.
             rows_affected: int = models.SubFunction.objects.filter(
                 id=subfunction_id
-            ).update(name=name, description=description, function=function_record)
+            ).update(
+                name=name,
+                description=description,
+                function=function_record,
+                modified=timezone.now(),
+            )
 
             subfunction.refresh_from_db()
 
