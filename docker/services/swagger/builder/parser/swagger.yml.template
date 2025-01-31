@@ -524,7 +524,33 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"     
+                  - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"
+    delete:
+      tags:
+        - "directory.tag.delete"
+      summary: "Delete Tag."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Tag` record
+            to be deleted.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteTagResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteTagUnAuthorizedResponse"
   /directory/tags/search:
     get:
       tags:
@@ -2307,6 +2333,15 @@ components:
       title: "Fetch `Tag` error response due to using an id that
         does not exist."
       example: "Tag (id=tag_id), does not exist."
+
+    DeleteTagResponse:
+      title: "Delete `Tag` response."
+      type: integer
+      example: 1
+
+    DeleteTagUnAuthorizedResponse:
+      title: "Delete `Tag` error response due to unauthorized access."
+      example: "Not authorized to access resource."
 
     SearchTagsResponse:
       title: "Search `Tag`s response."
