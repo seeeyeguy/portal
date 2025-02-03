@@ -15,7 +15,7 @@ class CreateQueryRequest(serializers.Serializer):
 class FetchQueryRequest(serializers.Serializer):
     """Request serializer for GET /v1/analytics/queries."""
 
-    id = serializers.IntegerField(allow_null=True, default=None)
+    id = serializers.IntegerField(min_value=1, allow_null=True, default=None)
     user = serializers.EmailField(allow_blank=True, default="")
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)

@@ -10,6 +10,7 @@ particularly in regards to committed searches.
 import logging
 
 from django import http
+from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -55,27 +56,35 @@ class Query(View):
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/analytics/queries."""
 
-        request_params = f"?id={body['id']}" if body["id"] else ""
-        request_params = (
-            f"?user={body['user']}" if body["user"] != "" else request_params
-        )
-        request_params = (
-            f"{request_params}{'&' if body['user'] else '?'}page={body['page']}"
-            if body["page"]
-            else request_params
-        )
-        request_params = (
-            # pylint: disable=line-too-long
-            f"{request_params}{'&' if body['user'] or body['page'] else '?'}limit={body['limit']}"
-            if body["limit"]
-            else request_params
-        )
+        try:
+            request_params = f"?id={body['id']}" if body["id"] else ""
+            request_params = (
+                f"?user={body['user']}" if body["user"] != "" else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if body['user'] else '?'}page={body['page']}"
+                if body["page"]
+                else request_params
+            )
+            request_params = (
+                # pylint: disable=line-too-long
+                f"{request_params}{'&' if body['user'] or body['page'] else '?'}limit={body['limit']}"
+                if body["limit"]
+                else request_params
+            )
 
-        LOGGER.info(f"GET /v1/analytics/queries{request_params}.")
-        queries = controllers.Query.fetch_query(
-            record_id=body["id"],
-            user=body["user"],
-            page=body["page"],
-            limit=body["limit"],
-        )
-        return http.JsonResponse(queries, status=status.HTTP_200_OK)
+            LOGGER.info(f"GET /v1/analytics/queries{request_params}.")
+
+            queries = controllers.Query.fetch_query(
+                record_id=body["id"],
+                user=body["user"],
+                page=body["page"],
+                limit=body["limit"],
+            )
+
+            data: dict = QuerySerializer(queries, many=bool(body["id"])).data
+
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except exceptions.AnalyticsError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
