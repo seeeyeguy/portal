@@ -38,14 +38,20 @@ class EmployeeLevel(View):
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/employee-levels."""
 
-        LOGGER.info("POST /v1/directory/employee-levels.")
+        try:
+            LOGGER.info("POST /v1/directory/employee-levels.")
 
-        employee_level = controllers.EmployeeLevel.create_employee_level(
-            name=body["name"], description=body["description"]
-        )
-        return http.JsonResponse(
-            employee_level, status=status.HTTP_201_CREATED, safe=False
-        )
+            employee_level = controllers.EmployeeLevel.create_employee_level(
+                name=body["name"], description=body["description"], level=body["level"]
+            )
+
+            # Serialize `EmployeeLevel`.
+            data: dict = EmployeeLevelSerializer(employee_level).data
+
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except exceptions.DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required())
     @method_decorator(admin_required())

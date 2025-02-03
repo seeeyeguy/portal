@@ -26,7 +26,9 @@ class EmployeeLevel:
     """
 
     @staticmethod
-    def create_employee_level(name: str, description: str) -> models.EmployeeLevel:
+    def create_employee_level(
+        name: str, description: str, level: int
+    ) -> models.EmployeeLevel:
         """
         Create an `EmployeeLevel` record with the given name and description.
 
@@ -34,6 +36,8 @@ class EmployeeLevel:
             * name (str): The name of the `EmployeeLevel`.
             * description (str): A short/detailed description of what
                 this `EmployeeLevel` is.
+            * level (int): An immutable numerical representation
+                of an `EmployeeLevel`.
 
         Returns:
             * employee_level (models.EmployeeLevel): The `EmployeeLevel`
@@ -41,10 +45,29 @@ class EmployeeLevel:
         """
 
         LOGGER.info(
-            f"Creating EmployeeLevel with name: {name} and description: {description}."
+            f"Creating EmployeeLevel with name: {name}, description: {description}, and level: {level}."
         )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+
+        # Ensure `EmployeeLevel` record doesn't already exist with the given `level`.
+        if models.EmployeeLevel.objects.filter(level=level).exists():
+            err_msg = (
+                f"An EmployeeLevel with the given level: ({level}) already exists."
+            )
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400)
+
+        # Ensure `EmployeeLevel` record doesn't already exist with the given `name`.
+        if models.EmployeeLevel.objects.filter(name__iexact=name).exists():
+            err_msg = f"EmployeeLevel already exists for name ({name})."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400)
+
+        # Create the 'EmployeeLevel' record with the given 'name', 'description', and 'level'.
+        employee_level: models.EmployeeLevel = models.EmployeeLevel.objects.create(
+            name=name.title(), description=description, level=level
+        )
+
+        return employee_level
 
     @staticmethod
     def update_employee_level(
