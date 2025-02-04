@@ -143,7 +143,7 @@ if [[ $? != 0 && $? != 1 && $? != 123 ]]; then
     echo -e "$RED[pre-push] MyPy failed to run. Please resolve issues.$RESET"
     exit 1
 fi
-if [[ $MYPY_COMMAND == "Success: no issues found"* ]];
+if [[ -z $FILES_TO_CHECK || $MYPY_COMMAND == "Success: no issues found"* ]];
 then
 	echo -e "$GREEN*** No issues found, PASS. ***$RESET"
 else
