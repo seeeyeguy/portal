@@ -89,7 +89,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     )
     revision_number: models.PositiveIntegerField = models.PositiveIntegerField()
     name: models.CharField = models.CharField(max_length=512)
-    url: models.URLField = models.URLField()
+    url: models.URLField = models.URLField(max_length=1024)
     thumbnail: models.ImageField = models.ImageField(
         upload_to=thumbnail_path, null=True
     )
