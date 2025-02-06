@@ -148,7 +148,7 @@ export default function NavBar({ profile }: NavBarProps) {
         // Not passed directly so that void is returned.
         clearSearchForSession();
       }}
-      menuButton={{
+      searchBarActionButton={{
         label: "Reset View",
         onClick: () => {
           clearSession();

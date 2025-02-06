@@ -480,6 +480,37 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteSubFunctionForbiddenErrorResponse"
   /directory/tags:
+    post:
+      tags:
+        - "directory.tag.create"
+      summary: "Create Tag."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTagRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateTagResponse"
+        "400":
+          description: "Label is a duplicate."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateTagDuplicateLabelErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateTagUnAuthorizedResponse"
     get:
       tags:
         - "directory.tag.fetch"
@@ -2284,6 +2315,35 @@ components:
     DeleteSubFunctionForbiddenErrorResponse:
       title: "Delete `SubFunction` Error response due to forbidden access."
       example: "Permissions Denied."
+    
+    CreateTagRequest:
+      title: "Create `Tag` request."
+      type: object
+      properties:
+        label:
+          type: string
+          description: "Label for the `Tag` being created."
+          default: "Create Tag 1"
+    
+    CreateTagResponse:
+      title: "Create `Tag` response."
+      type: object
+      description: A created `Tag`.
+      example:
+          {
+            "id": 1,
+            "label": "Create Tag",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+          }
+    
+    CreateTagDuplicateLabelErrorResponse:
+      title: "Create `Tag` error response due to using a duplicate label."
+      example: "`Tag` (label={label}) is a duplicate."
+    
+    CreateTagUnAuthorizedResponse:
+      title: "Create `Tag` error response due to unauthorized access."
+      example: "Not authorized to access resource."
     
     FetchTagsResponse:
       title: "Fetch `Tag` response."
