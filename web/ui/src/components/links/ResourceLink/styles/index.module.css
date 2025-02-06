@@ -2,10 +2,10 @@
   visibility: visible;
 }
 
-button svg:not([data-testid="faStar-icon"]) {
+.favorite-button svg:not([data-testid="faStar-icon"]) {
   visibility: hidden;
 }
 
-button:hover svg:not([data-testid="faStar-icon"]) {
+.favorite-button:hover svg:not([data-testid="faStar-icon"]) {
   visibility: visible;
 }

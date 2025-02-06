@@ -11,4 +11,12 @@
   .favorite-accordion summary div {
     color: var(--color-data-blue);
   }
+
+  .favorites-no-resources {
+    align-items: center;
+    display: flex;
+    font-weight: 700;
+    justify-self: center;
+    min-height: 11.35rem;
+  }
 }

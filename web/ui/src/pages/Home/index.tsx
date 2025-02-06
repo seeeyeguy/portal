@@ -5,7 +5,6 @@ import NavBar from "components/nav/NavBar";
 import Controls from "containers/Controls";
 import Favorites from "containers/Favorites";
 import Results from "containers/Results";
-import SessionControls from "containers/SessionControls";
 
 import { loadDirectoryResourceSearchState } from "state/actions/portal/directory/Resource/Search";
 import { useSearchTagsQuery } from "state/query/api/portal/directory/Tag";
@@ -50,7 +49,10 @@ export default function Home() {
   const { data: tagsApiResponse } = useSearchTagsQuery(FILTER_PREFIX);
   const filterTags = (tagsApiResponse?.data ?? []) as Tag[];
 
-  dispatch(loadDirectoryResourceSearchState(loaderData.user.email));
+  // Load initial user session data.
+  React.useEffect(() => {
+    dispatch(loadDirectoryResourceSearchState(loaderData.user.email));
+  }, [loaderData, dispatch]);
 
   if (!loaderData.user.email) {
     return <div>:x: 404</div>;
@@ -60,8 +62,7 @@ export default function Home() {
     <>
       <NavBar profile={profile} />
       <div id="page-content">
-        <Controls />
-        <SessionControls filterData={filterData} filterTags={filterTags} />
+        <Controls filterData={filterData} filterTags={filterTags} />
         <Favorites favorites={favorites} profile={profile} />
         <Results
           favorites={favorites}

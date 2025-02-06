@@ -1,6 +1,6 @@
 .function-buttons {
   height: fit-content;
-  margin: 1rem 2.5rem 0rem 2.5rem;
+  margin: 1rem 2.5rem 1rem 2.5rem;
 }
 
 .function-buttons header {
@@ -36,7 +36,7 @@
   margin-left: 3rem;
 }
 
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 581px) {
   .role-buttons-background {
     height: 14rem;
   }
@@ -45,7 +45,7 @@
   }
 }
 
-@media screen and (max-width: 714px) {
+@media screen and (max-width: 764px) {
   .role-buttons div[class*="filter-buttons-row"] {
     top: 1rem;
   }
