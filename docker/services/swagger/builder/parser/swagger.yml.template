@@ -366,6 +366,51 @@ paths:
                   - $ref: "#/components/schemas/ResourceSearchMissingParameterErrorResponse"
                   - $ref: "#/components/schemas/ResourceSearchInvalidParameterErrorResponse"
   /directory/subfunctions:
+    post:
+      tags:
+        - "directory.subfunction.create"
+      summary: "Create a SubFunction."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubFunctionRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateSubFunctionResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateSubFunctionBadRequestResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateSubFunctionUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateSubFunctionForbiddenErrorResponse"
+        "404":
+          description: "The `Function` for the given id does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateSubFunctionFunctionDoesNotExistResponse"
     get:
       tags:
         - "directory.subfunction.fetch"
@@ -2172,6 +2217,62 @@ components:
       title: "Fetch `Profile` Error response due to invalid permissions."
       example: "Permissions Denied."
 
+    CreateSubFunctionRequest:
+      title: "Create `SubFunction` request."
+      type: object
+      properties:
+        function:
+          type: integer
+          description: "Id for related `Function` used to create the `SubFunction`."
+          default: 1
+        name:
+          type: string
+          description: "Name for the `SubFunction` being created."
+          default: "Create SubFunction 1"
+        description:
+          type: string
+          description: "Description for the `SubFunction` being created."
+          default: "SubFunction description 1"
+
+    CreateSubFunctionResponse:
+      title: "Create `SubFunction` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: The created `SubFunction`.
+          example:
+              {
+                "id": 1,
+                "function": {
+                  "id": 1,
+                  "name": "Function 1 Name",
+                  "description": "Function 1 Description.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00"
+                },
+                "name": "SubFunction 1 Name",
+                "description": "Function 1 SubFunction 1.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00"
+              }
+
+    CreateSubFunctionBadRequestResponse:
+      title: "Create `SubFunction` error response due to bad request parameter."
+      example: "SubFunction (name={name}) already exists."
+    
+    CreateSubFunctionUnAuthorizedResponse:
+      title: "Create `SubFunction` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    CreateSubFunctionForbiddenErrorResponse:
+      title: "Create `SubFunction` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    CreateSubFunctionFunctionDoesNotExistResponse:
+      title: "Create `SubFunction` error response due to supplying an id for a `Function` that does not exist."
+      example: "The Function (id={function}) does not exist."
+
     FetchSubFunctionsResponse:
       title: "Fetch `SubFunction` response."
       type: object
@@ -2313,7 +2414,7 @@ components:
       example: "Not authorized to access resource."
 
     DeleteSubFunctionForbiddenErrorResponse:
-      title: "Delete `SubFunction` Error response due to forbidden access."
+      title: "Delete `SubFunction` error response due to forbidden access."
       example: "Permissions Denied."
     
     CreateTagRequest:
