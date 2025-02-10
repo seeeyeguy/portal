@@ -601,6 +601,52 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchTagByIdDoesNotExistResponse"
+    put:
+      tags:
+        - "directory.tag.update"
+      summary: "Update a `Tag`."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: "Primary key of the `Tag` record
+            to be updated."
+      requestBody:
+        content:
+          application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateTagRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateTagResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateTagDuplicateLabelErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateTagUnAuthorizedErrorResponse"
+        "404":
+          description: "Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateTagDoesNotExistErrorResponse"
     delete:
       tags:
         - "directory.tag.delete"
@@ -2494,6 +2540,44 @@ components:
       title: "Fetch `Tag` error response due to using an id that
         does not exist."
       example: "Tag (id=tag_id), does not exist."
+
+    UpdateTagRequest:
+      title: "Update `Tag` request."
+      type: object
+      properties:
+        label:
+          type: string
+          description: "New label used to update `Tag`."
+          default: "New label"
+
+    UpdateTagResponse:
+      title: "Update `Tag` response."
+      type: object
+      properties:
+        data:
+          type: object
+          description: "An updated `Tag`."
+          example: 
+            {
+              "id": 4,
+              "created": "2024-11-21T14:20:03.998038-05:00",
+              "modified": "2025-02-04T16:29:35.270217-05:00",
+              "label": "New label"
+            }
+
+    UpdateTagDuplicateLabelErrorResponse:
+      title: "Update `Tag` error response due to providing a label
+        that is already used by another Tag."
+      example: "Tag (label={label}) already exists."
+
+    UpdateTagUnAuthorizedErrorResponse:
+      title: "Update `Tag` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateTagDoesNotExistErrorResponse:
+      title: "Update `Tag` error response due to supplying an id
+        for a `Tag` that does not exist."
+      example: "Tag (id={tag_id}) does not exist."
 
     DeleteTagResponse:
       title: "Delete `Tag` response."
