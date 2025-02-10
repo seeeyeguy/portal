@@ -131,8 +131,10 @@ export default function NavBar({ profile }: NavBarProps) {
 
   return (
     <SearchBar
-      siteName="BI Portal"
-      icon=""
+      siteName=""
+      icon="icon/portal-logo.png"
+      iconHeight={32}
+      iconWidth={150}
       menuItems={menuItems}
       contactUsEmail={CONTACT_US_EMAIL}
       logoutHref={endpoints.SERVICE.SSO.LOGOUT}
