@@ -6,7 +6,7 @@ by labels.
 """
 
 import logging
-from typing import cast, Union
+from typing import cast, Tuple, Union
 
 from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
@@ -52,7 +52,7 @@ class Tag:
         return tag_record
 
     @staticmethod
-    def update_tag(tag_id: int, label: str) -> models.Tag:
+    def update_tag(tag_id: int, label: str) -> Tuple[models.Tag, int]:
         """
         Update a `Tag` record for the given id with the given label.
 
@@ -62,6 +62,7 @@ class Tag:
 
         Returns:
             * tag (models.Tag): The `Tag` record updated.
+            * rows_affected (int): Number of rows affected.
         """
 
         try:
@@ -78,7 +79,7 @@ class Tag:
                 .exists()
             ):
                 raise exceptions.DirectoryError(
-                    f"Tag with label {label} already exists.", 400
+                    f"Tag (label={label}) already exists.", 400
                 )
 
             # Update the `Tag` record.
@@ -87,7 +88,7 @@ class Tag:
             )
             tag_record.refresh_from_db()
 
-            return tag_record
+            return tag_record, rows_affected
         except models.Tag.DoesNotExist as exc:
             err_msg = f"Tag (id={tag_id}) does not exist."
             LOGGER.error(err_msg)

@@ -65,7 +65,7 @@ class Tag(View):
 
             LOGGER.info(f"PUT /v1/directory/tags?id={tag_id}.")
 
-            tag = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
+            tag, _ = controllers.Tag.update_tag(tag_id=tag_id, label=body["label"])
 
             # Serialize 'Tag'.
             data: dict = TagSerializer(tag).data

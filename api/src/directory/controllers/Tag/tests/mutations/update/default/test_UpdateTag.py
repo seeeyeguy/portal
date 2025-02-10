@@ -34,7 +34,7 @@ class TestUpdateTag(TestCase):
         """Success Case: Update a `Tag` record."""
 
         # Update `Tag` record.
-        tag_record = Tag.update_tag(
+        tag_record, rows_affected = Tag.update_tag(
             tag_id=arguments.UPDATE_TAG_ID, label=arguments.UPDATE_TAG_LABEL
         )
 
@@ -47,6 +47,7 @@ class TestUpdateTag(TestCase):
         del serialized_tag["created"]
         del serialized_tag["modified"]
 
+        self.assertEqual(rows_affected, 1)
         self.assertEqual(serialized_tag, arguments.UPDATE_TAG_EXPECTED_VALUES)
 
     @tag("controllers.tag.update_tag_record_dne")
@@ -54,7 +55,7 @@ class TestUpdateTag(TestCase):
         """Fail Case: Update a `Tag` that does not exist."""
 
         with pytest.raises(DirectoryError):
-            _ = Tag.update_tag(
+            _, __ = Tag.update_tag(
                 tag_id=arguments.UPDATE_TAG_ID_DNE, label=arguments.UPDATE_TAG_LABEL
             )
 
@@ -63,7 +64,7 @@ class TestUpdateTag(TestCase):
         """Fail Case: Update a `Tag` record with a duplicate label."""
 
         with pytest.raises(DirectoryError):
-            _ = Tag.update_tag(
+            _, __ = Tag.update_tag(
                 tag_id=arguments.UPDATE_TAG_ID,
                 label=arguments.UPDATE_TAG_LABEL_DUPLICATE,
             )
