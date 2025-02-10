@@ -1,0 +1,11 @@
+.menu-button-icon {
+    align-items: center;
+    background: var(--color-stealth);
+    border: 2px solid var(--color-medium-gray);
+    border-radius: 50%;
+    display: flex;
+    font-size: 1rem;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+}

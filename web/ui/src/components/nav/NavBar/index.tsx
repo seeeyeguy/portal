@@ -27,6 +27,8 @@ import Resource from "state/types/portal/directory/Resource";
 import { transformToOption } from "utils/components/select/options";
 import { DEFAULT_API_ERROR_MESSAGE } from "utils/constants/errors";
 
+import styles from "components/nav/NavBar/styles/index.module.css";
+
 const CONTACT_US_EMAIL = "melissa.cataldo@l3harris.com";
 
 const PROFILE: Profile = {
@@ -139,6 +141,12 @@ export default function NavBar({ profile }: NavBarProps) {
       contactUsEmail={CONTACT_US_EMAIL}
       logoutHref={endpoints.SERVICE.SSO.LOGOUT}
       profile={profileData}
+      menuButtonIcon={
+        <span className={styles["menu-button-icon"]}>
+          {profileData?.firstName?.charAt(0) ?? "-"}
+          {profileData?.lastName?.charAt(0) ?? "-"}
+        </span>
+      }
       clearOnSubmit={false}
       isSearchDisabled={false}
       showSubmit={false}
