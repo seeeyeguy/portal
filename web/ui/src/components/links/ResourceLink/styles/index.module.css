@@ -1,11 +1,26 @@
-.favorite-link:hover ~ .favorite-button svg:not([data-testid="faStar-icon"]) {
-  visibility: visible;
-}
-
 .favorite-button svg:not([data-testid="faStar-icon"]) {
   visibility: hidden;
 }
 
 .favorite-button:hover svg:not([data-testid="faStar-icon"]) {
   visibility: visible;
+}
+
+.favorite-link:hover ~ .favorite-button svg:not([data-testid="faStar-icon"]) {
+  visibility: visible;
+}
+
+.favorite-link-container > div {
+  align-items: end;
+  min-height: 9.55rem;
+}
+
+.favorite-link-container > div a {
+  align-items: start;
+  height: 100%;
+}
+
+.favorite-link-container > div button {
+  bottom: 1rem;
+  position: relative;
 }

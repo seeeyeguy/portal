@@ -84,24 +84,29 @@ export default function ResourceLink({
   }, [id, dispatch]);
 
   return (
-    <FavoriteThumbnailLink
-      className={styles["favorite-link"]}
-      name={name}
-      description={description}
-      url={url}
-      imgWidth={95}
-      imgHeight={95}
-      thumbnail={thumbnail}
-      download={download}
-      rel="noreferrer"
-      target="_blank"
-      isButtonActive={isButtonActive}
-      isButtonDisabled={false}
-      buttonClassName={styles["favorite-button"]}
-      callback={onLinkClick}
-      buttonCallback={debouncedUpdateFavorites.current}
-      buttonErrorCallback={onButtonClickError}
-      maxLineHeight={2}
-    />
+    <span
+      className={styles["favorite-link-container"]}
+      aria-description="styling container for a favorite link"
+    >
+      <FavoriteThumbnailLink
+        className={styles["favorite-link"]}
+        name={name}
+        description={description}
+        url={url}
+        imgWidth={95}
+        imgHeight={95}
+        thumbnail={thumbnail}
+        download={download}
+        rel="noreferrer"
+        target="_blank"
+        isButtonActive={isButtonActive}
+        isButtonDisabled={false}
+        buttonClassName={styles["favorite-button"]}
+        callback={onLinkClick}
+        buttonCallback={debouncedUpdateFavorites.current}
+        buttonErrorCallback={onButtonClickError}
+        maxLineHeight={2}
+      />
+    </span>
   );
 }

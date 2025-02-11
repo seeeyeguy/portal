@@ -1,5 +1,7 @@
 .filterable-resource-links-container {
   background: var(--color-white);
-  padding: 1rem;
+  border-left: solid 1px var(--color-gray);
+  border-right: solid 1px var(--color-gray);
   min-height: 15rem;
+  padding: 1rem;
 }

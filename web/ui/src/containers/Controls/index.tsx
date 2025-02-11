@@ -1,10 +1,6 @@
-import React from "react";
 import { useLoaderData } from "react-router";
-import lodash from "lodash";
 
 import FilterButtons from "components/buttons/FilterButtons";
-
-import { ControlsProps } from "containers/Controls/types";
 
 import {
   toggleEmployeeLevel,
@@ -21,7 +17,7 @@ import { User } from "state/types/services/sso";
 
 import styles from "containers/Controls/styles/index.module.css";
 
-export default function Controls({ filterData, filterTags }: ControlsProps) {
+export default function Controls() {
   const { employeeLevels: employeeLevelIds, functions: functionIds } =
     useTypedSelector((state) => state.ResourceSearch);
 
@@ -39,14 +35,6 @@ export default function Controls({ filterData, filterTags }: ControlsProps) {
   );
   const queryFilterStateId = queryFilterStateApiResponse?.data.id;
 
-  const filterDataValues = React.useMemo(
-    () =>
-      lodash
-        .values(filterData.current)
-        .reduce((acc, filters) => [...acc, ...filters], []),
-    [filterData]
-  );
-
   return (
     <>
       <div
@@ -57,6 +45,10 @@ export default function Controls({ filterData, filterTags }: ControlsProps) {
           className={styles["role-buttons-background"]}
           aria-description="container for the background of the role filter buttons"
         />
+        <h1 aria-description="segment of company">
+          Space and Airborne Systems
+        </h1>
+
         <FilterButtons
           title="Role"
           records={employeeLevels}
@@ -64,9 +56,6 @@ export default function Controls({ filterData, filterTags }: ControlsProps) {
           toggleAction={toggleEmployeeLevel(
             functionIds,
             employeeLevelIds,
-            filterTags,
-            filterData,
-            filterDataValues,
             queryFilterStateId
           )}
         />
@@ -82,9 +71,6 @@ export default function Controls({ filterData, filterTags }: ControlsProps) {
           toggleAction={toggleFunction(
             functionIds,
             employeeLevelIds,
-            filterTags,
-            filterData,
-            filterDataValues,
             queryFilterStateId
           )}
         />
