@@ -90,8 +90,8 @@ class Query:
 
     @staticmethod
     def fetch_query(
-        record_id: int | None,
-        user: str,
+        record_id: int | None = None,
+        user: str | None = None,
         page: int | None = None,
         limit: int | None = None,
     ) -> Union[models.Query, QuerySet[models.Query]]:
@@ -137,7 +137,7 @@ class Query:
                     email__iexact=user
                 )
                 queries: QuerySet[models.Query, models.Query] = queries.filter(
-                    user=user
+                    user=user_record
                 )
 
             # If `limit` is given, then limit the number of results.
