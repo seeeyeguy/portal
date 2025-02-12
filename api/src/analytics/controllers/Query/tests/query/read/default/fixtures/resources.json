@@ -1,0 +1,62 @@
+[
+  {
+    "model": "directory.Resource",
+    "pk": 1,
+    "fields": {
+      "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 1 Revision 1",
+      "description": "popstick.",
+      "url": "example.org",
+      "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/1/resource_1.png",
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 2,
+    "fields": {
+      "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2347",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 2 Revision 1",
+      "description": "pickle.",
+      "url": "example.org",
+      "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2/resource_1.png",
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": true,
+      "created": "2024-08-28T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 3,
+    "fields": {
+      "uid": "4c2c333e-68e9-4dca-8507-ce58cefde072",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 3 Revision 1",
+      "description": "bar.",
+      "url": "example-2.org",
+      "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/3/resource_2.png",
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 3",
+      "download": false,
+      "active": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]

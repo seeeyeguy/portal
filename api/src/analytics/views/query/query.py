@@ -82,7 +82,7 @@ class Query(View):
                 limit=body["limit"],
             )
 
-            data: dict = QuerySerializer(queries, many=bool(body["id"])).data
+            data: dict = QuerySerializer(queries, many=(not bool(body["id"]))).data
 
             return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
         except exceptions.AnalyticsError as exc:
