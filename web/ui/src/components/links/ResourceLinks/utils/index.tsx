@@ -27,7 +27,7 @@ const resourceTypeThumbnailPaths: { [key: string]: string } = {
  */
 function getThumbnailPath(resource: Resource) {
   if (resource.thumbnail?.length) {
-    return resource.thumbnail;
+    return `/api/${resource.thumbnail}`;
   }
   if (resource?.type?.toLowerCase() in resourceTypeThumbnailPaths) {
     return `/thumbnail/resourceTypes/${resourceTypeThumbnailPaths[resource.type.toLowerCase()]}`;
