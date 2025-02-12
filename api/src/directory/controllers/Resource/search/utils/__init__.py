@@ -135,7 +135,9 @@ def structure_resources(
                 structure[function_name] = {}
 
             # Get the name of the `SubFunction`.
-            subfunction_name: str = subfunction.name
+            subfunction_name: str = (
+                "General" if "General::" in subfunction.name else subfunction.name
+            )
             # If the subfunction_name is not an existing
             # key inside the `structure[function_name]` dict,
             # then add it as a key and assign either an
