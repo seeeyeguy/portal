@@ -27,6 +27,7 @@ services:
         environment:
             APP_NAME: ${APP_NAME}
             DANGEROUSLY_DISABLE_HOST_CHECK: true
+            IBM_TELEMETRY_DISABLED: true
             SSL_CERT: ${SSL_CERT}
             SSL_KEY: ${SSL_KEY}
             SSL_PASS: ${SSL_PASS}
