@@ -18,7 +18,10 @@ export default function FilterButtons({
       <header>
         <h2>{title}</h2>
       </header>
-      <div aria-description="container for buttons">
+      <div
+        className={styles["filter-buttons-container"]}
+        aria-description="container for buttons"
+      >
         {records.map((record, index) => (
           <FilterButton
             label={record.name}

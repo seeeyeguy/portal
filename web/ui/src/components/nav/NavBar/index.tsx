@@ -2,6 +2,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import { SearchBar } from "adas-react-components";
 import type { Option, Profile } from "adas-react-components/types";
+import { faUndo } from "@fortawesome/free-solid-svg-icons";
+
 import lodash from "lodash";
 
 import menuItems from "components/nav/NavBar/props/menu";
@@ -135,21 +137,31 @@ export default function NavBar({ profile }: NavBarProps) {
     <SearchBar
       siteName=""
       icon="icon/portal-logo.png"
-      iconHeight={32}
+      iconHeight={37}
       iconWidth={150}
-      menuItems={menuItems}
-      contactUsEmail={CONTACT_US_EMAIL}
-      logoutHref={endpoints.SERVICE.SSO.LOGOUT}
-      profile={profileData}
-      menuButtonIcon={
+      menuProfileButtonIcon={
         <span className={styles["menu-button-icon"]}>
           {profileData?.firstName?.charAt(0) ?? "-"}
           {profileData?.lastName?.charAt(0) ?? "-"}
         </span>
       }
+      menuItems={menuItems}
+      formButtons={[
+        {
+          label: "Reset View",
+          className: styles["reset-view-button"],
+          icon: faUndo,
+          onClick: () => {
+            clearSession();
+            updateSearchStateTerm("");
+          },
+        },
+      ]}
+      contactUsEmail={CONTACT_US_EMAIL}
+      logoutHref={endpoints.SERVICE.SSO.LOGOUT}
+      profile={profileData}
       clearOnSubmit={false}
       isSearchDisabled={false}
-      showSubmit={false}
       initialInput={searchTerm}
       searchOptions={loadSearchOptions}
       onSubmitSearch={onSubmitSearch}
@@ -157,13 +169,6 @@ export default function NavBar({ profile }: NavBarProps) {
       onClearSelect={() => {
         // Not passed directly so that void is returned.
         clearSearchForSession();
-      }}
-      searchBarActionButton={{
-        label: "Reset View",
-        onClick: () => {
-          clearSession();
-          updateSearchStateTerm("");
-        },
       }}
     />
   );

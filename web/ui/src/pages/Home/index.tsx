@@ -62,7 +62,7 @@ export default function Home() {
     <>
       <NavBar profile={profile} />
       <div id="page-content">
-        <Controls filterData={filterData} filterTags={filterTags} />
+        <Controls />
         <Favorites favorites={favorites} profile={profile} />
         <Results
           favorites={favorites}

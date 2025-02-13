@@ -8,8 +8,14 @@
     padding: 1rem;
   }
 
-  .favorite-accordion summary div {
-    color: var(--color-data-blue);
+  .favorite-accordion summary {
+    background-image: url(/banner/bi_portal_controls_banner.svg);
+    background-size: cover;
+  }
+
+  .favorite-accordion summary div:first-of-type {
+    border-bottom: solid 0.15rem red;
+    border-image: linear-gradient(to right, red 5rem, transparent 10rem) 100% 1;
   }
 
   .favorites-no-resources {
@@ -17,6 +23,6 @@
     display: flex;
     font-weight: 700;
     justify-self: center;
-    min-height: 11.35rem;
+    min-height: 12.55rem;
   }
 }

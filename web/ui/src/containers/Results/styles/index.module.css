@@ -1,3 +1,7 @@
 .resource-search-results > section {
   margin: 0.5rem 2.5rem;
 }
+
+.resource-search-results section section summary {
+  border: solid 1px var(--color-gray);
+}
