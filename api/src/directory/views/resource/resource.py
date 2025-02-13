@@ -9,6 +9,7 @@ content served by `BI Portal`.
 # Remove pylint disable in implementation story.
 # pylint: disable=unused-argument
 import logging
+from typing import List, Union
 
 from django import http
 from django.utils.decorators import method_decorator
@@ -99,20 +100,32 @@ class Resource(View):
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/directory/resources."""
 
-        request_params = f"?id={body['id']}" if body["id"] else ""
-        request_params = f"?page={body['page']}" if body["page"] else request_params
-        request_params = (
-            f"{request_params}{'&' if body['page'] else '?'}limit={body['limit']}"
-            if body["limit"]
-            else request_params
-        )
+        try:
+            request_params = f"?id={body['id']}" if body["id"] else ""
+            request_params = f"?page={body['page']}" if body["page"] else request_params
+            request_params = (
+                f"{request_params}{'&' if body['page'] else '?'}limit={body['limit']}"
+                if body["limit"]
+                else request_params
+            )
 
-        LOGGER.info(f"GET /v1/directory/resources{request_params}.")
+            LOGGER.info(f"GET /v1/directory/resources{request_params}.")
 
-        resources = ResourceController.fetch_resources(
-            resource_id=body["id"], page=body["page"], limit=body["limit"]
-        )
-        return http.JsonResponse(resources, status=status.HTTP_200_OK, safe=False)
+            resources = ResourceController.fetch_resources(
+                resource_id=body["id"], page=body["page"], limit=body["limit"]
+            )
+
+            many: bool = body["id"] is None
+
+            # Serialize `Resource` instance.
+            data: Union[dict | List[dict]] = ResourceSerializer(
+                resources, many=many
+            ).data
+
+            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
 
 class ResourceSearch(View):

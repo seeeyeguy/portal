@@ -167,16 +167,57 @@ class Resource:
                 the page and limit.
         """
 
-        optional_args = f" with id: {resource_id}" if resource_id else "s"
-        optional_args = f"{optional_args} with page: {page}" if page else optional_args
-        optional_args = (
-            f"{optional_args}{' and ' if page else ' with '}limit: {limit}"
-            if limit
-            else optional_args
-        )
-        LOGGER.info(f"Fetching Resource{optional_args}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+        try:
+            optional_args = f" with id: {resource_id}" if resource_id else "s"
+            optional_args = (
+                f"{optional_args} with page: {page}" if page else optional_args
+            )
+            optional_args = (
+                f"{optional_args}{' and ' if page else ' with '}limit: {limit}"
+                if limit
+                else optional_args
+            )
+            LOGGER.info(f"Fetching Resource{optional_args}.")
+
+            # If resource id is given, along with a page
+            # or limit then throw an invalid parameters error.
+            if resource_id and (page or limit):
+                raise exceptions.DirectoryError("Invalid parameters given.", 400)
+
+            # If a resource id is given, fetch the corresponding `Resource` record.
+            if resource_id:
+                return ResourceModel.objects.get(id=resource_id)
+
+            resources = ResourceModel.objects.all()
+
+            # If `limit` is given, then limit the `Resource` records.
+            resources = resources[:limit] if limit else resources
+
+            if page:
+                # Create a Paginator to paginate the collection
+                # of `Resource`s.
+                # pylint: disable=line-too-long
+                paginator: Paginator = Paginator(resources, DEFAULT_PAGE_LENGTH)
+
+                # If `page` number supplied in the params is greater
+                # than the number of available pages, then return an
+                # empty `Resource` Queryset.
+                if page > paginator.num_pages:
+                    return ResourceModel.objects.none()
+
+                # Get the corresponding Page.
+                resource_page: Page = paginator.page(page)
+
+                # Assign the page's `Resource` QuerySet to
+                # `resources`.
+                resources = cast(QuerySet[ResourceModel], resource_page.object_list)
+
+            return resources
+
+        except ResourceModel.DoesNotExist as exc:
+            err_msg = f"Resource (id={resource_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400) from exc
 
 
 class ResourceSearch:
