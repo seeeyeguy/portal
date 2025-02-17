@@ -34,7 +34,7 @@ class TestCreateEmployeeLevel(TestCase):
 
         # Create `EmployeeLevel` record.
         employee_level = EmployeeLevel.create_employee_level(
-            name=arguments.CREATE_EMPLOYEELEVEL_NAME_SUCCESSFUL,
+            name=arguments.CREATE_EMPLOYEELEVEL_NAME,
             description=arguments.CREATE_EMPLOYEELEVEL_DESCRIPTION,
             level=arguments.CREATE_EMPLOYEELEVEL_LEVEL,
         )
@@ -71,7 +71,7 @@ class TestCreateEmployeeLevel(TestCase):
         with pytest.raises(DirectoryError):
             # Create `EmployeeLevel` record with 'level' that already exists.
             _ = EmployeeLevel.create_employee_level(
-                name=arguments.CREATE_EMPLOYEELEVEL_NAME_SUCCESSFUL,
+                name=arguments.CREATE_EMPLOYEELEVEL_NAME,
                 description=arguments.CREATE_EMPLOYEELEVEL_DESCRIPTION,
                 level=arguments.CREATE_EMPLOYEELEVEL_LEVEL_DUPLICATE,
             )
