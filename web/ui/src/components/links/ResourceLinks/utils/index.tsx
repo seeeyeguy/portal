@@ -69,6 +69,7 @@ export const createResourceCollection = (
         description={resource.description}
         url={resource.url}
         thumbnail={getThumbnailPath(resource)}
+        primaryPointOfContact={resource.primaryPointOfContact}
         download={resource.download}
         favoriteId={resourceFavoriteMap[resource.id].favoriteId}
         key={resourceFavoriteMap[resource.id].id}

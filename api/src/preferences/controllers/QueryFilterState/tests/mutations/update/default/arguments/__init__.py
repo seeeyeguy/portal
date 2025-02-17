@@ -116,6 +116,7 @@ VALID_QUERYFILTERSTATE_RECORD: dict = {
                 "name": "Resource 1 Revision 1",
                 "url": "example-revision-site.org",
                 "thumbnail": "/v1/media/resources/thumbnails/d2ab62e8-4a0e-4b12-b94b-c128cae48222/1/resource_1.png",
+                "primary_point_of_contact": "May.Parker@harris.com",
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,

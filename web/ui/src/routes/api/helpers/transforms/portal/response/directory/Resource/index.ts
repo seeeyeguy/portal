@@ -23,6 +23,7 @@ export interface ApiResource {
   description: string;
   url: string;
   thumbnail: string;
+  primary_point_of_contact: string;
   employee_levels: ApiEmployeeLevel[];
   subfunctions: ApiSubFunction[];
   tags: ApiTag[];

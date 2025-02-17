@@ -454,6 +454,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "apple.",
         "url": "example.org",
         "thumbnail": "/v1/media/resources/thumbnails/deb17c21-e342-4a19-83ee-79a9c50f26ba/1/resource_1.png",
+        "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
                 "id": 1,
@@ -567,6 +568,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "orange.",
         "url": "example-2.org",
         "thumbnail": "/v1/media/resources/thumbnails/a9f5e437-88de-4e38-9a07-efb912af8108/3/resource_2.png",
+        "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
                 "id": 2,
@@ -658,6 +660,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "banana.",
         "url": "example-3.org",
         "thumbnail": "/v1/media/resources/thumbnails/ed473d39-6fa7-4e36-8ae1-1d1de940563a/5/resource_3.png",
+        "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
                 "id": 3,
@@ -763,6 +766,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "grape.",
         "url": "example-4.org",
         "thumbnail": "/v1/media/resources/thumbnails/367d5c78-10b8-4464-9190-e9705ae4997b/6/resource_4.png",
+        "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
                 "id": 1,
@@ -868,6 +872,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "watermelon.",
         "url": "example-4.org",
         "thumbnail": "/v1/media/resources/thumbnails/caebfad3-1cc2-40db-a8cf-70e56f289d98/7/resource_5.png",
+        "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
                 "id": 1,
