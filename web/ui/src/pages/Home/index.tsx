@@ -2,6 +2,7 @@ import React from "react";
 import { useLoaderData } from "react-router";
 
 import FAQModal from "components/modals/FAQModal";
+import IntroModal from "components/modals/IntroModal";
 import NavBar from "components/nav/NavBar";
 import Controls from "containers/Controls";
 import Favorites from "containers/Favorites";
@@ -62,6 +63,7 @@ export default function Home() {
   return (
     <>
       <FAQModal />
+      <IntroModal />
       <NavBar profile={profile} />
       <div id="page-content">
         <Controls />

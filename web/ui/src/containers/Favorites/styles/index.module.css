@@ -16,8 +16,13 @@
   }
 
   .favorite-accordion summary div:first-of-type {
-    border-bottom: solid 0.15rem red;
-    border-image: linear-gradient(to right, red 5rem, transparent 10rem) 100% 1;
+    border-bottom: solid 0.15rem var(--color-vibrant-red);
+    border-image: linear-gradient(
+        to right,
+        var(--color-vibrant-red) 5rem,
+        transparent 10rem
+      )
+      100% 1;
   }
 
   .favorites-no-resources {
@@ -27,17 +32,17 @@
     justify-self: center;
     min-height: 12.85rem;
   }
-}
 
-@media screen and (max-width: 1110px) {
-  .favorite-accordion summary {
-    background-image: none;
+  @media screen and (max-width: 1200px) {
+    .favorite-accordion summary {
+      background-position: calc(100% + 2.5rem) -300px;
+      background-size: 400px;
+    }
   }
-}
 
-@media screen and (max-width: 1200px) {
-  .favorite-accordion summary {
-    background-position: calc(100% + 2.5rem) -300px;
-    background-size: 400px;
+  @media screen and (max-width: 1110px) {
+    .favorite-accordion summary {
+      background-image: none;
+    }
   }
 }

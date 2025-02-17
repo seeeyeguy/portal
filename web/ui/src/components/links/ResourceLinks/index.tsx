@@ -41,6 +41,7 @@ export default function ResourceLinks({
         profile
       )}
       className={styles["resource-links"]}
+      minColumnWidth={12.5}
       {...rest}
     />
   );
