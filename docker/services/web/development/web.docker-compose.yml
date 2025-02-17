@@ -26,6 +26,7 @@ services:
         <<: *logging-settings
         environment:
             APP_NAME: ${APP_NAME}
+            IBM_TELEMETRY_DISABLED: true
         ports:
             - ${WEB_PORT}:3000
         volumes:

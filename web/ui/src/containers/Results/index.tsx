@@ -87,8 +87,8 @@ export default function Results({
         .filter(
           (record) => !functionIds?.length || functionIds.includes(record.id)
         )
-        .map((record, index) => (
-          <section key={index}>
+        .map((record) => (
+          <section key={record.id}>
             <Resources
               title={record.name}
               searchTerm={searchTerm}

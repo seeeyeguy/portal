@@ -7,7 +7,7 @@ html {
 
 body {
   background: var(--color-light-gray);
-  font-family: sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   height: 100%;
   margin: 0;
   width: 100%;

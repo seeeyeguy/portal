@@ -15,6 +15,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@ibm/plex": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.7",
     "adas-react-components": "git+ssh://git@lnsvr0329.gcsd.harris.com:7999/dsa/adas-react-components.git#dev",
     "change-case": "^5.4.4",
