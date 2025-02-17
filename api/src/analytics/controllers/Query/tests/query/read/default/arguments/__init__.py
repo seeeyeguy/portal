@@ -13,10 +13,10 @@ QUERY_ID_3: int = 3
 FETCH_QUERY_BY_ID: int = 1
 
 # Page number used for testing fetch by page.
-FETCH_QUERY_BY_PAGE: int = 1
+FETCH_QUERY_WITH_PAGE: int = 1
 
 # Id used for testing fetch by limit.
-FETCH_QUERY_BY_LIMIT: int = 2
+FETCH_QUERY_WITH_LIMIT: int = 2
 
 # Id used for testing fetch by user.
 FETCH_QUERY_BY_USER: str = "May.Parker@harris.com"
@@ -28,6 +28,38 @@ FETCH_QUERY_BY_ID_DNE: int = 999
 # Id used for testing fetch by user
 # DNE tests.
 FETCH_QUERY_BY_USER_DNE: str = "ay.Parker@harris.com"
+
+# Expected record count when testing
+# fetching all records.
+FETCH_QUERY_RECORD_COUNT: int = 3
+
+# Expected record count when testing
+# fetching with page.
+FETCH_QUERY_WITH_PAGE_RECORD_COUNT: int = 3
+
+# Expected record count when testing
+# fetching with limit.
+FETCH_QUERY_WITH_LIMIT_RECORD_COUNT: int = 2
+
+# Expected record count when testing
+# fetching with page and limit.
+FETCH_QUERY_WITH_PAGE_AND_LIMIT_RECORD_COUNT: int = 2
+
+# Expected record count when testing
+# fetching by user with page.
+FETCH_QUERY_BY_USER_WITH_PAGE_RECORD_COUNT: int = 1
+
+# Expected record count when testing
+# fetching by user with limit.
+FETCH_QUERY_BY_USER_WITH_LIMIT_RECORD_COUNT: int = 1
+
+# Expected record count when testing
+# fetching by user.
+FETCH_QUERY_BY_USER_RECORD_COUNT: int = 1
+
+# Expected record count when testing
+# fetching by user with page and limit.
+FETCH_QUERY_BY_USER_WITH_PAGE_AND_LIMIT_RECORD_COUNT: int = 1
 
 # Valid `Query` records dictionary.
 VALID_QUERY_RECORDS: dict = {
@@ -95,7 +127,7 @@ VALID_QUERY_RECORDS: dict = {
                 "thumbnail": "/v1/media/resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/1/resource_1.png",
                 "type": "Resource Type 1",
                 "download": False,
-                "active": False,
+                "active": True,
                 "previous_revision": None,
             }
         ],
@@ -159,12 +191,12 @@ VALID_QUERY_RECORDS: dict = {
                 ],
                 "description": "pickle.",
                 "created": "2024-08-28T12:00:00-04:00",
-                "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2347",
+                "uid": "d085a72c-b564-4e12-b7c3-eb9d5bd33932",
                 "revision_number": 1,
                 "name": "Resource 2 Revision 1",
-                "url": "example.org",
-                "thumbnail": "/v1/media/resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2/resource_1.png",
-                "type": "Resource Type 1",
+                "url": "example-2.org",
+                "thumbnail": "/v1/media/resources/thumbnails/d085a72c-b564-4e12-b7c3-eb9d5bd33932/2/resource_2.png",
+                "type": "Resource Type 2",
                 "download": False,
                 "active": True,
                 "previous_revision": None,
@@ -233,11 +265,11 @@ VALID_QUERY_RECORDS: dict = {
                 "uid": "4c2c333e-68e9-4dca-8507-ce58cefde072",
                 "revision_number": 1,
                 "name": "Resource 3 Revision 1",
-                "url": "example-2.org",
-                "thumbnail": "/v1/media/resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/3/resource_2.png",
+                "url": "example-3.org",
+                "thumbnail": "/v1/media/resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/3/resource_3.png",
                 "type": "Resource Type 3",
                 "download": False,
-                "active": False,
+                "active": True,
                 "previous_revision": None,
             }
         ],

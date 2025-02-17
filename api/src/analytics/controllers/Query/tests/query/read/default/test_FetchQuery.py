@@ -33,7 +33,10 @@ class TestFetchQuery(TestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "analytics/controllers/Query/tests/query/read/default/fixtures/resources.json",
-        "analytics/controllers/Query/tests/query/read/default/fixtures/query.json",
+        "analytics/controllers/Query/tests/query/read/default/fixtures/requests.json",
+        "analytics/controllers/Query/tests/query/read/default/fixtures/transitions.json",
+        "analytics/controllers/Query/tests/query/read/default/fixtures/dispositions.json",
+        "analytics/controllers/Query/tests/query/read/default/fixtures/queries.json",
     ]
 
     @tag("controllers.query.fetch_query")
@@ -43,7 +46,10 @@ class TestFetchQuery(TestCase):
         queries = Query.fetch_query()
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
-        self.assertEqual(queries.count(), len(arguments.VALID_QUERY_RECORDS.keys()))  # type: ignore[union-attr]
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             self.assertIsInstance(query, QueryModel)
@@ -59,9 +65,14 @@ class TestFetchQuery(TestCase):
     def test_fetch_query_with_page(self) -> None:
         """Success Case: Fetch page of `Query` records."""
 
-        queries = Query.fetch_query(page=arguments.FETCH_QUERY_BY_PAGE)
+        queries = Query.fetch_query(page=arguments.FETCH_QUERY_WITH_PAGE)
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_WITH_PAGE_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -76,11 +87,14 @@ class TestFetchQuery(TestCase):
     def test_fetch_query_with_limit(self) -> None:
         """Success Case: Fetch all `Query` records up to limit."""
 
-        queries = Query.fetch_query(limit=arguments.FETCH_QUERY_BY_LIMIT)
+        queries = Query.fetch_query(limit=arguments.FETCH_QUERY_WITH_LIMIT)
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
 
-        self.assertEqual(queries.count(), 2)  # type: ignore[union-attr]
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_WITH_LIMIT_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -96,12 +110,15 @@ class TestFetchQuery(TestCase):
         """Success Case: Fetch page of `Query` records up to limit."""
 
         queries = Query.fetch_query(
-            page=arguments.FETCH_QUERY_BY_PAGE, limit=arguments.FETCH_QUERY_BY_LIMIT
+            page=arguments.FETCH_QUERY_WITH_PAGE, limit=arguments.FETCH_QUERY_WITH_LIMIT
         )
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
 
-        self.assertEqual(queries.count(), 2)  # type: ignore[union-attr]
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_WITH_PAGE_AND_LIMIT_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -138,6 +155,11 @@ class TestFetchQuery(TestCase):
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
 
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_USER_RECORD_COUNT,
+        )
+
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
 
@@ -153,10 +175,15 @@ class TestFetchQuery(TestCase):
         user's email."""
 
         queries = Query.fetch_query(
-            user=arguments.FETCH_QUERY_BY_USER, page=arguments.FETCH_QUERY_BY_PAGE
+            user=arguments.FETCH_QUERY_BY_USER, page=arguments.FETCH_QUERY_WITH_PAGE
         )
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_USER_WITH_PAGE_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -173,12 +200,15 @@ class TestFetchQuery(TestCase):
         up to limit."""
 
         queries = Query.fetch_query(
-            user=arguments.FETCH_QUERY_BY_USER, limit=arguments.FETCH_QUERY_BY_LIMIT
+            user=arguments.FETCH_QUERY_BY_USER, limit=arguments.FETCH_QUERY_WITH_LIMIT
         )
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
 
-        self.assertEqual(queries.count(), 1)  # type: ignore[union-attr]
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_USER_WITH_LIMIT_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -196,13 +226,16 @@ class TestFetchQuery(TestCase):
 
         queries = Query.fetch_query(
             user=arguments.FETCH_QUERY_BY_USER,
-            page=arguments.FETCH_QUERY_BY_PAGE,
-            limit=arguments.FETCH_QUERY_BY_LIMIT,
+            page=arguments.FETCH_QUERY_WITH_PAGE,
+            limit=arguments.FETCH_QUERY_WITH_LIMIT,
         )
 
         self.assertIsInstance(queries, QuerySet[QueryModel])
 
-        self.assertEqual(queries.count(), 1)  # type: ignore[union-attr]
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_USER_WITH_PAGE_AND_LIMIT_RECORD_COUNT,
+        )
 
         for query in queries:  # type: ignore[union-attr]
             query_id: int = query.id
@@ -228,3 +261,37 @@ class TestFetchQuery(TestCase):
 
         with pytest.raises(AnalyticsError):
             _ = Query.fetch_query(user=arguments.FETCH_QUERY_BY_USER_DNE)
+
+    @tag("controllers.query.fetch_query_by_id_with_page")
+    def test_fetch_query_by_id_with_page(self) -> None:
+        """Fail Case: Fetch a `Query` record given an id where
+        a page is also supplied in the parameters."""
+
+        with pytest.raises(AnalyticsError):
+            _ = Query.fetch_query(
+                record_id=arguments.FETCH_QUERY_BY_ID,
+                page=arguments.FETCH_QUERY_WITH_PAGE,
+            )
+
+    @tag("controllers.query.fetch_query_by_id_with_limit")
+    def test_fetch_query_by_id_with_limit(self) -> None:
+        """Fail Case: Fetch a `Query` record given an id where
+        a limit is also supplied in the parameters."""
+
+        with pytest.raises(AnalyticsError):
+            _ = Query.fetch_query(
+                record_id=arguments.FETCH_QUERY_BY_ID,
+                limit=arguments.FETCH_QUERY_WITH_LIMIT,
+            )
+
+    @tag("controllers.query.fetch_query_by_id_with_page_and_limit")
+    def test_fetch_query_by_id_with_page_and_limit(self) -> None:
+        """Fail Case: Fetch a `Query` record given an id where
+        a page and limit is also supplied in the parameters."""
+
+        with pytest.raises(AnalyticsError):
+            _ = Query.fetch_query(
+                record_id=arguments.FETCH_QUERY_BY_ID,
+                page=arguments.FETCH_QUERY_WITH_PAGE,
+                limit=arguments.FETCH_QUERY_WITH_LIMIT,
+            )

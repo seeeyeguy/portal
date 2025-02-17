@@ -125,6 +125,11 @@ class Query:
         LOGGER.info(f"Fetching `Query`s{optional_args}.")
 
         try:
+            # If a record id is given, along with a page
+            # or limit then throw an invalid parameters error.
+            if record_id and (page or limit):
+                raise exceptions.AnalyticsError("Invalid parameters given.", 400)
+
             # If `record_id` is provided, return the record with the given id.
             if record_id:
                 return models.Query.objects.get(id=record_id)
@@ -166,7 +171,7 @@ class Query:
 
             return queries
         except models.Query.DoesNotExist as exc:
-            err_msg = f"Query(id={record_id}) does not exist."
+            err_msg = f"Query (id={record_id}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc
         except AuthModels.User.DoesNotExist as exc:
