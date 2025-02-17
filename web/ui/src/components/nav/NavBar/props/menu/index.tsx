@@ -11,8 +11,8 @@ export default [
   },
   {
     label: "FAQ",
-    path: "/",
+    path: "/?faq=true",
     icon: faQuestion,
-    onClick: () => redirect("/"),
+    onClick: () => redirect("/?faq=true"),
   },
 ] as unknown as SearchBarMenuItem[];
