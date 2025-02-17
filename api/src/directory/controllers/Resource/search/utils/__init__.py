@@ -12,8 +12,10 @@ from directory.models import Function, Resource, SubFunction, Tag
 from directory.models.Resource.serializers import ResourceSerializer
 
 
-FUNCTREE_STRUCTURE = "functree"
-DEFAULT_STRUCTURE = "default"
+FUNCTREE_STRUCTURE: str = "functree"
+DEFAULT_STRUCTURE: str = "default"
+
+GENERAL_SUBFUNCTION_NAME: str = "General"
 
 
 def structure_resources(
@@ -136,7 +138,9 @@ def structure_resources(
 
             # Get the name of the `SubFunction`.
             subfunction_name: str = (
-                "General" if "General::" in subfunction.name else subfunction.name
+                GENERAL_SUBFUNCTION_NAME
+                if f"{GENERAL_SUBFUNCTION_NAME}::" in subfunction.name
+                else subfunction.name
             )
             # If the subfunction_name is not an existing
             # key inside the `structure[function_name]` dict,
@@ -157,5 +161,33 @@ def structure_resources(
                 structure[function_name][subfunction_name] = structure[function_name][
                     subfunction_name
                 ] | Resource.objects.filter(id=resource.id)
+
+    # Loop through the `structure` in order to re-order
+    # the collection assigned to each `Function` name to
+    # follow the alphabetical order of the `SubFunction`
+    # name, with the special case that if the `SubFunction`
+    # name is equal to `GENERAL_SUBFUNCTION_NAME` that will
+    # be placed first.
+    for function_name, subfunction_collection in structure.items():
+        # Generate sorted list of `SubFunction` names from
+        # the keys of the `subfunction_collection`.
+        subfunction_names: List[str] = list(
+            sorted(subfunction_collection.keys(), key=str.lower)
+        )
+        # If `GENERAL_SUBFUNCTION_NAME` is in `subfunction_names`,
+        # then proceed to move it to the beginning of the list.
+        if GENERAL_SUBFUNCTION_NAME in subfunction_names:
+            subfunction_names.insert(
+                0,
+                subfunction_names.pop(
+                    subfunction_names.index(GENERAL_SUBFUNCTION_NAME)
+                ),
+            )
+        # Assign a new collection to the structure for the current
+        # `function_name` that follows the order in `subfunction_names`.
+        structure[function_name] = {
+            subfunction_name: structure[function_name][subfunction_name]
+            for subfunction_name in subfunction_names
+        }
 
     return structure
