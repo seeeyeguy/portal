@@ -7,6 +7,11 @@ import { login } from "routes/pages/loaders/services/sso";
 import { createTestRouter } from "utils/tests/routers";
 
 describe("`Home` Page Tests", () => {
+  beforeEach(() => {
+    HTMLDialogElement.prototype.showModal = vitest.fn();
+    HTMLDialogElement.prototype.close = vitest.fn();
+  });
+
   test("Render `Home` Page", async () => {
     const loader = async () => {
       const user = await login();

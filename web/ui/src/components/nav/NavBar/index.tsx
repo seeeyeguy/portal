@@ -1,5 +1,6 @@
 import React from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { SearchBar } from "adas-react-components";
 import type { Option, Profile } from "adas-react-components/types";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +32,7 @@ import { DEFAULT_API_ERROR_MESSAGE } from "utils/constants/errors";
 
 import styles from "components/nav/NavBar/styles/index.module.css";
 
-const CONTACT_US_EMAIL = "melissa.cataldo@l3harris.com";
+const CONTACT_US_EMAIL = "SAS-Portal@L3Harris.com";
 
 const PROFILE: Profile = {
   firstName: "",
@@ -51,9 +52,22 @@ export default function NavBar({ profile }: NavBarProps) {
   };
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const searchTerm = useTypedSelector(
     (state) => state.ResourceSearch.search.term
+  );
+
+  const menuLinks = React.useMemo(
+    () =>
+      menuItems.map((menuItem) => ({
+        ...menuItem,
+        onClick: (event: React.MouseEvent) => {
+          event.preventDefault();
+          navigate(menuItem.path);
+        },
+      })),
+    [navigate]
   );
 
   const clearSearchForSession = React.useCallback(
@@ -145,7 +159,7 @@ export default function NavBar({ profile }: NavBarProps) {
           {profileData?.lastName?.charAt(0) ?? "-"}
         </span>
       }
-      menuItems={menuItems}
+      menuItems={menuLinks}
       formButtons={[
         {
           label: "Reset View",
