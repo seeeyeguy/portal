@@ -1182,6 +1182,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example.org",
                     "thumbnail": "/v1/media/resources/thumbnails/f6a31db2-5271-401a-901e-9220e0e4cda2/1/resource_1.png",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -1245,6 +1246,7 @@ components:
                     "name": "Resource 2 Revision 1",
                     "url": "example.gov",
                     "thumbnail": "/v1/media/resources/thumbnails/2ca5ca29-5dbb-4333-99d3-750e30b1ed48/2/resource_2.png",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "type": "Resource Type 2",
                     "download": False,
                     "active": True,
@@ -1289,6 +1291,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1364,6 +1367,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1441,6 +1445,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1518,6 +1523,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1592,6 +1598,7 @@ components:
                   "description": "Resource 1 Description.",
                   "url": "www.example.com",
                   "thumbnail": "/path/to/resource/thumbnail",
+                  "primary_point_of_contact": "May.Parker@harris.com",
                   "employee_levels": [
                     {
                       "id": 1,
@@ -1665,6 +1672,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1739,6 +1747,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1813,6 +1822,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1887,6 +1897,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -1981,6 +1992,7 @@ components:
                   "description": "Resource 1 Description.",
                   "url": "www.example.com",
                   "thumbnail": "/path/to/resource/thumbnail",
+                  "primary_point_of_contact": "May.Parker@harris.com",
                   "employee_levels": [
                     {
                       "id": 1,
@@ -2097,6 +2109,7 @@ components:
                 "description": "Resource 1 Description.",
                 "url": "www.example.com",
                 "thumbnail": "/path/to/resource/thumbnail",
+                "primary_point_of_contact": "May.Parker@harris.com",
                 "employee_levels": [
                   {
                     "id": 1,
@@ -2162,6 +2175,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -2329,6 +2343,7 @@ components:
                   "name": "Resource 3",
                   "url": "example-3.org",
                   "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/3/resource_3.png",
+                  "primary_point_of_contact": "May.Parker@harris.com",
                   "type": "Resource Type 3",
                   "download": false,
                   "active": true,
@@ -2421,6 +2436,7 @@ components:
                   "name": "Resource 1 Revision 1",
                   "url": "example-site.org",
                   "thumbnail": "/path/to/thumbnail.png",
+                  "primary_point_of_contact": "May.Parker@harris.com",
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
@@ -2530,6 +2546,7 @@ components:
                   "name": "Resource 1 Revision 1",
                   "url": "example-site.org",
                   "thumbnail": "/path/to/thumbnail.png",
+                  "primary_point_of_contact": "May.Parker@harris.com",
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
@@ -2664,6 +2681,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/thumbnail.png",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -2974,6 +2992,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/thumbnail.png",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -3606,6 +3625,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/thumbnail.png",
+                    "primary_point_of_contact": "May.Parker@harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,

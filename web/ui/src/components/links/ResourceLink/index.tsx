@@ -25,6 +25,7 @@ export default function ResourceLink({
   description,
   url,
   thumbnail,
+  primaryPointOfContact,
   download,
   favoriteId = null,
 }: ResourceLinkProps) {
@@ -37,6 +38,12 @@ export default function ResourceLink({
 
   const [isButtonActive, setIsButtonActive] =
     React.useState<boolean>(!!favoriteId);
+
+  const memoizedPrimaryPointOfContact = React.useMemo(
+    () =>
+      primaryPointOfContact.replace(/@harris.com|@l3.com/i, "@l3harris.com"),
+    [primaryPointOfContact]
+  );
 
   const updateFavorites = React.useCallback(async () => {
     if (!isButtonActive) {
@@ -99,6 +106,14 @@ export default function ResourceLink({
         download={download}
         rel="noreferrer"
         target="_blank"
+        tooltipHTMLContent={
+          <>
+            <h4>Point of Contact:</h4>
+            <a href={`mailto:${memoizedPrimaryPointOfContact}`}>
+              {memoizedPrimaryPointOfContact}
+            </a>
+          </>
+        }
         isButtonActive={isButtonActive}
         isButtonDisabled={false}
         buttonClassName={styles["favorite-button"]}

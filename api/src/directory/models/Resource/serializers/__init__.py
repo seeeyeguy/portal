@@ -18,6 +18,9 @@ class ResourceSerializer(serializers.ModelSerializer):
     employee_levels = EmployeeLevelSerializer(many=True, read_only=True)
     subfunctions = SubFunctionSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
+    primary_point_of_contact = serializers.CharField(
+        source="requests.originator.user.email"
+    )
 
     class Meta:
         """Meta for `Resource` serializer."""

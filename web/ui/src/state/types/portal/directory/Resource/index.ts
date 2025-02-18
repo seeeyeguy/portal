@@ -15,6 +15,7 @@ export default interface Resource {
   description: string;
   url: string;
   thumbnail: string;
+  primaryPointOfContact: string;
   employeeLevels: EmployeeLevel[];
   subfunctions: SubFunction[];
   tags: Tag[];
