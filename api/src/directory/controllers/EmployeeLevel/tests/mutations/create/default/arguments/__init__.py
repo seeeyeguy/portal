@@ -3,8 +3,14 @@ Arguments to be shared for EmployeeLevel's create
 controller pytests.
 """
 
+# `User` email used for testing create with a superuser.
+CREATE_EMPLOYEELEVEL_USER_EMAIL_SUPERUSER: str = "Tony.Stark@harris.com"
+
+# `User` email used for testing create with a nonsuperuser.
+CREATE_EMPLOYEELEVEL_USER_EMAIL_NONSUPERUSER: str = "May.Parker@harris.com"
+
 # Arguments for successfully creating `EmployeeLevel` record.
-CREATE_EMPLOYEELEVEL_NAME_SUCCESSFUL = "Successful Employee Level"
+CREATE_EMPLOYEELEVEL_NAME = "Successful Employee Level"
 CREATE_EMPLOYEELEVEL_DESCRIPTION = "This is a test EmployeeLevel"
 CREATE_EMPLOYEELEVEL_LEVEL = 4
 

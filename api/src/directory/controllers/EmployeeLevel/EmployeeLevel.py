@@ -50,15 +50,13 @@ class EmployeeLevel:
 
         # Ensure `EmployeeLevel` record doesn't already exist with the given `level`.
         if models.EmployeeLevel.objects.filter(level=level).exists():
-            err_msg = (
-                f"An EmployeeLevel with the given level: ({level}) already exists."
-            )
+            err_msg = f"EmployeeLevel (level={level}) already exists."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, 400)
 
         # Ensure `EmployeeLevel` record doesn't already exist with the given `name`.
         if models.EmployeeLevel.objects.filter(name__iexact=name).exists():
-            err_msg = f"EmployeeLevel already exists for name ({name})."
+            err_msg = f"EmployeeLevel (name={name}) already exists."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, 400)
 
