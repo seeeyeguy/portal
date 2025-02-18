@@ -9,8 +9,10 @@
   }
 
   .favorite-accordion summary {
-    background-image: url(/banner/bi_portal_controls_banner.svg);
-    background-size: cover;
+    background-image: url(/banner/nexus.svg);
+    background-position: calc(100% + 100px + 2.5rem) 68%;
+    background-repeat: no-repeat;
+    background-size: 600px;
   }
 
   .favorite-accordion summary div:first-of-type {
@@ -24,5 +26,18 @@
     font-weight: 700;
     justify-self: center;
     min-height: 12.85rem;
+  }
+}
+
+@media screen and (max-width: 1110px) {
+  .favorite-accordion summary {
+    background-image: none;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .favorite-accordion summary {
+    background-position: calc(100% + 2.5rem) -300px;
+    background-size: 400px;
   }
 }
