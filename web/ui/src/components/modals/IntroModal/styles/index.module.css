@@ -1,0 +1,83 @@
+.close {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 0.8rem;
+  top: 0.4rem;
+}
+
+.close svg {
+  color: var(--color-stealth);
+  font-size: 1.5rem;
+}
+
+.close svg:hover {
+  color: var(--color-gray);
+  cursor: pointer;
+}
+
+.intro-modal {
+  background-color: rgba(200, 200, 200, 0.6);
+  height: 100%;
+  left: 0;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.modal-body {
+  border-radius: inherit;
+  box-sizing: border-box;
+  padding: 0rem 1rem;
+  width: 100%;
+}
+
+.modal-body li {
+  padding: 0.4rem;
+}
+
+.modal-content {
+  background: var(--color-stealth);
+  border-radius: 8px;
+  box-shadow: var(--color-gray) 2px 2px 4px 1px;
+  color: var(--color-white);
+  margin: 10% auto;
+  position: relative;
+  width: 50%;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.modal-footer a {
+  background: none;
+  border: none;
+  color: var(--color-data-blue);
+  font-weight: bold;
+  margin: 1.3rem 0;
+}
+
+.modal-footer a:hover {
+  color: var(--color-white);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.modal-header {
+  background: var(--color-light-gray);
+  border-radius: inherit;
+  box-sizing: border-box;
+  color: var(--color-stealth);
+  width: 100%;
+}
+
+.modal-header h2 {
+  border-bottom: 0.3rem solid var(--color-vibrant-red);
+  padding: 2rem;
+  text-align: center;
+}
