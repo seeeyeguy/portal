@@ -21,7 +21,7 @@
 }
 
 .favorite-link-container div[role="tooltip"] a,
-a:visited {
+.favorite-link-container div[role="tooltip"] a:visited {
   color: var(--color-white);
 }
 
