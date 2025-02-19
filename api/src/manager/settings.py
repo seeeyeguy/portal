@@ -276,6 +276,7 @@ SSO_SERVICE_ENCRYPTION_KEY = os.getenv("SSO_SERVICE_ENCRYPTION_KEY", "secret-key
 # Trusted hosts for cross site requests.
 CSRF_TRUSTED_ORIGINS = [
     f"{SCHEME}://{WEB_HOST}:{WEB_PORT}",
+    f"{SCHEME}://{WEB_HOST}",
     f"http://{SERVER_HOST.lower()}:{SWAGGER_PORT}",
 ]
 
