@@ -16,8 +16,12 @@
 }
 
 .role-buttons-background {
-  background-image: url("/banner/bi_portal_controls_banner.svg");
-  background-size: cover;
+  background-color: var(--color-stealth);
+  background-image: url("/banner/nexus.svg");
+  background-position: calc(100% + 95px) -50px;
+  background-repeat: no-repeat;
+  background-size: 600px;
+  border-top: solid 1px var(--color-grayscale-2);
   height: 10rem;
 }
 
@@ -49,6 +53,7 @@
   .role-buttons-background {
     height: 14rem;
   }
+
   .role-buttons div[class*="filter-buttons-row"] {
     top: 1rem;
   }
@@ -61,5 +66,18 @@
 
   .role-buttons div[class*="filter-buttons-row"] {
     top: 1rem;
+  }
+}
+
+@media screen and (max-width: 1110px) {
+  .role-buttons-background {
+    background-image: none;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .role-buttons-background {
+    background-position: 100% 0px;
+    background-size: 400px;
   }
 }
