@@ -43,9 +43,9 @@
   border-radius: 8px;
   box-shadow: var(--color-gray) 2px 2px 4px 1px;
   color: var(--color-white);
-  margin: 10% auto;
+  margin: 2% auto;
   position: relative;
-  width: 50%;
+  width: 75%;
 }
 
 .modal-footer {
@@ -80,4 +80,11 @@
   border-bottom: 0.3rem solid var(--color-vibrant-red);
   padding: 2rem;
   text-align: center;
+}
+
+@media screen and (min-width: 1300px) {
+  .modal-content {
+    margin: 8% auto;
+    width: 50%;
+  }
 }

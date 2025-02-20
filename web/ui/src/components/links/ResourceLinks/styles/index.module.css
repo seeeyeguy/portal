@@ -1,3 +1,11 @@
+.no-resources {
+  align-items: center;
+  display: flex;
+  font-weight: 700;
+  justify-self: center;
+  min-height: 12.85rem;
+}
+
 .resource-links {
   background: var(--color-white);
 }

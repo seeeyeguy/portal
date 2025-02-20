@@ -1,5 +1,6 @@
 import React from "react";
 import { PagedItemContainer } from "adas-react-components";
+import lodash from "lodash";
 
 import {
   ResourceFavoriteMap,
@@ -33,16 +34,28 @@ export default function ResourceLinks({
     [favorites, resources]
   );
 
+  const resourceCollection = React.useMemo(
+    () => createResourceCollection(resources, resourceFavoriteMap, profile),
+    [resources, resourceFavoriteMap, profile]
+  );
+
   return (
-    <PagedItemContainer
-      dataSet={createResourceCollection(
-        resources,
-        resourceFavoriteMap,
-        profile
+    <>
+      {lodash.isEmpty(resourceCollection) ? (
+        <div
+          className={styles["no-resources"]}
+          aria-description="empty container for resource links"
+        >
+          No Links Available
+        </div>
+      ) : (
+        <PagedItemContainer
+          dataSet={resourceCollection}
+          className={styles["resource-links"]}
+          minColumnWidth={12.5}
+          {...rest}
+        />
       )}
-      className={styles["resource-links"]}
-      minColumnWidth={12.5}
-      {...rest}
-    />
+    </>
   );
 }
