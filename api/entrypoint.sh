@@ -27,7 +27,12 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
         python manage.py shell_plus --notebook &> notebook.log &
         sleep 6
         sed -i "s/127.0.0.1/$SERVER_HOST/g" notebook.log 
+    else
+        # Collect all static files and place them in static root
+        # to be served.
+        python manage.py collectstatic --no-input
     fi
+
     python manage.py migrate
     /apps/init.sh
 fi
