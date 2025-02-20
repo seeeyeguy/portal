@@ -256,7 +256,7 @@ if DEBUG:
 DEFAULT_SSO_ORIGIN = "https://uspby1lnhdped03.gcsd.harris.com:43339"
 
 # SCHEME://HOST:PORT of SSO service.
-SSO_ORIGIN = os.getenv("SSO_ORGIN", DEFAULT_SSO_ORIGIN)
+SSO_ORIGIN = os.getenv("SSO_ORIGIN", DEFAULT_SSO_ORIGIN)
 
 # SSO service reverse URL.
 SSO_SERVICE_APP_URL = f"{SSO_ORIGIN}/app/{APP_NAME}"
@@ -561,9 +561,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "v1/static/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "manager/storage/static"),
-]
+
+STATIC_PATH = os.path.join(BASE_DIR, "manager/storage/static")
+if DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "manager/storage/static"),
+    ]
+else:
+    STATIC_ROOT = STATIC_PATH
 
 #################
 ## MEDIA FILES ##
