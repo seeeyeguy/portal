@@ -115,7 +115,7 @@ ENTRYPOINT ["/apps/entrypoint.sh"]
 FROM production AS wsgi-production
 
 EXPOSE 8080
-CMD ["gunicorn", "--bind", ":8080", "--workers", "4", "manager.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8080", "--workers", "8", "manager.wsgi:application"]
 
 #
 #   ASGI PRODUCTION
@@ -124,4 +124,4 @@ CMD ["gunicorn", "--bind", ":8080", "--workers", "4", "manager.wsgi:application"
 FROM production AS asgi-production
 
 EXPOSE 8080
-CMD ["gunicorn", "--bind", ":8080", "--workers", "4", "-k", "uvicorn_worker.UvicornWorker", "manager.asgi:application"]
+CMD ["gunicorn", "--bind", ":8080", "--workers", "8", "-k", "uvicorn_worker.UvicornWorker", "manager.asgi:application"]
