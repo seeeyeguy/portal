@@ -145,7 +145,9 @@ class Resource:
 
     @staticmethod
     def fetch_resources(
-        resource_id: int | None, page: int | None, limit: int | None
+        resource_id: int | None = None,
+        page: int | None = None,
+        limit: int | None = None,
     ) -> Union[ResourceModel, QuerySet[ResourceModel]]:
         """
         Fetch a `Resource` record from the database with the given

@@ -27,6 +27,9 @@ services:
         environment:
             APP_NAME: ${APP_NAME}
             IBM_TELEMETRY_DISABLED: true
+            SCHEME: ${SCHEME}
+            WEB_HOST: ${WEB_HOST}
+            WEB_PORT: ${WEB_PORT}
         ports:
             - ${WEB_PORT}:3000
         volumes:

@@ -1,0 +1,102 @@
+[
+    {
+        "model": "directory.Resource",
+        "pk": 1,
+        "fields": {
+            "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 1 Revision 1",
+            "description": "popstick.",
+            "url": "example.org",
+            "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/1/resource_1.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 1",
+            "download": false,
+            "active": true,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 2,
+        "fields": {
+            "uid": "d085a72c-b564-4e12-b7c3-eb9d5bd33932",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 2 Revision 1",
+            "description": "pickle.",
+            "url": "example-2.org",
+            "thumbnail": "resources/thumbnails/d085a72c-b564-4e12-b7c3-eb9d5bd33932/2/resource_2.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 2",
+            "download": false,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 3,
+        "fields": {
+            "uid": "4c2c333e-68e9-4dca-8507-ce58cefde072",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 3 Revision 1",
+            "description": "bar.",
+            "url": "example-3.org",
+            "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/3/resource_3.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 3",
+            "download": false,
+            "active": true,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 4,
+        "fields": {
+            "uid": "589c788b-9a38-4150-af1f-80426dfd0b57",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 4 Revision 1",
+            "description": "popstick.",
+            "url": "example.org",
+            "thumbnail": "resources/thumbnails/589c788b-9a38-4150-af1f-80426dfd0b57/1/resource_4.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 4",
+            "download": false,
+            "active": true,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 5,
+        "fields": {
+            "uid": "40de14f4-0983-49e9-a380-d7cfee90d696",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 5 Revision 1",
+            "description": "popstick.",
+            "url": "example.org",
+            "thumbnail": "resources/thumbnails/40de14f4-0983-49e9-a380-d7cfee90d696/1/resource_5.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 5",
+            "download": false,
+            "active": true,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    }
+]

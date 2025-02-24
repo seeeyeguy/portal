@@ -1,3 +1,6 @@
 declare const __APP_NAME__: string;
+declare const __SCHEME__: string;
+declare const __WEB_HOST__: string;
+declare const __WEB_PORT__: string;
 declare module "*.css";
 /// <reference types="vite/client" />

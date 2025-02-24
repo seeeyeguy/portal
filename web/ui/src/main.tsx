@@ -18,12 +18,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <HelmetProvider>
       <Helmet>
         <title>{__APP_NAME__}</title>
-        <meta name="og:title" content="L3Harris BI Portal" />
+        <meta property="og:url" content={`${__SCHEME__}://${__WEB_HOST__}:${__WEB_PORT__}`} />
+        <meta property="og:title" content={__APP_NAME__} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={__APP_NAME__} />
         <meta
-          name="og:description"
+          property="og:description"
           content="A directory of helpful services and resources."
         />
-        <meta name="og:image" content="/icon/l3harrislogo.png" />
+        <meta property="og:image" content={`${__SCHEME__}://${__WEB_HOST__}:${__WEB_PORT__}/icon/portal-logo.png`} />
       </Helmet>
     </HelmetProvider>
     <Provider store={store}>
