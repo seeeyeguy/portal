@@ -17,23 +17,21 @@
 
 .role-buttons-background {
   background-color: var(--color-stealth);
-  background-image: url("/banner/nexus.svg");
-  background-position: calc(100% + 95px) -50px;
   background-repeat: no-repeat;
-  background-size: 600px;
   border-top: solid 1px var(--color-grayscale-2);
-  height: 10rem;
+  height: 14rem;
 }
 
 .role-buttons div[class*="filter-buttons-row"] {
   left: 2.5rem;
   right: 2.5rem;
   position: absolute;
-  top: 50%;
+  top: 1rem;
 }
 
 .role-buttons h1 {
   color: var(--color-grayscale-2);
+  display: none;
   font-size: 2.2rem;
   font-weight: 500;
   left: 2.5rem;
@@ -49,35 +47,33 @@
   margin-left: 3rem;
 }
 
-@media screen and (max-width: 581px) {
+@media screen and (min-width: 568px) {
   .role-buttons-background {
-    height: 14rem;
-  }
-
-  .role-buttons div[class*="filter-buttons-row"] {
-    top: 1rem;
+    height: 10rem;
   }
 }
 
-@media screen and (max-width: 764px) {
+@media screen and (min-width: 745px) {
   .role-buttons h1 {
-    display: none;
+    display: block;
   }
 
   .role-buttons div[class*="filter-buttons-row"] {
-    top: 1rem;
+    top: 50%;
   }
 }
 
-@media screen and (max-width: 1110px) {
+@media screen and (min-width: 1110px) {
   .role-buttons-background {
-    background-image: none;
-  }
-}
-
-@media screen and (max-width: 1200px) {
-  .role-buttons-background {
+    background-image: url("/banner/nexus.svg");
     background-position: 100% 0px;
     background-size: 400px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .role-buttons-background {
+    background-position: calc(100% + 100px) -90px;
+    background-size: 600px;
   }
 }

@@ -58,9 +58,9 @@ export default function IntroModal() {
               or remove a resource from your favorites.
             </li>
             <li>
-              The Portal provides links to content, however, those resources
-              control access using their own processes – please consider whether
-              you need access to a resource prior to submitting a request.
+              We don't control, manage, or grant access to any tool or system
+              link through The Portal. Permissions for all resources are managed
+              through the native system.
             </li>
           </ul>
         </main>

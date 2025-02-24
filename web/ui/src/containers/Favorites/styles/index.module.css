@@ -9,10 +9,8 @@
   }
 
   .favorite-accordion summary {
-    background-image: url(/banner/nexus.svg);
-    background-position: calc(100% + 100px + 2.5rem) 68%;
+    background-image: none;
     background-repeat: no-repeat;
-    background-size: 600px;
   }
 
   .favorite-accordion summary div:first-of-type {
@@ -33,16 +31,18 @@
     min-height: 12.85rem;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (min-width: 1110px) {
     .favorite-accordion summary {
-      background-position: calc(100% + 2.5rem) -300px;
+      background-image: url(/banner/nexus.svg);
+      background-position: calc(100% + 2.5rem) 87.2%;
       background-size: 400px;
     }
   }
 
-  @media screen and (max-width: 1110px) {
+  @media screen and (min-width: 1200px) {
     .favorite-accordion summary {
-      background-image: none;
+      background-position: calc(100% + 100px + 2.5rem) 68%;
+      background-size: 600px;
     }
   }
 }
