@@ -20,6 +20,9 @@ const SHARED = {
 export default defineConfig({
   define: {
     __APP_NAME__: JSON.stringify(process.env.APP_NAME),
+    __SCHEME__: JSON.stringify(process.env.SCHEME),
+    __WEB_HOST__: JSON.stringify(process.env.WEB_HOST),
+    __WEB_PORT__: JSON.stringify(process.env.WEB_PORT)
   },
   plugins: [react(), tsconfigPaths()],
   test: {

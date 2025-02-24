@@ -28,11 +28,14 @@ services:
             APP_NAME: ${APP_NAME}
             DANGEROUSLY_DISABLE_HOST_CHECK: true
             IBM_TELEMETRY_DISABLED: true
+            SCHEME: ${SCHEME}
             SSL_CERT: ${SSL_CERT}
             SSL_KEY: ${SSL_KEY}
             SSL_PASS: ${SSL_PASS}
             TIMEOUT_SECONDS: ${TIMEOUT_SECONDS}
             WDS_SOCKET_PORT: ${WEB_PORT}
+            WEB_HOST: ${WEB_HOST}
+            WEB_PORT: ${WEB_PORT}
         ports:
             - ${WEB_PORT}:443
         volumes:
