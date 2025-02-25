@@ -91,19 +91,21 @@ class Query:
     @staticmethod
     def fetch_query(
         record_id: int | None = None,
+        resource_id: int | None = None,
         user: str | None = None,
         page: int | None = None,
         limit: int | None = None,
     ) -> Union[models.Query, QuerySet[models.Query]]:
         """
         Fetch all `Query` records based on the arguments passed to this
-        controller. If page, limit, or user are specified then a QuerySet
+        controller. If resource_id, page, limit, or user are specified then a QuerySet
         of `Query` records will be returned matching the arguments. If
         an id is specified then the associated `Query` record will be
         returned.
 
         Accepts:
             * record_id (int | None): The id of the `Query` record.
+            * resource_id (int | None): The id of the related `Resource` record.
             * user (str): The user associated with the `Query` record(s).
             * page (int | None): The page of `Query` records to return.
             * limit (int | None): The limit of `Query` records to return.
@@ -114,10 +116,22 @@ class Query:
         """
 
         optional_args = f" with record_id: {record_id}" if record_id else ""
-        optional_args = f" for User: {user}" if user != "" else optional_args
-        optional_args = f" {optional_args} with page: {page}" if page else optional_args
         optional_args = (
-            f"{optional_args}{' and ' if user or page else ' with '}limit: {limit}"
+            f" with resource_id: {resource_id}" if resource_id else optional_args
+        )
+        optional_args_with_resource_id = (
+            f"{optional_args if (record_id or resource_id) else ''} for User: {user}"
+        )
+        optional_args = (
+            f" {optional_args_with_resource_id}" if user != "" else optional_args
+        )
+        optional_args = (
+            f"{optional_args}{' and ' if resource_id or user else ' with '}page: {page}"
+            if page
+            else optional_args
+        )
+        optional_args = (
+            f"{optional_args}{' and ' if resource_id or user or page else ' with '}limit: {limit}"
             if limit
             else optional_args
         )
@@ -125,9 +139,9 @@ class Query:
         LOGGER.info(f"Fetching `Query`s{optional_args}.")
 
         try:
-            # If a record id is given, along with a page
+            # If a record id is given, along with a resource_id, page,
             # or limit then throw an invalid parameters error.
-            if record_id and (page or limit):
+            if record_id and (resource_id or page or limit):
                 raise exceptions.AnalyticsError("Invalid parameters given.", 400)
 
             # If `record_id` is provided, return the record with the given id.
@@ -136,7 +150,14 @@ class Query:
 
             queries: QuerySet[models.Query, models.Query] = models.Query.objects.all()
 
-            # If `user` is provided, filter all queries by the given `user`.
+            # If `resource_id` is provided, filter all queries by the given `Resource`.
+            if resource_id:
+                _ = Resource.objects.get(id=resource_id)
+                queries: QuerySet[models.Query, models.Query] = queries.filter(
+                    resources__in=[resource_id]
+                )
+
+            # If `user` is provided, filter all queries by the given `User`.
             if user:
                 user_record: AuthModels.User = AuthModels.User.objects.get(
                     email__iexact=user
@@ -172,6 +193,10 @@ class Query:
             return queries
         except models.Query.DoesNotExist as exc:
             err_msg = f"Query (id={record_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.AnalyticsError(err_msg, 404) from exc
+        except Resource.DoesNotExist as exc:
+            err_msg = f"Resource (resource_id={resource_id}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc
         except AuthModels.User.DoesNotExist as exc:
