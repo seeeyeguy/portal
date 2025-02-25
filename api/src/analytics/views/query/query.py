@@ -59,30 +59,44 @@ class Query(View):
         try:
             request_params = f"?id={body['id']}" if body["id"] else ""
             request_params = (
-                f"?user={body['user']}" if body["user"] != "" else request_params
+                f"?resource={body['resource_id']}"
+                if body["resource_id"]
+                else request_params
+            )
+            request_params_with_resource_id = (
+                f"{request_params}&user={body['user']}"
+                if body["resource_id"]
+                else f"?user={body['user']}"
             )
             request_params = (
-                f"{request_params}{'&' if body['user'] else '?'}page={body['page']}"
+                f"{request_params_with_resource_id}"
+                if body["user"] != ""
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if (body['resource_id'] or body['user']) else '?'}page={body['page']}"
                 if body["page"]
                 else request_params
             )
             request_params = (
                 # pylint: disable=line-too-long
-                f"{request_params}{'&' if body['user'] or body['page'] else '?'}limit={body['limit']}"
+                f"{request_params}{'&' if (body['resource_id'] or body['user'] or body['page']) else '?'}limit={body['limit']}"
                 if body["limit"]
                 else request_params
             )
-
             LOGGER.info(f"GET /v1/analytics/queries{request_params}.")
 
             queries = controllers.Query.fetch_query(
                 record_id=body["id"],
+                resource_id=body["resource_id"],
                 user=body["user"],
                 page=body["page"],
                 limit=body["limit"],
             )
 
-            data: dict = QuerySerializer(queries, many=(not bool(body["id"]))).data
+            is_many = body["id"] is None
+
+            data: dict = QuerySerializer(queries, many=is_many).data
 
             return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
         except exceptions.AnalyticsError as exc:
