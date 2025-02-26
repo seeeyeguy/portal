@@ -34,7 +34,9 @@ class TestFetchFunction(TestCase):
     def test_fetch_functions(self) -> None:
         """Success Case: Fetch all `Function` records."""
 
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url, headers={"content-type": "application/json"}
+        )
 
         functions = response.json()
 
@@ -49,7 +51,9 @@ class TestFetchFunction(TestCase):
         """Success Case: Fetch a `Function` record given an id."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_FUNCTION_BY_ID}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         function = response.json()
 
@@ -66,6 +70,8 @@ class TestFetchFunction(TestCase):
         record does not exist."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_FUNCTION_BY_ID_DNE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

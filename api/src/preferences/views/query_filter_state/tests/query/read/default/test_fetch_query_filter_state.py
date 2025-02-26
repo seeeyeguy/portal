@@ -54,7 +54,9 @@ class TestFetchQueryFilterState(TestCase):
             f"{self.url}?user={arguments.FETCH_QUERYFILTERSTATE_USER_EMAIL}"
         )
 
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         query_filter_state = response.json()
 
@@ -71,7 +73,9 @@ class TestFetchQueryFilterState(TestCase):
             f"{self.url}?user={arguments.FETCH_QUERYFILTERSTATE_USER_EMAIL_DNE}"
         )
 
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -82,6 +86,8 @@ class TestFetchQueryFilterState(TestCase):
 
         request_url: str = f"{self.url}?user={arguments.FETCH_QUERYFILTERSTATE_QUERYFILTERSTATE_DNE_USER_EMAIL}"
 
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

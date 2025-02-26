@@ -47,7 +47,9 @@ class TestDeleteSubFunction(TestCase):
             f"{self.url}?id={arguments.DELETE_SUBFUNCTION_SUBFUNCTION_ID}"
         )
 
-        response = self.client.delete(request_url)
+        response = self.client.delete(
+            request_url, headers={"content-type": "application/json"}
+        )
         rows_affected = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

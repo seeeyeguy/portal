@@ -41,6 +41,8 @@ class Request(DateTimeAbstractModel):
         """Supported statuses for `Request`s."""
 
         APPROVED = "APPROVED"
+        PENDING = "PENDING"
+        REJECTED = "REJECTED"
 
     resource: models.OneToOneField = models.OneToOneField(
         "directory.Resource", on_delete=models.CASCADE

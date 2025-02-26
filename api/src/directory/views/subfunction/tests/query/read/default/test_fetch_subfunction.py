@@ -35,7 +35,9 @@ class TestFetchSubFunction(TestCase):
     def test_fetch_subfunctions(self) -> None:
         """Success Case: Fetch all `SubFunction` records."""
 
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url, headers={"content-type": "application/json"}
+        )
 
         subfunctions = response.json()
 
@@ -50,7 +52,9 @@ class TestFetchSubFunction(TestCase):
         """Success Case: Fetch a `SubFunction` record given an id."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_SUBFUNCTION_BY_ID}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         subfunction = response.json()
 
@@ -67,6 +71,8 @@ class TestFetchSubFunction(TestCase):
         record does not exist."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_SUBFUNCTION_BY_ID_DNE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -46,7 +46,9 @@ class TestFetchProfile(TestCase):
         given user."""
 
         request_url: str = f"{self.url}?user={arguments.VALID_PROFILE_USER_EMAIL}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         profile = response.json()
 
@@ -60,6 +62,8 @@ class TestFetchProfile(TestCase):
         """Fail Case: Fetch `Profile` record for the wrong `User`."""
 
         request_url: str = f"{self.url}?user={arguments.WRONG_VALID_PROFILE_USER_EMAIL}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

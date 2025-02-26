@@ -8,15 +8,19 @@ by `BI Portal`.
 
 # pylint: disable=wrong-import-order
 import logging
+import requests
 from PIL import Image
 from typing import cast, List, Literal, TypedDict, Union
+from uuid import uuid4
 
+from django.core.exceptions import ValidationError
 from django.core.paginator import Page, Paginator
 from django.db.models import Count, Max, QuerySet
 
 from directory import exceptions
 from directory.controllers.Resource.search import utils
-from directory.models import Resource as ResourceModel
+from directory.models import EmployeeLevel, Resource as ResourceModel, SubFunction, Tag
+from directory.utils import validate_url
 from request.models import Request
 
 LOGGER = logging.getLogger(__name__)
@@ -34,6 +38,8 @@ MANY_TO_MANY_FILTER_MAP: dict = {
     "employee_levels": "employee_levels__id__in",
     "tags": "tags__id__in",
 }
+
+RESOURCE_DESCRIPTION_MIN_CHAR_LENGTH = 30
 
 
 class SearchParams(TypedDict):
@@ -78,6 +84,7 @@ class CreateResourceParams(BaseResourceParams):
     """
 
     previous_revision: int | None
+    uid: str
 
 
 class UpdateResourceParams(BaseResourceParams):
@@ -110,15 +117,133 @@ class Resource:
             * resource (ResourceModel): The `Resource` record created.
         """
 
-        LOGGER.info(
-            f"Creating Resource with name: {params['name']}, description: "
-            f"{params['description']}, previous revision: {params['previous_revision']}, "
-            f"url: {params['url']}, employee levels: {params['employee_levels']}, "
-            f"subfunctions: {params['subfunctions']}, tags: {params['tags']}, type: "
-            f"{params['type']}, and download: {params['download']}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Creating Resource with uid: {params['uid']}, name: {params['name']}, "
+                f"description: {params['description']}, previous revision: "
+                f"{params['previous_revision']}, url: {params['url']}, employee levels: "
+                f"{params['employee_levels']}, subfunctions: {params['subfunctions']}, "
+                f"tags: {params['tags']}, type: {params['type']}, and download: "
+                f"{params['download']}."
+            )
+
+            previous_revision: Union[ResourceModel, None] = (
+                ResourceModel.objects.get(id=params["previous_revision"])
+                if params["previous_revision"]
+                else None
+            )
+            # Ensure new revision being created has the same uid as the previous revision.
+            if previous_revision and (
+                not params["uid"] or previous_revision.uid != params["uid"]
+            ):
+                err_msg = (
+                    f"Resource (uid={params['uid']}) must match its previous revision."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            # Ensure a pending `Request` doesn't already exist for a `Resource` with
+            # the given uid.
+            if (
+                previous_revision
+                and ResourceModel.objects.filter(
+                    uid=previous_revision.uid,
+                    requests__status=Request.RequestStatus.PENDING,
+                ).exists()
+            ):
+                err_msg = f"Resource (uid={params['uid']}) has a pending draft."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            resources_with_name: QuerySet[ResourceModel] = ResourceModel.objects.filter(
+                name=params["name"]
+            )
+            # Ensure a `Resource` doesn't already exist with the given name.
+            if resources_with_name.exclude(uid=params["uid"]).exists():
+                err_msg = f"Resource (name={params['name']}) already exists."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            if (
+                not params["description"]
+                or len(params["description"]) < RESOURCE_DESCRIPTION_MIN_CHAR_LENGTH
+            ):
+                err_msg = (
+                    "Please provide a more detailed description for this resource."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            validate_url(params["url"])
+
+            if not params["employee_levels"]:
+                err_msg = "Resource must be associated with at least one EmployeeLevel."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch `EmployeeLevel` records.
+            employee_level_records: QuerySet[
+                EmployeeLevel
+            ] = EmployeeLevel.objects.filter(id__in=params["employee_levels"])
+            if employee_level_records.count() != len(set(params["employee_levels"])):
+                err_msg = f"Some EmployeeLevels (ids={params['employee_levels']}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            if not params["subfunctions"]:
+                err_msg = "Resource must be associated with at least one SubFunction."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch `SubFunction` records.
+            subfunction_records: QuerySet[SubFunction] = SubFunction.objects.filter(
+                id__in=params["subfunctions"]
+            )
+            if subfunction_records.count() != len(set(params["subfunctions"])):
+                err_msg = (
+                    f"Some SubFunctions (ids={params['subfunctions']}) do not exist."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            # Fetch `Tag` records.
+            tag_records: QuerySet[Tag] = Tag.objects.filter(id__in=params["tags"])
+            if tag_records.count() != len(set(params["tags"])):
+                err_msg = f"Some Tags (ids={params['tags']}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            resource: ResourceModel = ResourceModel.objects.create(
+                uid=params["uid"] if previous_revision else uuid4(),
+                previous_revision=previous_revision,
+                revision_number=None,
+                name=params["name"],
+                description=params["description"],
+                url=params["url"],
+                thumbnail=params["thumbnail"],
+                type=params["type"].lower(),
+                download=params["download"],
+                active=False,
+            )
+
+            # Add `EmployeeLevel`s, `SubFunction`s, and `Tag`s.
+            resource.employee_levels.add(*employee_level_records)
+            resource.subfunctions.add(*subfunction_records)
+            resource.tags.add(*tag_records)
+
+            return resource
+        except ResourceModel.DoesNotExist as exc:
+            err_msg = f"Resource (id={params['previous_revision']}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, status=404) from exc
+        except ValidationError as exc:
+            err_msg = f"URL({params['url']}) is malformed."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, status=400) from exc
+        except requests.HTTPError as exc:
+            err_msg = f"URL({params['url']}) is not reachable."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, status=404) from exc
 
     @staticmethod
     def update_resource(params: UpdateResourceParams) -> ResourceModel:
