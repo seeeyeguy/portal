@@ -42,7 +42,9 @@ class TestDeleteEmployeeLevel(TestCase):
         """Success Case: Delete an `EmployeeLevel` record."""
 
         request_url: str = f"{self.url}?id={arguments.DELETE_EMPLOYEE_LEVEL_BY_ID}"
-        response = self.client.delete(request_url)
+        response = self.client.delete(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         rows_affected = response.json()
 

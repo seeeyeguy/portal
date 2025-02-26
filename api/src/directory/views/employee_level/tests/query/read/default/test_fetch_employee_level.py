@@ -34,7 +34,9 @@ class TestFetchEmployeeLevel(TestCase):
     def test_fetch_employee_levels(self) -> None:
         """Success Case: Fetch all `EmployeeLevel` records."""
 
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url, headers={"content-type": "application/json"}
+        )
         employee_levels = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(employee_levels, List)
@@ -47,7 +49,9 @@ class TestFetchEmployeeLevel(TestCase):
         """Success Case: Fetch an `EmployeeLevel` record given an id."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_EMPLOYEELEVEL_BY_ID}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         employee_level = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsInstance(employee_level, dict)
@@ -62,5 +66,7 @@ class TestFetchEmployeeLevel(TestCase):
         record does not exist."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_EMPLOYEELEVEL_BY_ID_DNE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

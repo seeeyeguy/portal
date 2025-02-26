@@ -51,7 +51,9 @@ class TestFetchQuery(TestCase):
     def test_fetch_query(self) -> None:
         """Success Case: Fetch all `Query` records."""
 
-        response = self.client.get(self.url, content_type="application/json")
+        response = self.client.get(
+            self.url, headers={"content-type": "application/json"}
+        )
 
         queries = response.json()
 
@@ -82,7 +84,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -114,7 +116,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -147,7 +149,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -181,7 +183,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         query = response.json()
@@ -208,7 +210,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -242,7 +244,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -278,7 +280,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -315,7 +317,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         queries = response.json()
@@ -351,7 +353,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -366,7 +368,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -382,7 +384,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -398,7 +400,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -415,7 +417,7 @@ class TestFetchQuery(TestCase):
         }
 
         response = self.client.get(
-            self.url, query_params, content_type="application/json"
+            self.url, query_params, headers={"content-type": "application/json"}
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

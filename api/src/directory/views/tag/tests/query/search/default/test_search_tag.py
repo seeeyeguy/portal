@@ -37,7 +37,9 @@ class TestSearchTag(TestCase):
 
         # Make request to search `Tag`s endpoint.
         request_url = f"{self.url}?label={arguments.SEARCH_TERM}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         tags = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -56,7 +58,9 @@ class TestSearchTag(TestCase):
 
         # Make request to search `Tag`s endpoint.
         request_url = f"{self.url}?label={arguments.SEARCH_TERM_NO_RESULTS}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         tags = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

@@ -146,7 +146,7 @@ VALID_RESOURCE_MAP: dict = {
         "name": "Resource 1 Revision 2",
         "description": "popstick.",
         "url": "example.org",
-        "thumbnail": "/v1/media/resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2/resource_1.png",
+        "thumbnail": "/v1/media/resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2024_08_28__16_00_00/resource_1.png",
         "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
@@ -203,7 +203,7 @@ VALID_RESOURCE_MAP: dict = {
         "name": "Resource 2 Revision 2",
         "description": "bar.",
         "url": "example-2.org",
-        "thumbnail": "/v1/media/resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/4/resource_2.png",
+        "thumbnail": "/v1/media/resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/2024_08_28__16_00_00/resource_2.png",
         "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
@@ -288,7 +288,7 @@ VALID_RESOURCE_MAP: dict = {
         "name": "Resource 3 Revision 1",
         "description": "cake.",
         "url": "example-3.org",
-        "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/5/resource_3.png",
+        "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/2024_08_28__16_00_00/resource_3.png",
         "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
@@ -357,7 +357,7 @@ VALID_RESOURCE_MAP: dict = {
         "name": "Resource 4 Revision 1",
         "description": "cookie.",
         "url": "example-4.org",
-        "thumbnail": "/v1/media/resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/6/resource_4.png",
+        "thumbnail": "/v1/media/resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/2024_08_28__16_00_00/resource_4.png",
         "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {
@@ -432,7 +432,7 @@ VALID_RESOURCE_MAP: dict = {
         "name": "Resource 5 Revision 1",
         "description": "ice cream.",
         "url": "example-4.org",
-        "thumbnail": "/v1/media/resources/thumbnails/b7801c65-640e-403e-8f67-0a6b219f01ac/7/resource_5.png",
+        "thumbnail": "/v1/media/resources/thumbnails/b7801c65-640e-403e-8f67-0a6b219f01ac/2024_08_28__16_00_00/resource_5.png",
         "primary_point_of_contact": "May.Parker@harris.com",
         "employee_levels": [
             {

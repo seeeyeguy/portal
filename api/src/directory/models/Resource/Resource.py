@@ -42,8 +42,10 @@ def thumbnail_path(instance: ResourceModelType, filename: str) -> str:
         * (str): A path to the thumbnail file, where it will be saved.
     """
 
-    # file will be uploaded to MEDIA_ROOT/.../<revision_id>/<id>/<filename>
-    return f"resources/thumbnails/{instance.uid}/{instance.id}/{filename}"
+    created = instance.created.strftime("%Y_%m_%d__%H_%M_%S")  # type: ignore[attr-defined]
+
+    # file will be uploaded to MEDIA_ROOT/.../<revision_id>/<created>/<filename>
+    return f"resources/thumbnails/{instance.uid}/{created}/{filename}"
 
 
 class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
@@ -87,11 +89,13 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     previous_revision: models.OneToOneField = models.OneToOneField(
         "self", null=True, on_delete=models.SET_NULL
     )
-    revision_number: models.PositiveIntegerField = models.PositiveIntegerField()
+    revision_number: models.PositiveIntegerField = models.PositiveIntegerField(
+        null=True
+    )
     name: models.CharField = models.CharField(max_length=512)
     url: models.URLField = models.URLField(max_length=1024)
     thumbnail: models.ImageField = models.ImageField(
-        upload_to=thumbnail_path, null=True
+        upload_to=thumbnail_path, null=True, max_length=512
     )
     employee_levels: models.ManyToManyField = models.ManyToManyField(
         "directory.EmployeeLevel", db_table="directory_resource_employeelevels"

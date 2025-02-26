@@ -27,6 +27,17 @@ class Stage(BasicInformationAbstractModel):
             representation of the stage.
     """
 
+    class StageLevels:
+        """Levels for all `Stage`s in the BI Portal workflow."""
+
+        DRAFT = 1
+        SUBMITTED = 2
+        APPROVED_BY_BUSINESS_PROCESS_EXPERT = 3
+        REVISE = 4
+        REJECTED_BY_BUSINESS_PROCESS_EXPERT = 5
+        APPROVED_BY_SUPERUSER = 99
+        REJECTED_BY_SUPERUSER = 100
+
     level: models.IntegerField = models.PositiveIntegerField(unique=True)
 
     def __str__(self) -> str:

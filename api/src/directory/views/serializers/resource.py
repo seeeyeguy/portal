@@ -10,15 +10,11 @@ class BaseResourceRequest(serializers.Serializer):
     """Base serializer used for POST and PUT /v1/directory/resources requests."""
 
     name = serializers.CharField(max_length=512)
-    description = serializers.CharField(max_length=8192)
+    description = serializers.CharField(min_length=30, max_length=8192)
     url = serializers.URLField()
     thumbnail = serializers.ImageField(allow_null=True)
-    employee_levels = serializers.ListField(
-        child=serializers.IntegerField(), allow_empty=True, default=[]
-    )
-    subfunctions = serializers.ListField(
-        child=serializers.IntegerField(), allow_empty=True, default=[]
-    )
+    employee_levels = serializers.ListField(child=serializers.IntegerField())
+    subfunctions = serializers.ListField(child=serializers.IntegerField())
     tags = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, default=[]
     )
@@ -29,7 +25,10 @@ class BaseResourceRequest(serializers.Serializer):
 class CreateResourceRequest(BaseResourceRequest):
     """Request serializer for POST /v1/directory/resources"""
 
-    previous_revision = serializers.IntegerField(allow_null=True, default=None)
+    previous_revision = serializers.IntegerField(
+        allow_null=True, default=None, min_value=1
+    )
+    uid = serializers.UUIDField(format="hex_verbose", allow_null=True, default=None)
 
 
 class UpdateResourceRequest(BaseResourceRequest):

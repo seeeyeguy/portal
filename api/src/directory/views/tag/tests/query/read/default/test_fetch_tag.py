@@ -35,7 +35,9 @@ class TestFetchTag(TestCase):
     def test_fetch_tags(self) -> None:
         """Success Case: Fetch all `Tag` records."""
 
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url, headers={"content-type": "application/json"}
+        )
 
         tags = response.json()
 
@@ -56,7 +58,9 @@ class TestFetchTag(TestCase):
         """Success Case: Fetch page of `Tag` records."""
 
         request_url: str = f"{self.url}?page={arguments.FETCH_TAG_WITH_PAGE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         tags = response.json()
 
@@ -77,7 +81,9 @@ class TestFetchTag(TestCase):
         """Success Case: Fetch all `Tag` records up to limit."""
 
         request_url: str = f"{self.url}?limit={arguments.FETCH_TAG_WITH_LIMIT}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         tags = response.json()
 
@@ -98,7 +104,9 @@ class TestFetchTag(TestCase):
         """Success Case: Fetch page of `Tag` records up to limit."""
 
         request_url: str = f"{self.url}?page={arguments.FETCH_TAG_WITH_PAGE}&limit={arguments.FETCH_TAG_WITH_PAGE_AND_LIMIT_LIMIT_NUMBER}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         tags = response.json()
 
@@ -124,7 +132,9 @@ class TestFetchTag(TestCase):
         request_url: str = (
             f"{self.url}?page={arguments.FETCH_TAG_WITH_PAGE_EXCEEDING_PAGE_COUNT}"
         )
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         tags = response.json()
 
@@ -139,7 +149,9 @@ class TestFetchTag(TestCase):
         """Success Case: Fetch a `Tag` record given an id."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_TAG_BY_ID}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         tag = response.json()
 
@@ -157,7 +169,9 @@ class TestFetchTag(TestCase):
         record does not exist."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_TAG_BY_ID_DNE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -167,7 +181,9 @@ class TestFetchTag(TestCase):
         a page is also supplied in the parameters."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_TAG_BY_ID_DNE}&page={arguments.FETCH_TAG_WITH_PAGE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -177,7 +193,9 @@ class TestFetchTag(TestCase):
         a limit is also supplied in the parameters."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_TAG_BY_ID_DNE}&limit={arguments.FETCH_TAG_WITH_LIMIT}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -187,6 +205,8 @@ class TestFetchTag(TestCase):
         a page and limit is also supplied in the parameters."""
 
         request_url: str = f"{self.url}?id={arguments.FETCH_TAG_BY_ID_DNE}&page={arguments.FETCH_TAG_WITH_PAGE}&limit={arguments.FETCH_TAG_WITH_LIMIT}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

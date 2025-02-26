@@ -43,7 +43,9 @@ class TestDeleteTag(TestCase):
         """Success Case: Delete a `Tag` record."""
 
         request_url: str = f"{self.url}?id={arguments.DELETE_TAG_BY_ID}"
-        response = self.client.delete(request_url)
+        response = self.client.delete(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         rows_affected = response.json()
 

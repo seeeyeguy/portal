@@ -15,6 +15,8 @@ from django import http
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.views import APIView
 
 from directory.controllers.Resource.Resource import (
     CreateResourceParams,
@@ -36,34 +38,45 @@ from manager.utils.types.request import DjangoHttpRequest
 LOGGER = logging.getLogger(__name__)
 
 
-class Resource(View):
+class Resource(APIView):
     """
     Handle user requests to create, fetch, update, and delete `Resource`
     records for `BI Portal`. `Resource` represents a link to an internal
     tool within L3Harris technologies.
     """
 
+    parser_classes = (FormParser, MultiPartParser)
+
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.CreateResourceRequest))
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/resources."""
 
-        LOGGER.info(f"POST /v1/directory/resources.")
+        try:
+            LOGGER.info(f"POST /v1/directory/resources.")
 
-        create_params: CreateResourceParams = CreateResourceParams(
-            name=body["name"],
-            description=body["description"],
-            previous_revision=body["previous_revision"],
-            url=body["url"],
-            thumbnail=body["thumbnail"],
-            employee_levels=body["employee_levels"],
-            subfunctions=body["subfunctions"],
-            tags=body["tags"],
-            type=body["type"],
-            download=body["download"],
-        )
-        resource = ResourceController.create_resource(params=create_params)
-        return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
+            create_params: CreateResourceParams = CreateResourceParams(
+                uid=body["uid"],
+                name=body["name"],
+                description=body["description"],
+                previous_revision=body["previous_revision"],
+                url=body["url"],
+                thumbnail=body["thumbnail"],
+                employee_levels=body["employee_levels"],
+                subfunctions=body["subfunctions"],
+                tags=body["tags"],
+                type=body["type"],
+                download=body["download"],
+            )
+
+            resource = ResourceController.create_resource(params=create_params)
+
+            data: dict = ResourceSerializer(resource).data
+
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.UpdateResourceRequest))
@@ -92,7 +105,9 @@ class Resource(View):
             type=body["type"],
             download=body["download"],
         )
+
         resource = ResourceController.update_resource(params=update_params)
+
         return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchResourceRequest))

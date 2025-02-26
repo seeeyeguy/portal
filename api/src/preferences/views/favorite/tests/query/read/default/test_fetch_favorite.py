@@ -47,7 +47,9 @@ class TestFetchFavorite(TestCase):
         the given user."""
 
         request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         favorites = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(favorites, arguments.VALID_FAVORITES)
@@ -58,5 +60,7 @@ class TestFetchFavorite(TestCase):
         a `User` that does not exist."""
 
         request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL_DNE}"
-        response = self.client.get(request_url)
+        response = self.client.get(
+            request_url, headers={"content-type": "application/json"}
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

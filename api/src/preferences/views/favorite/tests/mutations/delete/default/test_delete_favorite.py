@@ -46,7 +46,9 @@ class TestDeleteFavorite(TestCase):
         """Success Case: Delete `Favorite` record with given id."""
 
         request_url: str = f"{self.url}?id={arguments.DELETE_FAVORITE_FAVORITE_ID}"
-        response = self.client.delete(request_url)
+        response = self.client.delete(
+            request_url, headers={"content-type": "application/json"}
+        )
         rows_deleted = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(rows_deleted, arguments.DELETE_FAVORITE_DELETED_ROWS)

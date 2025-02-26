@@ -43,7 +43,9 @@ class TestDeleteFunction(TestCase):
         """Success Case: Delete a `Function` record."""
 
         request_url: str = f"{self.url}?id={arguments.DELETE_FUNCTION_BY_ID}"
-        response = self.client.delete(request_url)
+        response = self.client.delete(
+            request_url, headers={"content-type": "application/json"}
+        )
 
         rows_affected = response.json()
 
