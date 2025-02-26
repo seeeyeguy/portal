@@ -30,6 +30,7 @@ CMD ["npm", "run", "dev"]
 FROM base AS builder
 
 ADD ./ui/ .
+RUN mkdir -p ${APPDIR}/storage
 RUN npm ci && \
     npm run build
 
