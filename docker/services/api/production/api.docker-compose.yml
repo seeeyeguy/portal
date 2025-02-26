@@ -61,6 +61,9 @@ services:
         ports:
             - ${SERVER_PORT}:8080
         volumes:
-            - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src/manager/storage:/manager/storage
+            # This volume is for hosting static files.
+            - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src/manager/storage:/apps/${APP_NAME}/manager/storage
+            # This volume is for hosting media files.
+            - /apps/${APP_NAME}/storage/media:/apps/${APP_NAME}/manager/storage/media
             # This volume is for fixing SSL CA Certs inside the container.
             - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro
