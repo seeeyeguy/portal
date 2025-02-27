@@ -83,6 +83,31 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("controllers.query.fetch_query_by_resource_id_with_page")
+    def test_fetch_query_by_resource_id_with_page(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            page=arguments.FETCH_QUERY_WITH_PAGE,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("controllers.query.fetch_query_with_limit")
     def test_fetch_query_with_limit(self) -> None:
         """Success Case: Fetch all `Query` records up to limit."""
@@ -94,6 +119,31 @@ class TestFetchQuery(TestCase):
         self.assertEqual(
             queries.count(),  # type: ignore[union-attr]
             arguments.FETCH_QUERY_WITH_LIMIT_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("controllers.query.fetch_query_by_resource_id_with_limit")
+    def test_fetch_query_by_resource_id_with_limit(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id up to limit."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            limit=arguments.FETCH_QUERY_WITH_LIMIT,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
         )
 
         for query in queries:  # type: ignore[union-attr]
@@ -129,6 +179,32 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("controllers.query.fetch_query_by_resource_id_with_page_and_limit")
+    def test_fetch_query_by_resource_id_with_page_and_limit(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id up to limit."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            page=arguments.FETCH_QUERY_WITH_PAGE,
+            limit=arguments.FETCH_QUERY_WITH_LIMIT,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("controllers.query.fetch_query_by_id")
     def test_fetch_query_by_id(self) -> None:
         """Success Case: Fetch a `Query` record given an id."""
@@ -147,6 +223,28 @@ class TestFetchQuery(TestCase):
             arguments.VALID_QUERY_RECORDS[query_id],
         )
 
+    @tag("controllers.query.fetch_query_by_resource_id")
+    def test_fetch_query_by_resource_id(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id."""
+
+        queries = Query.fetch_query(resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID)
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            self.assertIsInstance(query, QueryModel)
+
+            query_id: int = query.id
+
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("controllers.query.fetch_query_by_user")
     def test_fetch_query_by_user(self) -> None:
         """Success Case: Fetch `Query` records given a user's email."""
@@ -158,6 +256,31 @@ class TestFetchQuery(TestCase):
         self.assertEqual(
             queries.count(),  # type: ignore[union-attr]
             arguments.FETCH_QUERY_BY_USER_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("controllers.query.fetch_query_by_resource_id_for_user")
+    def test_fetch_query_by_resource_id_for_user(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            user=arguments.FETCH_QUERY_BY_USER,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
         )
 
         for query in queries:  # type: ignore[union-attr]
@@ -194,6 +317,32 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("controllers.query.fetch_query_by_resource_id_for_user_with_page")
+    def test_fetch_query_by_resource_id_for_user_with_page(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            user=arguments.FETCH_QUERY_BY_USER,
+            page=arguments.FETCH_QUERY_WITH_PAGE,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("controllers.query.fetch_query_by_user_with_limit")
     def test_fetch_query_by_user_with_limit(self) -> None:
         """Success Case: Fetch `Query` records given a user's email
@@ -208,6 +357,32 @@ class TestFetchQuery(TestCase):
         self.assertEqual(
             queries.count(),  # type: ignore[union-attr]
             arguments.FETCH_QUERY_BY_USER_WITH_LIMIT_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("controllers.query.fetch_query_by_resource_id_for_user_with_limit")
+    def test_fetch_query_by_resource_id_for_user_with_limit(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email up to limit."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            user=arguments.FETCH_QUERY_BY_USER,
+            limit=arguments.FETCH_QUERY_WITH_LIMIT,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
         )
 
         for query in queries:  # type: ignore[union-attr]
@@ -246,6 +421,33 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("controllers.query.fetch_query_by_resource_id_for_user_with_page_and_limit")
+    def test_fetch_query_by_resource_id_for_user_with_page_and_limit(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email up to limit."""
+
+        queries = Query.fetch_query(
+            resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            user=arguments.FETCH_QUERY_BY_USER,
+            page=arguments.FETCH_QUERY_WITH_PAGE,
+            limit=arguments.FETCH_QUERY_WITH_LIMIT,
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+
+        self.assertEqual(
+            queries.count(),  # type: ignore[union-attr]
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:  # type: ignore[union-attr]
+            query_id: int = query.id
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+            self.assertEqual(
+                QuerySerializer(query).data,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("controllers.query.fetch_query_by_id_dne")
     def test_fetch_query_by_id_dne(self) -> None:
         """Fail Case: Fetch a `Query` record given an id where record
@@ -253,6 +455,13 @@ class TestFetchQuery(TestCase):
 
         with pytest.raises(AnalyticsError):
             _ = Query.fetch_query(record_id=arguments.FETCH_QUERY_BY_ID_DNE)
+
+    @tag("controllers.query.fetch_query_by_resource_id_dne")
+    def test_fetch_query_by_resource_id_dne(self) -> None:
+        """Fail Case: Fetch `Query` records given a `Resource` id where the `Resource` does not exist."""
+
+        with pytest.raises(AnalyticsError):
+            _ = Query.fetch_query(record_id=arguments.FETCH_QUERY_BY_RESOURCE_ID_DNE)
 
     @tag("controllers.query.fetch_query_by_user_dne")
     def test_fetch_query_by_user_dne(self) -> None:
