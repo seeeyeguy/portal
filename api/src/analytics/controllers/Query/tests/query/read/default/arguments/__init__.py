@@ -18,12 +18,19 @@ FETCH_QUERY_WITH_PAGE: int = 1
 # Id used for testing fetch by limit.
 FETCH_QUERY_WITH_LIMIT: int = 2
 
+# Id used for testing fetch by `Resource`.
+FETCH_QUERY_BY_RESOURCE_ID: int = 1
+
 # Id used for testing fetch by user.
 FETCH_QUERY_BY_USER: str = "May.Parker@harris.com"
 
 # Id used for testing fetch by query id
 # DNE tests.
 FETCH_QUERY_BY_ID_DNE: int = 999
+
+# Id used for testing fetch by `Resource` id
+# DNE tests.
+FETCH_QUERY_BY_RESOURCE_ID_DNE: int = 999
 
 # Id used for testing fetch by user
 # DNE tests.
@@ -32,6 +39,10 @@ FETCH_QUERY_BY_USER_DNE: str = "ay.Parker@harris.com"
 # Expected record count when testing
 # fetching all records.
 FETCH_QUERY_RECORD_COUNT: int = 3
+
+# Expected record count when testing
+# fetch `Query` records by a `Resource` record
+FETCH_QUERY_BY_RESOURCE_RECORD_COUNT: int = 1
 
 # Expected record count when testing
 # fetching with page.
