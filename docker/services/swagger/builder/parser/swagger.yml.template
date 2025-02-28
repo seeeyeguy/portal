@@ -33,7 +33,7 @@ paths:
     get:
       tags:
         - "analytics.query.fetch"
-      summary: "Fetch a Query."
+      summary: "Fetch Query."
       parameters:
         - in: query
           name: id
@@ -41,6 +41,12 @@ paths:
             type: integer
           description: Primary key of the `Query` record
             to fetch.
+        - in: query
+          name: resource_id
+          schema:
+            type: integer
+          description: Primary key of the `Resource` record
+            to filter by.
         - in: query
           name: user
           schema:
@@ -64,15 +70,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchQueryResponse"
-                  - $ref: "#/components/schemas/FetchQueryWithPageResponse"
-                  - $ref: "#/components/schemas/FetchQueryWithLimitResponse"
-                  - $ref: "#/components/schemas/FetchQueryWithPageAndLimitResponse"
+                  - $ref: "#/components/schemas/FetchQueryWithParametersResponse"
                   - $ref: "#/components/schemas/FetchQueryByIdResponse"
-                  - $ref: "#/components/schemas/FetchQueryByUserResponse"
-                  - $ref: "#/components/schemas/FetchQueryByUserWithPageResponse"
-                  - $ref: "#/components/schemas/FetchQueryByUserWithLimitResponse"
-                  - $ref: "#/components/schemas/FetchQueryByUserWithPageAndLimitResponse"                  
         "400":
           description: "Invalid parameters"
           content:
@@ -88,12 +87,13 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/FetchQueryUnauthorizedResponse"
         "404":
-          description: "Query or User does not exist."
+          description: "`Query`, `Resource`, or `User` does not exist."
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchQueryIdDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchQueryByIdDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchQueryByResourceIdDoesNotExistResponse"
                   - $ref: "#/components/schemas/FetchQueryUserDoesNotExistResponse"
   /analytics/visits:
     post:
@@ -1261,240 +1261,8 @@ components:
       title: "Create `Query` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
-    FetchQueryResponse:
-      title: "Fetch `Query` response."
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              },
-              ...
-            ]
-  
-    FetchQueryWithPageResponse:
-      title: "Fetch `Query` with page response."
-      type: object
-      properties:
-        data:
-          type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              },
-              ...
-            ]
-
-    FetchQueryWithLimitResponse:
-      title: "Fetch `Query` with limit response."
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              },
-              ...
-            ]
-
-    FetchQueryWithPageAndLimitResponse:
-      title: "Fetch `Query` with page and limit response."
+    FetchQueryWithParametersResponse:
+      title: "Fetch `Query` with parameters response."
       type: object
       properties:
         data:
@@ -1644,306 +1412,6 @@ components:
               "search_term": "Example Search Term 1."
             }
 
-    FetchQueryByUserResponse:
-      title: "Fetch `Query` by user response."
-      type: object
-      properties:
-        data:
-          type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              }
-          ]
-
-    FetchQueryByUserWithPageResponse:
-      title: "Fetch `Query` by user with page response."
-      type: object
-      properties:
-        data:
-          type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              }
-          ]
-
-    FetchQueryByUserWithLimitResponse:
-      title: "Fetch `Query` by user with limit response."
-      type: object
-      properties:
-        data:
-          type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              }
-          ]
-
-    FetchQueryByUserWithPageAndLimitResponse:
-      title: "Fetch `Query` by user with page and limit response."
-      type: object
-      properties:
-        data:
-          type: object
-          example:
-            [
-              {
-                "id": 1,
-                "user": {
-                  "id": 1,
-                  "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
-                  "first_name": "May",
-                  "last_name": "Parker",
-                  "is_active": true
-                },
-                "resources": [
-                  {
-                    "id": 1,
-                    "uid": "00000000-0000-0000-0000-000000000000",
-                    "previous_revision": null,
-                    "revision_number": 1,
-                    "name": "Resource 1 Name",
-                    "description": "Resource 1 Description.",
-                    "url": "www.example.com",
-                    "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
-                    "employee_levels": [
-                      {
-                        "id": 1,
-                        "name": "Employee Level 1 Name",
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "subfunctions": [
-                      {
-                        "id": 1,                   
-                        "name": "Function 1 SubFunction 1 Name",
-                        "description": "Function 1 SubFunction 1 Description.",
-                        "function": {
-                          "id": 1,
-                          "name": "Function 1 Name",
-                          "description": "Function 1 Description.",
-                          "created": "1970-01-01T12:00:00-04:00",
-                          "modified": "1970-01-01T12:00:00-04:00",
-                        },
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                      },
-                      ...
-                    ],
-                    "tags": [
-                      {
-                        "id": 1,
-                        "created": "1970-01-01T12:00:00-04:00",
-                        "modified": "1970-01-01T12:00:00-04:00",
-                        "label": "filter::site:Test",
-                      },
-                      ...
-                    ],
-                    "type": "Resource Type 1",
-                    "download": false,
-                    "active": true,
-                    "created": "1970-01-01T12:00:00-04:00",
-                  }
-                ],
-                "created": "2025-01-27T11:00:00-05:00",
-                "search_term": "Example Search Term 1."
-              }
-          ]
-
     FetchQueryInvalidParametersResponse:
       title: "Fetch `Query` error response due to using invalid
         parameters."
@@ -1953,14 +1421,19 @@ components:
       title: "Fetch `Query` error response due to unauthorized access."
       example: "Not authorized to access resource."
       
-    FetchQueryIdDoesNotExistResponse:
+    FetchQueryByIdDoesNotExistResponse:
       title: "Fetch `Query` error response due to using an id for
         a `Query` that does not exist."
       example: "Query (id=query_id) does not exist."
+    
+    FetchQueryByResourceIdDoesNotExistResponse:
+      title: "Fetch `Query` error response due to using an id for
+        a `Resource` that does not exist."
+      example: "Resource (id=resource_id) does not exist."
 
     FetchQueryUserDoesNotExistResponse:
       title: "Fetch `Query` error response due to using an email
-        for a user that does not exist."
+        for a `User` that does not exist."
       example: "User (email=user) does not exist."
 
     CreateVisitRequest:
