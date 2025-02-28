@@ -107,6 +107,39 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("views.query.fetch_query_by_resource_id_with_page")
+    def test_fetch_query_by_resource_id_with_page(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "page": arguments.FETCH_QUERY_WITH_PAGE,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT)
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("views.query.fetch_query_with_limit")
     def test_fetch_query_with_limit(self) -> None:
         """Success Case: Fetch all `Query` records up to limit."""
@@ -126,6 +159,39 @@ class TestFetchQuery(TestCase):
         self.assertIsInstance(queries, list)
 
         self.assertEqual(len(queries), arguments.FETCH_QUERY_WITH_LIMIT_RECORD_COUNT)
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("views.query.fetch_query_by_resource_id_with_limit")
+    def test_fetch_query_by_resource_id_with_limit(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id up to limit."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "limit": arguments.FETCH_QUERY_WITH_LIMIT,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT)
 
         for query in queries:
             query_id: int = query["id"]
@@ -174,6 +240,40 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("views.query.fetch_query_by_resource_id_with_page_and_limit")
+    def test_fetch_query_by_resource_id_with_page_and_limit(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id up to limit."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "limit": arguments.FETCH_QUERY_WITH_LIMIT,
+            "page": arguments.FETCH_QUERY_WITH_PAGE,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT)
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("views.query.fetch_query_by_id")
     def test_fetch_query_by_id(self) -> None:
         """Success Case: Fetch a `Query` record given an id."""
@@ -201,6 +301,33 @@ class TestFetchQuery(TestCase):
             arguments.VALID_QUERY_RECORDS[query_id],
         )
 
+    @tag("views.query.fetch_query_by_resource_id")
+    def test_fetch_query_by_resource_id(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        query = response.json()
+
+        self.assertIsInstance(query, list)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        query_id: int = query[0]["id"]
+
+        self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+        self.assertEqual(
+            query[0],
+            arguments.VALID_QUERY_RECORDS[query_id],
+        )
+
     @tag("views.query.fetch_query_by_user")
     def test_fetch_query_by_user(self) -> None:
         """Success Case: Fetch `Query` records given a user's email."""
@@ -220,6 +347,39 @@ class TestFetchQuery(TestCase):
         self.assertIsInstance(queries, list)
 
         self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_USER_RECORD_COUNT)
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("views.query.fetch_query_by_resource_id_for_user")
+    def test_fetch_query_by_resource_id_for_user(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "user": arguments.FETCH_QUERY_BY_USER,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT)
 
         for query in queries:
             query_id: int = query["id"]
@@ -269,12 +429,82 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("views.query.fetch_query_by_resource_id_for_user_with_page")
+    def test_fetch_query_by_resource_id_for_user_with_page(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "user": arguments.FETCH_QUERY_BY_USER,
+            "page": arguments.FETCH_QUERY_WITH_PAGE,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(len(queries), arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT)
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("views.query.fetch_query_by_user_with_limit")
     def test_fetch_query_by_user_with_limit(self) -> None:
         """Success Case: Fetch `Query` records given a user's email
         up to limit."""
 
         query_params: dict = {
+            "user": arguments.FETCH_QUERY_BY_USER,
+            "limit": arguments.FETCH_QUERY_WITH_LIMIT,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(
+            len(queries), arguments.FETCH_QUERY_BY_USER_WITH_LIMIT_RECORD_COUNT
+        )
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
+    @tag("views.query.fetch_query_by_resource_id_for_user_with_limit")
+    def test_fetch_query_by_resource_id_for_user_with_limit(self) -> None:
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email up to limit."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
             "user": arguments.FETCH_QUERY_BY_USER,
             "limit": arguments.FETCH_QUERY_WITH_LIMIT,
         }
@@ -343,6 +573,44 @@ class TestFetchQuery(TestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("views.query.fetch_query_by_resource_id_for_user_with_page_and_limit")
+    def test_fetch_query_by_resource_id_for_user_with_page_and_limit(self) -> None:
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email up to limit."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
+            "user": arguments.FETCH_QUERY_BY_USER,
+            "page": arguments.FETCH_QUERY_WITH_PAGE,
+            "limit": arguments.FETCH_QUERY_WITH_LIMIT,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        queries = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(queries, list)
+
+        self.assertEqual(
+            len(queries),
+            arguments.FETCH_QUERY_BY_RESOURCE_RECORD_COUNT,
+        )
+
+        for query in queries:
+            query_id: int = query["id"]
+
+            self.assertIsInstance(query, dict)
+
+            self.assertIn(query_id, arguments.VALID_QUERY_RECORDS)
+
+            self.assertEqual(
+                query,
+                arguments.VALID_QUERY_RECORDS[query_id],
+            )
+
     @tag("views.query.fetch_query_by_id_dne")
     def test_fetch_query_by_id_dne(self) -> None:
         """Fail Case: Fetch a `Query` record given an id where record
@@ -350,6 +618,20 @@ class TestFetchQuery(TestCase):
 
         query_params: dict = {
             "id": arguments.FETCH_QUERY_BY_ID_DNE,
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @tag("views.query.fetch_query_by_resource_id_dne")
+    def test_fetch_query_by_resource_id_dne(self) -> None:
+        """Fail Case: Fetch `Query` records given a `Resource` id where the `Resource` does not exist."""
+
+        query_params: dict = {
+            "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID_DNE,
         }
 
         response = self.client.get(
