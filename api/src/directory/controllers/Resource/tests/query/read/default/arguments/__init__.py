@@ -20,10 +20,29 @@ FETCH_RESOURCE_BY_ID: int = 1
 # with page tests.
 FETCH_RESOURCE_WITH_PAGE: int = 1
 
+# Id used for testing fetch by `User`.
+FETCH_RESOURCE_BY_USER: str = "May.Parker@harris.com"
+
 # Page number that exceeds the number of
 # pages used in testing fetch `Resource` with
 # page tests.
 FETCH_RESOURCE_WITH_PAGE_EXCEEDING_PAGE_COUNT: int = 99
+
+# Expected record count when testing
+# fetching all records.
+FETCH_RESOURCE_RECORD_COUNT: int = 5
+
+# Expected record count when testing
+# fetching with page.
+FETCH_RESOURCE_WITH_PAGE_RECORD_COUNT: int = 5
+
+# Expected record count when testing
+# fetching with limit.
+FETCH_RESOURCE_WITH_LIMIT_RECORD_COUNT: int = 2
+
+# Expected record count when testing
+# fetching with page and limit.
+FETCH_RESOURCE_WITH_PAGE_AND_LIMIT_RECORD_COUNT: int = 2
 
 # Number of records expected after fetching `Resource`s
 # with a page number that exceeds the number of
