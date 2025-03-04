@@ -83,32 +83,39 @@ class Resource(APIView):
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/resources."""
 
-        req = serializers.UpdateResourceRequestQueryParams(data=request.GET)
-        if not req.is_valid():
-            return http.JsonResponse(
-                req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+        try:
+            req = serializers.UpdateResourceRequestQueryParams(data=request.GET)
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            resource_id = req.validated_data.get("id")
+
+            LOGGER.info(f"PUT /v1/directory/resources?id={resource_id}.")
+
+            update_params: UpdateResourceParams = UpdateResourceParams(
+                resource_id=resource_id,
+                name=body["name"],
+                description=body["description"],
+                url=body["url"],
+                thumbnail=body["thumbnail"],
+                employee_levels=body["employee_levels"],
+                subfunctions=body["subfunctions"],
+                tags=body["tags"],
+                type=body["type"],
+                download=body["download"],
             )
 
-        resource_id = req.validated_data.get("id")
+            resource, _ = ResourceController.update_resource(params=update_params)
 
-        LOGGER.info(f"PUT /v1/directory/resources?id={resource_id}.")
+            # Serialize `Resource` instance.
+            data: dict = ResourceSerializer(resource).data
 
-        update_params: UpdateResourceParams = UpdateResourceParams(
-            resource_id=resource_id,
-            name=body["name"],
-            description=body["description"],
-            url=body["url"],
-            thumbnail=body["thumbnail"],
-            employee_levels=body["employee_levels"],
-            subfunctions=body["subfunctions"],
-            tags=body["tags"],
-            type=body["type"],
-            download=body["download"],
-        )
-
-        resource = ResourceController.update_resource(params=update_params)
-
-        return http.JsonResponse(resource, status=status.HTTP_201_CREATED, safe=False)
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except DirectoryError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(with_serializer(serializers.FetchResourceRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
