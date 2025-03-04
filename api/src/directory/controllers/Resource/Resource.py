@@ -344,7 +344,7 @@ class Resource:
         except ResourceModel.DoesNotExist as exc:
             err_msg = f"Resource (id={resource_id}) does not exist."
             LOGGER.error(err_msg)
-            raise exceptions.DirectoryError(err_msg, 400) from exc
+            raise exceptions.DirectoryError(err_msg, 404) from exc
 
 
 class ResourceSearch:

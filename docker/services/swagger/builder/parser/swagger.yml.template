@@ -430,6 +430,59 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteFunctionForbiddenErrorResponse"
+  /directory/resources:
+    get:
+      tags:
+        - "directory.resource.fetch"
+      summary: "Fetch Resource(s)."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Resource` record
+            to fetch.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Resource` records to fetch.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Resource` records to return.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchResourcesWithParametersResponse"
+                  - $ref: "#/components/schemas/FetchResourceByIdResponse"
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchResourcesInvalidParametersResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchResourcesUnauthorizedResponse"                 
+        "404":
+          description: "`Resource` does not exist for given id."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchResourceByIdDoesNotExistResponse"
   /directory/resources/search:
     post:
       tags:
@@ -2397,6 +2450,155 @@ components:
     DeleteFunctionForbiddenErrorResponse:
       title: "Delete `Function` error response due to forbidden access."
       example: "Permissions Denied."
+    
+    FetchResourcesWithParametersResponse:
+      title: "Fetch `Resource`(s) response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "employee_levels": [
+                    {
+                      "id": 1,
+                      "name": "Employee",
+                      "description": "Employee Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 1,
+                    },
+                    {
+                      "id": 2,
+                      "name": "Manager",
+                      "description": "Manager Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 2,
+                    },
+                ],
+                "subfunctions": [
+                    {
+                      "id": 1,
+                      "function": {
+                          "id": 1,
+                          "name": "Human Resources",
+                          "description": "Function 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                        },
+                        "name": "Training",
+                        "description": "Function 1 SubFunction 1.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                    }
+                ],
+                "tags": [
+                    {
+                      "id": 1,
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "label": "filter::site:Melbourne",
+                    }
+                ],
+                "description": "popstick.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+                "revision_number": 1,
+                "name": "Resource 1 Revision 1",
+                "url": "example.org",
+                "thumbnail": "/path/to/resource/thumbnail",
+                "primary_point_of_contact": "May.Parker@harris.com",
+                "type": "Resource Type 1",
+                "download": false,
+                "active": true,
+                "previous_revision": None,
+              },
+              ...
+            ]
+
+    FetchResourceByIdResponse:
+      title: "Fetch `Resource` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+              {
+                "id": 1,
+                "employee_levels": [
+                    {
+                      "id": 1,
+                      "name": "Employee",
+                      "description": "Employee Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 1,
+                    },
+                    {
+                      "id": 2,
+                      "name": "Manager",
+                      "description": "Manager Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 2,
+                    },
+                ],
+                "subfunctions": [
+                    {
+                      "id": 1,
+                      "function": {
+                          "id": 1,
+                          "name": "Human Resources",
+                          "description": "Function 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                        },
+                        "name": "Training",
+                        "description": "Function 1 SubFunction 1.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                    }
+                ],
+                "tags": [
+                    {
+                      "id": 1,
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "label": "filter::site:Melbourne",
+                    }
+                ],
+                "description": "popstick.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+                "revision_number": 1,
+                "name": "Resource 1 Revision 1",
+                "url": "example.org",
+                "thumbnail": "/path/to/resource/thumbnail",
+                "primary_point_of_contact": "May.Parker@harris.com",
+                "type": "Resource Type 1",
+                "download": false,
+                "active": true,
+                "previous_revision": None,
+              }
+
+    FetchResourcesInvalidParametersResponse:
+      title: "Fetch `Resource`(s) error response due to using invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    FetchResourcesUnauthorizedResponse:
+      title: "Fetch `Resource`(s) error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    FetchResourceByIdDoesNotExistResponse:
+      title: "Fetch `Resource` error response due to using an id for
+        a `Resource` that does not exist."
+      example: "Resource (id=resource_id) does not exist."    
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
