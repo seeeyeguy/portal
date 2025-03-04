@@ -8,20 +8,21 @@ by `BI Portal`.
 
 # pylint: disable=wrong-import-order
 import logging
+import os
 import requests
 from PIL import Image
-from typing import cast, List, Literal, TypedDict, Union
+from typing import cast, List, Literal, Tuple, TypedDict, Union
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
 from django.core.paginator import Page, Paginator
-from django.db.models import Count, Max, QuerySet
+from django.db.models import Count, Max, Q, QuerySet
 
 from directory import exceptions
 from directory.controllers.Resource.search import utils
 from directory.models import EmployeeLevel, Resource as ResourceModel, SubFunction, Tag
 from directory.utils import validate_url
-from request.models import Request
+from request.models import Request, Stage, Transition
 
 LOGGER = logging.getLogger(__name__)
 
@@ -156,7 +157,15 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, status=400)
 
             resources_with_name: QuerySet[ResourceModel] = ResourceModel.objects.filter(
-                name=params["name"]
+                Q(
+                    name__iexact=params["name"],
+                    active=True,
+                    requests__status=Request.RequestStatus.APPROVED,
+                )
+                | Q(
+                    name__iexact=params["name"],
+                    requests__status=Request.RequestStatus.PENDING,
+                )
             )
             # Ensure a `Resource` doesn't already exist with the given name.
             if resources_with_name.exclude(uid=params["uid"]).exists():
@@ -246,7 +255,7 @@ class Resource:
             raise exceptions.DirectoryError(err_msg, status=404) from exc
 
     @staticmethod
-    def update_resource(params: UpdateResourceParams) -> ResourceModel:
+    def update_resource(params: UpdateResourceParams) -> Tuple[ResourceModel, int]:
         """
         Update a `Resource` record for the given id with the given params.
 
@@ -255,18 +264,180 @@ class Resource:
                 a `Resource` record.
 
         Returns:
-            * resource (ResourceModel): The `Resource` record updated.
+            * resource (ResourceModel): The updated `Resource` record.
+            * rows_affected (int): The number of `Resource` records updated.
         """
 
-        LOGGER.info(
-            f"Updating Resource with id: {params['resource_id']}, name: "
-            f"{params['name']}, description: {params['description']}, url: "
-            f"{params['url']}, employee levels: {params['employee_levels']}, "
-            f"subfunctions: {params['subfunctions']}, tags: {params['tags']}, "
-            f"type: {params['type']}, and download: {params['download']}."
-        )
-        # Please remove the ignore after implementation.
-        return {}  # type: ignore[return-value]
+        try:
+            LOGGER.info(
+                f"Updating Resource with id: {params['resource_id']}, name: "
+                f"{params['name']}, description: {params['description']}, url: "
+                f"{params['url']}, employee levels: {params['employee_levels']}, "
+                f"subfunctions: {params['subfunctions']}, tags: {params['tags']}, "
+                f"type: {params['type']}, and download: {params['download']}."
+            )
+
+            # Create a new non-typed dict from the `params` in order
+            # to use `.pop()` method without warnings.
+            new_params: dict = {**params}
+
+            # Fetch the `Resource` record.
+            resource: ResourceModel = ResourceModel.objects.get(
+                id=new_params.pop("resource_id")
+            )
+
+            # Verify DRAFT status for `Resource` with shared
+            # uid.
+            if (
+                ResourceModel.objects.filter(
+                    uid=resource.uid, requests__status=Request.RequestStatus.PENDING
+                )
+                .exclude(id=resource.id)
+                .exists()
+            ):
+                err_msg = f"Resource (uid={resource.uid}) has a pending draft."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch related `Transition`(s) for target
+            # `Resource` to update.
+            transitions_query = Transition.objects.filter(
+                request__resource=resource
+            ).prefetch_related("stage")
+
+            # Verify there are existing `Transition`s for
+            # the target `Resource` and that the latest one
+            # is for draft status.
+            if (
+                not transitions_query.exists()
+                or transitions_query.order_by("-created").first().stage.level  # type: ignore[union-attr]
+                != Stage.StageLevels.DRAFT
+            ):
+                err_msg = f"Resource (id={resource.id}) not in draft status."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            resources_with_name: QuerySet[ResourceModel] = ResourceModel.objects.filter(
+                Q(
+                    name__iexact=params["name"],
+                    active=True,
+                    requests__status=Request.RequestStatus.APPROVED,
+                )
+                | Q(
+                    name__iexact=params["name"],
+                    requests__status=Request.RequestStatus.PENDING,
+                )
+            )
+            # Ensure a `Resource` doesn't already exist with the given name.
+            if resources_with_name.exclude(uid=resource.uid).exists():
+                err_msg = f"Resource (name={params['name']}) already exists."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            # Verify a `description` was given and of appropriate length.
+            if (
+                not params["description"]
+                or len(params["description"]) < RESOURCE_DESCRIPTION_MIN_CHAR_LENGTH
+            ):
+                err_msg = (
+                    "Please provide a more detailed description for this resource."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, status=400)
+
+            # Validate `url`.
+            validate_url(params["url"])
+
+            employee_levels: List[int] = new_params.pop("employee_levels")
+            subfunctions: List[int] = new_params.pop("subfunctions")
+            tags: List[int] = new_params.pop("tags")
+
+            # Verify `EmployeeLevel` ids were given.
+            if not employee_levels:
+                err_msg = "Resource must be associated with at least one EmployeeLevel."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch `EmployeeLevel` records.
+            employee_level_records: QuerySet[
+                EmployeeLevel
+            ] = EmployeeLevel.objects.filter(id__in=employee_levels)
+            if employee_level_records.count() != len(employee_levels):
+                err_msg = f"Some EmployeeLevels (ids={employee_levels}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            # Verify `SubFunction` ids were given.
+            if not subfunctions:
+                err_msg = "Resource must be associated with at least one SubFunction."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Fetch `SubFunction` records.
+            subfunction_records: QuerySet[SubFunction] = SubFunction.objects.filter(
+                id__in=subfunctions
+            )
+            if subfunction_records.count() != len(subfunctions):
+                err_msg = f"Some SubFunctions (ids={subfunctions}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            # Fetch `Tag` records.
+            tag_records: QuerySet[Tag] = Tag.objects.filter(id__in=tags)
+            if tag_records.count() != len(tags):
+                err_msg = f"Some Tags (ids={tags}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 404)
+
+            # Get the thumbnail.
+            thumbnail = new_params.pop("thumbnail")
+            # Verify a thumbnail was given.
+            if thumbnail:
+                # If an existing thumbnail exists,
+                # proceed to delete it.
+                if resource.thumbnail:
+                    try:
+                        LOGGER.info(
+                            "Deleting existing Resource (id=%s) thumbnail: %s",
+                            resource.id,
+                            resource.thumbnail.name,
+                        )
+                        os.remove(resource.thumbnail.path)
+                    except FileNotFoundError:
+                        pass
+
+                # Update thumbnail.
+                resource.thumbnail = thumbnail
+                resource.save()
+
+            rows_affected: int = ResourceModel.objects.filter(id=resource.id).update(
+                **new_params
+            )
+
+            # Set `Function`s, `EmployeeLevel`s, and `Tag`s.
+            resource.subfunctions.set(subfunction_records)
+            resource.employee_levels.set(employee_level_records)
+            resource.tags.set(tag_records)
+
+            resource.refresh_from_db()
+
+            return resource, rows_affected
+        except KeyError as exc:
+            error_msg = f"Missing parameter: `{exc}` from update parameters."
+            LOGGER.error(error_msg)
+            raise exceptions.DirectoryError(error_msg, status=400) from exc
+        except ResourceModel.DoesNotExist as exc:
+            err_msg = f"Resource (id={params['resource_id']}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 404) from exc
+        except ValidationError as exc:
+            err_msg = f"URL({params['url']}) is malformed."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, status=400) from exc
+        except requests.HTTPError as exc:
+            err_msg = f"URL({params['url']}) is not reachable."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, status=404) from exc
 
     @staticmethod
     def fetch_resources(
