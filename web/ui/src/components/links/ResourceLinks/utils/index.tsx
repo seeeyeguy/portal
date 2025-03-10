@@ -12,6 +12,7 @@ import { User } from "state/types/services/sso";
 const resourceTypeThumbnailPaths: { [key: string]: string } = {
   "command media": "command media/command_media_default_icon.png",
   excel: "excel/excel_default_icon.png",
+  palantir: "palantir/palantir_default_icon.png",
   powerapps: "powerapps/powerapps_default_icon.png",
   powerbi: "powerbi/power-bi_default_icon.png",
   sharepoint: "sharepoint/sharepoint_default_icon.png",
