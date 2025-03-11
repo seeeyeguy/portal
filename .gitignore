@@ -59,5 +59,6 @@ devscript_*
 db.sqlite3
 node_modules
 san.cnf
+storybook-static
 web/package-lock.json
 web/ui/coverage*

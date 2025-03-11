@@ -1,0 +1,29 @@
+x-logging-settings: &logging-settings
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "256k"
+            max-file: "3"
+
+services:
+    storybook:
+        image: ${APP_NAME}-storybook:${DOCKER_COMPOSE_BUILD_TAG}
+        build:
+            context: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/storybook/builder
+            dockerfile: Dockerfile
+            target: ${DOCKER_COMPOSE_WEB_BUILD_TARGET}
+            tags:
+                - ${APP_NAME}-storybook:${DOCKER_COMPOSE_BUILD_TAG}
+            args:
+                APP_NAME: ${APP_NAME}
+                DOCKER_COMPOSE_PROJECT_ROOT: ${DOCKER_COMPOSE_PROJECT_ROOT}
+        restart: unless-stopped
+        container_name: ${APP_NAME}-storybook-${USER}
+        <<: *logging-settings
+        environment:
+            APP_NAME: ${APP_NAME}
+            IBM_TELEMETRY_DISABLED: true
+        ports:
+            - ${STORYBOOK_WEB_PORT}:6006
+        volumes:
+            - ${DOCKER_COMPOSE_PROJECT_ROOT}/web/ui:/apps/${APP_NAME}/

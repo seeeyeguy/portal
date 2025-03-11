@@ -1,3 +1,4 @@
 include:
     - ./docker/services/web/development/web.docker-compose.yml
+    - ./docker/services/storybook/development/storybook.docker-compose.yml
     - ./docker/services/swagger/common/swagger.docker-compose.yml
