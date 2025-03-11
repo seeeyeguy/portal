@@ -130,6 +130,16 @@ export default function NavBar({ profile }: NavBarProps) {
       }
     });
 
+  const closeResourceAccordions = () => {
+    const openAccordions = document.querySelectorAll(
+      'details[class*="recursive-accordion"] > summary:has(div[aria-checked="true"])'
+    );
+
+    openAccordions.forEach((openAccordion) =>
+      (openAccordion as HTMLElement).click()
+    );
+  };
+
   const onSubmitSearch = React.useCallback(async (newSearchTerm: string) => {
     store.dispatch(updateSearchStateTerm(newSearchTerm));
 
@@ -168,6 +178,7 @@ export default function NavBar({ profile }: NavBarProps) {
           onClick: () => {
             clearSession();
             updateSearchStateTerm("");
+            closeResourceAccordions();
           },
         },
       ]}
