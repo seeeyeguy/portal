@@ -6,5 +6,6 @@ export interface ResourceLinkProps {
   thumbnail: string;
   primaryPointOfContact: string;
   download: boolean;
+  restricted: boolean;
   favoriteId?: number | null | undefined;
 }

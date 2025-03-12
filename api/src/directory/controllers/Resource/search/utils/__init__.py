@@ -4,18 +4,23 @@ helper functions to search and format results from
 the database.
 """
 
-from typing import cast, List, TypedDict, Union
+from cryptography.fernet import Fernet
+from typing import cast, List
 
 from django.db.models import QuerySet
 
 from directory.models import Function, Resource, SubFunction, Tag
 from directory.models.Resource.serializers import ResourceSerializer
 
+from manager.settings import DATA_ENCRYPTION_KEY
 
 FUNCTREE_STRUCTURE: str = "functree"
 DEFAULT_STRUCTURE: str = "default"
 
 GENERAL_SUBFUNCTION_NAME: str = "General"
+
+# Initialize cryptography module.
+fernet = Fernet(DATA_ENCRYPTION_KEY)
 
 
 def structure_resources(
@@ -113,6 +118,26 @@ def structure_resources(
 
         # Assign `tag_restricted_labels` to `restricted` key.
         serialized_resource_data["restricted"] = restricted_dict
+        # If the `Resource` record has restricted tags, encrypt sensitive data
+        # with the encryption key.
+        if restricted_dict:
+            # Encrypt data.
+            encrypted_resource_name = fernet.encrypt(
+                cast(str, serialized_resource_data["name"]).encode()
+            )
+            encrypted_resource_description = fernet.encrypt(
+                cast(str, serialized_resource_data["description"]).encode()
+            )
+            encrypted_resource_url = fernet.encrypt(
+                cast(str, serialized_resource_data["url"]).encode()
+            )
+            # Assign encrypted data.
+            serialized_resource_data["name"] = encrypted_resource_name.decode()
+            serialized_resource_data[
+                "description"
+            ] = encrypted_resource_description.decode()
+            serialized_resource_data["url"] = encrypted_resource_url.decode()
+
         return serialized_resource_data
 
     # Initialize `structure` with an empty dictionary.

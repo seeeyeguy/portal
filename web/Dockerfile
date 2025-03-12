@@ -1,8 +1,13 @@
 FROM node:20.16-bullseye AS base
 
+# Add needed env variables.
+ARG APP_NAME
+ARG DATA_ENCRYPTION_KEY
+ARG SCHEME
+ARG WEB_HOST
+ARG WEB_PORT
 # Construct path to project.
 # Need to change PROJECT to app name.
-ARG APP_NAME
 ARG PROJECT=${APP_NAME}
 ARG APPDIR=/apps/${PROJECT}
 

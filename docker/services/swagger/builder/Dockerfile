@@ -1,4 +1,4 @@
-FROM swaggerapi/swagger-ui
+FROM swaggerapi/swagger-ui:v5.18.3
 
 # Add files from parser directory
 # in host machine to the swagger

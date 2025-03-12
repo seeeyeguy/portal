@@ -73,6 +73,9 @@ export const createResourceCollection = (
         primaryPointOfContact={resource.primaryPointOfContact}
         download={resource.download}
         favoriteId={resourceFavoriteMap[resource.id].favoriteId}
+        restricted={
+          !!resource?.restricted && !lodash.isEmpty(resource.restricted)
+        }
         key={resourceFavoriteMap[resource.id].id}
       />
     ));

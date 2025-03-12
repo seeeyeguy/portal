@@ -292,6 +292,11 @@ CORS_ALLOWED_ORIGINS = [
 DEFAULT_LDAP_SEARCH_ENDPOINT = "http://uspby1lnhdped03:8822/ldap/employees/cac"
 LDAP_SEARCH_ENDPOINT = os.getenv("LDAP_SEARCH_ENDPOINT", DEFAULT_LDAP_SEARCH_ENDPOINT)
 
+###########################################
+## DATA ENCRYPTION ENVIRONMENT VARIABLES ##
+###########################################
+
+DATA_ENCRYPTION_KEY = os.getenv("DATA_ENCRYPTION_KEY", "secret-key")
 
 ############################################
 ## APPLICATION HOST ENVIRONMENT VARIABLES ##
