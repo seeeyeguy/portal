@@ -3,13 +3,22 @@ Contains a helper utility class for Resource's search controller
 pytests.
 """
 
-from typing import Any, List, Union
+import pytest
+from cryptography.fernet import Fernet
+from typing import Any, cast, List, Union
 
 from django.db.models import QuerySet
 from django.test import TestCase
 
 from directory.models import Resource
 from directory.models.Resource.serializers import ResourceSerializer
+
+from manager.settings import DATA_ENCRYPTION_KEY
+
+# Initialize cryptography module.
+fernet = Fernet(DATA_ENCRYPTION_KEY)
+# Encrypted props on a `Resource` record when serialized.
+ENCRYPTED_PROPS_TO_TEST = {"name", "description", "url"}
 
 
 class TestCaseUtility(TestCase):
@@ -61,7 +70,20 @@ class TestCaseUtility(TestCase):
             # we'll use the list specific assertion:
             # assertCountEqual(...).
             if not isinstance(value, list):
-                self.assertEqual(serialized_resource[prop], value)
+                serialized_resource_value = serialized_resource[prop]
+                # Decrypt any encrypted values on a restricted `Resource` record.
+                if (
+                    "restricted" in serialized_resource
+                    and serialized_resource["restricted"]
+                    and prop in ENCRYPTED_PROPS_TO_TEST
+                ):
+                    try:
+                        serialized_resource_value = fernet.decrypt(
+                            cast(str, serialized_resource_value).encode()
+                        ).decode()
+                    except (TypeError, ValueError):
+                        pytest.fail("Values not encrypted.")
+                self.assertEqual(serialized_resource_value, value)
             else:
                 self.assertCountEqual(serialized_resource[prop], value)
 

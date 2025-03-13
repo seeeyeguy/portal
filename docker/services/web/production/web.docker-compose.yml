@@ -19,6 +19,10 @@ services:
                 - ${APP_NAME}-production-web:${DOCKER_COMPOSE_BUILD_TAG}
             args:
                 APP_NAME: ${APP_NAME}
+                DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY}
+                SCHEME: ${SCHEME}
+                WEB_HOST: ${WEB_HOST}
+                WEB_PORT: ${WEB_PORT}
         restart: unless-stopped
         container_name: ${APP_NAME}-web-${USER}
         depends_on:
@@ -27,6 +31,7 @@ services:
         environment:
             APP_NAME: ${APP_NAME}
             DANGEROUSLY_DISABLE_HOST_CHECK: true
+            DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY}
             IBM_TELEMETRY_DISABLED: true
             SCHEME: ${SCHEME}
             SSL_CERT: ${SSL_CERT}

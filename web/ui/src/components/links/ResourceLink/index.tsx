@@ -2,6 +2,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { FavoriteThumbnailLink } from "adas-react-components";
+import { Fernet } from "fernet-ts";
 import lodash from "lodash";
 
 import { ResourceLinkProps } from "components/links/ResourceLink/types";
@@ -27,6 +28,7 @@ export default function ResourceLink({
   thumbnail,
   primaryPointOfContact,
   download,
+  restricted,
   favoriteId = null,
 }: ResourceLinkProps) {
   const dispatch = useAppDispatch();
@@ -38,6 +40,29 @@ export default function ResourceLink({
 
   const [isButtonActive, setIsButtonActive] =
     React.useState<boolean>(!!favoriteId);
+
+  const [restrictedProps, setRestrictedProps] = React.useState({
+    name,
+    description,
+    url,
+  });
+
+  React.useEffect(() => {
+    const decryptProps = async () => {
+      const fernet = await Fernet.getInstance(__DATA_ENCRYPTION_KEY__);
+      const decryptedName = await fernet.decrypt(name);
+      const decryptedDescription = await fernet.decrypt(description);
+      const decryptedUrl = await fernet.decrypt(url);
+      setRestrictedProps({
+        name: decryptedName,
+        description: decryptedDescription,
+        url: decryptedUrl,
+      });
+    };
+    if (restricted) {
+      decryptProps();
+    }
+  }, [name, description, url, restricted, setRestrictedProps]);
 
   const memoizedPrimaryPointOfContact = React.useMemo(
     () =>
@@ -97,9 +122,9 @@ export default function ResourceLink({
     >
       <FavoriteThumbnailLink
         className={styles["favorite-link"]}
-        name={name}
-        description={description}
-        url={url}
+        name={restrictedProps.name}
+        description={restrictedProps.description}
+        url={restrictedProps.url}
         imgWidth={95}
         imgHeight={95}
         thumbnail={thumbnail}

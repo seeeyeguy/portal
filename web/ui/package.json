@@ -19,6 +19,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "adas-react-components": "git+ssh://git@lnsvr0329.gcsd.harris.com:7999/dsa/adas-react-components.git#dev",
     "change-case": "^5.4.4",
+    "fernet-ts": "^1.0.2",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
