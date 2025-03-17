@@ -15,6 +15,7 @@ from typing import cast, List, Literal, Tuple, TypedDict, Union
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Page, Paginator
 from django.db.models import Count, Max, Q, QuerySet
 
@@ -393,6 +394,12 @@ class Resource:
             thumbnail = new_params.pop("thumbnail")
             # Verify a thumbnail was given.
             if thumbnail:
+                # Validate thumbnail is a file.
+                if not isinstance(thumbnail, InMemoryUploadedFile):
+                    err_msg = f"Thumbnail: {thumbnail}, is not a file."
+                    LOGGER.error(err_msg)
+                    raise exceptions.DirectoryError(err_msg, 400)
+
                 # If an existing thumbnail exists,
                 # proceed to delete it.
                 if resource.thumbnail:
@@ -409,6 +416,9 @@ class Resource:
                 # Update thumbnail.
                 resource.thumbnail = thumbnail
                 resource.save()
+
+            # Lowercase the "type" in `new_params`.
+            new_params["type"] = new_params["type"].lower()
 
             rows_affected: int = ResourceModel.objects.filter(id=resource.id).update(
                 **new_params
@@ -438,6 +448,10 @@ class Resource:
             err_msg = f"URL({params['url']}) is not reachable."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=404) from exc
+        except AttributeError as exc:
+            err_msg = "Invalid parameter given."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400) from exc
 
     @staticmethod
     def fetch_resources(
