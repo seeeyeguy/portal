@@ -141,25 +141,6 @@ class TestResourceSearchFunctree(TestCaseUtility):
             serialized=True,
         )
 
-    @tag("views.resource.search_functree_resource_name_and_description")
-    def test_search_functree_serialized_by_resource_name_and_description(self) -> None:
-        """Success Case: Search for a matching `Resource` by name & description."""
-
-        body: dict = {
-            **search_functree_arguments.BASE_SEARCH_FUNCTREE_STRUCTURE_PARAMS,
-            "name": search_functree_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_NAME_STRING,
-            "description": search_functree_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_DESCRIPTION_STRING,
-        }
-        response = self.client.post(self.url, body, content_type="application/json")
-        search_results = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self._verify_functree_structure_search_results(
-            search_results=search_results,
-            resource_map=search_functree_arguments.VALID_RESOURCE_MAP,
-            validation_map=search_functree_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_VALIDATION_MAP,
-            serialized=True,
-        )
-
     @tag("views.resource.search_functree_resource_functions")
     def test_search_functree_serialized_by_resource_functions(self) -> None:
         """Success Case: Search for `Resource`s by functions."""

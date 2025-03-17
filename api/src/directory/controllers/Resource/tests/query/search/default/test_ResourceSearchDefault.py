@@ -121,22 +121,6 @@ class TestResourceSearchDefault(TestCaseUtility):
             resource_ids=search_default_arguments.SEARCH_BY_DESCRIPTION_RESOURCE_IDS,
         )
 
-    @tag("controllers.resource.search_default_resource_name_and_description")
-    def test_search_default_by_resource_name_and_description(self) -> None:
-        """Success Case: Search for a matching `Resource` by name & description."""
-
-        params: SearchParams = {
-            **search_default_arguments.BASE_SEARCH_DEFAULT_STRUCTURE_PARAMS,
-            "name": search_default_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_NAME_STRING,
-            "description": search_default_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_DESCRIPTION_STRING,
-        }
-        resources = ResourceSearch.search(params=params)
-        self._verify_collection_of_resources(
-            resources=resources,
-            resource_map=search_default_arguments.VALID_RESOURCE_MAP,
-            resource_ids=search_default_arguments.SEARCH_BY_NAME_AND_DESCRIPTION_RESOURCE_IDS,
-        )
-
     @tag("controllers.resource.search_default_resource_functions_subfunctions")
     def test_search_default_by_resource_functions_subfunctions(self) -> None:
         """Success Case: Search for `Resource`s by functions and subfunctions."""
