@@ -57,3 +57,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 -   Implemented initial User Interface for v1 release.
 -   Implemented Swagger UI template generator.
+
+## [0.1.0] - 2025-01-31
+
+### Added
+
+-   Implemented API endpoints:
+    -   PUT /v1/directory/employee-levels
+    -   DELETE /v1/directory/employee-levels
+    -   POST /v1/directory/functions
+    -   PUT /v1/directory/functions
+    -   DELETE /v1/directory/functions
+    -   PUT /v1/directory/subfunctions
+    -   DELETE /v1/directory/subfunctions
+    -   DELETE /v1/directory/tags
+    -   POST /v1/preferences/favorites
+    -   GET /v1/preferences/favorites
+    -   PUT /v1/preferences/favorites
+    -   DELETE /v1/preferences/favorites
+
+-   Implemented initial fixture generation script.
+
+### Changed
+
+-   Updated Resource search to use contains instead of full-text
+ search on name and description fields.
+
+
+## [0.1.0] - 2025-02-28
+
+### Added
+
+-   Implemented API endpoints:
+    -   GET /v1/analytics/queries
+    -   POST /v1/directory/employee-levels
+    -   GET /v1/directory/resource
+    -   POST /v1/directory/subfunctions
+    -   POST /v1/directory/tags
+    -   PUT /v1/directory/tags
+
+-   Implemented Intro Modal.
+-   Implemented FAQ Modal.
+-   Added mechanism to allow uploading thumbnails 
+ in production.
+
+### Changed
+
+-   Updated BI Portal website styling.

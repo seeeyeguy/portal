@@ -1,0 +1,62 @@
+[
+  {
+    "model": "directory.Resource",
+    "pk": 1,
+    "fields": {
+      "uid": "2182c2ab-b3ab-444b-90fa-58a79031ae9c",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 1 Revision 1",
+      "description": "cherry.",
+      "url": "www.example-site.org",
+      "thumbnail": "resources/thumbnails/2182c2ab-b3ab-444b-90fa-58a79031ae9c/2025_03_01__16_00_00/resource_1.png",
+      "employee_levels": [1],
+      "subfunctions": [4],
+      "tags": [],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": true,
+      "created": "2025-03-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 2,
+    "fields": {
+      "uid": "2182c2ab-b3ab-444b-90fa-58a79031ae9c",
+      "previous_revision": 1,
+      "revision_number": null,
+      "name": "Resource 1 Revision Draft",
+      "description": "cherry.",
+      "url": "www.example-site.org",
+      "thumbnail": "resources/thumbnails/2182c2ab-b3ab-444b-90fa-58a79031ae9c/2024_03_01__18_00_00/resource_1.png",
+      "employee_levels": [1],
+      "subfunctions": [4],
+      "tags": [],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": false,
+      "created": "2025-03-01T18:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 3,
+    "fields": {
+      "uid": "aa12d3f4-94b2-472f-917d-5cccea61714f",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 2 Revision 1",
+      "description": "strawberry.",
+      "url": "www.resource-2-site.org",
+      "thumbnail": "resources/thumbnails/aa12d3f4-94b2-472f-917d-5cccea61714f/2024_03_01__16_00_00/resource_2.png",
+      "employee_levels": [2],
+      "subfunctions": [3],
+      "tags": [1],
+      "type": "Resource Type 2",
+      "download": false,
+      "active": true,
+      "created": "2025-03-01T16:00:00Z"
+    }
+  }
+]
