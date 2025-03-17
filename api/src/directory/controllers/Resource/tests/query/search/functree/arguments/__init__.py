@@ -26,7 +26,6 @@ BASE_SEARCH_FUNCTREE_STRUCTURE_PARAMS: SearchParams = {
     "page": None,
 }
 
-
 # `Function` names.
 FUNCTION_1_NAME: str = "Human Resources"
 FUNCTION_2_NAME: str = "Engineering"
@@ -42,7 +41,6 @@ FUNCTION_3_SUBFUNCTION_1_NAME: str = "Capital"
 FUNCTION_3_SUBFUNCTION_2_NAME: str = "Cost Planning"
 FUNCTION_4_SUBFUNCTION_1_NAME: str = "Quality"
 FUNCTION_4_SUBFUNCTION_2_NAME: str = "General"
-
 
 # Dictionary used to validate the search results
 # using `functree` structure.
@@ -64,7 +62,6 @@ SEARCH_FUNCTREE_VALIDATION_MAP = {
         FUNCTION_4_SUBFUNCTION_2_NAME: [1, 6],
     },
 }
-
 
 # Id's of the `Resource`s.
 RESOURCE_1_REVISION_1_ID: int = 1
@@ -94,7 +91,6 @@ SEARCH_DOWNLOADABLE_VALIDATION_MAP: dict = {
     },
 }
 
-
 # Argument for search of non-downloadable `Resource`s.
 SEARCH_NON_DOWNLOADABLE_VALIDATION_MAP: dict = {
     FUNCTION_1_NAME: {
@@ -113,7 +109,6 @@ SEARCH_NON_DOWNLOADABLE_VALIDATION_MAP: dict = {
     },
 }
 
-
 # Arguments used for search by name tests.
 SEARCH_BY_NAME: str = "Resource 5"
 SEARCH_BY_NAME_VALIDATION_MAP: dict = {
@@ -128,7 +123,6 @@ SEARCH_BY_NAME_VALIDATION_MAP: dict = {
     },
 }
 
-
 # Arguments used for search by description tests.
 SEARCH_BY_DESCRIPTION: str = "orange."
 SEARCH_BY_DESCRIPTION_VALIDATION_MAP: dict = {
@@ -138,26 +132,6 @@ SEARCH_BY_DESCRIPTION_VALIDATION_MAP: dict = {
     },
     FUNCTION_3_NAME: {
         FUNCTION_3_SUBFUNCTION_1_NAME: [3],
-    },
-}
-
-
-# Arguments used for search by name & description tests.
-SEARCH_BY_NAME_AND_DESCRIPTION_NAME_STRING: str = "Resource 3"
-SEARCH_BY_NAME_AND_DESCRIPTION_DESCRIPTION_STRING: str = "watermelon."
-SEARCH_BY_NAME_AND_DESCRIPTION_VALIDATION_MAP: dict = {
-    FUNCTION_1_NAME: {
-        FUNCTION_1_SUBFUNCTION_1_NAME: [5],
-        FUNCTION_1_SUBFUNCTION_2_NAME: [5, 7],
-    },
-    FUNCTION_2_NAME: {
-        FUNCTION_2_SUBFUNCTION_2_NAME: [5],
-    },
-    FUNCTION_3_NAME: {
-        FUNCTION_3_SUBFUNCTION_2_NAME: [5, 7],
-    },
-    FUNCTION_4_NAME: {
-        FUNCTION_4_SUBFUNCTION_1_NAME: [7],
     },
 }
 
@@ -180,7 +154,6 @@ SEARCH_BY_FUNCTION_VALIDATION_MAP: dict = {
         FUNCTION_4_SUBFUNCTION_2_NAME: [1, 6],
     },
 }
-
 
 # Arguments used for search by subfunctions tests.
 SEARCH_BY_SUBFUNCTION_IDS: List[int] = [1, 8]

@@ -11,9 +11,11 @@ import logging
 import os
 import requests
 from PIL import Image
-from typing import cast, List, Literal, Tuple, TypedDict, Union
+from typing import cast, List, Literal, Set, Tuple, TypedDict, Union
 from uuid import uuid4
 
+from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Page, Paginator
@@ -613,33 +615,56 @@ class ResourceSearch:
             name_search_term: str = params["name"]
             description_search_term: str = params["description"]
 
-            # If either search term exists, perform a contains style search on the
-            # respective field.
+            # If either search term exists, use Postgres built-in search functionality
+            # to perform a full-text search against the data in the database, similar
+            # to a search engine.
+            # Documentation on Django Postgres full text search:
+            # https://docs.djangoproject.com/en/5.0/ref/contrib/postgres/search/
             if name_search_term or description_search_term:
-                search_by_name: QuerySet[ResourceModel] = ResourceModel.objects.none()
-                search_by_description: QuerySet[
-                    ResourceModel
-                ] = ResourceModel.objects.none()
 
-                # If `name_search_term` is non-empty, filter the `Resource`s by name.
-                if name_search_term:
-                    search_by_name: QuerySet[ResourceModel] = resources.filter(
-                        name__icontains=name_search_term
-                    )
-
-                # If `description_search_term` is non-empty, filter the `Resource`s by
-                # description.
-                if description_search_term:
-                    search_by_description: QuerySet[ResourceModel] = resources.filter(
-                        description__icontains=description_search_term
-                    )
-
-                # Union the QuerySets and order by their visit count(descending).
-                resources = (
-                    (search_by_name | search_by_description)
-                    .annotate(visits__count=Count("visits"))
-                    .order_by("-visits__count")
+                # Set the search term to the `name_search_term` if not empty
+                # set it to the `description_search_term`.
+                search_term: str = (
+                    name_search_term if name_search_term else description_search_term
                 )
+
+                # Construct the query expression from the `search_term` by creating
+                # a string where each word has the `:*` suffix for wildcard matching
+                # as well as joined by `&` operator to guarantee a match of all
+                # words in the target fields.
+                # Example: "word1:* & word2:* & ...""
+                query_expression: str = " & ".join(
+                    [f"{word.strip()}:*" for word in search_term.split(" ")]
+                )
+
+                # Create a SearchQuery from the `query_expression`.
+                search_query: SearchQuery = SearchQuery(
+                    query_expression, search_type="raw"
+                )
+
+                # Create a SearchVector from the target fields, each
+                # with their respective weightings.
+                search_vector = (
+                    SearchVector("name", weight="A")
+                    + SearchVector("description", weight="B")
+                    + SearchVector(StringAgg("tags__label", delimiter=" "), weight="C")
+                )
+
+                # Perform full text search.
+                full_text_search_resources: QuerySet[
+                    ResourceModel
+                ] = resources.annotate(
+                    search=search_vector,
+                    rank=SearchRank(search_vector, search_query),
+                ).filter(
+                    search=search_query
+                )
+
+                # Annotate the visit count and order by rank(descending) and then
+                # by visit count(descending).
+                resources = full_text_search_resources.annotate(
+                    visits__count=Count("visits")
+                ).order_by("-rank", "-visits__count")
             else:
                 # Order the `Resource's by their visit count(descending).
                 resources = resources.annotate(Count("visits")).order_by(
@@ -667,7 +692,7 @@ class ResourceSearch:
                         else {}
                     )
 
-                # Get the corresponding Page
+                # Get the corresponding Page.
                 page: Page = paginator.page(page_num)
 
                 # Assigning the page's `Resource` QueryList to
