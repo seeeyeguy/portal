@@ -46,7 +46,7 @@ export default function IntroModal() {
           <h2>Welcome to The Portal!</h2>
         </header>
         <main className={styles["modal-body"]}>
-          <h3>Since it is your first time visiting us, here are some tips:</h3>
+          <h3>Since it is your first time visiting us, here are a few tips:</h3>
           <ul>
             <li>
               When you filter using the Role and Function buttons, we save your
