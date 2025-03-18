@@ -225,6 +225,14 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 404)
 
+            # Verify a thumbnail was given.
+            if params["thumbnail"]:
+                # Validate thumbnail is a file.
+                if not isinstance(params["thumbnail"], InMemoryUploadedFile):  # type: ignore[unreachable,unused-ignore]
+                    err_msg = f"Thumbnail: {params['thumbnail']}, is not a file."
+                    LOGGER.error(err_msg)
+                    raise exceptions.DirectoryError(err_msg, 400)
+
             resource: ResourceModel = ResourceModel.objects.create(
                 uid=params["uid"] if previous_revision else uuid4(),
                 previous_revision=previous_revision,
@@ -256,6 +264,10 @@ class Resource:
             err_msg = f"URL({params['url']}) is not reachable."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=404) from exc
+        except AttributeError as exc:
+            err_msg = "Invalid parameter given."
+            LOGGER.error(err_msg)
+            raise exceptions.DirectoryError(err_msg, 400) from exc
 
     @staticmethod
     def update_resource(params: UpdateResourceParams) -> Tuple[ResourceModel, int]:

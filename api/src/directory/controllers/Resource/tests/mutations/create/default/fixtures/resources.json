@@ -1,0 +1,62 @@
+[
+    {
+        "model": "directory.Resource",
+        "pk": 1,
+        "fields": {
+            "uid": "4878469f-6d52-46da-aee3-77905002cd12",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 1 Revision 1",
+            "description": "Resource 1 Revision 1 description.",
+            "url": "www.example-resource-1.org",
+            "thumbnail": "resources/thumbnails/4878469f-6d52-46da-aee3-77905002cd12/2024_10_01__16_00_00/resource_1.png",
+            "employee_levels": [1],
+            "subfunctions": [1, 2],
+            "tags": [1, 2, 3],
+            "type": "Resource Type 1",
+            "download": false,
+            "active": true,
+            "created": "2024-10-01T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 2,
+        "fields": {
+            "uid": "aa852d37-938d-4b81-8db9-b1163b286619",
+            "previous_revision": null,
+            "revision_number": 1,
+            "name": "Resource 2 Revision 1",
+            "description": "Resource 2 Revision 1 description.",
+            "url": "www.example-resource-2.org",
+            "thumbnail": "resources/thumbnails/aa852d37-938d-4b81-8db9-b1163b286619/2024_10_01__18_00_00/resource_2.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1, 2],
+            "type": "Resource Type 2",
+            "download": false,
+            "active": true,
+            "created": "2024-10-01T18:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 3,
+        "fields": {
+            "uid": "aa852d37-938d-4b81-8db9-b1163b286619",
+            "previous_revision": 2,
+            "revision_number": null,
+            "name": "Resource 2 Revision 2 Draft",
+            "description": "Resource 2 Revision 2 Draft description.",
+            "url": "www.example-resource-2.org",
+            "thumbnail": "resources/thumbnails/aa852d37-938d-4b81-8db9-b1163b286619/2024_10_01__18_00_00/resource_2.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1, 2],
+            "type": "Resource Type 2",
+            "download": false,
+            "active": false,
+            "created": "2024-10-01T18:00:00Z"
+        }
+    }
+]
