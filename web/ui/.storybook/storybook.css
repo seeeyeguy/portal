@@ -1,0 +1,8 @@
+#storybook-docs {
+  height: 100vh;
+  overflow: auto;
+}
+
+.docs-story {
+  background: var(--color-light-gray);
+}
