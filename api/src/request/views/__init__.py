@@ -4,4 +4,5 @@ additions/modifications/queries of BI Portal directory resources through
 the request workflow.
 """
 
+from .disposition.disposition import Disposition
 from .request import Request

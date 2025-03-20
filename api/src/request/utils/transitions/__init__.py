@@ -49,9 +49,9 @@ def transition_request(request_id: int) -> Tuple[models.Request, models.Transiti
         # Fetch the related `Stage` and `Disposition` for the given `Request`.
         transition_stage = cast(int, latest_transition.stage.level)
         related_dispositions = cast(Manager, latest_transition.dispositions)
-        transition_disposition: Union[models.Disposition, None] = (
-            related_dispositions.first()
-        )
+        transition_disposition: Union[
+            models.Disposition, None
+        ] = related_dispositions.first()
 
         # Ensure `Request` is not in a terminal state.
         if transition_stage in {

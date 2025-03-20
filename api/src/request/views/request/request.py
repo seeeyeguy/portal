@@ -25,7 +25,7 @@ from request.controllers.Request.Request import (
 )
 from request.exceptions import RequestError
 from request.models.Request.serializers import RequestSerializer
-from request.views.request import serializers
+from request.views import serializers
 
 from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
