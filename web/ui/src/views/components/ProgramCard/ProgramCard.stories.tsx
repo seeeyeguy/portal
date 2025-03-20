@@ -34,14 +34,16 @@ export const Default: Story = {
 export const IsValid: Story = {
   args: {
     program: {
-      id: "1",
+      id: 1,
       paNumber: "12HA",
-      programName: "Program 12HA",
+      name: "Program 12HA",
       sector: "Sector Awesome",
       division: "Division Amazing",
       tier: 2,
-      contractValue: "20.5M",
-      valid: true,
+      contractValue: 20500000,
+      activeStatus: true,
+      created: new Date().toISOString(),
+      modified: new Date().toISOString(),
       disabled: false,
     },
   },
@@ -53,14 +55,16 @@ export const IsValid: Story = {
 export const IsInvalid: Story = {
   args: {
     program: {
-      id: "1",
+      id: 1,
       paNumber: "12HA",
-      programName: "Program 12HA",
+      name: "Program 12HA",
       sector: "Sector Awesome",
       division: "Division Amazing",
       tier: 2,
-      contractValue: "20.5M",
-      valid: false,
+      contractValue: 20500000,
+      activeStatus: false,
+      created: new Date().toISOString(),
+      modified: new Date().toISOString(),
       disabled: false,
     },
   },
@@ -72,14 +76,16 @@ export const IsInvalid: Story = {
 export const IsDisabled: Story = {
   args: {
     program: {
-      id: "1",
+      id: 1,
       paNumber: "12HA",
-      programName: "Program 12HA",
+      name: "Program 12HA",
       sector: "Sector Awesome",
       division: "Division Amazing",
       tier: 2,
-      contractValue: "20.5M",
-      valid: true,
+      contractValue: 20500000,
+      activeStatus: true,
+      created: new Date().toISOString(),
+      modified: new Date().toISOString(),
       disabled: true,
     },
   },

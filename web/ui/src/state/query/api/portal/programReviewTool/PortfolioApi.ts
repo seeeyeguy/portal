@@ -1,52 +1,65 @@
-import endpoints from "services/api";
 import { POST, GET, PUT, DELETE } from "definitions/RequestConstants";
-import {
-  ApiPortfolio,
-  transformPortfolioRecord,
-} from "utils/portal/programReviewTool/PortfolioTransformUtility";
-import { transformProgramRecord } from "utils/portal/programReviewTool/ProgramTransformUtility";
+import endpoints from "services/api";
 import api from "state/query/api";
+import {
+  IApiPortfolio,
+  transformPortfolioRecord,
+} from "state/query/api/portal/programReviewTool/PortfolioHelper";
+import { transformProgramRecord } from "state/query/api/portal/programReviewTool/ProgramHelper";
 
-import Portfolio from "state/types/program_review_tool/Portfolio";
-import Program from "state/types/program_review_tool/Program";
+import {
+  IPortfolio,
+  IPortfolios,
+} from "views/definitions/ProgramReviewTool.types";
 
-export interface IndexedPortfolio extends Omit<Portfolio, "programs"> {
-  programs: { [key: string]: Program };
-}
-
-export type ApiPortfolioResponse = {
-  data: { [key: number]: IndexedPortfolio } | Portfolio;
+type TApiPortfolioResponse = {
+  data: IPortfolios | IPortfolio;
   status: number | undefined;
 };
 
-export type ApiPortfolioRequest = {
+type TApiPortfolioRequest = {
   name: string;
   programs: number[];
 };
 
 const portfolioApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    addPortfolio: builder.mutation<ApiPortfolioResponse, ApiPortfolioRequest>({
-      query: (body) => ({
-        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(),
-        method: POST,
-        body,
-      }),
-      transformResponse: (response: ApiPortfolio, meta) => ({
-        data: transformPortfolioRecord(response),
-        status: meta?.response?.status,
-      }),
-      invalidatesTags: ["Portfolio"],
-    }),
-    getPortfolios: builder.query<ApiPortfolioResponse, string>({
+    addPortfolio: builder.mutation<TApiPortfolioResponse, TApiPortfolioRequest>(
+      {
+        query: (body) => ({
+          url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(),
+          method: POST,
+          body,
+        }),
+        transformResponse: (response: IApiPortfolio, meta) => {
+          const indexedPrograms =
+            response?.programs?.reduce(
+              (acc, program) => ({
+                ...acc,
+                [program.pa_number]: transformProgramRecord(program),
+              }),
+              {}
+            ) ?? {};
+          return {
+            data: {
+              ...transformPortfolioRecord(response),
+              programs: indexedPrograms,
+            },
+            status: meta?.response?.status,
+          };
+        },
+        invalidatesTags: ["Portfolio"],
+      }
+    ),
+    getPortfolios: builder.query<TApiPortfolioResponse, string>({
       query: (user: string) => ({
         url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(user),
         method: GET,
       }),
       transformResponse: (
-        response: ApiPortfolio[],
+        response: IApiPortfolio[],
         meta
-      ): ApiPortfolioResponse => ({
+      ): TApiPortfolioResponse => ({
         data: response?.reduce((acc, portfolio) => {
           const indexedPrograms =
             portfolio?.programs?.reduce(
@@ -66,10 +79,11 @@ const portfolioApi = api.injectEndpoints({
         }, {}),
         status: meta?.response?.status,
       }),
+      providesTags: ["Portfolio"],
     }),
     updatePortfolio: builder.mutation<
-      ApiPortfolioResponse,
-      { id: number } & ApiPortfolioRequest
+      TApiPortfolioResponse,
+      { id: number } & TApiPortfolioRequest
     >({
       query: ({ id, name, programs }) => ({
         url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(id),
@@ -79,10 +93,23 @@ const portfolioApi = api.injectEndpoints({
           programs,
         },
       }),
-      transformResponse: (response: ApiPortfolio, meta) => ({
-        data: transformPortfolioRecord(response),
-        status: meta?.response?.status,
-      }),
+      transformResponse: (response: IApiPortfolio, meta) => {
+        const indexedPrograms =
+          response?.programs?.reduce(
+            (acc, program) => ({
+              ...acc,
+              [program.pa_number]: transformProgramRecord(program),
+            }),
+            {}
+          ) ?? {};
+        return {
+          data: {
+            ...transformPortfolioRecord(response),
+            programs: indexedPrograms,
+          },
+          status: meta?.response?.status,
+        };
+      },
       invalidatesTags: ["Portfolio"],
     }),
     removePortfolio: builder.mutation<number, number>({

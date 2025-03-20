@@ -1,5 +1,6 @@
 import endpoints from "services/api";
-import { IApiSubFunction } from "utils/portal/directory/SubFunctionTransformUtility";
+import { IApiSubFunction } from "state/query/api/portal/directory/SubFunctionHelper";
+
 import api from "state/query/api";
 
 import { ISubFunction } from "definitions/portal/directory/SubFunction.types";

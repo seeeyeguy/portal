@@ -11,8 +11,16 @@ export default [
   },
   {
     label: "FAQ",
-    path: "/?faq=true",
+    path: "?faq=true",
     icon: faQuestion,
-    onClick: () => redirect("/?faq=true"),
+    onClick: () => {
+      // Update url params.
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.append("faq", "true");
+
+      // Redirect to the URL with new params
+      const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+      redirect(newUrl);
+    },
   },
 ] as unknown as SearchBarMenuItem[];

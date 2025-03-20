@@ -23,6 +23,16 @@ export default function FAQModal() {
     }
   }, [searchParams]);
 
+  const handleClose = React.useCallback(() => {
+    // Update url params.
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete("faq");
+
+    // Redirect to the URL with new params
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    navigate(newUrl, { replace: true });
+  }, [navigate]);
+
   const onClickClose = React.useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       const windowWidth = document.documentElement.clientWidth;
@@ -31,10 +41,10 @@ export default function FAQModal() {
         : 0;
       // Check if the mouse click was outside of the modal.
       if (faqModalRef.current && event.clientX < windowWidth - modalWidth) {
-        navigate("/");
+        handleClose();
       }
     },
-    [faqModalRef, navigate]
+    [faqModalRef, handleClose]
   );
 
   return (
@@ -47,7 +57,7 @@ export default function FAQModal() {
         <h2>FAQ</h2>
         <button
           aria-description="faq modal close button"
-          onClick={() => navigate("/")}
+          onClick={() => handleClose()}
         >
           <FontAwesomeIcon icon={faClose} size="lg" />
         </button>

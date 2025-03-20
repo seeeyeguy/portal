@@ -33,7 +33,7 @@ export interface IProgressBarProps {
   markerIncompleteLabel?: string;
 
   /** The id of the current progress marker. */
-  currentMarker?: number;
+  currentMarker?: number | null;
 
   /** Custom color for the progress bar. */
   progressColor?: string;
@@ -143,7 +143,7 @@ export default function IProgressBar({
         ${styles["progress-bar"]} 
         ${currentProgress === 0 && !lodash.isUndefined(discreteUnit) ? styles["progress-bar-empty"] : ""} 
         ${striped ? styles["progress-bar-apply-striped"] : ""} 
-        ${className ? styles[className] : ""}
+        ${className ?? ""}
       `}
       aria-description="container for progress bar"
       style={

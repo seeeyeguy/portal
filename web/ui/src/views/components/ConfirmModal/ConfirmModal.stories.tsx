@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ConfirmModal from "views/components/ConfirmModal/ConfirmModal";
@@ -17,7 +18,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    open: true,
     title: "Continue?",
     children: <></>,
     className: "",
@@ -25,18 +25,76 @@ export const Default: Story = {
     rejectLabel: <>Cancel</>,
     acceptClassName: "",
     rejectClassName: "",
-    onAccept: () => console.log("ACCEPTED"),
-    onReject: () => console.log("REJECTED"),
-    onHide: undefined,
+    onHide: null,
   },
   render: (args) => {
-    return <ConfirmModal {...args} />;
+    const [showModal, setShowModal] = React.useState(false);
+
+    return (
+      <>
+        <ConfirmModal
+          {...args}
+          open={showModal}
+          onAccept={() => {
+            console.log("ACCEPTED");
+            setShowModal(false);
+          }}
+          onReject={() => {
+            console.log("REJECTED");
+            setShowModal(false);
+          }}
+        />
+        <button
+          className="storybook-test-button"
+          onClick={() => setShowModal(true)}
+        >
+          Open Modal
+        </button>
+      </>
+    );
+  },
+};
+
+export const OnlyAcceptCloses: Story = {
+  args: {
+    title: "Continue?",
+    children: <></>,
+    className: "",
+    acceptLabel: <>Will Close</>,
+    rejectLabel: <>Won't Close</>,
+    acceptClassName: "",
+    rejectClassName: "",
+    onHide: null,
+  },
+  render: (args) => {
+    const [showModal, setShowModal] = React.useState(false);
+
+    return (
+      <>
+        <ConfirmModal
+          {...args}
+          open={showModal}
+          onAccept={() => {
+            console.log("ACCEPTED");
+            setShowModal(false);
+          }}
+          onReject={() => {
+            console.log("REJECTED");
+          }}
+        />
+        <button
+          className="storybook-test-button"
+          onClick={() => setShowModal(true)}
+        >
+          Open Modal
+        </button>
+      </>
+    );
   },
 };
 
 export const CustomStyle: Story = {
   args: {
-    open: true,
     title: "Save Session",
     children: "Would you like to save your current session?",
     className: "test-modal-style",
@@ -44,11 +102,10 @@ export const CustomStyle: Story = {
     rejectLabel: <>Close</>,
     acceptClassName: "test-confirm-button",
     rejectClassName: "test-cancel-button",
-    onAccept: () => console.log("SAVED"),
-    onReject: () => console.log("CLOSED"),
-    onHide: () => console.log("HIDDEN"),
   },
   render: (args) => {
+    const [showModal, setShowModal] = React.useState(false);
+
     return (
       <>
         <style>
@@ -74,7 +131,24 @@ export const CustomStyle: Story = {
         }
       `}
         </style>
-        <ConfirmModal {...args} />
+        <ConfirmModal
+          {...args}
+          open={showModal}
+          onAccept={() => {
+            console.log("ACCEPTED");
+            setShowModal(false);
+          }}
+          onReject={() => {
+            console.log("REJECTED");
+            setShowModal(false);
+          }}
+        />
+        <button
+          className="storybook-test-button"
+          onClick={() => setShowModal(true)}
+        >
+          Open Modal
+        </button>
       </>
     );
   },

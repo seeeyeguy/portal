@@ -6,8 +6,8 @@ import styles from "views/components/ConfirmModal/ConfirmModal.module.css";
 
 /** Properties for the ConfirmModal component. */
 interface IConfirmModalProps {
-  /** Initial state of dialog box. */
-  open: boolean;
+  /** Show or not to show the dialog box. */
+  open?: boolean;
 
   /** Title of the component. */
   title?: string;
@@ -53,12 +53,9 @@ export default function ConfirmModal({
   onReject,
   onHide = null,
 }: IConfirmModalProps) {
-  const [showModal, setShowModal] = React.useState(open);
-
   const handleAccept = React.useCallback(async () => {
     await onAccept();
-    setShowModal(false);
-  }, [onAccept, setShowModal]);
+  }, [onAccept]);
 
   const handleClickOutside = (
     event: React.MouseEvent<HTMLDialogElement, MouseEvent>
@@ -70,23 +67,19 @@ export default function ConfirmModal({
 
   const handleHide = React.useCallback(async () => {
     onHide ? onHide() : await onReject();
-    setShowModal(false);
-  }, [onHide, onReject, setShowModal]);
+  }, [onHide, onReject]);
 
   const handleReject = React.useCallback(async () => {
     await onReject();
-    setShowModal(false);
-  }, [onReject, setShowModal]);
+  }, [onReject]);
 
   return (
     <dialog
-      open={showModal}
+      open={open}
       className={styles["confirm-modal"]}
-      onClick={handleClickOutside}
+      onMouseDown={handleClickOutside}
     >
-      <section
-        className={`${styles["modal-content"]} ${className}`}
-      >
+      <section className={`${styles["modal-content"]} ${className}`}>
         <button
           className={styles["close"]}
           onClick={handleHide}

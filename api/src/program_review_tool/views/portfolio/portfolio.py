@@ -15,6 +15,7 @@ from rest_framework import status
 from program_review_tool import controllers, exceptions
 from program_review_tool.models.Portfolio.serializers import PortfolioSerializer
 from program_review_tool.views import serializers
+from program_review_tool.utils.constants.response import CACHE_CONTROL_NO_CACHE
 
 from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
@@ -133,6 +134,11 @@ class Portfolio(View):
             # Serialize `Portfolio`(s).
             data: List[dict] = PortfolioSerializer(portfolios, many=True).data
 
-            return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+            return http.JsonResponse(
+                data,
+                status=status.HTTP_200_OK,
+                headers={**CACHE_CONTROL_NO_CACHE},
+                safe=False,
+            )
         except exceptions.ProgramReviewToolError as exc:
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
