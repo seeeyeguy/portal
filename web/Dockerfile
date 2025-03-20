@@ -2,6 +2,7 @@ FROM node:20.16-bullseye AS base
 
 # Add needed env variables.
 ARG APP_NAME
+ARG APP_TITLE
 ARG DATA_ENCRYPTION_KEY
 ARG SCHEME
 ARG WEB_HOST
