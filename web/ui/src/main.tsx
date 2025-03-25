@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
       <Helmet>
-        <title>{__APP_NAME__}</title>
+        <title>{__APP_TITLE__}</title>
         <meta property="og:url" content={`${__SCHEME__}://${__WEB_HOST__}:${__WEB_PORT__}`} />
         <meta property="og:title" content={__APP_NAME__} />
         <meta property="og:type" content="website" />

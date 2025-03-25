@@ -19,6 +19,7 @@ services:
                 - ${APP_NAME}-production-web:${DOCKER_COMPOSE_BUILD_TAG}
             args:
                 APP_NAME: ${APP_NAME}
+                APP_TITLE: ${APP_TITLE}
                 DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY}
                 SCHEME: ${SCHEME}
                 WEB_HOST: ${WEB_HOST}
@@ -30,6 +31,7 @@ services:
         <<: *logging-settings
         environment:
             APP_NAME: ${APP_NAME}
+            APP_TITLE: ${APP_TITLE}
             DANGEROUSLY_DISABLE_HOST_CHECK: true
             DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY}
             IBM_TELEMETRY_DISABLED: true

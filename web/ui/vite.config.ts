@@ -20,6 +20,7 @@ const SHARED = {
 export default defineConfig({
   define: {
     __APP_NAME__: JSON.stringify(process.env.APP_NAME),
+    __APP_TITLE__: JSON.stringify(process.env.APP_TITLE),
     __DATA_ENCRYPTION_KEY__: JSON.stringify(process.env.DATA_ENCRYPTION_KEY),
     __SCHEME__: JSON.stringify(process.env.SCHEME),
     __WEB_HOST__: JSON.stringify(process.env.WEB_HOST),
