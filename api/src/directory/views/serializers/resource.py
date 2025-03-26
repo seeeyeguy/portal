@@ -34,7 +34,7 @@ class CreateResourceRequest(BaseResourceRequest):
 class UpdateResourceRequest(BaseResourceRequest):
     """Request serializer for PUT /v1/directory/resources"""
 
-    thumbnail = serializers.ImageField(default=None)
+    thumbnail = serializers.ImageField(allow_null=True, default=None)
 
 
 class UpdateResourceRequestQueryParams(serializers.Serializer):
