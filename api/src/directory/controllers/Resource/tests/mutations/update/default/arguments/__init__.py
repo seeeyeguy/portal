@@ -7,6 +7,9 @@ from typing import List
 
 from directory.controllers.Resource.Resource import UpdateResourceParams
 
+# User email used when testing `Resource` update view.
+UPDATE_RESOURCE_USER_EMAIL: str = "May.Parker@harris.com"
+
 # Id of `Resource` for testing successful `Resource` update.
 UPDATE_RESOURCE_ID: int = 2
 

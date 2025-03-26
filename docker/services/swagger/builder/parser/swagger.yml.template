@@ -483,6 +483,63 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchResourceByIdDoesNotExistResponse"
+    put:
+      tags:
+        - "directory.resource.update"
+      summary: "Update a Resource."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Resource` record
+            to update.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UpdateResourceRequest"
+            encoding:
+              thumbnail:
+                contentType: image/png, image/jpg, image/jpeg
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateResourceResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateResourceWithDuplicatePendingDraftResponse"
+                  - $ref: "#/components/schemas/UpdateResourceApprovedResourceResponse"
+                  - $ref: "#/components/schemas/UpdateResourceDuplicateNameResponse"
+                  - $ref: "#/components/schemas/UpdateResourceInvalidDescriptionResponse"
+                  - $ref: "#/components/schemas/UpdateResourceEmptyEmployeeLevelsResponse"
+                  - $ref: "#/components/schemas/UpdateResourceEmptySubFunctionsResponse"
+                  - $ref: "#/components/schemas/UpdateResourceUnreachableURLResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateResourceUnauthorizedResponse"
+        "404":
+          description: "Resource, EmployeeLevel, SubFunction or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateResourceResourceDoesNotExistResponse"
+                  - $ref: "#/components/schemas/UpdateResourceEmployeeLevelDoesNotExistResponse"
+                  - $ref: "#/components/schemas/UpdateResourceSubFunctionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/UpdateResourceTagDoesNotExistResponse"
   /directory/resources/search:
     post:
       tags:
@@ -2598,7 +2655,167 @@ components:
     FetchResourceByIdDoesNotExistResponse:
       title: "Fetch `Resource` error response due to using an id for
         a `Resource` that does not exist."
-      example: "Resource (id=resource_id) does not exist."    
+      example: "Resource (id=resource_id) does not exist."
+    
+    UpdateResourceRequest:
+      title: "Update `Resource` request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name to be applied to the `Resource` being updated.
+          default: "Update Resource Name"
+        description:
+          type: string
+          description: New description to be applied to the `Resource` being updated.
+          default: "Update Resource Description."
+        url:
+          type: string
+          description: New URL to be applied to the `Resource` being updated.
+          default: https://www.example.com
+        thumbnail:
+          type: string
+          description: New thumbnail image to be applied to the `Resource` being updated.
+          format: binary
+        employee_levels:
+          type: array[int]
+          description: Ids of `EmployeeLevel`s to be applied to the `Resource` being updated.
+          default: []
+        subfunctions:
+          type: array[int]
+          description: Ids of `SubFunction`s to be applied to the `Resource` being updated.
+          default: []
+        tags:
+          type: array[int]
+          description: Ids of `Tag`s to be applied to the `Resource` being updated.
+          default: []
+        type:
+          type: string
+          description: New type to be applied to the `Resource` being updated.
+          default: "tableau"
+        download:
+          type: boolean
+          description: New download flag to be applied to the `Resource` being updated.
+          default: false
+  
+    UpdateResourceResponse:
+      title: "Update `Resource` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+              {
+                "id": 1,
+                "employee_levels": [
+                  {
+                    "id": 1,
+                    "name": "Employee",
+                    "description": "Employee Level 1.",
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                    "level": 1,
+                  },
+                  ...
+                ],
+                "subfunctions": [
+                  {
+                    "id": 1,
+                    "function": {
+                      "id": 1,
+                      "name": "Function 1 Name",
+                      "description": "Function 1 Description.",
+                      "created": "1970-01-01T12:00:00-04:00",
+                      "modified": "1970-01-01T12:00:00-04:00",
+                    },
+                    "name": "Function 1 SubFunction 1 Name",
+                    "description": "Function 1 SubFunction 1 Description.",
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                  },
+                  ...
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "1970-01-01T12:00:00-04:00",
+                    "modified": "1970-01-01T12:00:00-04:00",
+                    "label": "example",
+                  },
+                  ...
+                ],
+                "description": "Resource 1 Revision 1 description.",
+                "created": "1970-01-01T12:00:00-04:00",
+                "uid": "000000000000-0000000000-000000000000",
+                "revision_number": 1,
+                "name": "Resource 1 Revision 1",
+                "url": "example-site.org",
+                "thumbnail": "/path/to/resource/thumbnail",
+                "primary_point_of_contact": "May.Parker@harris.com",
+                "type": "Resource Type 1",
+                "download": False,
+                "active": True,
+                "previous_revision": None,
+              }
+
+    UpdateResourceWithDuplicatePendingDraftResponse:
+      title: "Update `Resource` error response due to having
+        a duplicate pending draft."
+      example: "Resource (uid={resource_uid}) has a pending draft."
+    
+    UpdateResourceApprovedResourceResponse:
+      title: "Update `Resource` error response due to attempting
+        to update an approved `Resource`."
+      example: "Resource (id={resource_id}) not in draft status."
+    
+    UpdateResourceDuplicateNameResponse:
+      title: "Update `Resource` error response due to supplying a
+        name for an existing approved `Resource`."
+      example: "Resource (name={name}) already exists."
+
+    UpdateResourceInvalidDescriptionResponse:
+      title: "Update `Resource` error response due to supplying an
+        invalid description."
+      example: "Please provide a more detailed description for this resource."
+
+    UpdateResourceEmptyEmployeeLevelsResponse:
+      title: "Update `Resource` error response due to attempting
+        to update a `Resource` without supplying `EmployeeLevel` ids."
+      example: "Resource must be associated with at least one EmployeeLevel."
+    
+    UpdateResourceEmptySubFunctionsResponse:
+      title: "Update `Resource` error response due to attempting
+        to update a `Resource` without supplying `SubFunction` ids."
+      example: "Resource must be associated with at least one SubFunction."
+    
+    UpdateResourceUnreachableURLResponse:
+      title: "Update `Resource` error response due to supplying
+        a URL for an unreachable site."
+      example: "URL({url}) is not reachable."
+
+    UpdateResourceUnauthorizedResponse:
+      title: "Update `Resource` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateResourceResourceDoesNotExistResponse:
+      title: "Update `Resource` error response due to using an id for
+        a `Resource` that does not exist."
+      example: "Resource (id=resource_id) does not exist."
+
+    UpdateResourceEmployeeLevelDoesNotExistResponse:
+      title: "Update `Resource` error response due to supplying an id
+        for an `EmployeeLevel` that does not exist."
+      example: "Some EmployeeLevels (ids={employee_levels}) do not exist."
+    
+    UpdateResourceSubFunctionDoesNotExistResponse:
+      title: "Update `Resource` error response due to supplying an id
+        for a `SubFunction` that does not exist."
+      example: "Some SubFunctions (ids={subfunctions}) do not exist."
+
+    UpdateResourceTagDoesNotExistResponse:
+      title: "Update `Resource` error response due to supplying an id
+        for a `Tag` that does not exist."
+      example: "Some Tags (ids={tags}) do not exist."
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
