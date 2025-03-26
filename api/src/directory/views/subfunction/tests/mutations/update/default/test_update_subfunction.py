@@ -5,11 +5,13 @@ Collection of pytests for SubFunction's update view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.SubFunction.tests.mutations.update.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.SubFunction.tests.mutations.update.default import arg
     "subfunction.update.default",
     "views.TestUpdateSubFunction",
 )
-class TestUpdateSubFunction(TestCase):
+class TestUpdateSubFunction(MultiDBTestCase):
     """
     Tests for PUT /v1/directory/subfunctions endpoint.
     """

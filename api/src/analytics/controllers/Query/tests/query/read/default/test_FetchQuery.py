@@ -6,7 +6,7 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from analytics.controllers.Query.Query import Query
 from analytics.controllers.Query.tests.query.read.default import arguments
@@ -18,6 +18,8 @@ from analytics.models.Query.serializers import QuerySerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
 
+from manager.utils.tests import MultiDBTestCase
+
 
 @tag(
     "controllers",
@@ -27,7 +29,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "analytics.query.fetch",
     "query.fetch.default",
 )
-class TestFetchQuery(TestCase):
+class TestFetchQuery(MultiDBTestCase):
     """Test suite for Query's fetch controller."""
 
     fixtures: List[str] = [

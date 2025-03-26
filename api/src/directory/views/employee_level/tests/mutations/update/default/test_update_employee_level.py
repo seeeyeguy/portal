@@ -5,11 +5,13 @@ Collection of pytests for EmployeeLevel's update view endpoint.
 from typing import List
 
 from django.contrib.auth.models import User
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.EmployeeLevel.tests.mutations.update.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.EmployeeLevel.tests.mutations.update.default import a
     "employeelevel.update.default",
     "views.TestUpdateEmployeeLevel",
 )
-class TestUpdateEmployeeLevel(TestCase):
+class TestUpdateEmployeeLevel(MultiDBTestCase):
     """
     Tests for PUT /v1/directory/employee-levels endpoint.
     """

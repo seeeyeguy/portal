@@ -3,14 +3,17 @@
 from typing import List
 
 from django.contrib.auth.models import User
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
-from portal.models.fixtures import COMMON_FIXTURES
 from preferences.controllers.QueryFilterState.tests.mutations.create.default import (
     arguments,
 )
+
+from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -21,7 +24,7 @@ from preferences.controllers.QueryFilterState.tests.mutations.create.default imp
     "queryfilterstate.create.default",
     "views.TestCreateQueryFilterState",
 )
-class TestCreateQueryFilterState(TestCase):
+class TestCreateQueryFilterState(MultiDBTestCase):
     """
     Tests for POST /v1/preferences/query-filter-state endpoint.
     """

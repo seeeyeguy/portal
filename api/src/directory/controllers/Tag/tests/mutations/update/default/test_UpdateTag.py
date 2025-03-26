@@ -5,13 +5,15 @@ Collection of pytests for Tag's update controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import Tag
 from directory.controllers.Tag.tests.mutations.update.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.Tag import Tag as TagModel
 from directory.models.Tag.serializers import TagSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from directory.models.Tag.serializers import TagSerializer
     "directory.tag.update",
     "tag.update.default",
 )
-class TestUpdateTag(TestCase):
+class TestUpdateTag(MultiDBTestCase):
     """Test suite for Tag's update controller."""
 
     fixtures: List[str] = [

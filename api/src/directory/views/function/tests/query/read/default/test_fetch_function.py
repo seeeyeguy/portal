@@ -4,11 +4,13 @@ Collection of pytests for Function's fetch view endpoint.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Function.tests.query.read.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +21,7 @@ from directory.controllers.Function.tests.query.read.default import arguments
     "function.fetch.default",
     "views.TestFetchFunction",
 )
-class TestFetchFunction(TestCase):
+class TestFetchFunction(MultiDBTestCase):
     """
     Tests for GET /v1/directory/functions endpoint.
     """

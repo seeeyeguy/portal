@@ -1,8 +1,11 @@
 FROM python:3.12-bullseye AS base
 
+# Add needed env variables.
+ARG APP_NAME
+ARG CA_CERTIFICATE_FOR_API
+
 # Construct path to project.
 # Need to change PROJECT to app name.
-ARG APP_NAME
 ARG PROJECT=${APP_NAME}
 ARG APPDIR=/apps/${PROJECT}
 
@@ -11,15 +14,27 @@ ENV PYTHONPATH ${APPDIR}
 # Send container output to stdout.
 ENV PYTHONUNBUFFERED 1
 
+# Add ssl cert file and set PIP env variable.
+ADD ${CA_CERTIFICATE_FOR_API} /usr/local/share/${CA_CERTIFICATE_FOR_API}
+ADD ${CA_CERTIFICATE_FOR_API} /etc/ssl/certs/ca-certificates.crt
+ENV PIP_CERT=/usr/local/share/${CA_CERTIFICATE_FOR_API}
+
 # Install container dependencies.
 RUN DevTools="emacs iputils-ping less netcat openssh-client unzip vim zip" && \
     TLSDeps="apt-transport-https ca-certificates gnupg1 libsasl2-dev libssl-dev" && \
-    PostgresDeps="gcc libpq-dev python3-dev" && \
+    PostgresDeps="gcc libpq-dev postgresql-client python3-dev" && \
+    MSSQLDeps="msodbcsql17 unixodbc" && \
     DjangoDeps="graphviz graphviz-dev libjpeg-dev python3-enchant" && \
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list | tee /etc/apt/sources.list.d/msprod.list && \
+    curl -sSL -O https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb && \
     apt clean all && \
     apt --allow-releaseinfo-change update && \
     apt dist-upgrade -y && \
-    apt install --fix-missing -y $DevTools $TLSDeps $PostgresDeps $DjangoDeps && \
+    ACCEPT_EULA=Y apt install --fix-missing -y $DevTools $TLSDeps $PostgresDeps $DjangoDeps $MSSQLDeps && \
     pip install --upgrade pip && \
     apt autoremove -y
 

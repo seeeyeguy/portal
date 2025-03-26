@@ -5,11 +5,13 @@ Collection of pytests for Profile's fetch view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from users.controllers.Profile.tests.query.read.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from users.controllers.Profile.tests.query.read.default import arguments
     "profile.fetch.default",
     "views.TestFetchProfile",
 )
-class TestFetchProfile(TestCase):
+class TestFetchProfile(MultiDBTestCase):
     """
     Tests for GET /v1/users/profile endpoint.
     """

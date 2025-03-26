@@ -5,11 +5,13 @@ Collection of pytests for Tag's create view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Tag.tests.mutations.create.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.Tag.tests.mutations.create.default import arguments
     "tag.create.default",
     "views.TestCreateTag",
 )
-class TestCreateTag(TestCase):
+class TestCreateTag(MultiDBTestCase):
     """
     Tests for POST /v1/directory/tags endpoint.
     """

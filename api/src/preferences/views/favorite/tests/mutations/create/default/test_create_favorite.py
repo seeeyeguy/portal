@@ -3,12 +3,15 @@
 from typing import List
 
 from django.contrib.auth.models import User
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
-from portal.models.fixtures import COMMON_FIXTURES
 from preferences.controllers.Favorite.tests.mutations.create.default import arguments
+
+from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +22,7 @@ from preferences.controllers.Favorite.tests.mutations.create.default import argu
     "favorite.create.default",
     "views.TestCreateFavorite",
 )
-class TestCreateFavorite(TestCase):
+class TestCreateFavorite(MultiDBTestCase):
     """
     Tests for POST /v1/preferences/favorites endpoint.
     """

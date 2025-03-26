@@ -7,7 +7,7 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.EmployeeLevel.EmployeeLevel import EmployeeLevel
 from directory.controllers.EmployeeLevel.tests.query.read.default import arguments
@@ -16,6 +16,8 @@ from directory.models.EmployeeLevel.EmployeeLevel import (
     EmployeeLevel as EmployeeLevelModel,
 )
 from directory.models.EmployeeLevel.serializers import EmployeeLevelSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -26,7 +28,7 @@ from directory.models.EmployeeLevel.serializers import EmployeeLevelSerializer
     "directory.employeelevel.fetch",
     "employeelevel.fetch.default",
 )
-class TestFetchEmployeeLevel(TestCase):
+class TestFetchEmployeeLevel(MultiDBTestCase):
     """Test suite for EmployeeLevel's fetch controller."""
 
     fixtures: List[str] = [

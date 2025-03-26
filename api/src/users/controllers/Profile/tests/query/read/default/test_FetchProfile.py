@@ -6,13 +6,15 @@ Collection of pytests for Profile's fetch controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from users import models
 from users.controllers import Profile
 from users.controllers.Profile.tests.query.read.default import arguments
 from users.exceptions import UsersError
 from users.models.Profile.serializers import ProfileSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -23,7 +25,7 @@ from users.models.Profile.serializers import ProfileSerializer
     "users.profile.fetch",
     "profile.fetch.default",
 )
-class TestFetchProfile(TestCase):
+class TestFetchProfile(MultiDBTestCase):
     """Test suite for Profile's fetch controller."""
 
     fixtures: List[str] = [

@@ -6,7 +6,7 @@ import pytest
 from typing import List, Union
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Function.Function import Function
 from directory.controllers.Function.tests.query.read.default import arguments
@@ -15,6 +15,8 @@ from directory.models.Function.Function import (
     Function as FunctionModel,
 )
 from directory.models.Function.serializers import FunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +27,7 @@ from directory.models.Function.serializers import FunctionSerializer
     "directory.function.fetch",
     "function.fetch.default",
 )
-class TestFetchFunction(TestCase):
+class TestFetchFunction(MultiDBTestCase):
     """Test suite for Function's fetch controller."""
 
     fixtures: List[str] = [

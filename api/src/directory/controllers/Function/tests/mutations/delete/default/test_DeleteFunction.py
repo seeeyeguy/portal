@@ -4,10 +4,12 @@ Collection of pytests for Function's delete controller.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Function.Function import Function
 from directory.controllers.Function.tests.mutations.delete.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -18,7 +20,7 @@ from directory.controllers.Function.tests.mutations.delete.default import argume
     "directory.function.delete",
     "function.delete.default",
 )
-class TestDeleteFunction(TestCase):
+class TestDeleteFunction(MultiDBTestCase):
     """Test suite for Function's delete controller."""
 
     fixtures: List[str] = [

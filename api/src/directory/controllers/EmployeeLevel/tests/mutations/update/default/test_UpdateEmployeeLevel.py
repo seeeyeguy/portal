@@ -5,13 +5,15 @@ Collection of pytests for EmployeeLevel's update controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import EmployeeLevel
 from directory.controllers.EmployeeLevel.tests.mutations.update.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.EmployeeLevel import EmployeeLevel as EmployeeLevelModel
 from directory.models.EmployeeLevel.serializers import EmployeeLevelSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from directory.models.EmployeeLevel.serializers import EmployeeLevelSerializer
     "directory.employeelevel.update",
     "employeelevel.update.default",
 )
-class TestUpdateEmployeeLevel(TestCase):
+class TestUpdateEmployeeLevel(MultiDBTestCase):
     """Test suite for EmployeeLevel's update controller."""
 
     fixtures: List[str] = [

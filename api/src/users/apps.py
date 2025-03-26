@@ -1,7 +1,7 @@
 """
 App config module. UsersConfig provides
 configuration settings to Django while it
-sets up the `users` app. 
+sets up the `users` app.
 """
 
 from django.apps import AppConfig
@@ -15,14 +15,17 @@ class UsersConfig(AppConfig):
     name = "users"
 
     def ready(self) -> None:
+        """Perform initialization when app is ready."""
+
         # pylint: disable=import-outside-toplevel,invalid-name
         import logging
         from django.contrib.auth import get_user_model
+        from django.core.management import call_command
         from manager import settings
 
         User = get_user_model()
 
-        def create_development_user(**kwargs: dict) -> None:
+        def create_development_user(**_: dict) -> None:
             if settings.BUILD != settings.ApplicationBuild.DEVELOPMENT:
                 return None
 
@@ -45,5 +48,18 @@ class UsersConfig(AppConfig):
                 )
             return None
 
+        def load_initial_dataset(**_: dict) -> None:
+            if settings.BUILD != settings.ApplicationBuild.DEVELOPMENT:
+                return None
+
+            call_command(
+                "loaddata",
+                "portal/db/init/data/init.json",
+                verbosity=3,
+                database="default",
+            )
+
+        post_migrate.connect(load_initial_dataset, sender=self, weak=False)
         post_migrate.connect(create_development_user, sender=self, weak=False)
+
         return super().ready()

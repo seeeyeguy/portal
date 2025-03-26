@@ -2,10 +2,12 @@
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -16,7 +18,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "visit.fetch.default",
     "views.TestFetchVisit",
 )
-class TestFetchVisit(TestCase):
+class TestFetchVisit(MultiDBTestCase):
     """
     Tests for GET /v1/analytics/visits endpoint.
     """

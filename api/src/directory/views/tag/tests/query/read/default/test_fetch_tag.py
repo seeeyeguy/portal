@@ -5,11 +5,13 @@ Collection of pytests for Tag's fetch view endpoint.
 # pylint: disable=line-too-long
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Tag.tests.query.read.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.Tag.tests.query.read.default import arguments
     "tag.fetch.default",
     "views.TestFetchTag",
 )
-class TestFetchTag(TestCase):
+class TestFetchTag(MultiDBTestCase):
     """
     Tests for GET /v1/directory/tags endpoint.
     """

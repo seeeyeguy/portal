@@ -6,7 +6,7 @@ Collection of pytests for Query's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from analytics.controllers.Query.Query import Query as QueryController
 from analytics.controllers.Query.tests.mutations.create.default import arguments
@@ -15,6 +15,8 @@ from analytics.models.Query.Query import Query as QueryModel
 from analytics.models.Query.serializers import QuerySerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +27,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "analytics.query.create",
     "query.create.default",
 )
-class TestCreateQuery(TestCase):
+class TestCreateQuery(MultiDBTestCase):
     """Test suite for Query's create controller."""
 
     fixtures: List[str] = [

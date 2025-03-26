@@ -1,0 +1,25 @@
+x-logging-settings: &logging-settings
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "256k"
+            max-file: "3"
+
+services:
+    axis:
+        image: ${APP_NAME}-axis:${DOCKER_COMPOSE_BUILD_TAG}
+        build:
+            context: ./builder
+            dockerfile: Dockerfile
+            tags:
+                - ${APP_NAME}-axis:${DOCKER_COMPOSE_BUILD_TAG}
+        restart: unless-stopped
+        container_name: ${APP_NAME}-axis-${USER}
+        environment:
+            ACCEPT_EULA: Y
+            AXIS_DATABASE_NAME: ${AXIS_DATABASE_NAME}
+            AXIS_DATABASE_USER: ${AXIS_DATABASE_USER}
+            MSSQL_SA_PASSWORD: ${AXIS_DATABASE_PASSWORD}
+        <<: *logging-settings
+        ports:
+            - ${AXIS_DATABASE_PORT}:1433

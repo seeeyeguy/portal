@@ -6,13 +6,15 @@ Collection of pytests for Function's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import Function
 from directory.controllers.Function.tests.mutations.create.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.Function import Function as FunctionModel
 from directory.models.Function.serializers import FunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -23,7 +25,7 @@ from directory.models.Function.serializers import FunctionSerializer
     "directory.function.create",
     "function.create.default",
 )
-class TestCreateFunction(TestCase):
+class TestCreateFunction(MultiDBTestCase):
     """Test suite for Function's create controller."""
 
     fixtures: List[str] = [

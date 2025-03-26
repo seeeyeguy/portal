@@ -6,7 +6,7 @@ Collection of pytests for Visit's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from analytics.controllers.Visit.Visit import Visit
 from analytics.controllers.Visit.tests.mutations.create.default import arguments
@@ -14,8 +14,9 @@ from analytics.exceptions import AnalyticsError
 from analytics.models.Visit.Visit import Visit as VisitModel
 from analytics.models.Visit.serializers import VisitSerializer
 
-
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -26,7 +27,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "analytics.visit.create",
     "visit.create.default",
 )
-class TestCreateVisit(TestCase):
+class TestCreateVisit(MultiDBTestCase):
     """Test suite for Visit's create controller."""
 
     fixtures: List[str] = [

@@ -5,11 +5,13 @@ Collection of pytests for Tag's delete view endpoint.
 from typing import List
 
 from django.contrib.auth.models import User
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Tag.tests.mutations.delete.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.Tag.tests.mutations.delete.default import arguments
     "tag.delete.default",
     "views.TestDeleteTag",
 )
-class TestDeleteTag(TestCase):
+class TestDeleteTag(MultiDBTestCase):
     """
     Tests for DELETE /v1/directory/tags endpoint.
     """

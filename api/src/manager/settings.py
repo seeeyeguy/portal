@@ -331,7 +331,14 @@ if BUILD in {ApplicationBuild.DEVELOPMENT, ApplicationBuild.TEST}:
 ############################
 
 # Set all custom django apps here.
-CUSTOM_APPS: list[str] = ["users", "directory", "analytics", "preferences", "request"]
+CUSTOM_APPS: list[str] = [
+    "users",
+    "directory",
+    "analytics",
+    "preferences",
+    "request",
+    "program_review_tool",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -426,7 +433,17 @@ DATABASES = {
         "PORT": db.config.BASE.PORT,
         "TEST": db.config.BASE.TEST,
         "ATOMIC_REQUESTS": db.config.BASE.ATOMIC,
-    }
+    },
+    "prt": {
+        "ENGINE": db.config.PROGRAM_REVIEW_TOOL.ENGINE,
+        "NAME": db.config.PROGRAM_REVIEW_TOOL.NAME,
+        "USER": db.config.PROGRAM_REVIEW_TOOL.USER,
+        "PASSWORD": db.config.PROGRAM_REVIEW_TOOL.PASSWORD,
+        "HOST": db.config.PROGRAM_REVIEW_TOOL.HOST,
+        "PORT": db.config.PROGRAM_REVIEW_TOOL.PORT,
+        "TEST": db.config.PROGRAM_REVIEW_TOOL.TEST,
+        "ATOMIC_REQUESTS": db.config.PROGRAM_REVIEW_TOOL.ATOMIC,
+    },
 }
 
 if BUILD == ApplicationBuild.TEST:
@@ -436,7 +453,7 @@ if BUILD == ApplicationBuild.TEST:
 # Set the list of database routers with path.to.router
 # Routers direct reads, writes, etc to the appropriate
 # database.
-DATABASE_ROUTERS: list[str] = []
+DATABASE_ROUTERS: list[str] = ["manager.db.routers.ProgramReviewToolDatabaseRouter"]
 
 ###########
 ## CACHE ##
