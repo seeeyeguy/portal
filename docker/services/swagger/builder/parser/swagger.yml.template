@@ -431,6 +431,57 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteFunctionForbiddenErrorResponse"
   /directory/resources:
+    post:
+      tags:
+        - "directory.resource.create"
+      summary: "Create a Resource."
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateResourceRequest"
+            encoding:
+              thumbnail:
+                contentType: image/png, image/jpeg, image/jpg
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourceResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourceRevisionErroneousPreviousRevisionResponse"
+                  - $ref: "#/components/schemas/CreateResourceWithDuplicatePendingDraftResponse"
+                  - $ref: "#/components/schemas/CreateResourceDuplicateNameResponse"
+                  - $ref: "#/components/schemas/CreateResourceInvalidDescriptionResponse"
+                  - $ref: "#/components/schemas/CreateResourceMalformedURLResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmptyEmployeeLevelsResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmptySubFunctionsResponse"
+                  - $ref: "#/components/schemas/CreateResourceInvalidThumbnailResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourceUnauthorizedResponse"
+        "404":
+          description: "Resource, EmployeeLevel, SubFunction or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourcePreviousRevisionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmployeeLevelDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceSubFunctionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceTagDoesNotExistResponse"
     get:
       tags:
         - "directory.resource.fetch"
@@ -2507,6 +2558,190 @@ components:
     DeleteFunctionForbiddenErrorResponse:
       title: "Delete `Function` error response due to forbidden access."
       example: "Permissions Denied."
+    
+    CreateResourceRequest:
+      title: "Create `Resource` request." 
+      type: object
+      properties:
+        uid:
+          type: string
+          description: UID to be applied to the `Resource` being created, when it is a revision.
+          default: "000000000000-0000000000-000000000000"
+        name:
+          type: string
+          description: Name to be applied to the `Resource` being created.
+          default: "Create Resource Name"
+        description:
+          type: string
+          description: Description to be applied to the `Resource` being created.
+          default: "Create Resource Description."
+        previous_revision:
+          type: integer
+          description: Previous revision to be applied to the `Resource` being created.
+          default: int | None
+        url:
+          type: string
+          description: URL to be applied to the `Resource` being created.
+          default: https://www.example.com
+        thumbnail:
+          type: string
+          description: Thumbnail image to be applied to the `Resource` being created.
+          format: binary
+        employee_levels:
+          type: array[int]
+          description: Ids of `EmployeeLevel`s to be applied to the `Resource` being created.
+          default: []
+        subfunctions:
+          type: array[int]
+          description: Ids of `SubFunction`s to be applied to the `Resource` being created.
+          default: []
+        tags:
+          type: array[int]
+          description: Ids of `Tag`s to be applied to the `Resource` being created.
+          default: []
+        type:
+          type: string
+          description: Type to be applied to the `Resource` being created.
+          default: "tableau"
+        download:
+          type: boolean
+          description: Download flag to be applied to the `Resource` being created.
+          default: false
+
+    CreateResourceResponse:
+      title: "Create `Resource` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+              {
+                "id": 14,
+                "employee_levels": [
+                  {
+                    "id": 1,
+                    "name": "Employee",
+                    "description": "Employee Level 1.",
+                    "created": "1984-01-01T12:00:00-05:00",
+                    "modified": "1984-01-01T12:00:00-05:00",
+                    "level": 1
+                  },
+                  {
+                    "id": 2,
+                    "name": "Manager",
+                    "description": "Manager Level 1.",
+                    "created": "1984-01-01T12:00:00-05:00",
+                    "modified": "1984-01-01T12:00:00-05:00",
+                    "level": 2
+                  },
+                  ...
+                ],
+                "subfunctions": [
+                  {
+                    "id": 1,
+                    "function": {
+                      "id": 1,
+                      "name": "Function 1 Name",
+                      "description": "Function 1 Description.",
+                      "created": "1984-01-01T12:00:00-05:00",
+                      "modified": "1984-01-01T12:00:00-05:00"
+                    },
+                    "name": "Function 1 SubFunction 1 Name",
+                    "description": "Function 1 SubFunction 1 Description.",
+                    "created": "1984-01-01T12:00:00-05:00",
+                    "modified": "1984-01-01T12:00:00-05:00"
+                  },
+                  ...
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "1984-01-01T12:00:00-05:00",
+                    "modified": "1984-01-01T12:00:00-05:00",
+                    "label": "example"
+                  },
+                  {
+                    "id": 2,
+                    "created": "1984-01-01T12:00:00-05:00",
+                    "modified": "1984-01-01T12:00:00-05:00",
+                    "label": "example-2"
+                  },
+                  ...
+                ],
+                "description": "Resource 1 Revision 1 description.",
+                "created": "1984-01-01T12:00:00-05:00",
+                "uid": "000000000000-0000000000-000000000000",
+                "name": "Resource 1 Revision 1",
+                "url": "example-site.org",
+                "thumbnail": "/path/to/resource/thumbnail",
+                "type": "Resource Type 1",
+                "download": false,
+                "active": true,
+                "previous_revision": None,
+              }
+
+    CreateResourceRevisionErroneousPreviousRevisionResponse:
+      title: "Create `Resource` error response due to having
+        a revision for a resource with a different `Resource.uid`."
+      example: "Resource (uid={uid}) must match its previous revision."
+    
+    CreateResourceWithDuplicatePendingDraftResponse:
+      title: "Create `Resource` error response due to having
+        a duplicate pending draft."
+      example: "Resource (uid={uid}) has a pending draft."
+
+    CreateResourceDuplicateNameResponse:
+      title: "Create `Resource` error response due to supplying 
+        a name for an existing approved `Resource`."
+      example: "Resource (name={name}) already exists."
+    
+    CreateResourceInvalidDescriptionResponse:
+      title: "Create `Resource` error response due to supplying 
+        an invalid description."
+      example: "Please provide a more detailed description for this resource."
+    
+    CreateResourceMalformedURLResponse:
+      title: "Create `Resource` error response due to supplying
+        a malformed URL."
+      example: "URL({url}) is malformed."
+
+    CreateResourceEmptyEmployeeLevelsResponse:
+      title: "Create `Resource` error response due to attempting
+        to create a `Resource` without supplying `EmployeeLevel` ids."
+      example: "Resource must be associated with at least one EmployeeLevel."
+
+    CreateResourceEmptySubFunctionsResponse:
+      title: "Create `Resource` error response due to attempting
+        to create a `Resource` without supplying `SubFunction` ids."
+      example: "Resource must be associated with at least one SubFunction."
+    
+    CreateResourceInvalidThumbnailResponse:
+      title: "Create `Resource` error response due to supplying an invalid thumbnail."
+      example: "Resource (thumbnail={thumbnail}), is not a file."
+    
+    CreateResourceUnauthorizedResponse:
+      title: "Create `Resource` error response due to unauthorized access."
+      example: "Not authorized to access this resource."
+
+    CreateResourcePreviousRevisionDoesNotExistResponse:
+      title: "Create `Resource` error response due to a given previous revision
+        id where that `Resource` does not exist."
+      example: "Resource (previous_revision={previous_revision}) does not exist."
+
+    CreateResourceEmployeeLevelDoesNotExistResponse:
+      title: "Create `Resource` error response due to supplying an id
+        for an `EmployeeLevel` that does not exist."
+      example: "Some EmployeeLevels (ids={employee_levels}) do not exist."
+
+    CreateResourceSubFunctionDoesNotExistResponse:
+      title: "Create `Resource` error response due to supplying an id
+        for a `SubFunction` that does not exist."
+      example: "Some SubFunctions (ids={subfunctions}) do not exist."
+
+    CreateResourceTagDoesNotExistResponse:
+      title: "Create `Resource` error response due to supplying an id
+        for a `Tag` that does not exist."
+      example: "Some Tags (ids={tags}) do not exist."
     
     FetchResourcesWithParametersResponse:
       title: "Fetch `Resource`(s) response."

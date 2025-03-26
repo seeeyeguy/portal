@@ -5,23 +5,55 @@ controller pytests.
 
 from typing import List
 
+from django.core.files.base import File
+
 from directory.controllers.Resource.Resource import CreateResourceParams
 
 # pylint: disable=line-too-long
 
+# User email used when testing `Resource` create view.
+CREATE_RESOURCE_USER_EMAIL: str = "May.Parker@harris.com"
+
 # Base parameters used for successful `Resource` creation.
 BASE_CREATE_RESOURCE_STRUCTURE_PARAMS: CreateResourceParams = {
-    "uid": "66d4baed-9d6e-4167-9ad1-a62f8492cf32",
+    "uid": None,
     "previous_revision": None,
     "name": "Test Create Name",
     "description": "Test resource description for create tests.",
     "url": "https://www.test-site.com",
-    "thumbnail": None,  # type: ignore[typeddict-item,unused-ignore]
+    "thumbnail": File(b""),  # type: ignore[typeddict-item,unused-ignore,arg-type]
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
     "type": "test create type",
     "download": False,
+}
+
+# Base parameters used for succesful `Resource` revision creation.
+BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS: CreateResourceParams = {
+    "uid": "4878469f-6d52-46da-aee3-77905002cd12",
+    "previous_revision": 1,
+    "name": "Resource 1 Revision 2",
+    "description": "Resource 1 Revision 2 description.",
+    "url": "https://www.example-resource-1-revision-2.org",
+    "thumbnail": File(b""),  # type: ignore[typeddict-item,unused-ignore,arg-type]
+    "employee_levels": [3],
+    "subfunctions": [2, 5],
+    "tags": [1, 2, 3],
+    "type": "resource type 1",
+    "download": False,
+}
+
+# Base parameters used for successful `Resource` creation (JSON serializable).
+BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE = {
+    **BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
+    "thumbnail": None,
+}
+
+# Base parameters used for successful `Resource` revision creation (JSON serializable).
+BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS_JSON_SERIALIZABLE = {
+    **BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS,
+    "thumbnail": None,
 }
 
 # Id for a `Resource's` previous revision does not exist used for testing failure case.
@@ -119,13 +151,88 @@ VALID_CREATED_RESOURCE: dict = {
         },
     ],
     "primary_point_of_contact": None,
-    "description": "Test resource description for create tests.",
     "revision_number": None,
     "name": "Test Create Name",
+    "description": "Test resource description for create tests.",
     "url": "https://www.test-site.com",
     "thumbnail": None,
     "type": "test create type",
     "download": False,
     "active": False,
     "previous_revision": None,
+}
+
+VALID_CREATED_RESOURCE_REVISION: dict = {
+    "id": 5,
+    "employee_levels": [
+        {
+            "id": 3,
+            "name": "Executive",
+            "description": "Executive Level 1.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+            "level": 3,
+        }
+    ],
+    "subfunctions": [
+        {
+            "id": 5,
+            "function": {
+                "id": 3,
+                "name": "Finance",
+                "description": "Function 3.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+            },
+            "name": "Capital",
+            "description": "Function 3 SubFunction 1.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+        },
+        {
+            "id": 2,
+            "function": {
+                "id": 1,
+                "name": "Human Resources",
+                "description": "Function 1.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+            },
+            "name": "Recruiting",
+            "description": "Function 1 SubFunction 2.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+        },
+    ],
+    "tags": [
+        {
+            "id": 1,
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+            "label": "filter::site:Melbourne",
+        },
+        {
+            "id": 2,
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+            "label": "filter::site:Rochester",
+        },
+        {
+            "id": 3,
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+            "label": "restricted::department:GeoSpatial",
+        },
+    ],
+    "primary_point_of_contact": None,
+    "uid": "4878469f-6d52-46da-aee3-77905002cd12",
+    "revision_number": None,
+    "name": "Resource 1 Revision 2",
+    "description": "Resource 1 Revision 2 description.",
+    "url": "https://www.example-resource-1-revision-2.org",
+    "thumbnail": None,
+    "type": "resource type 1",
+    "download": False,
+    "active": False,
+    "previous_revision": 1,
 }

@@ -54,6 +54,24 @@ class TestCreateResource(TestCase):
 
         self.assertEqual(serialized_resource, arguments.VALID_CREATED_RESOURCE)
 
+    @tag("controllers.resource.create_resource_revision")
+    def test_create_resource_revision(self) -> None:
+        """Success Case: Create a `Resource` record revision."""
+
+        resource = Resource.create_resource(
+            arguments.BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS
+        )
+
+        self.assertIsInstance(resource, ResourceModel)
+
+        # Serialize `Resource`.
+        serialized_resource: dict = ResourceSerializer(resource).data
+
+        # Remove dynamic datetime field before comparison.
+        del serialized_resource["created"]
+
+        self.assertEqual(serialized_resource, arguments.VALID_CREATED_RESOURCE_REVISION)
+
     @tag("controllers.resource.create_resource_previous_revision_dne")
     def test_create_resource_previous_revision_dne(self) -> None:
         """Fail Case: Create a `Resource` record with a given previous revision

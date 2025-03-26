@@ -88,7 +88,7 @@ class CreateResourceParams(BaseResourceParams):
     """
 
     previous_revision: int | None
-    uid: str
+    uid: str | None
 
 
 class UpdateResourceParams(BaseResourceParams):
@@ -138,7 +138,7 @@ class Resource:
             )
             # Ensure new revision being created has the same uid as the previous revision.
             if previous_revision and (
-                not params["uid"] or previous_revision.uid != params["uid"]
+                not params["uid"] or str(previous_revision.uid) != str(params["uid"])
             ):
                 err_msg = (
                     f"Resource (uid={params['uid']}) must match its previous revision."
