@@ -42,7 +42,7 @@ const PROFILE: Profile = {
   icon: null,
 };
 
-export default function NavBar({ profile }: NavBarProps) {
+export default function NavBar({ profile, hideSearchBar=false }: NavBarProps) {
   const profileData = {
     ...PROFILE,
     firstName: profile?.user.firstName,
@@ -186,6 +186,7 @@ export default function NavBar({ profile }: NavBarProps) {
       logoutHref={endpoints.SERVICE.SSO.LOGOUT}
       profile={profileData}
       clearOnSubmit={false}
+      hideSearch={hideSearchBar}
       isSearchDisabled={false}
       initialInput={searchTerm}
       searchOptions={loadSearchOptions}
