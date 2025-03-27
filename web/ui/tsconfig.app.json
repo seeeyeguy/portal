@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "test-utils": ["utils/tests/test-utils/index"]
+      "test-utils": ["tests/test-utils/index"]
     },
     /* Bundler mode */
     "moduleResolution": "Bundler",

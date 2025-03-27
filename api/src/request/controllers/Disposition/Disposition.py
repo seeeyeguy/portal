@@ -207,9 +207,9 @@ class Disposition:
                     new_resource_revision = 1
 
                     # Deprecate previous `Resource` revision if it exists.
-                    previous_resource_revision: Union[Resource, None] = (
-                        resource_record.previous_revision
-                    )
+                    previous_resource_revision: Union[
+                        Resource, None
+                    ] = resource_record.previous_revision
                     if previous_resource_revision:
                         previous_resource_revision.active = False
                         new_resource_revision = (
