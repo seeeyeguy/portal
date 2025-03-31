@@ -2,19 +2,16 @@
 Collection of pytests for Function's update view endpoint.
 """
 
-import pytest
 from typing import List
 
 from django.contrib.auth.models import User
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
-from directory.controllers import Function
 from directory.controllers.Function.tests.mutations.update.default import arguments
-from directory.exceptions import DirectoryError
-from directory.models.Function import Function as FunctionModel
-from directory.models.Function.serializers import FunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +22,7 @@ from directory.models.Function.serializers import FunctionSerializer
     "function.update.default",
     "views.TestUpdateFunction",
 )
-class TestUpdateFunction(TestCase):
+class TestUpdateFunction(MultiDBTestCase):
     """
     Tests for PUT /v1/directory/functions endpoint.
     """

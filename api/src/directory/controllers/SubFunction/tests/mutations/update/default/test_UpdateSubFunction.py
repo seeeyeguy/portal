@@ -5,13 +5,15 @@ Collection of pytests for SubFunction's update controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import SubFunction
 from directory.controllers.SubFunction.tests.mutations.update.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models import SubFunction as SubFunctionModel
 from directory.models.SubFunction.serializers import SubFunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from directory.models.SubFunction.serializers import SubFunctionSerializer
     "directory.subfunction.update",
     "subfunction.update.default",
 )
-class TestUpdateSubFunction(TestCase):
+class TestUpdateSubFunction(MultiDBTestCase):
     """Test suite for SubFunction's update controller."""
 
     fixtures: List[str] = [

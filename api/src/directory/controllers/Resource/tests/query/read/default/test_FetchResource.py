@@ -7,7 +7,7 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Resource.Resource import Resource
 from directory.controllers.Resource.tests.query.read.default import arguments
@@ -16,6 +16,8 @@ from directory.models.Resource.Resource import Resource as ResourceModel
 from directory.models.Resource.serializers import ResourceSerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -26,7 +28,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "directory.resource.fetch",
     "resource.fetch.default",
 )
-class TestFetchResource(TestCase):
+class TestFetchResource(MultiDBTestCase):
     """Test suite for Resource's fetch controller."""
 
     fixtures: List[str] = [

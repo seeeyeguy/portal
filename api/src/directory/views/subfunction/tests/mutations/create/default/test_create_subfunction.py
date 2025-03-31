@@ -5,11 +5,13 @@ Collection of pytests for SubFunction's create view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.SubFunction.tests.mutations.create.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.controllers.SubFunction.tests.mutations.create.default import arg
     "subfunction.create.default",
     "views.TestCreateSubFunction",
 )
-class TestCreateSubFunction(TestCase):
+class TestCreateSubFunction(MultiDBTestCase):
     """
     Tests for POST /v1/directory/subfunctions endpoint.
     """

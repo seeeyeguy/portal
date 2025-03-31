@@ -1,16 +1,19 @@
 """
 Collection of pytests for Function's update controller.
 """
+
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import Function
 from directory.controllers.Function.tests.mutations.update.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.Function import Function as FunctionModel
 from directory.models.Function.serializers import FunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -21,7 +24,7 @@ from directory.models.Function.serializers import FunctionSerializer
     "directory.function.update",
     "function.update.default",
 )
-class TestUpdateFunction(TestCase):
+class TestUpdateFunction(MultiDBTestCase):
     """Test suite for Function's update controller."""
 
     fixtures: List[str] = [

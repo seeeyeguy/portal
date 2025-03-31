@@ -3,18 +3,15 @@
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from analytics.controllers.Query.tests.query.read.default import arguments
-from analytics.exceptions import AnalyticsError
-from analytics.models.Query.Query import (
-    Query as QueryModel,
-)
-from analytics.models.Query.serializers import QuerySerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +22,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "query.fetch.default",
     "views.TestFetchQuery",
 )
-class TestFetchQuery(TestCase):
+class TestFetchQuery(MultiDBTestCase):
     """
     Tests for GET /v1/analytics/queries endpoint.
     """

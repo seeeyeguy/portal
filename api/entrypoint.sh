@@ -23,6 +23,9 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
         # Flush the database.
         python manage.py flush --no-input       
         
+        # Add permissions for db user.
+        python manage.py dbshell -- -c "ALTER USER $POSTGRES_PROGRAM_REVIEW_TOOL_USER CREATEDB"
+
         # Deploy Jupyter Notebook.
         python manage.py shell_plus --notebook &> notebook.log &
         sleep 6

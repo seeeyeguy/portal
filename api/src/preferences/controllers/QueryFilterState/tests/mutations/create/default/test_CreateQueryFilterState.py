@@ -5,9 +5,8 @@ Collection of pytests for QueryFilterState's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
-from portal.models.fixtures import COMMON_FIXTURES
 from preferences import exceptions
 from preferences.controllers.QueryFilterState.QueryFilterState import QueryFilterState
 from preferences.controllers.QueryFilterState.tests.mutations.create.default import (
@@ -18,6 +17,10 @@ from preferences.models.QueryFilterState import (
     serializers,
 )
 
+from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
+
 
 @tag(
     "controllers",
@@ -27,7 +30,7 @@ from preferences.models.QueryFilterState import (
     "preferences.queryfilterstate.create",
     "queryfilterstate.create.default",
 )
-class TestCreateQueryFilterState(TestCase):
+class TestCreateQueryFilterState(MultiDBTestCase):
     """Test suite for QueryFilterState's create controller."""
 
     # pylint: disable=line-too-long

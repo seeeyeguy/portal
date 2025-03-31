@@ -7,7 +7,7 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.SubFunction.SubFunction import SubFunction
 from directory.controllers.SubFunction.tests.query.read.default import arguments
@@ -16,6 +16,8 @@ from directory.models.SubFunction.SubFunction import (
     SubFunction as SubFunctionModel,
 )
 from directory.models.SubFunction.serializers import SubFunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -26,7 +28,7 @@ from directory.models.SubFunction.serializers import SubFunctionSerializer
     "directory.subfunction.fetch",
     "subfunction.fetch.default",
 )
-class TestFetchSubFunction(TestCase):
+class TestFetchSubFunction(MultiDBTestCase):
     """Test suite for SubFunction's fetch controller."""
 
     fixtures: List[str] = [

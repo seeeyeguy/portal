@@ -6,9 +6,8 @@ Collection of pytests for QueryFilterState's update controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
-from portal.models.fixtures import COMMON_FIXTURES
 from preferences.controllers.QueryFilterState.QueryFilterState import QueryFilterState
 from preferences.controllers.QueryFilterState.tests.mutations.update.default import (
     arguments,
@@ -19,6 +18,10 @@ from preferences.models.QueryFilterState.QueryFilterState import (
 )
 from preferences.models.QueryFilterState.serializers import QueryFilterStateSerializer
 
+from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
+
 
 @tag(
     "controllers",
@@ -28,7 +31,7 @@ from preferences.models.QueryFilterState.serializers import QueryFilterStateSeri
     "preferences.queryfilterstate.update",
     "queryfilterstate.update.default",
 )
-class TestUpdateQueryFilterState(TestCase):
+class TestUpdateQueryFilterState(MultiDBTestCase):
     """Test suite for QueryFilterState's update controller."""
 
     fixtures: List[str] = [

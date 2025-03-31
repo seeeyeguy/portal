@@ -4,14 +4,17 @@
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from preferences.controllers.QueryFilterState.tests.mutations.update.default import (
     arguments,
 )
+
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +25,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "queryfilterstate.update.default",
     "views.TestUpdateQueryFilterState",
 )
-class TestUpdateQueryFilterState(TestCase):
+class TestUpdateQueryFilterState(MultiDBTestCase):
     """
     Tests for PUT /v1/preferences/query-filter-state endpoint.
     """

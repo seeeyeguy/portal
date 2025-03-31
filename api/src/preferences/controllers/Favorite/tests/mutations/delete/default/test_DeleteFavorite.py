@@ -4,11 +4,14 @@ Collection of pytests for Favorite's delete controller.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
-from portal.models.fixtures import COMMON_FIXTURES
 from preferences.controllers.Favorite.Favorite import Favorite
 from preferences.controllers.Favorite.tests.mutations.delete.default import arguments
+
+from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +22,7 @@ from preferences.controllers.Favorite.tests.mutations.delete.default import argu
     "preferences.favorite.delete",
     "favorite.delete.default",
 )
-class TestDeleteFavorite(TestCase):
+class TestDeleteFavorite(MultiDBTestCase):
     """Test suite for Favorite's delete controller."""
 
     fixtures: List[str] = [

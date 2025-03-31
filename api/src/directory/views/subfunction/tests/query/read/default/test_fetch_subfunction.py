@@ -4,11 +4,13 @@ Collection of pytests for SubFunction's fetch view endpoint.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.SubFunction.tests.query.read.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +21,7 @@ from directory.controllers.SubFunction.tests.query.read.default import arguments
     "subfunction.fetch.default",
     "views.TestFetchSubFunction",
 )
-class TestFetchSubFunction(TestCase):
+class TestFetchSubFunction(MultiDBTestCase):
     """
     Tests for GET /v1/directory/subfunctions endpoint.
     """

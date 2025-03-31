@@ -8,12 +8,13 @@ from cryptography.fernet import Fernet
 from typing import Any, cast, List, Union
 
 from django.db.models import QuerySet
-from django.test import TestCase
 
 from directory.models import Resource
 from directory.models.Resource.serializers import ResourceSerializer
 
 from manager.settings import DATA_ENCRYPTION_KEY
+
+from manager.utils.tests import MultiDBTestCase
 
 # Initialize cryptography module.
 fernet = Fernet(DATA_ENCRYPTION_KEY)
@@ -21,7 +22,7 @@ fernet = Fernet(DATA_ENCRYPTION_KEY)
 ENCRYPTED_PROPS_TO_TEST = {"name", "description", "url"}
 
 
-class TestCaseUtility(TestCase):
+class TestCaseUtility(MultiDBTestCase):
     """
     Helper class used for Resource's search controller
     pytests.

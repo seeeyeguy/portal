@@ -5,13 +5,15 @@ Collection of pytests for Tag's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import Tag
 from directory.controllers.Tag.tests.mutations.create.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models import Tag as TagModel
 from directory.models.Tag.serializers import TagSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from directory.models.Tag.serializers import TagSerializer
     "directory.tag.create",
     "tag.create.default",
 )
-class TestCreateTag(TestCase):
+class TestCreateTag(MultiDBTestCase):
     """Test suite for Tag's create controller."""
 
     fixtures: List[str] = [

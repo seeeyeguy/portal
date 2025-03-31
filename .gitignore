@@ -54,6 +54,8 @@ api/CloudServicesRootCA.crt
 api/lib
 api/lib64
 api/pyvenv.cfg
+api/src/.Trash*
+api/src/notebooks
 build
 devscript_*
 db.sqlite3

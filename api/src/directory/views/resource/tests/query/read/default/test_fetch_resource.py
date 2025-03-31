@@ -5,13 +5,15 @@ Collection of pytests for Resource's fetch view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Resource.tests.query.read.default import arguments
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "resource.fetch.default",
     "views.TestFetchResources",
 )
-class TestFetchResource(TestCase):
+class TestFetchResource(MultiDBTestCase):
     """
     Tests for GET /v1/directory/resources endpoint.
     """

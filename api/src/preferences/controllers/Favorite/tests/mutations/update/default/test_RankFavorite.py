@@ -7,7 +7,7 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from portal.models.fixtures import COMMON_FIXTURES
 from preferences.controllers.Favorite.Favorite import Favorite
@@ -15,6 +15,8 @@ from preferences.controllers.Favorite.tests.mutations.update.default import argu
 from preferences.exceptions import PreferencesError
 from preferences.models.Favorite.Favorite import Favorite as FavoriteModel
 from preferences.models.Favorite.serializers import FavoriteSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +27,7 @@ from preferences.models.Favorite.serializers import FavoriteSerializer
     "preferences.favorite.rank",
     "favorite.rank.default",
 )
-class TestRankFavorite(TestCase):
+class TestRankFavorite(MultiDBTestCase):
     """Test suite for Favorite's rank controller."""
 
     fixtures: List[str] = [

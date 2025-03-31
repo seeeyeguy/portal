@@ -7,14 +7,17 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from preferences.controllers.Favorite.Favorite import Favorite
 from preferences.controllers.Favorite.tests.query.read.default import arguments
 from preferences.exceptions import PreferencesError
 from preferences.models.Favorite.Favorite import Favorite as FavoriteModel
 from preferences.models.Favorite.serializers import FavoriteSerializer
+
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -25,7 +28,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "preferences.favorite.fetch",
     "favorite.fetch.default",
 )
-class TestFetchFavorite(TestCase):
+class TestFetchFavorite(MultiDBTestCase):
     """Test suite for Favorite's fetch controller."""
 
     fixtures: List[str] = [

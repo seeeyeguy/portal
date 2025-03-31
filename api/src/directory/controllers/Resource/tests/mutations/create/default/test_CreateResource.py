@@ -5,7 +5,7 @@ Collection of pytests for Resource's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Resource.Resource import CreateResourceParams, Resource
 from directory.controllers.Resource.tests.mutations.create.default import arguments
@@ -14,6 +14,8 @@ from directory.models.Resource import Resource as ResourceModel
 from directory.models.Resource.serializers import ResourceSerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -24,7 +26,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "directory.resource.create",
     "resource.create.default",
 )
-class TestCreateResource(TestCase):
+class TestCreateResource(MultiDBTestCase):
     """Test suite for Resource's create controller."""
 
     fixtures: List[str] = [

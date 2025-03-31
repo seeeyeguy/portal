@@ -4,11 +4,13 @@ Collection of pytests for EmployeeLevel's fetch view endpoint.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.EmployeeLevel.tests.query.read.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +21,7 @@ from directory.controllers.EmployeeLevel.tests.query.read.default import argumen
     "employeelevel.fetch.default",
     "views.TestFetchEmployeeLevel",
 )
-class TestFetchEmployeeLevel(TestCase):
+class TestFetchEmployeeLevel(MultiDBTestCase):
     """
     Tests for GET /v1/directory/employee-levels endpoint.
     """

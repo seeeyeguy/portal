@@ -4,9 +4,11 @@ Collection of pytests for Visit's fetch controller.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from portal.models.fixtures import COMMON_FIXTURES
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -17,7 +19,7 @@ from portal.models.fixtures import COMMON_FIXTURES
     "analytics.visit.fetch",
     "visit.fetch.default",
 )
-class TestFetchVisit(TestCase):
+class TestFetchVisit(MultiDBTestCase):
     """Test suite for Visit's fetch controller."""
 
     fixtures: List[str] = [*COMMON_FIXTURES]

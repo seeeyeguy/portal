@@ -4,10 +4,12 @@ Collection of pytests for Tag's delete controller.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Tag.Tag import Tag
 from directory.controllers.Tag.tests.mutations.delete.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -18,7 +20,7 @@ from directory.controllers.Tag.tests.mutations.delete.default import arguments
     "directory.tag.delete",
     "tag.delete.default",
 )
-class TestDeleteTag(TestCase):
+class TestDeleteTag(MultiDBTestCase):
     """Test suite for Tag's delete controller."""
 
     fixtures: List[str] = [

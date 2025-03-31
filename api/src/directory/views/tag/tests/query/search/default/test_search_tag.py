@@ -4,11 +4,13 @@ Collection of pytests for Tag's search view endpoint.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from directory.controllers.Tag.tests.query.search.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -19,7 +21,7 @@ from directory.controllers.Tag.tests.query.search.default import arguments
     "tag.search.default",
     "views.TestSearchTag",
 )
-class TestSearchTag(TestCase):
+class TestSearchTag(MultiDBTestCase):
     """
     Tests for GET /v1/directory/tags/search endpoint.
     """

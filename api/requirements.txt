@@ -55,6 +55,8 @@ notebook==6.2.0
 numpy==2.0.0
 # A Python library to read/write Excel 2010 xlsx/xlsm/xltx/xltm files.
 openpyxl==3.1.0
+# Python interface to Oracle Database.
+oracledb==3.0.0
 # Flexible and powerful data analysis / manipulation library
 # for Python, providing labeled data structures similar to
 # R data.frame objects, statistical functions, and much more.
@@ -72,6 +74,8 @@ pyenchant==3.2.2
 # Python interface to Graphviz. Can be used with django_extensions
 # to generate an ERD with the `graph_models` command.
 pygraphviz==1.13
+# DB API module for ODBC
+pyodbc==5.2.0
 # A module provides powerful extensions to the standard datetime
 # module, available in Python.
 python-dateutil==2.9.0

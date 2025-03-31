@@ -5,11 +5,13 @@ Collection of pytests for Tag's search controller.
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory import controllers, models
 from directory.controllers.Tag.tests.query.search.default import arguments
 from directory.models.Tag.serializers import TagSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -20,7 +22,7 @@ from directory.models.Tag.serializers import TagSerializer
     "directory.tag.search",
     "tag.search.default",
 )
-class TestSearchTag(TestCase):
+class TestSearchTag(MultiDBTestCase):
     """Test suite for Tag's search controller."""
 
     fixtures: List[str] = [

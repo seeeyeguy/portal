@@ -7,13 +7,15 @@ import pytest
 from typing import List
 
 from django.db.models import QuerySet
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.Tag.Tag import Tag
 from directory.controllers.Tag.tests.query.read.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.Tag.Tag import Tag as TagModel
 from directory.models.Tag.serializers import TagSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -24,7 +26,7 @@ from directory.models.Tag.serializers import TagSerializer
     "directory.tag.fetch",
     "tag.fetch.default",
 )
-class TestFetchTag(TestCase):
+class TestFetchTag(MultiDBTestCase):
     """Test suite for Tag's fetch controller."""
 
     fixtures: List[str] = [

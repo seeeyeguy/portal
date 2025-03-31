@@ -5,13 +5,15 @@ Collection of pytests for SubFunction's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers import SubFunction
 from directory.controllers.SubFunction.tests.mutations.create.default import arguments
 from directory.exceptions import DirectoryError
 from directory.models.SubFunction import SubFunction as SubfunctionModel
 from directory.models.SubFunction.serializers import SubFunctionSerializer
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +24,7 @@ from directory.models.SubFunction.serializers import SubFunctionSerializer
     "directory.subfunction.create",
     "subfunction.create.default",
 )
-class TestCreateSubFunction(TestCase):
+class TestCreateSubFunction(MultiDBTestCase):
     """Test suite for SubFunction's create controller."""
 
     fixtures: List[str] = [

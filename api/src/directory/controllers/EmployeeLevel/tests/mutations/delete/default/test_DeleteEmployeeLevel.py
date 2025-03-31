@@ -4,10 +4,12 @@ Collection of pytests for EmployeeLevel's delete controller.
 
 from typing import List
 
-from django.test import tag, TestCase
+from django.test import tag
 
 from directory.controllers.EmployeeLevel.EmployeeLevel import EmployeeLevel
 from directory.controllers.EmployeeLevel.tests.mutations.delete.default import arguments
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -18,7 +20,7 @@ from directory.controllers.EmployeeLevel.tests.mutations.delete.default import a
     "directory.employeelevel.delete",
     "employeelevel.delete.default",
 )
-class TestDeleteEmployeeLevel(TestCase):
+class TestDeleteEmployeeLevel(MultiDBTestCase):
     """Test suite for EmployeeLevel's delete controller."""
 
     fixtures: List[str] = [

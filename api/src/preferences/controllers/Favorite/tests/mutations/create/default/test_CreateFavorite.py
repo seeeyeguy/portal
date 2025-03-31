@@ -5,13 +5,14 @@ Collection of pytests for Favorite's create controller.
 import pytest
 from typing import List
 
-from django.test import tag, TestCase
-
+from django.test import tag
 from portal.models.fixtures import COMMON_FIXTURES
 from preferences import exceptions
 from preferences.controllers import Favorite
 from preferences.controllers.Favorite.tests.mutations.create.default import arguments
 from preferences.models.Favorite import Favorite as FavoriteModel, serializers
+
+from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
@@ -22,7 +23,7 @@ from preferences.models.Favorite import Favorite as FavoriteModel, serializers
     "preferences.favorite.create",
     "favorite.create.default",
 )
-class TestCreateFavorite(TestCase):
+class TestCreateFavorite(MultiDBTestCase):
     """Test suite for Favorite's create controller."""
 
     # pylint: disable=line-too-long
