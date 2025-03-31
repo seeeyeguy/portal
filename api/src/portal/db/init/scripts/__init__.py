@@ -32,6 +32,8 @@ class PortalDataFrameColumnValidators:
         accepted_category_values = [
             "command media",
             "excel",
+            "hr systems",
+            "palantir",
             "powerapps",
             "powerbi",
             "sharepoint",
