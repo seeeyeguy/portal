@@ -20,6 +20,8 @@ import { DEFAULT_API_ERROR_MESSAGE } from "utils/constants/errors";
 
 import styles from "components/links/ResourceLink/styles/index.module.css";
 
+const POINT_OF_CONTACT_PLACEHOLDER = "nathaniel.charbonneau@l3harris.com";
+
 export default function ResourceLink({
   id,
   name,
@@ -132,12 +134,15 @@ export default function ResourceLink({
         rel="noreferrer"
         target="_blank"
         tooltipHTMLContent={
-          <>
-            <h4>Point of Contact:</h4>
-            <a href={`mailto:${memoizedPrimaryPointOfContact}`}>
-              {memoizedPrimaryPointOfContact}
-            </a>
-          </>
+          memoizedPrimaryPointOfContact ===
+          POINT_OF_CONTACT_PLACEHOLDER ? null : (
+            <>
+              <h4>Point of Contact:</h4>
+              <a href={`mailto:${memoizedPrimaryPointOfContact}`}>
+                {memoizedPrimaryPointOfContact}
+              </a>
+            </>
+          )
         }
         isButtonActive={isButtonActive}
         isButtonDisabled={false}
