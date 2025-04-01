@@ -5,6 +5,8 @@ Collection of pytests for Resource's update controller.
 import pytest
 from typing import List
 
+
+from django.contrib.auth import models as AuthModels
 from django.test import tag
 
 from directory.controllers.Resource.Resource import Resource, UpdateResourceParams
@@ -31,6 +33,9 @@ class TestUpdateResource(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/users.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/roles.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/resources.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/transitions.json",
@@ -42,7 +47,12 @@ class TestUpdateResource(MultiDBTestCase):
         """Success Case: Update a `Resource` record."""
 
         resource, rows_affected = Resource.update_resource(
-            arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS
+            {
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
+            }
         )
 
         self.assertIsInstance(resource, ResourceModel)
@@ -54,6 +64,20 @@ class TestUpdateResource(MultiDBTestCase):
         serialized_resource: dict = ResourceSerializer(resource).data
         self.assertDictEqual(serialized_resource, arguments.VALID_UPDATED_RESOURCE)
 
+    @tag("controllers.resource.update_resource_invalid_user_role")
+    def test_update_resource_invalid_user_role(self) -> None:
+        """Fail Case: Update a `Resource` record with a `User` that
+        has an invalid `Role`."""
+
+        with pytest.raises(DirectoryError):
+            params: UpdateResourceParams = {
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+                ),
+            }
+            _, _ = Resource.update_resource(params)
+
     @tag("controllers.resource.update_resource_record_dne")
     def test_update_resource_record_dne(self) -> None:
         """Fail Case: Update a `Resource` that does not exist."""
@@ -62,6 +86,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_DNE_RESOURCE_ID,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -73,6 +100,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_WITH_DUPLICATE_PENDING_DRAFT_RESOURCE_ID,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -85,6 +115,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_APPROVED_RESOURCE_ID,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -97,6 +130,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "name": arguments.UPDATE_RESOURCE_DUPLICATE_RESOURCE_NAME,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -109,6 +145,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "description": arguments.UPDATE_RESOURCE_INVALID_RESOURCE_DESCRIPTION,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -120,6 +159,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "url": arguments.UPDATE_RESOURCE_MALFORMED_RESOURCE_URL,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -131,6 +173,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "thumbnail": arguments.UPDATE_RESOURCE_INVALID_RESOURCE_THUMBNAIL,  # type: ignore[typeddict-item,unused-ignore]
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -143,6 +188,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": [],
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -155,6 +203,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": arguments.UPDATE_RESOURCE_EMPLOYEE_LEVEL_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -167,6 +218,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": [],
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -179,6 +233,9 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": arguments.UPDATE_RESOURCE_SUBFUNCTION_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)
 
@@ -191,5 +248,8 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.UPDATE_RESOURCE_TAG_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
             }
             _, _ = Resource.update_resource(params)

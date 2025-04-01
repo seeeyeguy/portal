@@ -67,6 +67,7 @@ class Resource(APIView):
                 tags=body["tags"],
                 type=body["type"],
                 download=body["download"],
+                user=request.user,
             )
 
             resource = ResourceController.create_resource(params=create_params)
@@ -105,6 +106,7 @@ class Resource(APIView):
                 tags=body["tags"],
                 type=body["type"],
                 download=body["download"],
+                user=request.user,
             )
 
             resource, _ = ResourceController.update_resource(params=update_params)

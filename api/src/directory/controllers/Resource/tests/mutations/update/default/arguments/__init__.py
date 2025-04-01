@@ -10,6 +10,10 @@ from directory.controllers.Resource.Resource import UpdateResourceParams
 # User email used when testing `Resource` update view.
 UPDATE_RESOURCE_USER_EMAIL: str = "May.Parker@harris.com"
 
+# User email used when testing `Resource` update with a
+# `User` that does not have `Access` with a valid `Role`.
+UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE: str = "Ben.Parker@harris.com"
+
 # Id of `Resource` for testing successful `Resource` update.
 UPDATE_RESOURCE_ID: int = 2
 

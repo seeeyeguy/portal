@@ -5,6 +5,7 @@ Collection of pytests for Resource's create controller.
 import pytest
 from typing import List
 
+from django.contrib.auth import models as AuthModels
 from django.test import tag
 
 from directory.controllers.Resource.Resource import CreateResourceParams, Resource
@@ -31,6 +32,9 @@ class TestCreateResource(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/users.json",
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/roles.json",
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/resources.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/transitions.json",
@@ -42,7 +46,12 @@ class TestCreateResource(MultiDBTestCase):
         """Success Case: Create a `Resource` record."""
 
         resource = Resource.create_resource(
-            arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS
+            {
+                **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
+            }
         )
 
         self.assertIsInstance(resource, ResourceModel)
@@ -61,7 +70,12 @@ class TestCreateResource(MultiDBTestCase):
         """Success Case: Create a `Resource` record revision."""
 
         resource = Resource.create_resource(
-            arguments.BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS
+            {
+                **arguments.BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
+            }
         )
 
         self.assertIsInstance(resource, ResourceModel)
@@ -74,6 +88,21 @@ class TestCreateResource(MultiDBTestCase):
 
         self.assertEqual(serialized_resource, arguments.VALID_CREATED_RESOURCE_REVISION)
 
+    @tag("controllers.resource.create_resource_invalid_user_role")
+    def test_create_resource_invalid_user_role(self) -> None:
+        """Fail Case: Create a `Resource` record with a `User` that
+        has an invalid `Role`."""
+
+        with pytest.raises(DirectoryError):
+            params: CreateResourceParams = {
+                **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+                ),
+            }
+
+            _ = Resource.create_resource(params)
+
     @tag("controllers.resource.create_resource_previous_revision_dne")
     def test_create_resource_previous_revision_dne(self) -> None:
         """Fail Case: Create a `Resource` record with a given previous revision
@@ -83,6 +112,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "previous_revision": arguments.CREATE_RESOURCE_PREVIOUS_RESOURCE_REVISION_DNE_ID,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -96,6 +128,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "previous_revision": 1,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -109,6 +144,9 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "uid": arguments.CREATE_RESOURCE_WITH_DUPLICATE_PENDING_DRAFT_RESOURCE_ID,
                 "previous_revision": arguments.CREATE_RESOURCE_PREVIOUS_RESOURCE_REVISION_ID,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -122,6 +160,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "name": arguments.CREATE_RESOURCE_DUPLICATE_RESOURCE_NAME,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -135,6 +176,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "description": arguments.CREATE_RESOURCE_INVALID_RESOURCE_DESCRIPTION,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -147,6 +191,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "url": arguments.CREATE_RESOURCE_MALFORMED_RESOURCE_URL,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -160,6 +207,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": [],
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -173,6 +223,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": arguments.CREATE_RESOURCE_EMPLOYEE_LEVEL_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -186,6 +239,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": [],
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -199,6 +255,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": arguments.CREATE_RESOURCE_SUBFUNCTION_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -212,6 +271,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.CREATE_RESOURCE_TAG_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)
@@ -224,6 +286,9 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "thumbnail": arguments.CREATE_RESOURCE_INVALID_RESOURCE_THUMBNAIL,  # type: ignore[typeddict-item,unused-ignore]
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                ),
             }
 
             _ = Resource.create_resource(params)

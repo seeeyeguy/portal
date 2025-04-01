@@ -34,6 +34,13 @@ class Role(DateTimeAbstractModel):
             was created.
     """
 
+    class RoleLevels:
+        """Levels for all initial `Role`s in BI Portal."""
+
+        SUPERUSER = 1
+        BUSINESS_PROCESS_EXPERT = 2
+        DATA_STEWARD = 3
+
     name: models.CharField = models.CharField(unique=True, max_length=512)
     description: models.TextField = models.TextField()
     level: models.PositiveIntegerField = models.PositiveIntegerField(unique=True)
