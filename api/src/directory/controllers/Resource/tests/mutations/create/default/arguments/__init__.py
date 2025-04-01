@@ -14,6 +14,10 @@ from directory.controllers.Resource.Resource import CreateResourceParams
 # User email used when testing `Resource` create view.
 CREATE_RESOURCE_USER_EMAIL: str = "May.Parker@harris.com"
 
+# User email used when testing `Resource` create with a
+# `User` that does not have `Access` with a valid `Role`.
+CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE: str = "Gwen.Stacy@harris.com"
+
 # Base parameters used for successful `Resource` creation.
 BASE_CREATE_RESOURCE_STRUCTURE_PARAMS: CreateResourceParams = {
     "uid": None,

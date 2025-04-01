@@ -1,0 +1,12 @@
+[
+  {
+    "model": "users.role",
+    "pk": 4,
+    "fields": {
+      "name": "Viewer",
+      "description": "Viewer.",
+      "level": 4,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]

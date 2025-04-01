@@ -37,6 +37,9 @@ class TestUpdateResource(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/users.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/roles.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/resources.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/transitions.json",
@@ -265,3 +268,25 @@ class TestUpdateResource(MultiDBTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @tag("views.resource.update_resource_invalid_user_role")
+    def test_update_resource_invalid_user_role(self) -> None:
+        """Fail Case: Update a `Resource` record with a `User` that
+        has an invalid `Role`."""
+
+        request_url = f"{self.url}?id={arguments.UPDATE_RESOURCE_ID}"
+
+        user_with_invalid_role = AuthModels.User.objects.get(
+            email=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+        )
+        self.client.force_login(user_with_invalid_role)
+
+        response = self.client.put(
+            request_url,
+            data={
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

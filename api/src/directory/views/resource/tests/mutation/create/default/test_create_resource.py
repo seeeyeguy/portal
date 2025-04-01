@@ -36,6 +36,9 @@ class TestCreateResource(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/users.json",
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/roles.json",
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/resources.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/transitions.json",
@@ -266,6 +269,24 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
                 "thumbnail": arguments.CREATE_RESOURCE_INVALID_RESOURCE_THUMBNAIL,
             },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @tag("views.resource.create_resource_invalid_user_role")
+    def test_create_resource_invalid_user_role(self) -> None:
+        """Fail Case: Create a `Resource` record with a `User` that
+        has an invalid `Role`."""
+
+        user_with_invalid_role = AuthModels.User.objects.get(
+            email=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+        )
+        self.client.force_login(user_with_invalid_role)
+
+        response = self.client.post(
+            self.url,
+            data=arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
             content_type="application/json",
         )
 

@@ -14,6 +14,7 @@ from PIL import Image
 from typing import cast, List, Literal, Set, Tuple, TypedDict, Union
 from uuid import uuid4
 
+from django.contrib.auth import models as AuthModels
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.exceptions import ValidationError
@@ -26,6 +27,7 @@ from directory.controllers.Resource.search import utils
 from directory.models import EmployeeLevel, Resource as ResourceModel, SubFunction, Tag
 from directory.utils import validate_url
 from request.models import Request, Stage, Transition
+from users.models import Role
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +46,13 @@ MANY_TO_MANY_FILTER_MAP: dict = {
 }
 
 RESOURCE_DESCRIPTION_MIN_CHAR_LENGTH = 30
+
+# Valid `Role` levels.
+VALID_ROLE_LEVELS: Set[int] = {
+    Role.RoleLevels.SUPERUSER,
+    Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+    Role.RoleLevels.DATA_STEWARD,
+}
 
 
 class SearchParams(TypedDict):
@@ -79,6 +88,7 @@ class BaseResourceParams(TypedDict):
     tags: List[int]
     type: str
     download: bool
+    user: AuthModels.User
 
 
 class CreateResourceParams(BaseResourceParams):
@@ -130,6 +140,15 @@ class Resource:
                 f"tags: {params['tags']}, type: {params['type']}, and download: "
                 f"{params['download']}."
             )
+
+            # Verify user has an `Access` with a valid Role.
+            user: AuthModels.User = params["user"]
+            if not user.accesses.filter(
+                access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
+            ).exists():
+                err_msg = f"User (email={user.email}) does not have a valid role."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
 
             previous_revision: Union[ResourceModel, None] = (
                 ResourceModel.objects.get(id=params["previous_revision"])
@@ -295,6 +314,15 @@ class Resource:
             # Create a new non-typed dict from the `params` in order
             # to use `.pop()` method without warnings.
             new_params: dict = {**params}
+
+            # Verify user has an `Access` with a valid Role.
+            user: AuthModels.User = new_params.pop("user")
+            if not user.accesses.filter(
+                access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
+            ).exists():
+                err_msg = f"User (email={user.email}) does not have a valid role."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
 
             # Fetch the `Resource` record.
             resource: ResourceModel = ResourceModel.objects.get(

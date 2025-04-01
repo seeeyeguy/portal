@@ -465,6 +465,7 @@ paths:
                   - $ref: "#/components/schemas/CreateResourceEmptyEmployeeLevelsResponse"
                   - $ref: "#/components/schemas/CreateResourceEmptySubFunctionsResponse"
                   - $ref: "#/components/schemas/CreateResourceInvalidThumbnailResponse"
+                  - $ref: "#/components/schemas/CreateResourceUserInvalidRoleResponse"
         "401":
           description: "UNAUTHORIZED"
           content:
@@ -574,6 +575,7 @@ paths:
                   - $ref: "#/components/schemas/UpdateResourceEmptyEmployeeLevelsResponse"
                   - $ref: "#/components/schemas/UpdateResourceEmptySubFunctionsResponse"
                   - $ref: "#/components/schemas/UpdateResourceUnreachableURLResponse"
+                  - $ref: "#/components/schemas/UpdateResourceUserInvalidRoleResponse"
         "401":
           description: "UNAUTHORIZED"
           content:
@@ -2742,6 +2744,11 @@ components:
       title: "Create `Resource` error response due to supplying an id
         for a `Tag` that does not exist."
       example: "Some Tags (ids={tags}) do not exist."
+
+    CreateResourceUserInvalidRoleResponse:
+      title: "Create `Resource` error response due to `User` having
+        an invalid `Role`."
+      example: "User (email={user_email}) does not have a valid role."
     
     FetchResourcesWithParametersResponse:
       title: "Fetch `Resource`(s) response."
@@ -3051,6 +3058,11 @@ components:
       title: "Update `Resource` error response due to supplying an id
         for a `Tag` that does not exist."
       example: "Some Tags (ids={tags}) do not exist."
+
+    UpdateResourceUserInvalidRoleResponse:
+      title: "Update `Resource` error response due to `User` having
+        an invalid `Role`."
+      example: "User (email={user_email}) does not have a valid role."
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
