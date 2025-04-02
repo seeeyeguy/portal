@@ -58,7 +58,12 @@ export const createResourceCollection = (
             (profile[typedKey] as Segment)?.name ??
             (profile[typedKey] as User)?.email ??
             profile[typedKey];
-          return key in profile && resource.restricted[key].includes(control);
+          return (
+            key in profile &&
+            resource.restricted[key]
+              ?.map((s) => s.toLowerCase())
+              ?.includes(control.toLowerCase())
+          );
         }
         return true;
       })
