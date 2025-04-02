@@ -1,0 +1,84 @@
+.cancel-button {
+  background-color: var(--color-light-gray);
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  font-weight: 500;
+  margin: 3px;
+  padding: 0.5rem 1rem;
+}
+
+.cancel-button:hover {
+  background-color: var(--color-grayscale-2);
+}
+
+.close {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 0.8rem;
+  top: 0.4rem;
+}
+
+.close svg {
+  color: var(--color-gray);
+  font-size: 1.5rem;
+}
+
+.close svg:hover {
+  color: var(--color-gray);
+  cursor: pointer;
+}
+
+.confirm-button {
+  background-color: var(--color-light-gray);
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  font-weight: 500;
+  margin: 3px;
+  padding: 0.5rem 1rem;
+}
+
+.confirm-button:hover {
+  background-color: var(--color-grayscale-2);
+}
+
+.confirm-modal {
+  background-color: rgba(200, 200, 200, 0.6);
+  height: 100%;
+  left: 0;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.modal-content {
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: var(--color-gray) 2px 2px 4px 1px;
+  color: var(--color-stealth);
+  margin: 8% auto;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  position: relative;
+  width: 25%;
+}
+
+.modal-content footer {
+  padding: 0.5rem 0rem;
+}
+
+.modal-content header {
+  box-sizing: border-box;
+  color: var(--color-stealth);
+  width: 100%;
+}
+
+.modal-content main {
+  box-sizing: border-box;
+  padding: 0.1rem 0rem 0.5rem;
+  width: 100%;
+}
