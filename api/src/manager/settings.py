@@ -100,6 +100,9 @@ SWAGGER_PORT = os.getenv("SWAGGER_PORT", "your-swagger-port")
 WEB_HOST = os.getenv("WEB_HOST", "your-web-host")
 WEB_PORT = os.getenv("WEB_PORT", "your-web-port")
 
+# Set DNS name for application.
+DNS_NAME = os.getenv("DNS_NAME", "theportal.l3harris.com")
+
 
 #############################
 ## DJANGO SETTINGS CONFIGS ##
@@ -319,6 +322,7 @@ ALLOWED_HOSTS = [
     ".gcsd.harris.com",
     ".rootforest.com",
     WEB_HOST,
+    DNS_NAME,
 ]
 
 if BUILD in {ApplicationBuild.DEVELOPMENT, ApplicationBuild.TEST}:
