@@ -35,6 +35,7 @@ services:
             APP_NAME: ${APP_NAME}
             BUILD: ${BUILD}
             CONTAINER_PASSWORD: ${PASSWORD}
+            DNS_NAME: ${DNS_NAME}
             SCHEME: ${SCHEME}
             SERVER_HOST: ${SERVER_HOST}
             SERVER_PORT: ${SERVER_PORT}
