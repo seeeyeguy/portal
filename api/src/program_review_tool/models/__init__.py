@@ -7,3 +7,6 @@ generate a powerpoint review template that provides consolidated
 insights on the health of a program or collection of programs
 for our users.
 """
+
+from program_review_tool.models.Program import Program
+from program_review_tool.models.Portfolio import Portfolio

@@ -37,6 +37,7 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     fi
 
     python manage.py migrate
+    python manage.py crontab add
     /apps/init.sh
 fi
 

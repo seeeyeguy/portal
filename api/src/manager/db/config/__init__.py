@@ -59,3 +59,6 @@ class TEST:
 
     ENGINE = "django.db.backends.postgresql_psycopg2"
     NAME = "test.db"
+
+
+EXTERNAL_SOURCE_DATABASE = os.getenv("EXTERNAL_SOURCE_DATABASE", "axis")

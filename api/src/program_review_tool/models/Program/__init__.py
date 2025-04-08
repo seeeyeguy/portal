@@ -6,3 +6,5 @@ may create a review template for each validated program within
 the system. These templates provide a consolidated insight into the
 health of the program.
 """
+
+from program_review_tool.models.Program.Program import Program
