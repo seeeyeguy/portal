@@ -353,6 +353,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_extensions",
+    "django_crontab",
     "django_rq",
     "rest_framework",
     "corsheaders",
@@ -538,6 +539,17 @@ RQ_QUEUES = {
         "DEFAULT_TIMEOUT": 360,
     }
 }
+
+################
+## CRON JOBS ###
+################
+
+CRONJOBS = [
+    (
+        "0 5 * * *",
+        "program_review_tool.models.Program.utils.update_programs_from_external_database",
+    )
+]
 
 #########################
 ## PASSWORD VALIDATION ##
