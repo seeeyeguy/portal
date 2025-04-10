@@ -11,7 +11,7 @@ const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Favorite", "Query", "QueryFilterState", "Visit"],
+  tagTypes: ["Favorite", "Portfolio", "Query", "QueryFilterState", "Visit"],
   endpoints: () => ({}),
 });
 

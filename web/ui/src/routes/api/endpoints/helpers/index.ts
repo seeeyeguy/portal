@@ -2,11 +2,12 @@ export const RESOURCE_PATHS = {
   ANALYTICS: "analytics",
   DIRECTORY: "directory",
   PREFERENCES: "preferences",
+  PROGRAM_REVIEW_TOOL: "program-review-tool",
   USERS: "users",
 } as const;
 
 type RESOURCE_PATHS_KEYS = keyof typeof RESOURCE_PATHS;
-type RESOURCE_PATHS = typeof RESOURCE_PATHS[RESOURCE_PATHS_KEYS];
+type RESOURCE_PATHS = (typeof RESOURCE_PATHS)[RESOURCE_PATHS_KEYS];
 
 type DIRECTORY_RESOURCE =
   | "employee-levels"
@@ -15,11 +16,17 @@ type DIRECTORY_RESOURCE =
   | "subfunctions"
   | "tags";
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
-type RESOURCE = DIRECTORY_RESOURCE | PREFERENCES_RESOURCE;
+type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program";
+type RESOURCE =
+  | DIRECTORY_RESOURCE
+  | PREFERENCES_RESOURCE
+  | PROGRAM_REVIEW_TOOL_RESOURCE;
 
-type SUFFIX = "search" | null;
+type SUFFIX = "search" | "review" | null;
 
-type PARAM = "id" | "label" | "page" | "user";
+type PARAM = "id" | "ids" | "label" | "page" | "user";
+
+const acceptedParamArrays = new Set(["ids"]);
 
 /**
  * Build a URL for an endpoint, given its application path,
@@ -37,9 +44,19 @@ const buildQueryResourceURL =
     suffix: SUFFIX,
     paramType: PARAM
   ) =>
-  (param: number | string | null = null) => {
+  (param: number | number[] | string | null = null) => {
     const base = `${path}/${resource}${suffix ? `/${suffix}` : ""}`;
     if (param) {
+      if (acceptedParamArrays.has(paramType)) {
+        const queryParamArray = (param as number[]).reduce((acc, arg, i) => {
+          const queryParamArrayArg = `${paramType}=${arg}`;
+          if (i < 1) {
+            return `${acc}${queryParamArrayArg}`;
+          }
+          return `${acc}&${queryParamArrayArg}`;
+        }, "");
+        return `${base}?${queryParamArray}`;
+      }
       return `${base}?${paramType}=${param}`;
     }
     return base;
@@ -56,6 +73,19 @@ export const buildQueryResourceByIdURL = (
   path: RESOURCE_PATHS,
   resource: RESOURCE
 ) => buildQueryResourceURL(path, resource, null, "id");
+
+/**
+ * Build a URL with an optional array of ids for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of ids and returns the appropriate URL.
+ */
+export const buildQueryResourceByIdsURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "ids");
 
 /**
  * Build a URL with an optional user for an endpoint, given its application path, and

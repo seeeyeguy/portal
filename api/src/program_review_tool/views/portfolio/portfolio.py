@@ -119,10 +119,15 @@ class Portfolio(View):
 
             user = req.validated_data.get("user")
 
+            if request.user.username != user:
+                return http.JsonResponse(
+                    "Permissions Denied.", status=status.HTTP_403_FORBIDDEN, safe=False
+                )
+
             LOGGER.info(f"GET /program-review-tool/portfolio?user={user}")
 
             # Fetch the `Portfolio`(s).
-            portfolios = controllers.Portfolio.fetch_portfolios(user)
+            portfolios = controllers.Portfolio.fetch_portfolios(request.user)
 
             # Serialize `Portfolio`(s).
             data: List[dict] = PortfolioSerializer(portfolios, many=True).data
