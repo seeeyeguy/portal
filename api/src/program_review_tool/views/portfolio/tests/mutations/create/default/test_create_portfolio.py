@@ -1,48 +1,53 @@
 """
-Collection of pytests for Portfolio's create controller.
+Collection of pytests for Portfolio's create view endpoint.
 """
 
 from django.test import tag
+from django.urls import reverse
 
 from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
-    "controllers",
     "portfolio",
     "program_review_tool",
-    "controllers.TestCreatePortfolio",
+    "views",
     "portfolio.create.default",
     "program_review_tool.portfolio.create",
+    "views.TestCreatePortfolio",
 )
 class TestCreatePortfolio(MultiDBTestCase):
-    """Test suite for Portfolio's create controller."""
+    """
+    Tests for POST /v1/program-review-tool/portfolio endpoint.
+    """
 
-    @tag("controllers.portfolio.create_portfolio")
+    url: str = reverse("program_review_tool.portfolio")
+
+    @tag("views.portfolio.create_portfolio")
     def test_create_portfolio(self) -> None:
         """Success Case: Create a `Portfolio` record."""
 
-    @tag("controllers.portfolio.create_portfolio_user_dne")
+    @tag("views.portfolio.create_portfolio_user_dne")
     def test_create_portfolio_user_dne(self) -> None:
         """Fail Case: Create a `Portfolio` record with a `User`
         that does not exist."""
 
-    @tag("controllers.portfolio.create_portfolio_empty_name")
+    @tag("views.portfolio.create_portfolio_empty_name")
     def test_create_portfolio_empty_name(self) -> None:
         """Fail Case: Create a `Portfolio` record with
         an empty name."""
 
-    @tag("controllers.portfolio.create_portfolio_with_duplicate_name_for_user")
-    def test_create_portfolio_with_duplicate_name_for_user(self) -> None:
-        """Fail Case: Create a `Portfolio` record with a name
-        that already exists for the given `User`."""
+    @tag("views.portfolio.test_create_portfolio_duplicate_name")
+    def test_create_portfolio_duplicate_name(self) -> None:
+        """Fail Case: Create a `Portfolio` record with
+        a duplicate name for the given user."""
 
-    @tag("controllers.portfolio.create_portfolio_empty_programs")
+    @tag("views.portfolio.create_portfolio_empty_programs")
     def test_create_portfolio_empty_programs(self) -> None:
         """Fail Case: Create a `Portfolio` record without supplying
         `Program` ids."""
 
-    @tag("controllers.portfolio.create_portfolio_programs_dne")
+    @tag("views.portfolio.create_portfolio_programs_dne")
     def test_create_portfolio_programs_dne(self) -> None:
         """Fail Case: Create a `Portfolio` record, supplying
         ids for `Program`s that do not exist."""
