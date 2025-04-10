@@ -29,6 +29,7 @@ urlpatterns: urlconfig.PathPatternList = [
     path("v1/analytics/", include("analytics.urls")),
     path("v1/directory/", include("directory.urls")),
     path("v1/preferences/", include("preferences.urls")),
+    path("v1/program-review-tool/", include("program_review_tool.urls")),
     path("v1/request/", include("request.urls")),
     path("v1/users/", include("users.urls")),
     *serviceurls.urlpatterns,

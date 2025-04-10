@@ -20,4 +20,4 @@ class TestDeletePortfolio(MultiDBTestCase):
 
     @tag("controllers.portfolio.delete_portfolio")
     def test_delete_portfolio(self) -> None:
-        """Success Case: Delete `Portfolio` record with given id."""
+        """Success Case: Delete `Portfolio` record with the given id."""
