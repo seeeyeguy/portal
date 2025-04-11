@@ -81,12 +81,13 @@ class Portfolio:
         return {}  # type: ignore[return-value]
 
     @staticmethod
-    def delete_portfolio(portfolio_id: int) -> int:
+    def delete_portfolio(portfolio_id: int, user: AuthModels.User) -> int:
         """
         Delete the `Portfolio` record with the given id.
 
         Accepts:
             * portfolio_id (int): The id of the `Portfolio` record being deleted.
+            * user (AuthModels.user): The portfolio's owner.
 
         Returns:
             * rows_affected (int): Number of rows removed.
@@ -94,7 +95,19 @@ class Portfolio:
 
         LOGGER.info(f"Deleting Portfolio instance with id: {portfolio_id}.")
 
-        return 1
+        if not (user and user.is_authenticated):
+            raise exceptions.ProgramReviewToolError(
+                "Authentication required.", status=401
+            )
+
+        portfolio = models.Portfolio.objects.filter(id=portfolio_id)
+
+        if not portfolio.filter(user=user).exists():
+            raise exceptions.ProgramReviewToolError("Permissions Denied.", status=403)
+
+        rows_affected, _ = portfolio.delete()
+
+        return rows_affected
 
     @staticmethod
     def fetch_portfolios(user: AuthModels.User) -> QuerySet[models.Portfolio]:
