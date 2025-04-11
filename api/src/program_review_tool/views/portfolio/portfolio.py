@@ -96,7 +96,7 @@ class Portfolio(View):
             LOGGER.info(f"DELETE /program-review-tool/portfolio?id={portfolio_id}.")
 
             rows_affected = controllers.Portfolio.delete_portfolio(
-                portfolio_id=portfolio_id
+                portfolio_id=portfolio_id, user=request.user
             )
 
             return http.JsonResponse(
