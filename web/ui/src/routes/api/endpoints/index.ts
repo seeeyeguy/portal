@@ -3,6 +3,7 @@ import lodash from "lodash";
 import {
   RESOURCE_PATHS,
   buildQueryResourceByIdURL,
+  buildQueryResourceByIdsURL,
   buildQueryResourceByUserURL,
   buildSearchForResourceByLabelURL,
   buildSearchForResourceByPageURL,
@@ -91,6 +92,29 @@ export default {
         }
         return base;
       },
+    },
+    PROGRAM_REVIEW_TOOL: {
+      PORTFOLIO: (param: number | string | null = null) => {
+        if (lodash.isNumber(param)) {
+          return buildQueryResourceByIdURL(
+            RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+            "portfolio"
+          )(param);
+        }
+        if (lodash.isString(param)) {
+          return buildQueryResourceByUserURL(
+            RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+            "portfolio"
+          )(param);
+        }
+        return `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/portfolio`;
+      },
+      PROGRAM: (param: number[]) =>
+        buildQueryResourceByIdsURL(
+          RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+          "program"
+        )(param),
+      PROGRAM_REVIEW: `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/program/review`,
     },
     REQUEST: {},
     USERS: {

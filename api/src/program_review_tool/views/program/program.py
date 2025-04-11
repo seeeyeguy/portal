@@ -49,7 +49,7 @@ class Program(View):
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
-    def get(self, request: DjangoHttpRequest) -> http.JsonResponse:
+    def get(self, request: DjangoHttpRequest, _: dict) -> http.JsonResponse:
         """Endpoint for GET /v1/program-review-tool/program."""
 
         try:
