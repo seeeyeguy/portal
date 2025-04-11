@@ -10,7 +10,7 @@ from typing import List
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
 
-from program_review_tool import models
+from program_review_tool import exceptions, models
 
 LOGGER = logging.getLogger(__name__)
 
@@ -112,5 +112,11 @@ class Portfolio:
 
         LOGGER.info(f"Fetching Portfolios for user: {user.email}")
 
-        # Please remove ignore after implementation.
-        return {}  # type: ignore[return-value]
+        if not (user and user.is_authenticated):
+            raise exceptions.ProgramReviewToolError(
+                "Authentication Required.", status=401
+            )
+
+        portfolios = models.Portfolio.objects.filter(user=user)
+
+        return portfolios
