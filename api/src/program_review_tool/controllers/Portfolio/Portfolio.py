@@ -123,7 +123,9 @@ class Portfolio:
                 records for the given user.
         """
 
-        LOGGER.info(f"Fetching Portfolios for user: {user.email}")
+        LOGGER.info(
+            f"Fetching Portfolios for user: {user.email if user.is_authenticated else 'None'}"
+        )
 
         if not (user and user.is_authenticated):
             raise exceptions.ProgramReviewToolError(

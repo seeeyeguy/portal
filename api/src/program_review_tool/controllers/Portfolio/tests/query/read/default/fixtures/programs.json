@@ -1,0 +1,66 @@
+[
+    {
+        "model": "program_review_tool.Program",
+        "pk": 1,
+        "fields": {
+            "pa_number": "6C27",
+            "name": "SOA IDIQ II_6C27",
+            "segment": 1,
+            "sector": "Airborne Combat Systems",
+            "division": "Electronic Warfare",
+            "tier": 1,
+            "contract_value": 3000000000,
+            "active_status": true,
+            "created": "2024-08-27T16:00:00Z",
+            "modified": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "program_review_tool.Program",
+        "pk": 2,
+        "fields": {
+            "pa_number": "10LR",
+            "name": "Zeus CLIN 0005 Single Launch_10LR",
+            "segment": 1,
+            "sector": "Space Systems",
+            "division": "Surveillance Systems",
+            "tier": 3,
+            "contract_value": 3000000000,
+            "active_status": true,
+            "created": "2024-08-27T16:00:00Z",
+            "modified": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "program_review_tool.program",
+        "pk": 3,
+        "fields": {
+            "pa_number": "10MR",
+            "name": "Zeus CLIN 0006 Demo and Ops_10MR",
+            "segment": 1,
+            "sector": "Space Systems",
+            "division": "Surveillance Systems",
+            "tier": 4,
+            "contract_value": 3000000000,
+            "active_status": true,
+            "created": "2024-08-27T16:00:00Z",
+            "modified": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "program_review_tool.Program",
+        "pk": 4,
+        "fields": {
+            "pa_number": "61GK",
+            "name": "Zeus Critical Spares_61GK",
+            "segment": 1,
+            "sector": "Space Systems",
+            "division": "Surveillance Systems",
+            "tier": 4,
+            "contract_value": 3000000000,
+            "active_status": true,
+            "created": "2024-08-27T16:00:00Z",
+            "modified": "2024-08-27T16:00:00Z"
+        }
+    }
+]
