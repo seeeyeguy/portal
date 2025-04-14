@@ -21,10 +21,7 @@ echo "PostgreSQL started"
 if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     if [[ $BUILD != $PRODUCTION && $BUILD != $STAGING ]]; then
         # Flush the database.
-        python manage.py flush --no-input       
-        
-        # Add permissions for db user.
-        python manage.py dbshell -- -c "ALTER USER $POSTGRES_PROGRAM_REVIEW_TOOL_USER CREATEDB"
+        python manage.py flush --no-input
 
         # Deploy Jupyter Notebook.
         python manage.py shell_plus --notebook &> notebook.log &
@@ -36,7 +33,10 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
         python manage.py collectstatic --no-input
     fi
 
-    python manage.py migrate
+    # Apply migrations, ensuring to specify the target databases.
+    python manage.py migrate --database=default
+    python manage.py migrate program_review_tool --database=prt
+
     python manage.py crontab add
     /apps/init.sh
 fi

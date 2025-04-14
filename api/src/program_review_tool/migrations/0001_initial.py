@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("users", "0003_role_access_access_user_access_on_granted_date"),
+        ("users", "0002_initialize_segment_model"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
