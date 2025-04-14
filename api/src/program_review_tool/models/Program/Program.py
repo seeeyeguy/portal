@@ -78,6 +78,5 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
             models.Index(fields=("name",), name="program_name"),
             models.Index(fields=("id",), name="program_id"),
         ]
-        ordering = ["pa_number"]
         verbose_name = "program"
         verbose_name_plural = "programs"
