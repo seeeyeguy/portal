@@ -5,7 +5,7 @@ the `Portfolio` table.
 """
 
 import logging
-from typing import List
+from typing import cast, List
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
@@ -104,6 +104,9 @@ class Portfolio:
 
         if not portfolio.filter(user=user).exists():
             raise exceptions.ProgramReviewToolError("Permissions Denied.", status=403)
+
+        if portfolio.exists():
+            cast(models.Portfolio, portfolio.first()).programs.clear()
 
         rows_affected, _ = portfolio.delete()
 
