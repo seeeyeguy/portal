@@ -5,7 +5,11 @@ controller pytests.
 
 FETCH_PORTFOLIO_USER_EMAIL: str = "May.Parker@harris.com"
 
-EXPECTED_PORTFOLIOS = [
+FETCH_PORTFOLIO_USER_EMAIL_PERMISSIONS_DENIED: str = "Peter.Parker@harris.com"
+
+FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS_COUNT = 2
+
+FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
     {
         "id": 1,
         "name": "Portfolio Name 1",

@@ -1222,6 +1222,39 @@ paths:
                   - $ref: "#/components/schemas/UpdateQueryFilterStateFunctionDoesNotExistErrorResponse"
                   - $ref: "#/components/schemas/UpdateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
                   - $ref: "#/components/schemas/UpdateQueryFilterStateTagDoesNotExistErrorResponse"  
+  /program-review-tool/portfolio:
+    get:
+      tags:
+        - "program_review_tool.portfolio.fetch"
+      summary: "Fetch all `Portfolio`s for the given user."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related to the desired portfolios."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchPortfoliosResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchPortfoliosUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchPortfoliosPermissionsDeniedResponse"
   /users/profile:
     get:
       tags:
@@ -3171,6 +3204,68 @@ components:
         a `User` that does not have an associated `QueryFilterState`."
       example: "QueryFilterState (user={user}) does not exist."
 
+    FetchPortfoliosResponse:
+      title: "Fetch `Portfolio`s response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "name": "Portfolio Example 1",
+                "user": {
+                    "username": "May.Parker@harris.com",
+                    "email": "May.Parker@harris.com",
+                    "first_name": "May",
+                    "last_name": "Parker",
+                    "is_active": True,
+                },
+                "programs": [
+                    {
+                        "id": 1,
+                        "segment": "SPACE & AIRBORNE SYSTEMS",
+                        "name": "SOA IDIQ II_6C27",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                        "pa_number": "6C27",
+                        "sector": "Airborne Combat Systems",
+                        "division": "Electronic Warfare",
+                        "tier": 1,
+                        "contract_value": 3000000000,
+                        "active_status": True,
+                    },
+                    {
+                        "id": 2,
+                        "segment": "SPACE & AIRBORNE SYSTEMS",
+                        "name": "Zeus CLIN 0005 Single Launch_10LR",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                        "pa_number": "10LR",
+                        "sector": "Space Systems",
+                        "division": "Surveillance Systems",
+                        "tier": 3,
+                        "contract_value": 3000000000,
+                        "active_status": True,
+                    },
+                ],
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+              },
+              ...
+            ]
+
+    FetchPortfoliosUnAuthorizedResponse:
+      title: "Fetch `Portfolio` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    FetchPortfoliosPermissionsDeniedResponse:
+      title: "Fetch `Portfolio` error response due to invalid permissions."
+      example: "Permissions Denied."
+
     FetchProfileResponse:
       title: "Fetch `Profile` response."
       type: object
@@ -3215,7 +3310,7 @@ components:
       example: "Not authorized to access resource."
 
     FetchProfilePermissionsDeniedResponse:
-      title: "Fetch `Profile` Error response due to invalid permissions."
+      title: "Fetch `Profile` error response due to invalid permissions."
       example: "Permissions Denied."
 
     CreateSubFunctionRequest:
