@@ -55,7 +55,7 @@ class TestFetchPortfolio(MultiDBTestCase):
         ).data
 
         # Ensure the data is correct.
-        self.assertEqual(data, arguments.EXPECTED_PORTFOLIOS)
+        self.assertEqual(data, arguments.FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS)
 
     @tag("controllers.portfolio.fetch_portfolios_by_user_not_authenticated")
     def test_fetch_portfolios_by_user_not_authenticated(self) -> None:
