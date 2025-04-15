@@ -1255,6 +1255,38 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchPortfoliosPermissionsDeniedResponse"
+    delete:
+      tags:
+        - "program_review_tool.portfolio.delete"
+      summary: "Delete `Portfolio` for the given id."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: "Id related to the desired portfolio."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeletePortfolioResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeletePortfolioUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeletePortfolioPermissionsDeniedResponse"  
   /users/profile:
     get:
       tags:
@@ -3264,6 +3296,19 @@ components:
 
     FetchPortfoliosPermissionsDeniedResponse:
       title: "Fetch `Portfolio` error response due to invalid permissions."
+      example: "Permissions Denied."
+
+    DeletePortfolioResponse:
+      title: "Delete `Portfolio` response."
+      type: integer
+      example: 1
+
+    DeletePortfolioUnAuthorizedResponse:
+      title: "Delete `Portfolio` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    DeletePortfolioPermissionsDeniedResponse:
+      title: "Delete `Portfolio` error response due to invalid permissions."
       example: "Permissions Denied."
 
     FetchProfileResponse:
