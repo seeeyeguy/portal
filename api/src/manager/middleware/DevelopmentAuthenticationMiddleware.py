@@ -6,7 +6,7 @@ to login as a custom user, even if that user does not exist. The
 middleware will login a custom user specified in a developer's .env with
 the environment variables `SSO_DEVELOPMENT_USER_FIRST_NAME` and
 `SSO_DEVELOPMENT_USER_LAST_NAME`. A developer can even have more granular
-control of authentication by instantiating the request headers with 
+control of authentication by instantiating the request headers with
 `SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY`. This makes it easier to test
 the application's functionality where authentication would be required.
 """
@@ -34,6 +34,8 @@ class DevelopmentAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: DjangoHttpRequest) -> http.HttpResponseBase:
+        """Method to allow a class to be a `Callable`."""
+
         # Login development user, if and only if BUILD==development.
         self.login_dev_user(request=request)
 

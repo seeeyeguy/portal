@@ -1,6 +1,6 @@
-""" 
+"""
 `Profile` extends the `User` model with
-insightful data queried from LDAP. 
+insightful data queried from LDAP.
 """
 
 from typing import cast
@@ -11,13 +11,10 @@ import requests
 # pylint: disable=imported-auth-user,too-many-instance-attributes,no-member,unused-argument
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from users.models.Segment.Segment import Segment
 
 from manager.services.ldap.provider.utils import fetch_employee_record_from_ldap
-from manager.settings import ApplicationBuild, BUILD
 
 
 LOGGER = logging.getLogger(__name__)
@@ -150,30 +147,3 @@ class Profile(models.Model):
 
         self.save()
         return None
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(
-    sender: User, instance: User, created: bool, **kwargs: dict
-) -> None:
-    """When a User is created, create an associated profile."""
-
-    if BUILD != ApplicationBuild.TEST and created:
-        Profile.objects.create(user=instance)
-        try:
-            instance.profile.update_user_profile_ldap()
-        except AttributeError:
-            # Fail silently.
-            pass
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender: User, instance: User, **kwargs: dict) -> None:
-    """When a User object is saved, save the associated profile."""
-
-    try:
-        if BUILD != ApplicationBuild.TEST:
-            instance.profile.update_user_profile_ldap()
-    except AttributeError:
-        # Fail silently.
-        pass
