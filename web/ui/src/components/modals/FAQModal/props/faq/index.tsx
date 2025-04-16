@@ -65,4 +65,19 @@ export const FAQs: FAQ[] = [
       </>
     ),
   },
+  {
+    question:
+      "Who selected the resources that are included in The Portal?  Why don't I see a certain resource?",
+    answer: (
+      <>
+        Each functional Data Owner curated the list of standard resources for
+        their function. The Portal doesn’t contain all possible resources, but
+        rather those that have been identified as key content by each function.
+        <br />
+        <br />
+        Please note that resources will be reviewed and updated regularly to
+        ensure the site content remains comprehensive and accurate.
+      </>
+    ),
+  },
 ];
