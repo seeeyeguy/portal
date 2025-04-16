@@ -11,7 +11,7 @@ from program_review_tool.models.Program import Program
 class ProgramSerializer(serializers.ModelSerializer):
     """Model Base Serializer for `Program`."""
 
-    segment = serializers.CharField(source="segment.name")
+    segment = serializers.CharField(source="segment.name", default="")
 
     class Meta:
         """Meta for `Program` serializer."""
