@@ -44,12 +44,50 @@ class Portfolio:
         LOGGER.info(
             (
                 f"Creating Portfolio with name: {name} and Programs:{programs} "
-                f"for user: {user.email}"
+                f"for user: {user.email if user.is_authenticated else 'None'}"
             )
         )
 
-        # Please remove ignore after implementation.
-        return {}  # type: ignore[return-value]
+        if not (user and user.is_authenticated):
+            raise exceptions.ProgramReviewToolError(
+                "Authentication required.", status=401
+            )
+
+        # Ensure a name is given.
+        if not name.strip():
+            err_msg = "No name given for Portfolio."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+        # Ensure a `Portfolio` doesn't already exist for the given name
+        # and `User`.
+        if models.Portfolio.objects.filter(user=user, name=name).exists():
+            err_msg = f"Portfolio (name={name}, user={user}) already exists."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+        # Ensure `Program` ids list is not empty.
+        if not programs:
+            err_msg = "Portfolio must be associated with at least one Program."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+        # Fetch `Program` records.
+        program_records: QuerySet[models.Program] = models.Program.objects.filter(
+            id__in=programs
+        )
+        if program_records.count() != len(set(programs)):
+            err_msg = f"Some Programs (ids={programs}) do not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 404)
+
+        portfolio: models.Portfolio = models.Portfolio.objects.create(
+            user=user, name=name
+        )
+
+        portfolio.programs.add(*program_records)
+
+        return portfolio
 
     # pylint: disable=line-too-long
     @staticmethod
