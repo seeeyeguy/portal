@@ -46,7 +46,7 @@ SEGMENTS_MAP = {
 }
 
 
-def create_initial_segments(apps, _):
+def create_initial_segments(apps, schema_editor):
     """
     Create the initial segments for L3Harris Technologies, Inc.
     as of 07/23/2024
@@ -55,10 +55,11 @@ def create_initial_segments(apps, _):
     SegmentModel = apps.get_model("users", "Segment")
 
     try:
-        LOGGER.info("Creating inital segments...")
+        LOGGER.info("Creating initial segments...")
+
         with transaction.atomic():
             for segment_name, segment_description in SEGMENTS_MAP.items():
-                SegmentModel.objects.create(
+                SegmentModel.objects.using(schema_editor.connection.alias).create(
                     name=segment_name, description=segment_description
                 )
         LOGGER.info("Successfully created initial segments.")

@@ -10,3 +10,7 @@ for our users.
 
 from program_review_tool.models.Program import Program
 from program_review_tool.models.Portfolio import Portfolio
+from users.models.User.signals import (
+    create_user_in_prt_database,
+    update_user_in_prt_database,
+)

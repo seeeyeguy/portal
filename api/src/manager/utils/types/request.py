@@ -14,3 +14,4 @@ class DjangoHttpRequest(HttpRequest):
     """Type annotation for Django HttpRequest."""
 
     user: models.User
+    auser: models.User  # type: ignore[assignment]

@@ -34,8 +34,9 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     fi
 
     # Apply migrations, ensuring to specify the target databases.
-    python manage.py migrate --database=default
+    python manage.py migrate auth 0012_alter_user_first_name_max_length --database=prt    
     python manage.py migrate program_review_tool --database=prt
+    python manage.py migrate --database=default   
 
     python manage.py crontab add
     /apps/init.sh
