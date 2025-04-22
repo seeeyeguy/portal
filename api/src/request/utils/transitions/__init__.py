@@ -4,7 +4,7 @@ BI Portal `Request` app to help with transitions.
 """
 
 import logging
-from typing import cast, Union
+from typing import cast, Tuple, Union
 
 from django.db.models import Manager
 
@@ -14,12 +14,19 @@ from users.models.Role.Role import Role
 LOGGER = logging.getLogger(__name__)
 
 
-def transition_request(request_id: int) -> models.Transition:
+def transition_request(request_id: int) -> Tuple[models.Request, models.Transition]:
     """Transition a `Request` to the next appropriate stage, given its id."""
 
     try:
         # Query the `Request` record.
         request_record = models.Request.objects.get(id=request_id)
+
+        # Ensure that the `Request` is pending.
+        if request_record.status != models.Request.RequestStatus.PENDING:
+            err_msg = f"Request(id={request_id}) is not PENDING."
+            LOGGER.error(err_msg)
+            raise exceptions.RequestError(err_msg, 400)
+
         # Fetch the latest `Transition` record.
         related_transitions = cast(Manager, request_record.transitions)
         latest_transition = cast(
@@ -37,7 +44,7 @@ def transition_request(request_id: int) -> models.Transition:
                 stage=draft,
                 previous_transition=None,
             )
-            return new_transition
+            return request_record, new_transition
 
         # Fetch the related `Stage` and `Disposition` for the given `Request`.
         transition_stage = cast(int, latest_transition.stage.level)
@@ -63,14 +70,25 @@ def transition_request(request_id: int) -> models.Transition:
         if not transition_disposition and transition_stage in {
             models.Stage.StageLevels.SUBMITTED,
             models.Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT,
-            models.Stage.StageLevels.REVISE,
         }:
             err_msg = (
                 f"Request(id={request_id}) does not have the needed"
                 f" disposition to transition from Stage(level={transition_stage})."
             )
             LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, 400)
+            raise exceptions.RequestError(err_msg, 409)
+
+        if transition_stage == models.Stage.StageLevels.REVISE:
+            # Fetch `Stage` record for `DRAFT` as it is
+            # the next appropriate stage.
+            draft = models.Stage.objects.get(level=models.Stage.StageLevels.DRAFT)
+            # Transition `Request` from `REVISE` to `DRAFT`.
+            new_transition = models.Transition.objects.create(
+                request=request_record,
+                stage=draft,
+                previous_transition=latest_transition,
+            )
+            return request_record, new_transition
 
         if transition_stage == models.Stage.StageLevels.DRAFT:
             # Fetch `Stage` record for `SUBMITTED` as it is
@@ -84,7 +102,7 @@ def transition_request(request_id: int) -> models.Transition:
                 stage=submitted,
                 previous_transition=latest_transition,
             )
-            return new_transition
+            return request_record, new_transition
 
         transition_disposition = cast(models.Disposition, transition_disposition)
         approver = transition_disposition.approver
@@ -93,14 +111,14 @@ def transition_request(request_id: int) -> models.Transition:
         if (
             transition_stage
             == models.Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT
-            and approver.role.role_level != Role.RoleLevels.SUPERUSER
+            and approver.role.level != Role.RoleLevels.SUPERUSER
         ):
             err_msg = (
                 f"Latest Disposition(approver={approver.user.email})"
                 f" for Request(id={request_id}) is invalid."
             )
             LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, 400)
+            raise exceptions.RequestError(err_msg, 409)
 
         if transition_stage == models.Stage.StageLevels.SUBMITTED:
             stage_after_submitted = None
@@ -113,7 +131,7 @@ def transition_request(request_id: int) -> models.Transition:
                 )
 
             # Approver is a `Business Process Expert`.
-            if approver.role.role_level == Role.RoleLevels.BUSINESS_PROCESS_EXPERT:
+            if approver.role.level == Role.RoleLevels.BUSINESS_PROCESS_EXPERT:
                 if (
                     transition_disposition.disposition
                     == models.Disposition.DispositionValues.APPROVED
@@ -130,7 +148,7 @@ def transition_request(request_id: int) -> models.Transition:
                     )
 
             # Approver is a `Superuser`.
-            if approver.role.role_level == Role.RoleLevels.SUPERUSER:
+            if approver.role.level == Role.RoleLevels.SUPERUSER:
                 if (
                     transition_disposition.disposition
                     == models.Disposition.DispositionValues.APPROVED
@@ -149,7 +167,7 @@ def transition_request(request_id: int) -> models.Transition:
             if not stage_after_submitted:
                 err_msg = f"Unable to determine next stage for Request(id={request_id})"
                 LOGGER.error(err_msg)
-                raise exceptions.RequestError(err_msg, 400)
+                raise exceptions.RequestError(err_msg, 409)
 
             # Transition `Request` from `SUBMITTED` to next appropriate stage.
             new_transition = models.Transition.objects.create(
@@ -157,41 +175,65 @@ def transition_request(request_id: int) -> models.Transition:
                 stage=stage_after_submitted,
                 previous_transition=latest_transition,
             )
-            return new_transition
+            return request_record, new_transition
 
         if (
             transition_stage
             == models.Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT
         ):
-            # Fetch `Stage` record for `APPROVED BY SUPERUSER` as it is
-            # the next appropriate stage.
-            approved_by_superuser = models.Stage.objects.get(
-                level=models.Stage.StageLevels.APPROVED_BY_SUPERUSER
-            )
-            # Transition `Request` from `APPROVED BY BUSINESS PROCESS EXPERT`
-            # to `APPROVED BY SUPERUSER`.
-            new_transition = models.Transition.objects.create(
-                request=request_record,
-                stage=approved_by_superuser,
-                previous_transition=latest_transition,
-            )
-            return new_transition
+            stage_after_approved_by_business_process_owner = None
 
-        if transition_stage == models.Stage.StageLevels.REVISE:
-            # Fetch `Stage` record for `DRAFT` as it is
-            # the next appropriate stage.
-            draft = models.Stage.objects.get(level=models.Stage.StageLevels.DRAFT)
-            # Transition `Request` from `REVISE` to `DRAFT`.
+            if (
+                transition_disposition.disposition
+                == models.Disposition.DispositionValues.REVISE
+            ):
+                # Fetch `Stage` record for `REVISE` as it may be
+                # the next appropriate stage.
+                stage_after_approved_by_business_process_owner = (
+                    models.Stage.objects.get(level=models.Stage.StageLevels.REVISE)
+                )
+
+            if (
+                transition_disposition.disposition
+                == models.Disposition.DispositionValues.APPROVED
+            ):
+                # Fetch `Stage` record for `APPROVED BY SUPERUSER` as it may be
+                # the next appropriate stage.
+                stage_after_approved_by_business_process_owner = (
+                    models.Stage.objects.get(
+                        level=models.Stage.StageLevels.APPROVED_BY_SUPERUSER
+                    )
+                )
+
+            if (
+                transition_disposition.disposition
+                == models.Disposition.DispositionValues.REJECTED
+            ):
+                # Fetch `Stage` record for `REJECTED BY SUPERUSER` as it may be
+                # the next appropriate stage.
+                stage_after_approved_by_business_process_owner = (
+                    models.Stage.objects.get(
+                        level=models.Stage.StageLevels.REJECTED_BY_SUPERUSER
+                    )
+                )
+
+            if not stage_after_approved_by_business_process_owner:
+                err_msg = f"Unable to determine next stage for Request(id={request_id})"
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 409)
+
+            # Transition `Request` from `APPROVED BY BUSINESS PROCESS EXPERT`
+            # to the next appropriate stage.
             new_transition = models.Transition.objects.create(
                 request=request_record,
-                stage=draft,
+                stage=stage_after_approved_by_business_process_owner,
                 previous_transition=latest_transition,
             )
-            return new_transition
+            return request_record, new_transition
 
         err_msg = f"Unable to determine next stage for Request(id={request_id})"
         LOGGER.error(err_msg)
-        raise exceptions.RequestError(err_msg, 400)
+        raise exceptions.RequestError(err_msg, 409)
     except models.Request.DoesNotExist as exc:
         err_msg = f"Request(id={request_id}) for Resource does not exist."
         LOGGER.error(err_msg)
