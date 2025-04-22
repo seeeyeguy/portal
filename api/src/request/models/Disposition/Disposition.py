@@ -3,7 +3,7 @@
 request to add/modify a directory resource. A request must
 have all needed dispositions before it can transition to the
 next stage (state) in the request workflow. `Disposition` can be
-`APPROVE`, `REJECT`, `REVISE`, etc. A disposition is final and
+`APPROVED`, `REJECTED`, `REVISE`, etc. A disposition is final and
 cannot be modified. `Disposition`s should never be deleted without
 an appropriate reason. `Disposition`s also help provide validation
 for a request and thus additions/changes to directory resources.
@@ -38,6 +38,14 @@ class Disposition(DateTimeAbstractModel):
         * created (models.DateTimeField): The date & time this `Disposition`
             was created.
     """
+
+    # pylint: disable=too-few-public-methods
+    class DispositionValues:
+        """Supported values for `Disposition`s."""
+
+        APPROVED = "APPROVED"
+        REJECTED = "REJECTED"
+        REVISE = "REVISE"
 
     approver: models.ForeignKey = models.ForeignKey(
         "users.Access", on_delete=models.PROTECT

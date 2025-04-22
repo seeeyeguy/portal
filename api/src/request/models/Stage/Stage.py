@@ -3,7 +3,7 @@
 the state of a request. If a request transitions from its initial
 state to a final state, it is conveyed a status (`APPROVED`,
 `REJECTED`, etc) and affirms whether an addition/modification
-of a directory resource was accepted. 
+of a directory resource was accepted.
 """
 
 from django.db import models
@@ -37,6 +37,25 @@ class Stage(BasicInformationAbstractModel):
         REJECTED_BY_BUSINESS_PROCESS_EXPERT = 5
         APPROVED_BY_SUPERUSER = 99
         REJECTED_BY_SUPERUSER = 100
+
+        ADJACENCY_LIST = {
+            str(REJECTED_BY_SUPERUSER): [
+                SUBMITTED,
+                APPROVED_BY_BUSINESS_PROCESS_EXPERT,
+            ],
+            str(APPROVED_BY_SUPERUSER): [
+                SUBMITTED,
+                APPROVED_BY_BUSINESS_PROCESS_EXPERT,
+            ],
+            str(REJECTED_BY_BUSINESS_PROCESS_EXPERT): [SUBMITTED],
+            str(REVISE): [
+                SUBMITTED,
+                APPROVED_BY_BUSINESS_PROCESS_EXPERT,
+            ],
+            str(APPROVED_BY_BUSINESS_PROCESS_EXPERT): [SUBMITTED],
+            str(SUBMITTED): [DRAFT],
+            str(DRAFT): [None, REVISE],
+        }
 
     level: models.IntegerField = models.PositiveIntegerField(unique=True)
 
