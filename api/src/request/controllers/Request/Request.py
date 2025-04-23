@@ -25,9 +25,13 @@ from directory.controllers.Resource.Resource import (
 )
 from directory import exceptions as DirectoryExceptions, models as DirectoryModels
 from request import exceptions, models
+from request.utils.transitions import transition_request
 from users import models as UsersModels
 
 LOGGER = logging.getLogger(__name__)
+
+PENDING = "PENDING"
+SUBMITTED = "SUBMITTED"
 
 
 class CreateRequestParams(CreateResourceParams):
@@ -37,7 +41,7 @@ class CreateRequestParams(CreateResourceParams):
     """
 
     originator: AuthModels.User
-    stage: int
+    stage: str
 
 
 class UpdateRequestParams(BaseResourceParams):
@@ -47,7 +51,7 @@ class UpdateRequestParams(BaseResourceParams):
     """
 
     request_id: int
-    stage: int
+    stage: str
 
 
 class Request:
@@ -73,21 +77,66 @@ class Request:
         """
 
         try:
+            resource_params = cast(dict, params.copy())
+
+            stage: str = resource_params.pop("stage")
+
             log_msg = (
-                f"Creating Request for Resource(name={params['name']}, url={params['url']})"
-                f" at Stage(level={params['stage']})"
-                f" for Originator(email={params['originator'].email})"
+                f"{'Creating' if stage != SUBMITTED else 'Submitting'}"
+                f" Request for Resource(name={params['name']}, url={params['url']})"
+                f" for Originator(email={params['originator'].email})."
             )
             LOGGER.info(log_msg)
 
-            resource_params = cast(dict, params.copy())
+            # Fetch `Access` record for originator.
             originator: AuthModels.User = resource_params.pop("originator")
-            stage: int = resource_params.pop("stage")
+            accepted_roles = [
+                UsersModels.Role.RoleLevels.DATA_STEWARD,
+                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+                UsersModels.Role.RoleLevels.SUPERUSER,
+            ]
+            originator_access: Union[UsersModels.Access, None] = (
+                UsersModels.Access.objects.filter(
+                    user=originator,
+                    role__level__in=accepted_roles,
+                    access_revoked_date__isnull=True,
+                )
+                .order_by("-role__level")
+                .first()
+            )
+
+            # Ensure originator has the appropriate permissions.
+            if not originator_access:
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 403)
+
+            if stage not in [PENDING, SUBMITTED]:
+                err_msg = f"Stage must be {PENDING} or {SUBMITTED}."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
+
+            # Create the related `Resource` record.
             resource: DirectoryModels.Resource = ResourceController.create_resource(
                 cast(CreateResourceParams, resource_params)
             )
 
-            return models.Request()
+            # Create the `Request` record.
+            request = models.Request.objects.create(
+                resource=resource,
+                originator=originator_access,
+                status=models.Request.RequestStatus.PENDING,
+            )
+
+            # Transition `Request` to `DRAFT`.
+            transition_request(request_id=request.id)
+
+            # If the `Request` was submitted on create,
+            # transition `Request` to `SUBMITTED`.
+            if stage == SUBMITTED:
+                transition_request(request_id=request.id)
+
+            return request
         except KeyError as exc:
             err_msg: str = "Invalid parameters given."
             LOGGER.error(err_msg)
@@ -129,12 +178,12 @@ class Request:
             stage: int = resource_params.pop("stage")
 
             resource_id: int = 1
-            _: Tuple[
-                DirectoryModels.Resource, int
-            ] = ResourceController.update_resource(
-                cast(
-                    UpdateResourceParams,
-                    {"resource_id": resource_id, **resource_params},
+            _: Tuple[DirectoryModels.Resource, int] = (
+                ResourceController.update_resource(
+                    cast(
+                        UpdateResourceParams,
+                        {"resource_id": resource_id, **resource_params},
+                    )
                 )
             )
 
