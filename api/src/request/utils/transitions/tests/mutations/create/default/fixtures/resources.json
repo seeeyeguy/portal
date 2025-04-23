@@ -1,0 +1,282 @@
+[
+    {
+        "model": "directory.Resource",
+        "pk": 1,
+        "fields": {
+            "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2348",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 1 Revision 1",
+            "description": "popstick.",
+            "url": "example-1.org",
+            "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2024_08_27__16_00_00/resource_1.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 1",
+            "download": false,
+            "active": false,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 2,
+        "fields": {
+            "uid": "e8b25711-d9a8-46f7-bddb-cef7436e2349",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 2 Revision 1",
+            "description": "brownie.",
+            "url": "example-2.org",
+            "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2349/2024_08_28__16_00_00/resource_2.png",
+            "employee_levels": [1, 2],
+            "subfunctions": [1],
+            "tags": [1],
+            "type": "Resource Type 2",
+            "download": false,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 3,
+        "fields": {
+            "uid": "4c2c333e-68e9-4dca-8507-ce58cefde072",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 3 Revision 1",
+            "description": "bar.",
+            "url": "example-3.org",
+            "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/2024_08_27__16_00_00/resource_3.png",
+            "employee_levels": [1, 2, 3],
+            "subfunctions": [1, 2],
+            "tags": [1, 2],
+            "type": "Resource Type 3",
+            "download": false,
+            "active": false,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 4,
+        "fields": {
+            "uid": "4c2c333e-68e9-4dca-8507-ce58cefde073",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 4 Revision 1",
+            "description": "bar.",
+            "url": "example-4.org",
+            "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde073/2024_08_28__16_00_00/resource_4.png",
+            "employee_levels": [1, 2, 3],
+            "subfunctions": [1, 2],
+            "tags": [1, 2],
+            "type": "Resource Type 4",
+            "download": false,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 5,
+        "fields": {
+            "uid": "a157e2a8-1db7-4ef2-adc1-90e109af0557",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 5 Revision 1",
+            "description": "cake.",
+            "url": "example-5.org",
+            "thumbnail": "resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/2024_08_28__16_00_00/resource_5.png",
+            "employee_levels": [3],
+            "subfunctions": [5, 6],
+            "tags": [3, 6],
+            "type": "Resource Type 5",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 6,
+        "fields": {
+            "uid": "0e8ec5b9-11b5-44b6-9b16-6a4d69067d46",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 6 Revision 1",
+            "description": "cookie.",
+            "url": "example-6.org",
+            "thumbnail": "resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/2024_08_28__16_00_00/resource_6.png",
+            "employee_levels": [2],
+            "subfunctions": [7, 8],
+            "tags": [3, 4, 7],
+            "type": "Resource Type 6",
+            "download": false,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 7,
+        "fields": {
+            "uid": "b7801c65-640e-403e-8f67-0a6b219f01ac",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 7 Revision 1",
+            "description": "ice cream.",
+            "url": "example-7.org",
+            "thumbnail": "resources/thumbnails/b7801c65-640e-403e-8f67-0a6b219f01ac/2024_08_28__16_00_00/resource_7.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 7",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 8,
+        "fields": {
+            "uid": "d6ac9bcc-2dc1-430f-b3f3-2f1bd90f7837",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 8 Revision 1",
+            "description": "cotton candy.",
+            "url": "example-8.org",
+            "thumbnail": "resources/thumbnails/d6ac9bcc-2dc1-430f-b3f3-2f1bd90f7837/2024_08_28__16_00_00/resource_8.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 8",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 9,
+        "fields": {
+            "uid": "dabf077c-686d-4eca-bcf7-3257638b8ca7",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 9 Revision 1",
+            "description": "chocolate.",
+            "url": "example-9.org",
+            "thumbnail": "resources/thumbnails/dabf077c-686d-4eca-bcf7-3257638b8ca7/2024_08_28__16_00_00/resource_9.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 9",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 10,
+        "fields": {
+            "uid": "6578b7d0-8e37-4c1b-bb91-2d017b6c8004",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 10 Revision 1",
+            "description": "licorice.",
+            "url": "example-10.org",
+            "thumbnail": "resources/thumbnails/6578b7d0-8e37-4c1b-bb91-2d017b6c8004/2024_08_28__16_00_00/resource_10.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 10",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 11,
+        "fields": {
+            "uid": "f758c53b-7bb6-44ae-b73d-342665e9347c",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 11 Revision 1",
+            "description": "caramel.",
+            "url": "example-11.org",
+            "thumbnail": "resources/thumbnails/f758c53b-7bb6-44ae-b73d-342665e9347c/2024_08_28__16_00_00/resource_11.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 11",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 12,
+        "fields": {
+            "uid": "829c8586-9652-4cb4-982d-5e28056a58d5",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 12 Revision 1",
+            "description": "caramel.",
+            "url": "example-12.org",
+            "thumbnail": "resources/thumbnails/829c8586-9652-4cb4-982d-5e28056a58d5/2024_08_28__16_00_00/resource_12.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 12",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 13,
+        "fields": {
+            "uid": "fca25e47-6faf-4bb7-bac5-5c21ec3db10d",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 13 Revision 1",
+            "description": "caramel.",
+            "url": "example-13.org",
+            "thumbnail": "resources/thumbnails/fca25e47-6faf-4bb7-bac5-5c21ec3db10d/2024_08_28__16_00_00/resource_13.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 13",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 14,
+        "fields": {
+            "uid": "4ce7d56f-0327-4460-987c-c2050a691da4",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 14 Revision 1",
+            "description": "jelly beans.",
+            "url": "example-14.org",
+            "thumbnail": "resources/thumbnails/4ce7d56f-0327-4460-987c-c2050a691da4/2024_08_28__16_00_00/resource_14.png",
+            "employee_levels": [1],
+            "subfunctions": [3, 8],
+            "tags": [1, 2, 8],
+            "type": "Resource Type 14",
+            "download": true,
+            "active": true,
+            "created": "2024-08-28T16:00:00Z"
+        }
+    }
+]
