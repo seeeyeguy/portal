@@ -7,3 +7,5 @@ modify, and delete `Resource`s through the request workflow. A
 through the request workflow and receiving the needed approvals via
 a `Request`.
 """
+
+from .Request import Request
