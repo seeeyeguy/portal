@@ -30,7 +30,7 @@ from users import models as UsersModels
 
 LOGGER = logging.getLogger(__name__)
 
-PENDING = "PENDING"
+DRAFT = "DRAFT"
 SUBMITTED = "SUBMITTED"
 
 
@@ -111,8 +111,8 @@ class Request:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
-            if stage not in [PENDING, SUBMITTED]:
-                err_msg = f"Stage must be {PENDING} or {SUBMITTED}."
+            if stage not in [DRAFT, SUBMITTED]:
+                err_msg = f"Stage must be {DRAFT} or {SUBMITTED}."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
