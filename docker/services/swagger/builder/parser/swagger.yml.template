@@ -1223,6 +1223,53 @@ paths:
                   - $ref: "#/components/schemas/UpdateQueryFilterStateEmployeeLevelDoesNotExistErrorResponse"
                   - $ref: "#/components/schemas/UpdateQueryFilterStateTagDoesNotExistErrorResponse"  
   /program-review-tool/portfolio:
+    post:
+      tags:
+        - "program_review_tool.portfolio.create"
+      summary: "Create a Portfolio for user."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortfolioRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreatePortfolioResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreatePortfolioEmptyNameResponse"
+                  - $ref: "#/components/schemas/CreatePortfolioDuplicateNameForUserResponse"
+                  - $ref: "#/components/schemas/CreatePortfolioEmptyProgramsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreatePortfolioUnAuthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreatePortfolioPermissionsDeniedResponse"
+        "404":
+          description: "`Program` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreatePortfolioProgramDoesNotExistResponse"
     get:
       tags:
         - "program_review_tool.portfolio.fetch"
@@ -3299,6 +3346,84 @@ components:
       title: "Fetch `QueryFilterState` error response due to using an email for
         a `User` that does not have an associated `QueryFilterState`."
       example: "QueryFilterState (user={user}) does not exist."
+
+    CreatePortfolioRequest:
+      title: "Create `Portfolio` for user request."
+      type: object
+      properties:
+        name:
+          type: integer
+          description: Name for the `Portfolio` being created.
+          default: "Create Portfolio 1"
+        programs:
+          type: array[int]
+          description: Ids of `Program`s being linked to the `Portfolio`
+            being created.
+          default: []
+    
+    CreatePortfolioResponse:
+      title: "Create `Portfolio` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "name": "Portfolio Example 1",
+              "user": {
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "programs": [
+                {
+                  "id": 1,
+                  "segment": "SPACE & AIRBORNE SYSTEMS",
+                  "name": "SOA IDIQ II_6C27",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00",
+                  "pa_number": "6C27",
+                  "sector": "Airborne Combat Systems",
+                  "division": "Electronic Warfare",
+                  "tier": 1,
+                  "contract_value": 5000000000,
+                  "active_status": True,
+                },                
+                ...
+              ],
+              "created": "2025-05-04T12:00:00-04:00",
+              "modified": "2024-05-04T12:00:00-04:00",
+            }
+
+    CreatePortfolioEmptyNameResponse:
+      title: "Create `Portfolio` error response due to not supplying a name."
+      example: "No name given for Portfolio."
+
+    CreatePortfolioDuplicateNameForUserResponse:
+      title: "Create `Portfolio` error response due to supplying a name that
+        already exists for the user."
+      example: "Portfolio (name={name}, user={user}) already exists."
+    
+    CreatePortfolioEmptyProgramsResponse:
+      title: "Create `Portfolio` error response due to not supplying `Program`
+        ids."
+      example: "Portfolio must be associated with at least one Program."
+
+    CreatePortfolioUnAuthorizedResponse:
+      title: "Create `Portfolio` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreatePortfolioPermissionsDeniedResponse:
+      title: "Create `Portfolio` error response due to invalid permissions."
+      example: "Permissions Denied."
+
+    CreatePortfolioProgramDoesNotExistResponse:
+      title: "Create `Portfolio` error response due to supplying an id
+        for a `Program` that does not exist."
+      example: "Some Programs (ids={programs}) do not exist."
 
     FetchPortfoliosResponse:
       title: "Fetch `Portfolio`s response."
