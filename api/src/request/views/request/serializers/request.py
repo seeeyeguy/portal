@@ -12,7 +12,7 @@ from directory.views.serializers import CreateResourceRequest, UpdateResourceReq
 class CreateRequestRequest(CreateResourceRequest):
     """Request serializer for POST /v1/request/request."""
 
-    stage = serializers.IntegerField(min_value=1, max_value=100)
+    stage = serializers.CharField(max_length=10, default="DRAFT")
 
 
 class UpdateRequestRequest(UpdateResourceRequest, CreateRequestRequest):

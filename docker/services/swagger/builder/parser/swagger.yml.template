@@ -1286,7 +1286,71 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeletePortfolioPermissionsDeniedResponse"  
+                  - $ref: "#/components/schemas/DeletePortfolioPermissionsDeniedResponse"
+  /request/request:
+    post:
+      tags:
+        - "request.request.create"
+      summary: "Create a Request."
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateRequestRequest"
+            encoding:
+              thumbnail:
+                contentType: image/png, image/jpeg, image/jpg
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRequestResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourceRevisionErroneousPreviousRevisionResponse"
+                  - $ref: "#/components/schemas/CreateResourceWithDuplicatePendingDraftResponse"
+                  - $ref: "#/components/schemas/CreateResourceDuplicateNameResponse"
+                  - $ref: "#/components/schemas/CreateResourceInvalidDescriptionResponse"
+                  - $ref: "#/components/schemas/CreateResourceMalformedURLResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmptyEmployeeLevelsResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmptySubFunctionsResponse"
+                  - $ref: "#/components/schemas/CreateResourceInvalidThumbnailResponse"
+                  - $ref: "#/components/schemas/CreateResourceUserInvalidRoleResponse"
+                  - $ref: "#/components/schemas/CreateRequestInvalidParamsResponse"
+                  - $ref: "#/components/schemas/CreateRequestInvalidStageResponse"
+                  
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRequestUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRequestForbiddenErrorResponse"
+        "404":
+          description: "Resource, EmployeeLevel, SubFunction or Tag does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourcePreviousRevisionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceEmployeeLevelDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceSubFunctionDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateResourceTagDoesNotExistResponse"
+
   /users/profile:
     get:
       tags:
@@ -3962,3 +4026,216 @@ components:
       title: "Update `QueryFilterState` error response due to supplying an id
         for a `Tag` that does not exist."
       example: "Some Tags (ids={tags}) do not exist."
+
+    CreateRequestRequest:
+      title: "Create `Request` request." 
+      type: object
+      properties:
+        uid:
+          type: string
+          description: UID to be applied to the `Resource` being created, when it is a revision. You may leave empty for None.
+          default: "000000000000-0000000000-000000000000"
+        name:
+          type: string
+          description: Name to be applied to the `Resource` being created.
+          default: "Create Resource Name"
+        description:
+          type: string
+          description: Description to be applied to the `Resource` being created.
+          default: "Create Resource Description."
+        previous_revision:
+          type: integer
+          description: Previous revision to be applied to the `Resource` being created. You may leave empty for None.
+          default: int | None
+        url:
+          type: string
+          description: URL to be applied to the `Resource` being created.
+          default: https://www.example.com
+        thumbnail:
+          type: string
+          description: Thumbnail image to be applied to the `Resource` being created.
+          format: binary
+        employee_levels:
+          type: array[int]
+          description: Ids of `EmployeeLevel`s to be applied to the `Resource` being created. Wrap array value in `"`.
+          default: []
+        subfunctions:
+          type: array[int]
+          description: Ids of `SubFunction`s to be applied to the `Resource` being created. Wrap array value in `"`.
+          default: []
+        tags:
+          type: array[int]
+          description: Ids of `Tag`s to be applied to the `Resource` being created. Wrap array value in `"`.
+          default: []
+        type:
+          type: string
+          description: Type to be applied to the `Resource` being created.
+          default: "tableau"
+        download:
+          type: boolean
+          description: Download flag to be applied to the `Resource` being created.
+          default: false
+        stage:
+          type: string
+          description: Indicate whether to create the `Request` at the `DRAFT` or `SUBMITTED` stage.
+          default: "DRAFT"
+
+
+    CreateRequestResponse:
+      title: "Create `Resource` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "resource": {
+                  "id": 1,
+                  "employee_levels": [
+                      {
+                          "id": 3,
+                          "name": "Executive",
+                          "description": "Executive Level 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "level": 3,
+                      }
+                  ],
+                  "subfunctions": [
+                      {
+                          "id": 5,
+                          "function": {
+                              "id": 3,
+                              "name": "Finance",
+                              "description": "Function 3.",
+                              "created": "2024-08-27T12:00:00-04:00",
+                              "modified": "2024-08-27T12:00:00-04:00",
+                          },
+                          "name": "Capital",
+                          "description": "Function 3 SubFunction 1.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      {
+                          "id": 2,
+                          "function": {
+                              "id": 1,
+                              "name": "Human Resources",
+                              "description": "Function 1.",
+                              "created": "2024-08-27T12:00:00-04:00",
+                              "modified": "2024-08-27T12:00:00-04:00",
+                          },
+                          "name": "Recruiting",
+                          "description": "Function 1 SubFunction 2.",
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                  ],
+                  "tags": [
+                      {
+                          "id": 1,
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "label": "filter::site:Melbourne",
+                      },
+                      {
+                          "id": 2,
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "label": "filter::site:Rochester",
+                      },
+                      {
+                          "id": 3,
+                          "created": "2024-08-27T12:00:00-04:00",
+                          "modified": "2024-08-27T12:00:00-04:00",
+                          "label": "restricted::department:GeoSpatial",
+                      },
+                  ],
+                  "primary_point_of_contact": "Test.User@harris.com",
+                  "description": "Test resource description for create tests.",
+                  "created": "2025-04-24T11:59:30.789539-04:00",
+                  "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
+                  "revision_number": None,
+                  "name": "Test Create Name",
+                  "url": "https://www.test-site.com",
+                  "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
+                  "type": "test create type",
+                  "download": False,
+                  "active": False,
+                  "previous_revision": None,
+              },
+              "originator": {
+                  "id": 3,
+                  "user": {
+                      "id": 1,
+                      "username": "Test.User@harris.com",
+                      "email": "Test.User@harris.com",
+                      "first_name": "Test",
+                      "last_name": "User",
+                      "is_active": True,
+                  },
+                  "role": {
+                      "id": 3,
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "name": "Data Steward",
+                      "description": "Data Steward.",
+                      "level": 3,
+                  },
+                  "stage": [],
+                  "access_granted_date": "2024-08-27T12:00:00-04:00",
+                  "access_revoked_date": None,
+              },
+              "created": "2025-04-24T11:59:30.796324-04:00",
+              "modified": "2025-04-24T11:59:30.796357-04:00",
+              "status": "PENDING",
+              "transitions": {
+                  "latest": 3,
+                  "nodes": {
+                      "3": {
+                          "id": 3,
+                          "request": 2,
+                          "stage": {
+                              "id": 2,
+                              "name": "Submitted",
+                              "description": "A resource was submitted.",
+                              "level": 2,
+                          },
+                          "previous_transition": 2,
+                          "created": "2025-04-24T11:59:30.805896-04:00",
+                          "dispositions": [],
+                      },
+                      "2": {
+                          "id": 2,
+                          "request": 2,
+                          "stage": {
+                              "id": 1,
+                              "name": "Draft",
+                              "description": "A resource was created.",
+                              "level": 1,
+                          },
+                          "previous_transition": None,
+                          "created": "2025-04-24T11:59:30.799683-04:00",
+                          "dispositions": [],
+                      },
+                  },
+              },
+            }
+
+    CreateRequestInvalidParamsResponse:
+      title: "Create `Request` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    CreateRequestInvalidStageResponse:
+      title: "Create `Request` error response due to providing an invalid
+        stage."
+      example: "Stage must be DRAFT or SUBMITTED."
+
+    CreateRequestUnauthorizedResponse:
+      title: "Create `Request` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreateRequestForbiddenErrorResponse:
+      title: "Create `Request` error response due to forbidden access."
+      example: "Permissions Denied."

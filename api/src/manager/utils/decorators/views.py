@@ -1,4 +1,4 @@
-""" Generic view decorators for view routes. """
+"""Generic view decorators for view routes."""
 
 import json
 import logging
@@ -13,7 +13,7 @@ from rest_framework.serializers import Serializer
 LOGGER = logging.getLogger(__name__)
 
 JSON_CONTENT_TYPE: str = "application/json"
-FORM_CONTENT_TYPE: str = "multipart/form-data"
+FORM_CONTENT_TYPE: str = "multipart"
 
 
 def with_serializer(serializer_class: Type[Serializer], many: bool = False) -> Callable:
