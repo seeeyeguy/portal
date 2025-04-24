@@ -178,12 +178,12 @@ class Request:
             stage: int = resource_params.pop("stage")
 
             resource_id: int = 1
-            _: Tuple[DirectoryModels.Resource, int] = (
-                ResourceController.update_resource(
-                    cast(
-                        UpdateResourceParams,
-                        {"resource_id": resource_id, **resource_params},
-                    )
+            _: Tuple[
+                DirectoryModels.Resource, int
+            ] = ResourceController.update_resource(
+                cast(
+                    UpdateResourceParams,
+                    {"resource_id": resource_id, **resource_params},
                 )
             )
 

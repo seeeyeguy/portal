@@ -11,5 +11,10 @@ from request import views
 from manager.utils.types import urlconfig
 
 urlpatterns: urlconfig.PathPatternList = [
-    path("request", views.Request.as_view(), name="request.request")
+    path(
+        "disposition",
+        view=views.Disposition.as_view(),
+        name="request.disposition",
+    ),
+    path("request", views.Request.as_view(), name="request.request"),
 ]

@@ -1,4 +1,4 @@
-""" 
+"""
 `Disposition` module. `Disposition` represents a vote by a
 BI Portal admin on a request for a directory resource.
 """

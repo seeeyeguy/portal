@@ -6,7 +6,7 @@ instance of APIConsumerFactory with key data about the view and
 then, use `APIConsumerFactory.create_api_consumer` to create an
 instance of a JsonWebsocketConsumer that may process requests to
 your view using websockets.
-Ex. APIConsumerFactory("GET", my_view, "group_name").create_api_consumer().as_view()
+Ex. APIConsumerFactory("GET", my_view, "group_name").create_api_consumer().as_asgi()
 """
 
 import json
@@ -34,7 +34,7 @@ class APIConsumerFactory:
             on each request. It must accept a Django.http.HttpRequest and
             return Django.http.JsonResponse.
         * group (str): The name of the channel group. Each `Consumer` within this group
-            with receive the same response from the view handler whenever it is called.
+            will receive the same response from the view handler whenever it is called.
         * authentication_required (bool): Is the user required to be authenticated to
             complete the request. If so, any request from an unauthenticated user will
             be rejected.
@@ -47,7 +47,6 @@ class APIConsumerFactory:
         group: str,
         authentication_required: bool = False,
     ) -> None:
-
         if view_method not in ("GET", "POST", "PUT", "DELETE"):
             raise APIConsumerFactoryConfigError(f"Method({view_method}) not allowed!")
 
@@ -123,6 +122,7 @@ class APIConsumerFactory:
                 else:
                     # Otherwise, put the data in the body of the request.
                     body = json.dumps(content)
+                    request.content_type = "application/json"
                     # pylint: disable=protected-access
                     request._body = body  # type: ignore[assignment]
 
@@ -142,7 +142,7 @@ class APIConsumerFactory:
             def send_response_to_group(self, event: dict) -> None:
                 """
                 Process event initiated by the consumer. Send response to
-                all memebers of the group.
+                all members of the group.
 
                 Accept:
                     * event (dict): Data sent to members of group.
