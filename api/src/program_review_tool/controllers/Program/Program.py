@@ -49,6 +49,8 @@ class Program:
 
         programs = models.Program.objects.filter(active_status=True)
 
+        programs = programs.order_by("id") if page or limit else programs
+
         # If program ids are given, filter QuerySet to corresponding `Program` records.
         if program_ids:
             programs = programs.filter(id__in=program_ids)

@@ -1,0 +1,10 @@
+[
+    {
+        "model": "users.Segment",
+        "pk": 1,
+        "fields": {
+            "name": "SPACE & AIRBORNE SYSTEMS",
+            "description": "Space and Airborne Systems is a leading provider of full mission solutions as a prime and subsystem integrator in the space, airborne and cyber domains. We provide top-tier capabilities in the design, development, integration, production and sustainment of major weapons systems for defense primes and national security, civil government and international customers."
+        }
+    }
+]
