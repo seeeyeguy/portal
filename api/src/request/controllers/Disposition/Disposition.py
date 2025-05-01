@@ -13,7 +13,7 @@ from django.db import transaction
 
 from directory.models import Resource
 from request import exceptions, models
-from request.utils import transitions
+from request.utils.transitions import transition_request
 from users import models as UsersModels
 
 LOGGER = logging.getLogger(__name__)
@@ -98,18 +98,34 @@ class Disposition:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
-            # Fetch inactive `Resource` record.
-            resource_record: Resource = Resource.objects.only("id").get(
-                id=resource, active=False
+            # Fetch `Resource` record.
+            resource_record: Union[Resource, None] = (
+                Resource.objects.only("id").filter(id=resource).first()
             )
+
+            if not resource_record:
+                err_msg = f"Resource (id={resource}) does not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 404)
+
+            if resource_record.active:
+                LOGGER.warning(resource_record.active)
+                err_msg = f"Resource (id={resource}) is not pending."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
 
             # Fetch pending `Request` record.
             request_record: models.Request = models.Request.objects.select_related(
                 "originator__user"
-            ).get(
-                resource_id=resource_record.id,
-                status=models.Request.RequestStatus.PENDING,
-            )
+            ).get(resource_id=resource_record.id)
+
+            if request_record.status in {
+                models.Request.RequestStatus.APPROVED,
+                models.Request.RequestStatus.REJECTED,
+            }:
+                err_msg = f"Resource (id={resource}) is a historical record."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
 
             # Fetch latest `Transition` record.
             transition_record: Union[models.Transition, None] = (
@@ -185,9 +201,7 @@ class Disposition:
                 )
 
                 # Transition the `Request`.
-                request_record, new_transition = transitions.transition_request(
-                    request_record.id
-                )
+                request_record, new_transition = transition_request(request_record.id)
 
                 # Fetch `Stage` corresponding to the new stage.
                 stage_record = new_transition.stage
@@ -221,7 +235,7 @@ class Disposition:
                 else:
                     # Transition the `Request` from `REVISE` to `DRAFT`.
                     if stage_record.level == models.Stage.StageLevels.REVISE:
-                        _ = transitions.transition_request(request_record.id)
+                        _ = transition_request(request_record.id)
 
                     return disposition_record
 
@@ -233,10 +247,6 @@ class Disposition:
 
         except User.DoesNotExist as exc:
             err_msg = f"User (email={approver}) does not exist."
-            LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, 404) from exc
-        except Resource.DoesNotExist as exc:
-            err_msg = f"A pending Resource (id={resource}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, 404) from exc
         except models.Request.DoesNotExist as exc:
