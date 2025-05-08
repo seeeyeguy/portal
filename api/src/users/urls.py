@@ -12,8 +12,13 @@ from manager.utils.types import urlconfig
 
 urlpatterns: urlconfig.PathPatternList = [
     path(
+        "access",
+        view=views.Access.as_view(),
+        name="users.access",
+    ),
+    path(
         "profile",
         view=views.Profile.as_view(),
         name="users.profile",
-    )
+    ),
 ]
