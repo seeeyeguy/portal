@@ -1,0 +1,56 @@
+[
+    {
+        "model": "directory.Resource",
+        "pk": 1,
+        "fields": {
+            "uid": "f6a31db2-5271-401a-901e-9220e0e4cda2",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 1 Revision 1",
+            "description": "popstick.",
+            "url": "example.org",
+            "thumbnail": "resources/thumbnails/f6a31db2-5271-401a-901e-9220e0e4cda2/2024_08_27__16_00_00/resource_1.png",
+            "employee_levels": [
+                1,
+                2
+            ],
+            "subfunctions": [
+                1
+            ],
+            "tags": [
+                1
+            ],
+            "type": "Resource Type 1",
+            "download": false,
+            "active": false,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    },
+    {
+        "model": "directory.Resource",
+        "pk": 2,
+        "fields": {
+            "uid": "2ca5ca29-5dbb-4333-99d3-750e30b1ed48",
+            "previous_revision": null,
+            "revision_number": null,
+            "name": "Resource 2 Revision 1",
+            "description": "ripstick.",
+            "url": "example.gov",
+            "thumbnail": "resources/thumbnails/2ca5ca29-5dbb-4333-99d3-750e30b1ed48/2024_08_27__16_00_00/resource_2.png",
+            "employee_levels": [
+                1,
+                2
+            ],
+            "subfunctions": [
+                1
+            ],
+            "tags": [
+                1
+            ],
+            "type": "Resource Type 2",
+            "download": false,
+            "active": false,
+            "created": "2024-08-27T16:00:00Z"
+        }
+    }
+]

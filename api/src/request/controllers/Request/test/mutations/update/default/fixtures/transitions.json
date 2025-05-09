@@ -1,0 +1,32 @@
+[
+    {
+        "model": "request.transition",
+        "pk": 1,
+        "fields": {
+            "request": 1,
+            "stage": 1,
+            "previous_transition": null,
+            "created": "2024-10-01T16:00:00Z"
+        }
+    },
+    {
+        "model": "request.transition",
+        "pk": 2,
+        "fields": {
+            "request": 2,
+            "stage": 1,
+            "previous_transition": null,
+            "created": "2024-10-01T16:00:00Z"
+        }
+    },
+    {
+        "model": "request.transition",
+        "pk": 3,
+        "fields": {
+            "request": 2,
+            "stage": 2,
+            "previous_transition": 2,
+            "created": "2024-10-02T16:00:00Z"
+        }
+    }
+]

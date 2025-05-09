@@ -175,23 +175,89 @@ class Request:
 
             resource_params = cast(dict, params.copy())
             request_id: int = resource_params.pop("request_id")
-            stage: int = resource_params.pop("stage")
+            stage: str = resource_params.pop("stage")
 
-            resource_id: int = 1
-            _: Tuple[
-                DirectoryModels.Resource, int
-            ] = ResourceController.update_resource(
+            # Fetch the existing `Request` record.
+            request = models.Request.objects.get(id=request_id)
+
+            # Fetch `Access` record for requester.
+            requester: AuthModels.User = resource_params.pop("user")
+            accepted_roles = [
+                UsersModels.Role.RoleLevels.DATA_STEWARD,
+                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+                UsersModels.Role.RoleLevels.SUPERUSER,
+            ]
+            requester_access: Union[UsersModels.Access, None] = (
+                UsersModels.Access.objects.filter(
+                    user=requester,
+                    role__level__in=accepted_roles,
+                    access_revoked_date__isnull=True,
+                )
+                .order_by("-role__level")
+                .first()
+            )
+
+            # Ensure originator has the appropriate permissions.
+            if not requester_access:
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 403)
+
+            # Validate the `stage` parameter.
+            if stage not in [DRAFT, SUBMITTED]:
+                err_msg = f"Stage must be {DRAFT} or {SUBMITTED}."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
+
+            # Validate the requester and originator are not the same.
+            if requester_access.user != request.originator.user:
+                err_msg = (
+                    f"Requester for Request(id={request_id}) is not the originator."
+                )
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 403)
+
+            # Fetch the latest `Transition` record.
+            latest_transition = cast(
+                models.Transition, request.transitions.order_by("-created").first()
+            )
+
+            # Ensure `Request` is at the `DRAFT` stage
+            if (
+                not latest_transition
+                or latest_transition.stage.level != models.Stage.StageLevels.DRAFT
+            ):
+                err_msg = f"Request(id={request_id}) must be in {DRAFT}."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
+
+            # Update the related `Resource` record.
+            resource_id: int = request.resource.id
+            _, rows_affected = ResourceController.update_resource(
                 cast(
                     UpdateResourceParams,
-                    {"resource_id": resource_id, **resource_params},
+                    {
+                        "resource_id": resource_id,
+                        "user": requester_access.user,
+                        **resource_params,
+                    },
                 )
             )
 
-            return models.Request(), 1
+            # If the `Request` was submitted on update,
+            # transition `Request` to `SUBMITTED`.
+            if stage == SUBMITTED:
+                request, _ = transition_request(request_id=request.id)
+
+            return request, rows_affected
         except KeyError as exc:
             err_msg: str = "Invalid parameters given."
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, 400) from exc
+        except models.Request.DoesNotExist as exc:
+            err_msg: str = f"Request(id={params['request_id']}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.RequestError(err_msg, 404) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
                 f"Resource(name={params['name']}, url={params['url']})",
