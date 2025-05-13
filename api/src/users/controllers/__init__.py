@@ -5,4 +5,5 @@ modification, deletion, fetching, and processing of data.
 conveyed by our LDAP Search Service.
 """
 
+from .Access import Access
 from .Profile import Profile
