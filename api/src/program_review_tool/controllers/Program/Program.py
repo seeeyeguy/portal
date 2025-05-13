@@ -60,7 +60,7 @@ class Program:
                     programs.values_list("id", flat=True)
                 )
                 raise exceptions.ProgramReviewToolError(
-                    f"Programs(ids={missing_program_ids}) do not exist.", 400
+                    f"Programs(ids={missing_program_ids}) do not exist.", 404
                 )
 
         # If `limit` is given, then limit the `Program` records.
