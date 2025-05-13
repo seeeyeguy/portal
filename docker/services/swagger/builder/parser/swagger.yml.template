@@ -119,7 +119,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateVisitUnAuthorizedResponse"              
+                  - $ref: "#/components/schemas/CreateVisitUnauthorizedResponse"              
         "404":
           description: "Resource does not exist."
           content:
@@ -159,7 +159,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateEmployeeLevelUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/CreateEmployeeLevelUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -231,7 +231,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/UpdateEmployeeLevelUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/UpdateEmployeeLevelUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -271,7 +271,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteEmployeeLevelUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeleteEmployeeLevelUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -310,7 +310,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/CreateFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -382,7 +382,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/UpdateFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/UpdateFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -422,7 +422,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeleteFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -663,7 +663,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateSubFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/CreateSubFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -742,7 +742,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/UpdateSubFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/UpdateSubFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -783,7 +783,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteSubFunctionUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeleteSubFunctionUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -822,7 +822,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateTagUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/CreateTagUnauthorizedResponse"
     get:
       tags:
         - "directory.tag.fetch"
@@ -906,7 +906,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/UpdateTagUnAuthorizedErrorResponse"
+                  - $ref: "#/components/schemas/UpdateTagUnauthorizedErrorResponse"
         "404":
           description: "Tag does not exist."
           content:
@@ -939,7 +939,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteTagUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeleteTagUnauthorizedResponse"
   /directory/tags/search:
     get:
       tags:
@@ -990,7 +990,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateFavoriteUnAuthorizedResponse"              
+                  - $ref: "#/components/schemas/CreateFavoriteUnauthorizedResponse"              
         "404":
           description: "User or Resource does not exist."
           content:
@@ -1023,7 +1023,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchFavoriteUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/FetchFavoriteUnauthorizedResponse"
         "404":
           description: "User does not exist."
           content:
@@ -1070,7 +1070,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/RankFavoritesUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/RankFavoritesUnauthorizedResponse"
         "404":
           description: "User does not exist or missing user Favorite ids."
           content:
@@ -1103,7 +1103,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeleteFavoriteUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeleteFavoriteUnauthorizedResponse"
 
   /preferences/query-filter-state:
     post:
@@ -1129,7 +1129,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreateQueryFilterStateUnAuthorizedResponse"              
+                  - $ref: "#/components/schemas/CreateQueryFilterStateUnauthorizedResponse"              
         "404":
           description: "Query, Function, EmployeeLevel, or Tag does not exist."
           content:
@@ -1164,7 +1164,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchQueryFilterStateUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/FetchQueryFilterStateUnauthorizedResponse"
         "404":
           description: "User, or QueryFilterState does not exist."
           content:
@@ -1203,7 +1203,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/UpdateQueryFilterStateUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/UpdateQueryFilterStateUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -1255,7 +1255,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/CreatePortfolioUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/CreatePortfolioUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -1294,7 +1294,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchPortfoliosUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/FetchPortfoliosUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -1326,7 +1326,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/DeletePortfolioUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/DeletePortfolioUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -1334,6 +1334,52 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeletePortfolioPermissionsDeniedResponse"
+  /program-review-tool/program:
+    get:
+      tags:
+        - "program_review_tool.program.fetch"
+      summary: "Fetch active `Program` records."
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: array
+            items:
+              type: integer
+          description: "Ids related to the desired `Program`s."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Program` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Program` records to return.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProgramsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProgramsUnauthorizedResponse"
+        "404":
+          description: "`Program` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProgramsDoesNotExistResponse"
   /request/request:
     post:
       tags:
@@ -1423,7 +1469,7 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchProfileUnAuthorizedResponse"
+                  - $ref: "#/components/schemas/FetchProfileUnauthorizedResponse"
         "403":
           description: "FORBIDDEN"
           content:
@@ -1848,7 +1894,7 @@ components:
               "user": "Test.User@harris.com"
             }
 
-    CreateVisitUnAuthorizedResponse:
+    CreateVisitUnauthorizedResponse:
       title: "Create `Visit` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -2168,7 +2214,7 @@ components:
       title: "Create `Favorite` error response due to bad request parameters."
       example: "Favorite already exists for User: {user} and Resource id: {resource}."
 
-    CreateFavoriteUnAuthorizedResponse:
+    CreateFavoriteUnauthorizedResponse:
       title: "Create `Favorite` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2260,7 +2306,7 @@ components:
               ...      
             ]
 
-    FetchFavoriteUnAuthorizedResponse:
+    FetchFavoriteUnauthorizedResponse:
       title: "Fetch `Favorite` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2381,7 +2427,7 @@ components:
       example: "Ranks given: [rank_for_favorite_1,rank_for_favorite_2, ...],
         do not match existing ranks."
     
-    RankFavoritesUnAuthorizedResponse:
+    RankFavoritesUnauthorizedResponse:
       title: "Rank user's `Favorite`s error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2401,7 +2447,7 @@ components:
       type: integer
       example: 1
 
-    DeleteFavoriteUnAuthorizedResponse:
+    DeleteFavoriteUnauthorizedResponse:
       title: "Delete `Favorite` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2519,7 +2565,7 @@ components:
               "modified": "2024-08-27T12:00:00-04:00",
             }
 
-    CreateQueryFilterStateUnAuthorizedResponse:
+    CreateQueryFilterStateUnauthorizedResponse:
       title: "Create `QueryFilterState` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2623,7 +2669,7 @@ components:
       title: "Create `Function` error response due to using a duplicate name."
       example: "Function name({name}) is duplicate."
 
-    CreateFunctionUnAuthorizedResponse:
+    CreateFunctionUnauthorizedResponse:
       title: "Create `Function` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -2711,7 +2757,7 @@ components:
       title: "Update `Function` error response due to using a duplicate name."
       example: "Function name({name}) is duplicate."
 
-    UpdateFunctionUnAuthorizedResponse:
+    UpdateFunctionUnauthorizedResponse:
       title: "Update `Function` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -2729,7 +2775,7 @@ components:
       type: integer
       example: 1
 
-    DeleteFunctionUnAuthorizedResponse:
+    DeleteFunctionUnauthorizedResponse:
       title: "Delete `Function` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3333,7 +3379,7 @@ components:
               "modified": "1970-01-01T12:00:00-04:00",
             }
 
-    FetchQueryFilterStateUnAuthorizedResponse:
+    FetchQueryFilterStateUnauthorizedResponse:
       title: "Fetch `QueryFilterState` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -3412,7 +3458,7 @@ components:
         ids."
       example: "Portfolio must be associated with at least one Program."
 
-    CreatePortfolioUnAuthorizedResponse:
+    CreatePortfolioUnauthorizedResponse:
       title: "Create `Portfolio` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3479,7 +3525,7 @@ components:
               ...
             ]
 
-    FetchPortfoliosUnAuthorizedResponse:
+    FetchPortfoliosUnauthorizedResponse:
       title: "Fetch `Portfolio` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3492,13 +3538,47 @@ components:
       type: integer
       example: 1
 
-    DeletePortfolioUnAuthorizedResponse:
+    DeletePortfolioUnauthorizedResponse:
       title: "Delete `Portfolio` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
     DeletePortfolioPermissionsDeniedResponse:
       title: "Delete `Portfolio` error response due to invalid permissions."
       example: "Permissions Denied."
+
+    FetchProgramsResponse:
+      title: "Fetch `Program`s response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "segment": "SPACE & AIRBORNE SYSTEMS",
+                "name": "Aegis AIN 987 Demo Ops_10LR #1",
+                "created": "2025-03-08T06:37:32-05:00",
+                "modified": "2024-05-01T12:19:00-04:00",
+                "pa_number": "4X25J",
+                "sector": "Air Defense",
+                "division": "North Command",
+                "tier": 2,
+                "contract_value": 606545312,
+                "active_status": True,
+              }
+            ]
+
+    FetchProgramsUnauthorizedResponse:
+      title: "Fetch `Program`s error response due to unauthorized access."
+      example: "Not authorized to access program."
+    
+    FetchProgramsDoesNotExistResponse:
+      title: "Fetch `Program` error response due to fetching a `Program` record
+      for ids that do not exist."
+      example: "Programs (ids={ids}) do not exist."
 
     FetchProfileResponse:
       title: "Fetch `Profile` response."
@@ -3539,7 +3619,7 @@ components:
                 "citizenship": "US",
               }
     
-    FetchProfileUnAuthorizedResponse:
+    FetchProfileUnauthorizedResponse:
       title: "Fetch `Profile` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3591,7 +3671,7 @@ components:
       title: "Create `SubFunction` error response due to bad request parameter."
       example: "SubFunction (name={name}) already exists."
     
-    CreateSubFunctionUnAuthorizedResponse:
+    CreateSubFunctionUnauthorizedResponse:
       title: "Create `SubFunction` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -3716,7 +3796,7 @@ components:
       title: "Update `SubFunction` error response due to using a duplicate name."
       example: "SubFunction with name: {name} already exists."
 
-    UpdateSubFunctionUnAuthorizedResponse:
+    UpdateSubFunctionUnauthorizedResponse:
       title: "Update `SubFunction` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -3739,7 +3819,7 @@ components:
       type: integer
       example: 1
 
-    DeleteSubFunctionUnAuthorizedResponse:
+    DeleteSubFunctionUnauthorizedResponse:
       title: "Delete `SubFunction` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3772,7 +3852,7 @@ components:
       title: "Create `Tag` error response due to using a duplicate label."
       example: "`Tag` (label={label}) is a duplicate."
     
-    CreateTagUnAuthorizedResponse:
+    CreateTagUnauthorizedResponse:
       title: "Create `Tag` error response due to unauthorized access."
       example: "Not authorized to access resource."
     
@@ -3854,7 +3934,7 @@ components:
         that is already used by another Tag."
       example: "Tag (label={label}) already exists."
 
-    UpdateTagUnAuthorizedErrorResponse:
+    UpdateTagUnauthorizedErrorResponse:
       title: "Update `Tag` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3868,7 +3948,7 @@ components:
       type: integer
       example: 1
 
-    DeleteTagUnAuthorizedResponse:
+    DeleteTagUnauthorizedResponse:
       title: "Delete `Tag` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3936,7 +4016,7 @@ components:
       title: "Create `EmployeeLevel` error response due to using a duplicate name."
       example: "EmployeeLevel (name={name}) already exists."
     
-    CreateEmployeeLevelUnAuthorizedResponse:
+    CreateEmployeeLevelUnauthorizedResponse:
       title: "Create `EmployeeLevel` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3979,7 +4059,7 @@ components:
         that is already used by another EmployeeLevel."
       example: "EmployeeLevel name({name}) is a duplicate."
 
-    UpdateEmployeeLevelUnAuthorizedResponse:
+    UpdateEmployeeLevelUnauthorizedResponse:
       title: "Update `EmployeeLevel` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -3997,7 +4077,7 @@ components:
       type: integer
       example: 1
 
-    DeleteEmployeeLevelUnAuthorizedResponse:
+    DeleteEmployeeLevelUnauthorizedResponse:
       title: "Delete `EmployeeLevel` error response due to unauthorized access."
       example: "Not authorized to access resource."
 
@@ -4119,7 +4199,7 @@ components:
               "modified": "1970-01-01T12:00:00-04:00",
             }
 
-    UpdateQueryFilterStateUnAuthorizedResponse:
+    UpdateQueryFilterStateUnauthorizedResponse:
       title: "Update `QueryFilterState` error response due to unauthorized access."
       example: "Not authorized to access resource."
 

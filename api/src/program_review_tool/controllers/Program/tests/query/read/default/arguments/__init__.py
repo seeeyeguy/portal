@@ -5,6 +5,9 @@ controller pytests.
 
 from typing import List
 
+# Email to authenticate a User to fetch programs.
+FETCH_PROGRAMS_USER: str = "May.Parker@harris.com"
+
 # Valid `Program` ids used to ensure the validity of our success case.
 FETCH_PROGRAMS_ALL_VALID_IDS: List[int] = list(range(1, 1001))
 
@@ -22,6 +25,9 @@ FETCH_PROGRAM_WITH_LIMIT_VALID_IDS: List[int] = [1, 2]
 # Page number used in testing fetch `Program`
 # with page tests.
 FETCH_PROGRAM_WITH_PAGE: int = 1
+
+# Ids used in testing fetch `Program` with page tests.
+FETCH_PROGRAM_WITH_PAGE_IDS: List[int] = [i for i in range(1, 51)]
 
 # Number of expected records within first page of `Programs`.
 FETCH_PROGRAM_WITH_PAGE_EXPECTED_COUNT: int = 50

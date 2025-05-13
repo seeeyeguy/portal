@@ -107,18 +107,6 @@ class TestFetchProgram(MultiDBTestCase):
             data, list(arguments.EXPECTED_PROGRAMS_PROGRAM_ID_VALIDATE_PARAMS.values())
         )
 
-    @tag("controllers.program.fetch_programs_with_limit")
-    def test_fetch_programs_with_limit(self) -> None:
-        """Success Case: Fetch active `Program` records up to a limit."""
-
-        programs = controllers.Program.fetch_programs(
-            program_ids=[], page=None, limit=arguments.FETCH_PROGRAM_WITH_LIMIT
-        )
-
-        self.assertIsInstance(programs, QuerySet[models.Program])
-
-        self.assertEqual(programs.count(), arguments.FETCH_PROGRAM_WITH_LIMIT)
-
     @tag("controllers.program.fetch_programs_with_page")
     def test_fetch_programs_with_page(self) -> None:
         """Success Case: Fetch page of active `Program` records."""
@@ -152,6 +140,18 @@ class TestFetchProgram(MultiDBTestCase):
                 serialized_program,
                 expected_program,
             )
+
+    @tag("controllers.program.fetch_programs_with_limit")
+    def test_fetch_programs_with_limit(self) -> None:
+        """Success Case: Fetch active `Program` records up to a limit."""
+
+        programs = controllers.Program.fetch_programs(
+            program_ids=[], page=None, limit=arguments.FETCH_PROGRAM_WITH_LIMIT
+        )
+
+        self.assertIsInstance(programs, QuerySet[models.Program])
+
+        self.assertEqual(programs.count(), arguments.FETCH_PROGRAM_WITH_LIMIT)
 
     @tag("controllers.program.fetch_programs_with_page_and_limit")
     def test_fetch_programs_with_page_and_limit(self) -> None:
