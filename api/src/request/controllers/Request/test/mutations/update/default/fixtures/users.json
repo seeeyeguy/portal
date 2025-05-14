@@ -1,0 +1,13 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 4,
+        "fields": {
+            "username": "Gwen.Stacy@harris.com",
+            "first_name": "Gwen",
+            "last_name": "Stacy",
+            "email": "Gwen.Stacy@harris.com",
+            "is_superuser": false
+        }
+    }
+]
