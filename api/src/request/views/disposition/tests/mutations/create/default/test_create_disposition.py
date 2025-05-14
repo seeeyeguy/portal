@@ -56,7 +56,7 @@ class TestCreateDisposition(MultiDBTestCase):
         """Success Case: Create a `Disposition` record approving a `Submitted` `Request`."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -85,7 +85,7 @@ class TestCreateDisposition(MultiDBTestCase):
         """Success Case: Create a `Disposition` record rejecting a `Submitted` `Request`."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_REJECTED_DISPOSITION,
             "justification": arguments.CREATE_DISPOSITION_REJECTED_JUSTIFICATION,
         }
@@ -114,7 +114,7 @@ class TestCreateDisposition(MultiDBTestCase):
         """Success Case: Create a `Disposition` record to revise a `Submitted` `Request`."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_REVISE_DISPOSITION,
             "justification": arguments.CREATE_DISPOSITION_REVISE_JUSTIFICATION,
         }
@@ -138,29 +138,13 @@ class TestCreateDisposition(MultiDBTestCase):
             disposition, arguments.CREATE_DISPOSITION_REVISE_EXPECTED_VALUES
         )
 
-    @tag("views.disposition.create_disposition_resource_dne")
-    def test_create_disposition_resource_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` does not exist."""
-
-        body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_DNE,
-            "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
-            "justification": "",
-        }
-
-        # Make request to create `Disposition`.
-        response = self.client.post(self.url, body, content_type="application/json")
-        # Ensure the response status code is 404.
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     @tag("views.disposition.create_disposition_request_dne")
     def test_create_disposition_request_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` has no pending `Request`."""
+        """Fail Case: Create a `Disposition` record with a given request id
+        where that `Request` does not exist."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_REQUEST_DNE,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_DNE,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -172,11 +156,11 @@ class TestCreateDisposition(MultiDBTestCase):
 
     @tag("views.disposition.create_disposition_transition_dne")
     def test_create_disposition_transition_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
+        """Fail Case: Create a `Disposition` record with a given request id
         where a needed `Transition` record does not exist."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_TRANSITION_DNE,
+            "request_id": arguments.CREATE_DISPOSITION_TRANSITION_DNE_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -188,11 +172,11 @@ class TestCreateDisposition(MultiDBTestCase):
 
     @tag("views.disposition.create_disposition_active_resource")
     def test_create_disposition_active_resource(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` is already active."""
+        """Fail Case: Create a `Disposition` record with a given request id
+        where the related `Resource` is already active."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_ACTIVE_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_ACTIVE_RESOURCE_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -202,13 +186,13 @@ class TestCreateDisposition(MultiDBTestCase):
         # Ensure the response status code is 400.
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @tag("views.disposition.create_disposition_historical_resource")
-    def test_create_disposition_historical_resource(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` is an inactive previous revision."""
+    @tag("views.disposition.create_disposition_request_not_pending")
+    def test_create_disposition_request_not_pending(self) -> None:
+        """Fail Case: Create a `Disposition` record with a given request id
+        where the related `Resource` is an inactive previous revision."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_HISTORICAL_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_HISTORICAL_RESOURCE_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -226,7 +210,7 @@ class TestCreateDisposition(MultiDBTestCase):
         self.client.force_login(user=user)
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -247,7 +231,7 @@ class TestCreateDisposition(MultiDBTestCase):
         self.client.force_login(user=user)
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -258,12 +242,12 @@ class TestCreateDisposition(MultiDBTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag("views.disposition.create_disposition_invalid_stage")
-    def test_create_disposition_transition_invalid_stage(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
+    def test_create_disposition_invalid_stage(self) -> None:
+        """Fail Case: Create a `Disposition` record with a given request id
         where the latest `Transition` is not at a valid voting `Stage`."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_INVALID_STAGE,
+            "request_id": arguments.CREATE_DISPOSITION_INVALID_STAGE_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             "justification": "",
         }
@@ -274,11 +258,11 @@ class TestCreateDisposition(MultiDBTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @tag("views.disposition.create_disposition_invalid_disposition")
-    def test_create_disposition_transition_invalid_disposition(self) -> None:
+    def test_create_disposition_invalid_disposition(self) -> None:
         """Fail Case: Create a `Disposition` record with an invalid disposition value."""
 
         body: dict = {
-            "resource_id": arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
             "disposition": arguments.CREATE_DISPOSITION_INVALID_DISPOSITION,
             "justification": "",
         }

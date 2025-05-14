@@ -5,6 +5,7 @@ Collection of pytests for Disposition's create controller.
 import pytest
 from typing import cast, List
 
+from django.contrib.auth import models as AuthModels
 from django.test import tag
 
 from request import controllers, exceptions, models
@@ -40,6 +41,14 @@ class TestCreateDisposition(MultiDBTestCase):
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/dispositions.json",
     ]
 
+    def _fetch_approver(self, email: str) -> AuthModels.User:
+        """Fetch `User` record, given an email."""
+
+        try:
+            return AuthModels.User.objects.get(email=email)
+        except AuthModels.User.DoesNotExist:
+            return cast(AuthModels.User, AuthModels.AnonymousUser())
+
     @tag("controllers.disposition.create_disposition_approved_disposition")
     def test_create_disposition_approved_disposition(self) -> None:
         """Success Case: Create a `Disposition` record approving a
@@ -47,14 +56,14 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=arguments.CREATE_DISPOSITION_USER,
-            resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
         )
 
         # Fetch approved `Request` record.
         request_record: models.Request = models.Request.objects.only("id").get(
-            resource_id=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            id=arguments.CREATE_DISPOSITION_REQUEST_ID,
             status=models.Request.RequestStatus.APPROVED,
         )
 
@@ -95,15 +104,15 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=arguments.CREATE_DISPOSITION_USER,
-            resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_REJECTED_DISPOSITION,
             justification=arguments.CREATE_DISPOSITION_REJECTED_JUSTIFICATION,
         )
 
         # Fetch rejected `Request` record.
         request_record: models.Request = models.Request.objects.only("id").get(
-            resource_id=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            id=arguments.CREATE_DISPOSITION_REQUEST_ID,
             status=models.Request.RequestStatus.REJECTED,
         )
 
@@ -144,15 +153,15 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=arguments.CREATE_DISPOSITION_USER,
-            resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_REVISE_DISPOSITION,
             justification=arguments.CREATE_DISPOSITION_REVISE_JUSTIFICATION,
         )
 
         # Fetch pending `Request` record.
         request_record: models.Request = models.Request.objects.only("id").get(
-            resource_id=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+            id=arguments.CREATE_DISPOSITION_REQUEST_ID,
             status=models.Request.RequestStatus.PENDING,
         )
 
@@ -186,75 +195,65 @@ class TestCreateDisposition(MultiDBTestCase):
             models.Stage.StageLevels.DRAFT,
         )
 
-    @tag("controllers.disposition.create_disposition_user_dne")
-    def test_create_disposition_user_dne(self) -> None:
+    @tag("controllers.disposition.create_disposition_user_not_authenticated")
+    def test_create_disposition_user_not_authenticated(self) -> None:
         """Fail Case: Create a `Disposition` record with a `User`
-        that does not exist."""
+        that is not authenticated."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER_DNE,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
-                disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
-            )
-
-    @tag("controllers.disposition.create_disposition_resource_dne")
-    def test_create_disposition_resource_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` does not exist."""
-
-        with pytest.raises(exceptions.RequestError):
-            _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_DNE,
+                approver=self._fetch_approver(
+                    email=arguments.CREATE_DISPOSITION_USER_DNE
+                ),
+                request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
     @tag("controllers.disposition.create_disposition_request_dne")
     def test_create_disposition_request_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` has no pending `Request`."""
+        """Fail Case: Create a `Disposition` record with a given request id
+        where that `Request` does not exist."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_REQUEST_DNE,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_REQUEST_DNE,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
     @tag("controllers.disposition.create_disposition_transition_dne")
     def test_create_disposition_transition_dne(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
+        """Fail Case: Create a `Disposition` record with a given request id
         where a needed `Transition` record does not exist."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_TRANSITION_DNE,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_TRANSITION_DNE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
     @tag("controllers.disposition.create_disposition_active_resource")
     def test_create_disposition_active_resource(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` is already active."""
+        """Fail Case: Create a `Disposition` record with a given request id
+        where the related `Resource` is already active."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_ACTIVE_RESOURCE_ID,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_ACTIVE_RESOURCE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
-    @tag("controllers.disposition.create_disposition_historical_resource")
-    def test_create_disposition_historical_resource(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
-        where that `Resource` is an inactive previous revision."""
+    @tag("controllers.disposition.create_disposition_request_not_pending")
+    def test_create_disposition_request_not_pending(self) -> None:
+        """Fail Case: Create a `Disposition` record with a given request id
+        where the related `Resource` is an inactive previous revision."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_HISTORICAL_RESOURCE_ID,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_HISTORICAL_RESOURCE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
@@ -264,8 +263,10 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+                approver=self._fetch_approver(
+                    email=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS
+                ),
+                request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
@@ -276,20 +277,22 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+                approver=self._fetch_approver(
+                    email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE
+                ),
+                request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
     @tag("controllers.disposition.create_disposition_invalid_stage")
     def test_create_disposition_invalid_stage(self) -> None:
-        """Fail Case: Create a `Disposition` record with a given resource id
+        """Fail Case: Create a `Disposition` record with a given request id
         where the latest `Transition` is not at a valid voting `Stage`."""
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_INVALID_STAGE,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_INVALID_STAGE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
@@ -299,7 +302,7 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=arguments.CREATE_DISPOSITION_USER,
-                resource=arguments.CREATE_DISPOSITION_RESOURCE_ID,
+                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_INVALID_DISPOSITION,
             )

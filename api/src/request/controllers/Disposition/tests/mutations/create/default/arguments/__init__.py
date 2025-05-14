@@ -5,7 +5,7 @@ controller pytests.
 
 # Arguments for successfully creating `Disposition` record.
 CREATE_DISPOSITION_USER: str = "Tony.Stark@harris.com"
-CREATE_DISPOSITION_RESOURCE_ID: int = 1
+CREATE_DISPOSITION_REQUEST_ID: int = 1
 
 # Valid `Disposition` values.
 CREATE_DISPOSITION_APPROVED_DISPOSITION: str = "APPROVED"
@@ -29,24 +29,21 @@ CREATE_DISPOSITION_REVOKED_USER_ACCESS: str = "Miles.Morales@harris.com"
 # on the current `Stage`.
 CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE: str = "May.Parker@harris.com"
 
-# Invalid `Resource` id for testing failure case.
-CREATE_DISPOSITION_RESOURCE_DNE: int = 9999
+# Invalid `Request` id for testing failure case.
+CREATE_DISPOSITION_REQUEST_DNE: int = 9999
 
-# `Resource` id for testing create `Disposition` where the latest `Transition`
+# `Request` id for testing create `Disposition` where the latest `Transition`
 # is not at a valid voting `Stage`.
-CREATE_DISPOSITION_RESOURCE_INVALID_STAGE: int = 2
+CREATE_DISPOSITION_INVALID_STAGE_REQUEST_ID: int = 2
 
-# `Resource` id for testing create `Disposition` on an active `Resource` record.
-CREATE_DISPOSITION_ACTIVE_RESOURCE_ID: int = 3
+# `Request` id for testing create `Disposition` on an active `Resource` record.
+CREATE_DISPOSITION_ACTIVE_RESOURCE_REQUEST_ID: int = 3
 
-# `Resource` id for testing create `Disposition` on a historical `Resource` record.
-CREATE_DISPOSITION_HISTORICAL_RESOURCE_ID: int = 4
+# `Request` id for testing create `Disposition` on a historical `Resource` record.
+CREATE_DISPOSITION_HISTORICAL_RESOURCE_REQUEST_ID: int = 4
 
 # `Resource` id for testing create `Disposition` where a `Transition` does not exist.
-CREATE_DISPOSITION_RESOURCE_TRANSITION_DNE: int = 6
-
-# `Resource` id for testing create `Disposition` with `Resource` with no pending `Request`.
-CREATE_DISPOSITION_RESOURCE_REQUEST_DNE: int = 7
+CREATE_DISPOSITION_TRANSITION_DNE_REQUEST_ID: int = 6
 
 # Expected values for created `APPROVED` `Disposition`.
 CREATE_DISPOSITION_APPROVED_EXPECTED_VALUES: dict = {
