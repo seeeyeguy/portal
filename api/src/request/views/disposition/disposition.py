@@ -43,8 +43,8 @@ class Disposition(View):
 
             # Call controller to create `Disposition`.
             disposition = controllers.Disposition.create_disposition(
-                approver=request.user.email,
-                resource=body["resource_id"],
+                approver=request.user,
+                request=body["request_id"],
                 disposition=body["disposition"],
                 justification=body.pop("justification", ""),
             )

@@ -1380,6 +1380,63 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProgramsDoesNotExistResponse"
+  /request/disposition:
+    post:
+      tags:
+        - "request.disposition.create"
+      summary: "Create a Disposition."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDispositionRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionDispositionNotValidResponse"
+                  - $ref: "#/components/schemas/CreateDispositionResourceIsAlreadyActiveResponse"
+                  - $ref: "#/components/schemas/CreateDispositionRequestNotPendingResponse"
+                  - $ref: "#/components/schemas/CreateDispositionDispositionNotPermittedResponse"
+                  - $ref: "#/components/schemas/CreateDispositionDispositionAlreadyExistsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionForbiddenErrorResponse"
+        "404":
+          description: "Request does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionRequestDoesNotExistResponse"
+        "409":
+          description: "CONFLICT"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateDispositionTransitionDoesNotExistResponse"
   /request/request:
     post:
       tags:
@@ -4231,6 +4288,107 @@ components:
       title: "Update `QueryFilterState` error response due to supplying an id
         for a `Tag` that does not exist."
       example: "Some Tags (ids={tags}) do not exist."
+
+    CreateDispositionRequest:
+      title: "Create `Disposition` request."
+      type: object
+      properties:
+        request_id:
+          type: integer
+          description: Id of a pending `Request` to be reviewed.
+          default: 1
+        disposition:
+          type: string
+          description: Value of a `Disposition`. Accepted values include `APPROVED`, `REJECTED` or `REVISE`.
+          default: "APPROVED"
+        justification:
+          type: string
+          description: A reason as to why a disposition was cast. Only recorded if value of `Disposition` is `REJECTED` or `REVISE`.
+          default: ""
+
+    CreateDispositionResponse:
+      title: "Create `Disposition` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "approver": {
+                "id": 1,
+                "user": {
+                    "id": 3,
+                    "username": "Tony.Stark@harris.com",
+                    "email": "Tony.Stark@harris.com",
+                    "first_name": "Tony",
+                    "last_name": "Stark",
+                    "is_active": True,
+                },
+                "role": {"id": 1, "name": "Superuser", "description": "Superuser.", "level": 1},
+                "stage": [
+                  {
+                      "id": 2,
+                      "name": "Submitted",
+                      "description": "A resource was submitted.",
+                      "level": 2,
+                  },
+                  {
+                      "id": 3,
+                      "name": "Approved by Business Process Expert",
+                      "description": "A resource was approved by the Business Process Expert.",
+                      "level": 3,
+                  },
+                ],
+              },
+              "transition": 3,
+              "disposition": "APPROVED",
+              "justification": "",
+            }
+
+    CreateDispositionDispositionNotValidResponse:
+      title: "Create `Disposition` error due to supplying a
+        disposition that is not valid."
+      example: "Disposition (disposition) is not valid. Disposition must be APPROVED, REJECTED or REVISE."
+    
+    CreateDispositionRequestNotPendingResponse:
+      title: "Create `Disposition` error due to supplying an id
+        for a `Request` that is not PENDING."
+      example: "Request (id=request_id) is not PENDING."
+
+    CreateDispositionResourceIsAlreadyActiveResponse:
+      title: "Create `Disposition` error due to supplying an id
+        for a `Request` related to a `Resource` that is already active."
+      example: "Resource (id=resource_id) for Request (id=request_id) is already active."
+
+    CreateDispositionDispositionNotPermittedResponse:
+      title: "Create `Disposition` error due to submitting a
+        disposition at an invalid stage."
+      example: "Disposition is not permitted at Stage (name=stage_name)."
+
+    CreateDispositionDispositionAlreadyExistsResponse:
+      title: "Create `Disposition` error due to submitting a
+        disposition for a `Request` that already has a disposition
+        at the current stage."
+      example: "Disposition already exists for Request (id=request_id) at Stage (name=stage_name)."
+
+    CreateDispositionUnauthorizedResponse:
+      title: "Create `Disposition` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreateDispositionForbiddenErrorResponse:
+      title: "Create `Disposition` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    CreateDispositionRequestDoesNotExistResponse:
+      title: "Create `Disposition` error response due to using an id for
+        a `Request` that does not exist."
+      example: "Request (id=request_id) does not exist."
+    
+    CreateDispositionTransitionDoesNotExistResponse:
+      title: "Create `Disposition` error response due to attempting to
+        create a disposition for a `Request` where its related `Transition`
+        does not exist."
+      example: "Transition for Request (id=request_id) does not exist."
 
     CreateRequestRequest:
       title: "Create `Request` request." 

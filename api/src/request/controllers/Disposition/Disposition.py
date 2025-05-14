@@ -29,15 +29,15 @@ class Disposition:
 
     @staticmethod
     def create_disposition(
-        approver: str, resource: int, disposition: str, justification: str = ""
+        approver: User, request: int, disposition: str, justification: str = ""
     ) -> models.Disposition:
         """
         Create a `Disposition` record in the database using the given
-        user, resource id, disposition, and justification.
+        user, request id, disposition, and justification.
 
         Accepts:
-            * approver (str): The user that approved the given resource.
-            * resource (int): The id of the resource being created/modified.
+            * approver (auth.User): The user approving the given request.
+            * request (int): The id of the request to be considered.
             * disposition (str): The vote being recorded. This
                 can be `APPROVED`, `REJECTED`, `REVISE`, etc.
             * justification (str): The reason as to why a disposition
@@ -48,7 +48,12 @@ class Disposition:
                 record.
         """
 
-        log_msg: str = f"Creating Disposition: {disposition} for User: {approver} and Resource: {resource}."
+        approver_email: str = approver.email if approver.is_authenticated else None
+
+        log_msg: str = (
+            f"Creating Disposition (disposition={disposition})"
+            f" for Request (id={request}) by User (email={approver_email})."
+        )
 
         if justification:
             log_msg = f"{log_msg} Justification: {justification}"
@@ -63,7 +68,7 @@ class Disposition:
                 models.Disposition.DispositionValues.REVISE,
             ]:
                 err_msg = (
-                    f"Disposition: {disposition} is not valid. "
+                    f"Disposition ({disposition}) is not valid. "
                     f"Disposition must be {models.Disposition.DispositionValues.APPROVED}, "
                     f"{models.Disposition.DispositionValues.REJECTED} "
                     f"or {models.Disposition.DispositionValues.REVISE}."
@@ -71,21 +76,21 @@ class Disposition:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
-            # Fetch `User` record.
-            user_record: User = User.objects.only("username").get(
-                email__iexact=approver
-            )
-
             # Construct list of `Role`s allowed to create a `Disposition`.
             valid_approvers: List[int] = [
                 UsersModels.Role.RoleLevels.SUPERUSER,
                 UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
             ]
 
+            if not (approver and approver.is_authenticated):
+                err_msg = "Authentication required."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 401)
+
             # Fetch `Access` record.
             access_record: Union[UsersModels.Access, None] = (
                 UsersModels.Access.objects.filter(
-                    user_id=user_record.username,
+                    user=approver,
                     access_revoked_date__isnull=True,
                     role__level__in=valid_approvers,
                 )
@@ -98,32 +103,27 @@ class Disposition:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
-            # Fetch `Resource` record.
-            resource_record: Union[Resource, None] = (
-                Resource.objects.only("id").filter(id=resource).first()
-            )
-
-            if not resource_record:
-                err_msg = f"Resource (id={resource}) does not exist."
-                LOGGER.error(err_msg)
-                raise exceptions.RequestError(err_msg, 404)
-
-            if resource_record.active:
-                LOGGER.warning(resource_record.active)
-                err_msg = f"Resource (id={resource}) is not pending."
-                LOGGER.error(err_msg)
-                raise exceptions.RequestError(err_msg, 400)
-
             # Fetch pending `Request` record.
             request_record: models.Request = models.Request.objects.select_related(
                 "originator__user"
-            ).get(resource_id=resource_record.id)
+            ).get(id=request)
 
             if request_record.status in {
                 models.Request.RequestStatus.APPROVED,
                 models.Request.RequestStatus.REJECTED,
             }:
-                err_msg = f"Resource (id={resource}) is a historical record."
+                err_msg = f"Request (id={request}) is not {models.Request.RequestStatus.PENDING}."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 400)
+
+            # Fetch `Resource` record related to request.
+            resource_record: Resource = request_record.resource
+
+            if resource_record.active:
+                err_msg = (
+                    f"Resource (id={resource_record.id})"
+                    f" for Request (id={request}) is already active."
+                )
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
@@ -136,11 +136,7 @@ class Disposition:
 
             # Ensure a `Transition` record exists.
             if not transition_record:
-                err_msg = (
-                    f"Transition for Resource"
-                    f"(id={resource_record.id}, name={resource_record.name}, url={resource_record.url}) "
-                    "does not exist."
-                )
+                err_msg = f"Transition for Request (id={request}) does not exist."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 409)
 
@@ -150,14 +146,13 @@ class Disposition:
                 models.Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT,
             ]:
                 err_msg = (
-                    f"Disposition cannot be recorded for Resource"
-                    f"(id={resource_record.id}, name={resource_record.name}, url={resource_record.url}) "
-                    f"in Stage: {transition_record.stage.name}."
+                    "Disposition is not permitted at"
+                    f" Stage (name={transition_record.stage.name})."
                 )
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
-            # Ensure `User` has an `Access` to vote on the current `Stage`.
+            # Ensure `User` has an `Access` to vote at the current `Stage`.
             if not access_record.stage.filter(
                 level=transition_record.stage.level
             ).exists():
@@ -166,26 +161,25 @@ class Disposition:
                 raise exceptions.RequestError(err_msg, 403)
 
             # Ensure `User` cannot vote on their own `Request`.
-            if user_record.email == request_record.originator.user.email:
+            if approver.email == request_record.originator.user.email:
                 err_msg = "Permissions denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
             # Ensure `Disposition` record doesn't already exist for the
-            # latest `Transition` for the given `Resource`.
+            # latest `Transition`.
             if models.Disposition.objects.filter(
                 transition_id=transition_record.id,
             ).exists():
                 err_msg = (
-                    f"Disposition: {disposition.upper()} already exists for Resource"
-                    f"(id={resource_record.id}, name={resource_record.name}, url={resource_record.url}) "
-                    f"at Stage: {transition_record.stage.name}."
+                    f"Disposition already exists for Request (id={request})"
+                    f"at Stage (name={transition_record.stage.name})."
                 )
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
             with transaction.atomic():
-                # Create `Disposition` record for the given `User` and `Resource`.
+                # Create `Disposition` record for the given `User` and `Request`.
                 disposition_record: models.Disposition = (
                     models.Disposition.objects.create(
                         approver_id=access_record.id,
@@ -213,9 +207,9 @@ class Disposition:
                     new_resource_revision = 1
 
                     # Deprecate previous `Resource` revision if it exists.
-                    previous_resource_revision: Union[
-                        Resource, None
-                    ] = resource_record.previous_revision
+                    previous_resource_revision: Union[Resource, None] = (
+                        resource_record.previous_revision
+                    )
                     if previous_resource_revision:
                         previous_resource_revision.active = False
                         new_resource_revision = (
@@ -244,12 +238,7 @@ class Disposition:
                 request_record.save()
 
             return disposition_record
-
-        except User.DoesNotExist as exc:
-            err_msg = f"User (email={approver}) does not exist."
-            LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, 404) from exc
         except models.Request.DoesNotExist as exc:
-            err_msg = f"A pending Request for Resource (id={resource}) does not exist."
+            err_msg = f"A pending Request (id={request}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, 404) from exc
