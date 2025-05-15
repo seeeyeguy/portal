@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import { getCookie } from "routes/api/helpers/headers/cookies";
+import { getCookie } from "utils/CookieUtility";
 
 const api = createApi({
   baseQuery: fetchBaseQuery({

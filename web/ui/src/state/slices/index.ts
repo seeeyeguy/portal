@@ -1,4 +1,4 @@
-import ResourceSearch from "state/slices/portal/directory/Resource/Search";
+import ResourceSearch from "state/slices/ResourceSearchActions";
 
 const AppReducers = {
   ResourceSearch,

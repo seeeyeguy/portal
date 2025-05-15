@@ -3,11 +3,11 @@ import favoriteApi, {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
   useOrderFavoritesMutation,
-} from "state/query/api/portal/preferences/Favorite";
+} from "state/query/api/portal/preferences/FavoriteApi";
 import queryFilterStateApi, {
   useGetQueryFilterStateQuery,
   usePostQueryFilterStateMutation,
-} from "state/query/api/portal/preferences/QueryFilterState";
+} from "state/query/api/portal/preferences/QueryFilterStateApi";
 
 export default {
   favoriteApi,

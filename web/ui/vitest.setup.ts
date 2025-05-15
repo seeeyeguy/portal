@@ -1,7 +1,7 @@
 import { setupServer } from "msw/node";
 import "@testing-library/jest-dom/vitest";
 
-import handlers from "./src/utils/tests/mocks/handlers";
+import handlers from "./src/tests/mocks/HandlerMocks";
 
 const server = setupServer(...handlers);
 
