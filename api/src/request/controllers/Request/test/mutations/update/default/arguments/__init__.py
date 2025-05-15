@@ -44,6 +44,7 @@ BASE_UPDATE_REQUEST_STRUCTURE_PARAMS: UpdateRequestParams = {
 }
 
 VALID_UPDATE_REQUEST_DRAFT = {
+    "id": 1,
     "resource": {
         "employee_levels": [
             {
@@ -106,11 +107,11 @@ VALID_UPDATE_REQUEST_DRAFT = {
             },
         ],
         "primary_point_of_contact": "May.Parker@harris.com",
-        "description": "Test resource description for create tests.",
+        "description": "Test resource description for update tests.",
         "revision_number": None,
-        "name": "Test Create Name",
+        "name": "Test Update Name",
         "url": "https://www.test-site.com",
-        "type": "test create type",
+        "type": "test update type",
         "download": False,
         "active": False,
         "previous_revision": None,
@@ -140,6 +141,7 @@ VALID_UPDATE_REQUEST_DRAFT = {
 }
 
 VALID_UPDATE_REQUEST_SUBMITTED = {
+    "id": 1,
     "resource": {
         "employee_levels": [
             {
@@ -202,11 +204,11 @@ VALID_UPDATE_REQUEST_SUBMITTED = {
             },
         ],
         "primary_point_of_contact": "May.Parker@harris.com",
-        "description": "Test resource description for create tests.",
+        "description": "Test resource description for update tests.",
         "revision_number": None,
-        "name": "Test Create Name",
+        "name": "Test Update Name",
         "url": "https://www.test-site.com",
-        "type": "test create type",
+        "type": "test update type",
         "download": False,
         "active": False,
         "previous_revision": None,
@@ -232,5 +234,5 @@ VALID_UPDATE_REQUEST_SUBMITTED = {
         "access_granted_date": "2024-08-27T12:00:00-04:00",
         "access_revoked_date": None,
     },
-    "status": "SUBMITTED",
+    "status": "PENDING",
 }

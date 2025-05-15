@@ -209,11 +209,9 @@ class Request:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
-            # Validate the requester and originator are not the same.
+            # Validate the requester and originator are the same.
             if requester_access.user != request.originator.user:
-                err_msg = (
-                    f"Requester for Request(id={request_id}) is not the originator."
-                )
+                err_msg = "Permissions Denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
@@ -247,8 +245,10 @@ class Request:
             # If the `Request` was submitted on update,
             # transition `Request` to `SUBMITTED`.
             if stage == SUBMITTED:
-                request, _ = transition_request(request_id=request.id)
+                _, _ = transition_request(request_id=request.id)
 
+            # Refresh the `Request` record.
+            request.refresh_from_db()
             return request, rows_affected
         except KeyError as exc:
             err_msg: str = "Invalid parameters given."
