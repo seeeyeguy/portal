@@ -80,6 +80,9 @@ class TestUpdateRequest(MultiDBTestCase):
     url: str = reverse("request.request")
 
     @tag("views.request.update_request")
+    @override_settings(
+        STORAGES={"default": {"BACKEND": "django.core.files.storage.InMemoryStorage"}}
+    )
     def test_update_request(self) -> None:
         """Success Case: Update a `Request` record."""
 
@@ -113,6 +116,9 @@ class TestUpdateRequest(MultiDBTestCase):
             self.assertEqual(item[1]["stage"]["level"], stages[i])
 
     @tag("views.request.update_request_submitted")
+    @override_settings(
+        STORAGES={"default": {"BACKEND": "django.core.files.storage.InMemoryStorage"}}
+    )
     def test_update_request_submitted(self) -> None:
         """Success Case: Update and submit a `Request` record."""
 
