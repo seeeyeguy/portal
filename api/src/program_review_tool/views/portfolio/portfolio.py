@@ -66,8 +66,9 @@ class Portfolio(View):
             LOGGER.info(f"PUT /program-review-tool/portfolio?id={portfolio_id}.")
 
             # Update `Portfolio`.
-            portfolio = controllers.Portfolio.update_portfolio(
+            portfolio, _ = controllers.Portfolio.update_portfolio(
                 portfolio_id=portfolio_id,
+                user=request.user,
                 name=body["name"],
                 programs=body["programs"],
             )

@@ -5,7 +5,7 @@ the `Portfolio` table.
 """
 
 import logging
-from typing import cast, List
+from typing import cast, List, Tuple
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
@@ -44,7 +44,7 @@ class Portfolio:
         LOGGER.info(
             (
                 f"Creating Portfolio with name: {name} and Programs:{programs} "
-                f"for user: {user.email if user.is_authenticated else 'None'}"
+                f"for user: {user.email if user.is_authenticated else 'None'}."
             )
         )
 
@@ -92,8 +92,8 @@ class Portfolio:
     # pylint: disable=line-too-long
     @staticmethod
     def update_portfolio(
-        portfolio_id: int, name: str, programs: List[int]
-    ) -> models.Portfolio:
+        portfolio_id: int, user: AuthModels.User, name: str, programs: List[int]
+    ) -> Tuple[models.Portfolio, int]:
         """
         Update a `Portfolio` record for the given id with the given params.
 
@@ -108,15 +108,58 @@ class Portfolio:
             * rows_affected (int): The number of `Portfolio` records updated.
         """
 
-        LOGGER.info(
-            (
-                f"Updating Portfolio(id={portfolio_id}) with name: {name} "
-                f"and Programs:{programs}"
+        try:
+            LOGGER.info(
+                (
+                    f"Updating Portfolio(id={portfolio_id}) with name: {name} "
+                    f"and Programs: {programs}."
+                )
             )
-        )
 
-        # Please remove ignore after implementation.
-        return {}  # type: ignore[return-value]
+            # Fetch `Portfolio` record by id and user.
+            portfolio: models.Portfolio = models.Portfolio.objects.get(
+                id=portfolio_id, user=user
+            )
+
+            # Ensure `Program` ids list is not empty.
+            if not programs:
+                err_msg = "Portfolio must be associated with at least one Program."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+            # Fetch `Program` records by id.
+            program_records: QuerySet[models.Program] = models.Program.objects.filter(
+                id__in=programs
+            )
+            if program_records.count() != len(set(programs)):
+                err_msg = f"Some Programs (ids={programs}) do not exist."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 404)
+
+            # Check for existing `Portfolio` with given name, excluding
+            # the target `Portfolio`.
+            if (
+                models.Portfolio.objects.filter(user=user, name=name)
+                .exclude(id=portfolio.id)
+                .exists()
+            ):
+                err_msg = f"Portfolio with name: {name} already exists."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+            # Update the `Portfolio` record.
+            rows_affected: int = models.Portfolio.objects.filter(
+                id=portfolio.id
+            ).update(name=name)
+
+            portfolio.programs.set(program_records)
+            portfolio.refresh_from_db()
+
+            return portfolio, rows_affected
+        except models.Portfolio.DoesNotExist as exc:
+            err_msg = f"Portfolio (id={portfolio_id}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
 
     @staticmethod
     def delete_portfolio(portfolio_id: int, user: AuthModels.User) -> int:
@@ -165,7 +208,7 @@ class Portfolio:
         """
 
         LOGGER.info(
-            f"Fetching Portfolios for user: {user.email if user.is_authenticated else 'None'}"
+            f"Fetching Portfolios for user: {user.email if user.is_authenticated else 'None'}."
         )
 
         if not (user and user.is_authenticated):
