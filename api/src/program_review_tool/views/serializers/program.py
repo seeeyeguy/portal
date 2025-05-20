@@ -20,4 +20,4 @@ class ReviewProgramRequest(serializers.Serializer):
     """Request serializer for POST /v1/program-review-tool/program/review."""
 
     programs = serializers.ListField(child=serializers.IntegerField())
-    review_name = serializers.CharField(max_length=1028)
+    name = serializers.CharField(max_length=1028, default="Program Review")

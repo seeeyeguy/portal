@@ -5,7 +5,7 @@ organization and/or advance its objectives. A `Program` consists
 of several attributes, as well as metadata that may be used to
 provide insights into those attributes. `Program Review tool`
 uses `Program` data to generate its content for its users. This
-content is primarily a set of Powerpoint slides that summarize the
+content is primarily a set of PowerPoint slides that summarize the
 health of a `Program`. `Program`s may be grouped together to form
 `Portfolio`s that a `User` may quickly access so that they can
 easily generate `Program Review Tool`s content. These `Program`s

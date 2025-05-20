@@ -1,7 +1,7 @@
 """
 `Portfolio` represents a collection
 of `Program`s that a user may submit for review,
-generating a Powerpoint review template that provides
+generating a PowerPoint review template that provides
 a consolidated insight into the health of the programs.
 A `Portfolio` relates a `User` to many `Program`s, where
 a `Program` is an effort supported by L3Harris Technologies.
@@ -19,7 +19,7 @@ class Portfolio(DateTimeAbstractModel):
     """
     `Portfolio` represents a collection
     of `Program`s that a user may submit for review,
-    generating a Powerpoint review template that provides
+    generating a PowerPoint review template that provides
     a consolidated insight into the health of the programs.
 
     A `Portfolio` includes:

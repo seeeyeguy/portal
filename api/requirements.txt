@@ -83,7 +83,7 @@ pyodbc==5.2.0
 python-dateutil==2.9.0
 # A Python library for creating, reading, and updating
 # PowerPoint (.pptx) files.
-python-pptx==0.6.23
+python-pptx==1.0.2
 # Redis Python client.
 redis[hiredis]
 # An Open Source Python library for generating PDFs and graphics.

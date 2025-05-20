@@ -4,7 +4,7 @@ fetch and generate reviews for records within the `Program` table.
 """
 
 import logging
-from typing import List
+from typing import List, Union
 
 from django import http
 from django.utils.decorators import method_decorator
@@ -16,10 +16,13 @@ from program_review_tool.models.Program.serializers import ProgramSerializer
 from program_review_tool.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
+from manager.settings import SERVER_HOST
 from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
 LOGGER = logging.getLogger(__name__)
+
+VLE_HOSTNAME_PREFIX: str = "lnvle"
 
 
 class Program(View):
@@ -30,20 +33,34 @@ class Program(View):
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.ReviewProgramRequest))
-    def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+    def post(
+        self, request: DjangoHttpRequest, body: dict, _: dict
+    ) -> Union[http.JsonResponse, http.StreamingHttpResponse]:
         """Endpoint for POST /program-review-tool/program/review."""
-
         try:
             LOGGER.info("POST /program-review-tool/program/review.")
 
-            review_status = controllers.Program.review_programs(
-                program_ids=body["program_ids"],
-                user=request.user,
-                review_name=body["review_name"],
-            )
+            if SERVER_HOST.lower().startswith(VLE_HOSTNAME_PREFIX):
+                return http.JsonResponse(
+                    "No connection to L3Harris network.",
+                    status=status.HTTP_502_BAD_GATEWAY,
+                    safe=False,
+                )
 
-            return http.JsonResponse(
-                review_status, status=status.HTTP_201_CREATED, safe=False
+            review_status, export_path = controllers.Program.review_programs(
+                program_ids=body["programs"],
+                user=request.user,
+                review_name=body["name"],
+            )
+            if export_path is None:
+                return http.JsonResponse(
+                    review_status,
+                    status=status.HTTP_200_OK,
+                    safe=False,
+                )
+            return http.FileResponse(
+                open(export_path, "rb"),
+                content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
             )
         except exceptions.ProgramReviewToolError as exc:
             return http.JsonResponse(exc.message, status=exc.status, safe=False)

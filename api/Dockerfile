@@ -3,6 +3,7 @@ FROM python:3.12-bullseye AS base
 # Add needed env variables.
 ARG APP_NAME
 ARG CA_CERTIFICATE_FOR_API
+ARG CA_CERTIFICATE_FOR_TABLEAU
 
 # Construct path to project.
 # Need to change PROJECT to app name.
@@ -19,12 +20,15 @@ ADD ${CA_CERTIFICATE_FOR_API} /usr/local/share/${CA_CERTIFICATE_FOR_API}
 ADD ${CA_CERTIFICATE_FOR_API} /etc/ssl/certs/ca-certificates.crt
 ENV PIP_CERT=/usr/local/share/${CA_CERTIFICATE_FOR_API}
 
+ADD ${CA_CERTIFICATE_FOR_TABLEAU} /etc/ssl/certs/tableau-ca-certificate.crt
+ENV TABLEAU_CA_CERTIFICATE=/etc/ssl/certs/tableau-ca-certificate.crt
+
 # Install container dependencies.
 RUN DevTools="emacs iputils-ping less netcat openssh-client unzip vim zip" && \
     TLSDeps="apt-transport-https ca-certificates gnupg1 libsasl2-dev libssl-dev" && \
     PostgresDeps="gcc libpq-dev postgresql-client python3-dev" && \
     MSSQLDeps="msodbcsql17 unixodbc" && \
-    DjangoDeps="graphviz graphviz-dev libjpeg-dev python3-enchant" && \
+    DjangoDeps="cron graphviz graphviz-dev libjpeg-dev python3-enchant" && \
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && \
     curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
     curl https://packages.microsoft.com/config/debian/11/prod.list | tee /etc/apt/sources.list.d/msprod.list && \

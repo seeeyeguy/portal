@@ -546,10 +546,26 @@ RQ_QUEUES = {
 ################
 
 CRONJOBS = [
+    # Description: Deletes the expired `Program` review PowerPoint exports.
+    # Execution time: Everyday at 3:00 AM.
+    (
+        "0 3 * * *",
+        "program_review_tool.utils.review.export.cleanup_expired_exports",
+    ),
+    # Description: Sign-in to Tableau Server in order to keep the token,
+    #   used for fetching images from Tableau, fresh in the cache.
+    # Execution time: Everyday at 4:00 AM.
+    (
+        "0 4 * * *",
+        "program_review_tool.utils.review.tableau.cache_tableau_auth_token",
+    ),
+    # Description: Communicate with external database to update the `Program`
+    #   entries data.
+    # Execution time: Everyday at 5:00 AM.
     (
         "0 5 * * *",
         "program_review_tool.models.Program.utils.update_programs_from_external_database",
-    )
+    ),
 ]
 
 #########################
