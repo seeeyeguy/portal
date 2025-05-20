@@ -7,7 +7,18 @@
             "first_name": "Miles",
             "last_name": "Morales",
             "email": "Miles.Morales@harris.com",
-            "is_superuser": true
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 5,
+        "fields": {
+            "username": "Gwen.Stacy@harris.com",
+            "first_name": "Gwen",
+            "last_name": "Stacy",
+            "email": "Gwen.Stacy@harris.com",
+            "is_superuser": false
         }
     }
 ]

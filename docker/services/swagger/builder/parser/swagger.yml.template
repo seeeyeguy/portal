@@ -473,6 +473,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateResourceUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateResourceForbiddenErrorResponse"
         "404":
           description: "Resource, EmployeeLevel, SubFunction or Tag does not exist."
           content:
@@ -583,6 +590,13 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/UpdateResourceUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateResourceForbiddenErrorResponse"
         "404":
           description: "Resource, EmployeeLevel, SubFunction or Tag does not exist."
           content:
@@ -3072,6 +3086,10 @@ components:
       title: "Create `Resource` error response due to unauthorized access."
       example: "Not authorized to access this resource."
 
+    CreateResourceForbiddenErrorResponse:
+      title: "Create `Resource` error response due to forbidden access."
+      example: "Permissions Denied."
+
     CreateResourcePreviousRevisionDoesNotExistResponse:
       title: "Create `Resource` error response due to a given previous revision
         id where that `Resource` does not exist."
@@ -3385,6 +3403,10 @@ components:
     UpdateResourceUnauthorizedResponse:
       title: "Update `Resource` error response due to unauthorized access."
       example: "Not authorized to access resource."
+    
+    UpdateResourceForbiddenErrorResponse:
+      title: "Update `Resource` error response due to forbidden access."
+      example: "Permissions Denied."
 
     UpdateResourceResourceDoesNotExistResponse:
       title: "Update `Resource` error response due to using an id for

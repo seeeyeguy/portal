@@ -99,7 +99,7 @@ class Disposition:
             )
 
             if not access_record:
-                err_msg = "Permissions denied."
+                err_msg = "Permissions Denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
@@ -152,17 +152,30 @@ class Disposition:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 400)
 
+            # Ensure `User` has an `Access` to vote on `Request`s for `Resource`s
+            # within the related `SubFunction`s.
+            is_superuser = (
+                access_record.role.level == UsersModels.Role.RoleLevels.SUPERUSER
+            )
+            has_subfunction_permissions = access_record.subfunctions.filter(
+                id__in=resource_record.subfunctions.values_list("id", flat=True)
+            ).exists()
+            if not (is_superuser or has_subfunction_permissions):
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 403)
+
             # Ensure `User` has an `Access` to vote at the current `Stage`.
             if not access_record.stage.filter(
                 level=transition_record.stage.level
             ).exists():
-                err_msg = "Permissions denied."
+                err_msg = "Permissions Denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
             # Ensure `User` cannot vote on their own `Request`.
             if approver.email == request_record.originator.user.email:
-                err_msg = "Permissions denied."
+                err_msg = "Permissions Denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 

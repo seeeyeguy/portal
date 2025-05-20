@@ -251,6 +251,24 @@ class TestUpdateResource(MultiDBTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    @tag("views.resource.update_resource_subfunctions_permissions_denied")
+    def test_update_resource_subfunctions_permissions_denied(self) -> None:
+        """Fail Case: Update a `Resource` record where the `User` does not have
+        permissions to update a `Resource` within the given `SubFunction`s."""
+
+        user = AuthModels.User.objects.get(
+            email=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+        )
+        self.client.force_login(user=user)
+
+        response = self.client.post(
+            self.url,
+            data=arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @tag("views.resource.update_resource_tag_dne")
     def test_update_resource_tag_dne(self) -> None:
         """Fail Case: Update a `Resource` record with a given tag id

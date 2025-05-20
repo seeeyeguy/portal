@@ -262,6 +262,21 @@ class TestCreateResource(MultiDBTestCase):
 
             _ = Resource.create_resource(params)
 
+    @tag("controllers.resource.create_resource_subfunctions_permissions_denied")
+    def test_create_resource_subfunctions_permissions_denied(self) -> None:
+        """Fail Case: Create a `Resource` record where the `User` does not have
+        permissions to create a `Resource` within the given `SubFunction`s."""
+
+        with pytest.raises(DirectoryError):
+            params: CreateResourceParams = {
+                **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+                ),
+            }
+
+            _ = Resource.create_resource(params)
+
     @tag("controllers.resource.create_resource_tag_dne")
     def test_create_resource_tag_dne(self) -> None:
         """Fail Case: Create a `Resource` record with a given tag id

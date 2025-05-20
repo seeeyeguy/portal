@@ -243,6 +243,24 @@ class TestCreateResource(MultiDBTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    @tag("views.resource.create_resource_subfunctions_permissions_denied")
+    def test_create_resource_subfunctions_permissions_denied(self) -> None:
+        """Fail Case: Create a `Resource` record where the `User` does not have
+        permissions to create a `Resource` within the given `SubFunction`s."""
+
+        user = AuthModels.User.objects.get(
+            email=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+        )
+        self.client.force_login(user=user)
+
+        response = self.client.post(
+            self.url,
+            data=arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @tag("views.resource.create_resource_tag_dne")
     def test_create_resource_tag_dne(self) -> None:
         """Fail Case: Create a `Resource` record with a given tag id

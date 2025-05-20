@@ -6,7 +6,7 @@ and manages access granted and access revoked dates to act
 as an archive for accesses granted to the user. A user can
 have many accesses, an access may have only one role, and
 so a user may have many different roles in the system
-through their accesses. 
+through their accesses.
 """
 
 # pylint: disable=no-member
@@ -49,6 +49,9 @@ class Access(models.Model):
     )
     stage: models.ManyToManyField = models.ManyToManyField(
         "request.Stage", db_table="users_access_stages"
+    )
+    subfunctions: models.ManyToManyField = models.ManyToManyField(
+        "directory.SubFunction", db_table="users_access_subfunctions"
     )
 
     def __str__(self) -> str:
