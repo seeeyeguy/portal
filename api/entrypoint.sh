@@ -37,8 +37,18 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     python manage.py migrate auth 0012_alter_user_first_name_max_length --database=prt    
     python manage.py migrate program_review_tool --database=prt
     python manage.py migrate --database=default   
+    
+    # Run script to authenticate with Tableau and store token in cache.
+    python manage.py runscript program_review_tool.utils.review.tableau.scripts.authenticate_with_tableau
 
+    # Start the cron service.
+    echo $CONTAINER_PASSWORD | sudo -S service cron start
+    # Copy environment variables into the shared environment.
+    # NOTE: Needed for cron.
+    printenv | grep -Ev 'LANG=' | sudo tee -a /etc/environment > /dev/null   
+    # Add cron jobs specified in CRON JOBS to the crontab.
     python manage.py crontab add
+
     /apps/init.sh
 fi
 
