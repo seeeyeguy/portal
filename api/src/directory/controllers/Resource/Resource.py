@@ -237,6 +237,22 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 404)
 
+            # Ensure `User` has an `Access` to create a `Resource`
+            # within the related `SubFunction`s.
+            access_subfunction_ids: set[int] = set(
+                user.accesses.values_list("subfunctions__id", flat=True)
+            )
+            is_superuser: bool = user.accesses.filter(
+                role__level=Role.RoleLevels.SUPERUSER
+            ).exists()
+            if (
+                len(set(params["subfunctions"]) - access_subfunction_ids)
+                and not is_superuser
+            ):
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 403)
+
             # Fetch `Tag` records.
             tag_records: QuerySet[Tag] = Tag.objects.filter(id__in=params["tags"])
             if tag_records.count() != len(set(params["tags"])):
@@ -424,6 +440,19 @@ class Resource:
                 err_msg = f"Some SubFunctions (ids={subfunctions}) do not exist."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 404)
+
+            # Ensure `User` has an `Access` to update a `Resource`
+            # within the related `SubFunction`s.
+            access_subfunction_ids: set[int] = set(
+                user.accesses.values_list("subfunctions__id", flat=True)
+            )
+            is_superuser: bool = user.accesses.filter(
+                role__level=Role.RoleLevels.SUPERUSER
+            ).exists()
+            if len(set(subfunctions) - access_subfunction_ids) and not is_superuser:
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 403)
 
             # Fetch `Tag` records.
             tag_records: QuerySet[Tag] = Tag.objects.filter(id__in=tags)

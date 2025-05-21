@@ -270,6 +270,21 @@ class TestCreateDisposition(MultiDBTestCase):
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
 
+    @tag("controllers.disposition.create_disposition_invalid_access_for_subfunctions")
+    def test_create_disposition_invalid_access_for_subfunctions(self) -> None:
+        """Fail Case: Create a `Disposition` record with a `User` that doesn't have
+        `Access` to vote on a `Request` related to a `Resource` within restricted
+        `SubFunction`s."""
+
+        with pytest.raises(exceptions.RequestError):
+            _ = controllers.Disposition.create_disposition(
+                approver=self._fetch_approver(
+                    email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
+                ),
+                request=arguments.CREATE_DISPOSITION_REQUEST_ID,
+                disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
+            )
+
     @tag("controllers.disposition.create_disposition_invalid_access_for_stage")
     def test_create_disposition_invalid_access_for_stage(self) -> None:
         """Fail Case: Create a `Disposition` record with a `User` that doesn't have

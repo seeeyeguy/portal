@@ -14,6 +14,13 @@ UPDATE_RESOURCE_USER_EMAIL: str = "May.Parker@harris.com"
 # `User` that does not have `Access` with a valid `Role`.
 UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE: str = "Ben.Parker@harris.com"
 
+# `User` email used when testing `Resource` update with a
+# `User` that does not have `Access` to update a `Resource`
+# within a set of given `SubFunction`s.
+UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED: str = (
+    "Miles.Morales@harris.com"
+)
+
 # Id of `Resource` for testing successful `Resource` update.
 UPDATE_RESOURCE_ID: int = 2
 

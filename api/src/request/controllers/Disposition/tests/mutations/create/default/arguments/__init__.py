@@ -26,6 +26,10 @@ CREATE_DISPOSITION_USER_DNE: str = "DNE.User@harris.com"
 CREATE_DISPOSITION_REVOKED_USER_ACCESS: str = "Miles.Morales@harris.com"
 
 # `User` email for testing when a `User` does not have access to vote
+# on a `Request` related to a `Resource` within restricted `SubFunction`s.
+CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS: str = "Gwen.Stacy@harris.com"
+
+# `User` email for testing when a `User` does not have access to vote
 # on the current `Stage`.
 CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE: str = "May.Parker@harris.com"
 
@@ -72,6 +76,7 @@ CREATE_DISPOSITION_APPROVED_EXPECTED_VALUES: dict = {
                 "level": 3,
             },
         ],
+        "subfunctions": [],
     },
     "transition": 3,
     "disposition": "APPROVED",
@@ -105,6 +110,7 @@ CREATE_DISPOSITION_REJECTED_EXPECTED_VALUES: dict = {
                 "level": 3,
             },
         ],
+        "subfunctions": [],
     },
     "transition": 3,
     "disposition": "REJECTED",
@@ -138,6 +144,7 @@ CREATE_DISPOSITION_REVISE_EXPECTED_VALUES: dict = {
                 "level": 3,
             },
         ],
+        "subfunctions": [],
     },
     "transition": 3,
     "disposition": "REVISE",

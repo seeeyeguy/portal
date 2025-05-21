@@ -765,7 +765,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063375",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        1
+      ]
     }
   },
   {
@@ -776,7 +779,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063420",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        1
+      ]
     }
   },
   {
@@ -787,7 +793,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063431",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        2
+      ]
     }
   },
   {
@@ -798,7 +807,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063440",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -809,7 +821,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063447",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        4
+      ]
     }
   },
   {
@@ -820,7 +835,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063464",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -831,7 +849,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063479",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        5
+      ]
     }
   },
   {
@@ -842,7 +863,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063495",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        5
+      ]
     }
   },
   {
@@ -853,7 +877,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063502",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        5
+      ]
     }
   },
   {
@@ -864,7 +891,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063523",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -875,7 +905,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063530",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -886,7 +919,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063554",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -897,7 +933,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063580",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -908,7 +947,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063588",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -919,7 +961,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063595",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -930,7 +975,11 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063611",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3,
+        6
+      ]
     }
   },
   {
@@ -941,7 +990,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063625",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        2
+      ]
     }
   },
   {
@@ -952,7 +1004,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063637",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        3
+      ]
     }
   },
   {
@@ -963,7 +1018,12 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063645",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        2,
+        3,
+        7
+      ]
     }
   },
   {
@@ -974,7 +1034,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063651",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        7
+      ]
     }
   },
   {
@@ -985,7 +1048,14 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063658",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        2,
+        11,
+        15,
+        18,
+        21
+      ]
     }
   },
   {
@@ -996,7 +1066,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063671",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        8
+      ]
     }
   },
   {
@@ -1007,7 +1080,12 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063690",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        9,
+        22,
+        23
+      ]
     }
   },
   {
@@ -1018,7 +1096,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063697",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        8
+      ]
     }
   },
   {
@@ -1029,7 +1110,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063703",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        10
+      ]
     }
   },
   {
@@ -1040,7 +1124,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063726",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        8
+      ]
     }
   },
   {
@@ -1051,7 +1138,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063740",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        9
+      ]
     }
   },
   {
@@ -1065,6 +1155,11 @@
       "stage": [
         2,
         3
+      ],
+      "subfunctions": [
+        9,
+        21,
+        22
       ]
     }
   },
@@ -1076,7 +1171,11 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063840",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        12,
+        7
+      ]
     }
   },
   {
@@ -1087,7 +1186,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063847",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        9
+      ]
     }
   },
   {
@@ -1098,7 +1200,11 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063859",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        9,
+        15
+      ]
     }
   },
   {
@@ -1109,7 +1215,12 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063871",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        17,
+        18,
+        9
+      ]
     }
   },
   {
@@ -1120,7 +1231,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063893",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        13
+      ]
     }
   },
   {
@@ -1131,7 +1245,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063917",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        10
+      ]
     }
   },
   {
@@ -1142,7 +1259,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063924",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        14
+      ]
     }
   },
   {
@@ -1153,7 +1273,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063939",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        15
+      ]
     }
   },
   {
@@ -1167,7 +1290,8 @@
       "stage": [
         2,
         3
-      ]
+      ],
+      "subfunctions": []
     }
   },
   {
@@ -1178,7 +1302,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063976",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        16
+      ]
     }
   },
   {
@@ -1189,7 +1316,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.063999",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        16
+      ]
     }
   },
   {
@@ -1200,7 +1330,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064012",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        19
+      ]
     }
   },
   {
@@ -1211,7 +1344,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064025",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        19
+      ]
     }
   },
   {
@@ -1222,7 +1358,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064038",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        18
+      ]
     }
   },
   {
@@ -1233,7 +1372,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064045",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        18
+      ]
     }
   },
   {
@@ -1244,7 +1386,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064062",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        18
+      ]
     }
   },
   {
@@ -1255,7 +1400,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064076",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        18
+      ]
     }
   },
   {
@@ -1266,7 +1414,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064084",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        20
+      ]
     }
   },
   {
@@ -1277,7 +1428,10 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064100",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        21
+      ]
     }
   },
   {
@@ -1288,7 +1442,19 @@
       "role": 3,
       "access_granted_date": "2025-04-01T12:21:05.064115",
       "access_revoked_date": null,
-      "stage": []
+      "stage": [],
+      "subfunctions": [
+        32,
+        33,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ]
     }
   },
   {

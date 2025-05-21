@@ -239,6 +239,21 @@ class TestUpdateResource(MultiDBTestCase):
             }
             _, _ = Resource.update_resource(params)
 
+    @tag("controllers.resource.update_resource_subfunctions_permissions_denied")
+    def test_update_resource_subfunctions_permissions_denied(self) -> None:
+        """Fail Case: Update a `Resource` record where the `User` does not have
+        permissions to update a `Resource` within the given `SubFunction`s."""
+
+        with pytest.raises(DirectoryError):
+            params: UpdateResourceParams = {
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+                ),
+            }
+
+            _ = Resource.update_resource(params)
+
     @tag("controllers.resource.update_resource_tag_dne")
     def test_update_resource_tag_dne(self) -> None:
         """Fail Case: Update a `Resource` record with a given tag id

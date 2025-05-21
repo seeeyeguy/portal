@@ -1,13 +1,26 @@
 [
-  {
-    "model": "users.access",
-    "pk": 4,
-    "fields": {
-      "user": "Ben.Parker@harris.com",
-      "role": 4,
-      "access_granted_date": "2024-08-27T16:00:00Z",
-      "access_revoked_date": null,
-      "stage": []
+    {
+        "model": "users.access",
+        "pk": 4,
+        "fields": {
+            "user": "Ben.Parker@harris.com",
+            "role": 4,
+            "access_granted_date": "2024-08-27T16:00:00Z",
+            "access_revoked_date": null,
+            "stage": [],
+            "subfunctions": [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+    },
+    {
+        "model": "users.access",
+        "pk": 5,
+        "fields": {
+            "user": "Miles.Morales@harris.com",
+            "role": 3,
+            "access_granted_date": "2024-08-27T16:00:00Z",
+            "access_revoked_date": null,
+            "stage": [],
+            "subfunctions": [2]
+        }
     }
-  }
 ]

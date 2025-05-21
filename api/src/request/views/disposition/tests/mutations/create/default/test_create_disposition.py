@@ -220,6 +220,28 @@ class TestCreateDisposition(MultiDBTestCase):
         # Ensure the response status code is 403.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @tag("views.disposition.create_disposition_invalid_access_for_subfunctions")
+    def test_create_disposition_invalid_access_for_subfunctions(self) -> None:
+        """Fail Case: Create a `Disposition` record with a `User` that doesn't have
+        `Access` to vote on a `Request` related to a `Resource` within restricted
+        `SubFunction`s."""
+
+        user = User.objects.get(
+            email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
+        )
+        self.client.force_login(user=user)
+
+        body: dict = {
+            "request_id": arguments.CREATE_DISPOSITION_REQUEST_ID,
+            "disposition": arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
+            "justification": "",
+        }
+
+        # Make request to create `Disposition`.
+        response = self.client.post(self.url, body, content_type="application/json")
+        # Ensure the response status code is 403.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @tag("views.disposition.create_disposition_invalid_access_for_stage")
     def test_create_disposition_invalid_access_for_stage(self) -> None:
         """Fail Case: Create a `Disposition` record with a `User` that doesn't have
