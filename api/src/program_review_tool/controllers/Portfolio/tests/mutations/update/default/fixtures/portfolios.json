@@ -1,0 +1,24 @@
+[
+    {
+        "model": "program_review_tool.portfolio",
+        "pk": 1,
+        "fields": {
+            "user": "May.Parker@harris.com",
+            "programs": [1, 2],
+            "name": "Existing Portfolio Name",
+            "created": "2025-01-01T16:00:00Z",
+            "modified": "2025-01-01T16:00:00Z"
+        }
+    },
+    {
+        "model": "program_review_tool.portfolio",
+        "pk": 2,
+        "fields": {
+            "user": "May.Parker@harris.com",
+            "programs": [1, 2],
+            "name": "Existing Portfolio Name 2",
+            "created": "2025-01-01T16:00:00Z",
+            "modified": "2025-01-01T16:00:00Z"
+        }
+    }
+]
