@@ -1394,6 +1394,69 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProgramsDoesNotExistResponse"
+  /program-review-tool/program/review:
+    post:
+      tags:
+        - "program_review_tool.program.review"
+      summary: "Review `Program` records and generate PowerPoint export."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProgramsReviewRequest"
+      produces:
+        - application/vnd.openxmlformats-officedocument.presentationml.presentation
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewResponse"            
+        "201":
+          description: "CREATED"
+          content:
+            application/vnd.openxmlformats-officedocument.presentationml.presentation:
+              schema:
+                type: file
+                format: binary
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewEmptyProgramsResponse"
+                  - $ref: "#/components/schemas/CreateProgramsReviewNoReviewNameResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewUnauthorizedResponse"            
+        "404":
+          description: "`Program` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewProgramDoesNotExistResponse"
+        "500":
+          description: "Export generation failed."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewExportGenerationFailedResponse"
+        "502":
+          description: "BAD GATEWAY"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewNoNetworkConnectivityResponse"
   /request/disposition:
     post:
       tags:
@@ -3692,6 +3755,58 @@ components:
     DeletePortfolioPermissionsDeniedResponse:
       title: "Delete `Portfolio` error response due to invalid permissions."
       example: "Permissions Denied."
+
+    CreateProgramsReviewRequest:
+      title: "Create `Program`s Review request."
+      type: object
+      properties:
+        programs:
+          type: array[int]          
+          description:
+            A list of `Program` ids for `Program` records that will reviewed.
+          default: []
+        name:
+          type: string
+          description:
+            Name of the review that will be used in the generated PowerPoint export.
+          default: ""
+
+    CreateProgramsReviewResponse:
+      title: "Create `Program`s Review response."
+      type: object
+      properties:
+        data:
+          type: integer
+          example: 0
+
+    CreateProgramsReviewEmptyProgramsResponse:
+      title: "Create `Program`s Review error response due to not supplying `Program`
+        ids."
+      example: "No Program ids given to review."
+
+    CreateProgramsReviewNoReviewNameResponse:
+      title: "Create `Program`s Review error response due to supplying an empty review
+        name."
+      example: "No name given for the review."
+
+    CreateProgramsReviewUnauthorizedResponse:
+      title: "Create `Program`s Review error response due to unauthorized access."
+      example: "Not authorized to access this resource."
+    
+    CreateProgramsReviewProgramDoesNotExistResponse:
+      title: "Create `Program`s Review error response due to supplying ids for
+        `Program` record(s) that do not exist."
+      example: "Some Programs (ids={ids}) do not exist."
+
+    CreateProgramsReviewExportGenerationFailedResponse:
+      title: "Create `Program`s Review error response due to a failure in the
+        Powerpoint export generation."
+      example: "Failed to generate export."
+    
+    CreateProgramsReviewNoNetworkConnectivityResponse:
+      title: "Create `Program`s Review error response due to not having a
+        connection to L3Harris network."
+      example: "No connection to L3Harris network."
 
     FetchProgramsResponse:
       title: "Fetch `Program`s response."

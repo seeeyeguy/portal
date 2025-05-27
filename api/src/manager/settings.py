@@ -287,6 +287,8 @@ CORS_ALLOWED_ORIGINS = [
     f"http://{SERVER_HOST.lower()}:{SWAGGER_PORT}",
 ]
 
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
+
 ########################################
 ## LDAP SERVICE ENVIRONMENT VARIABLES ##
 ########################################

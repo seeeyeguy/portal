@@ -16,7 +16,7 @@ from program_review_tool.models.Program.serializers import ProgramSerializer
 from program_review_tool.views import serializers
 
 from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
-from manager.settings import SERVER_HOST
+from manager.settings import ApplicationBuild, BUILD, SERVER_HOST
 from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
@@ -40,7 +40,10 @@ class Program(View):
         try:
             LOGGER.info("POST /program-review-tool/program/review.")
 
-            if SERVER_HOST.lower().startswith(VLE_HOSTNAME_PREFIX):
+            if (
+                SERVER_HOST.lower().startswith(VLE_HOSTNAME_PREFIX)
+                and BUILD != ApplicationBuild.TEST
+            ):
                 return http.JsonResponse(
                     "No connection to L3Harris network.",
                     status=status.HTTP_502_BAD_GATEWAY,
@@ -58,10 +61,14 @@ class Program(View):
                     status=status.HTTP_200_OK,
                     safe=False,
                 )
-            return http.FileResponse(
+            filename: str = export_path.split("/")[-1]
+            response = http.FileResponse(
                 open(export_path, "rb"),
                 content_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                status=status.HTTP_201_CREATED,
             )
+            response["Content-Disposition"] = f"attachment;filename={filename}"
+            return response
         except exceptions.ProgramReviewToolError as exc:
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 

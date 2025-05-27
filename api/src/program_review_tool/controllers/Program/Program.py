@@ -21,6 +21,8 @@ from program_review_tool.utils.review.export import (
     PROGRAM_REVIEW_CACHE_PREFIX,
 )
 
+from manager.settings import ApplicationBuild, BUILD
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -137,6 +139,11 @@ class Program:
             LOGGER.error(err_msg)
             raise exceptions.ProgramReviewToolError(err_msg, 400)
 
+        if not review_name.strip():
+            err_msg = "No name given for the review."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 400)
+
         # Get the user's email.
         user_email: str = user.email
         # Create a list of sorted `Program` ids.
@@ -191,6 +198,11 @@ class Program:
             LOGGER.error(err_msg)
             raise exceptions.ProgramReviewToolError(err_msg, 404)
 
+        # If `BUILD` is `test` then return a `Queued`
+        # response.
+        if BUILD == ApplicationBuild.TEST:
+            return (ExportStatus.QUEUED, None)
+
         # Construct a list of pa numbers from the fetched `Program`s.
         pa_numbers: List[str] = list(programs.values_list("pa_number", flat=True))
 
@@ -217,6 +229,7 @@ class Program:
                 "cache_key": export_cache_key,
             },
         )
+
         # Set the `Queued` status for the export_cache_key.
         cache.set(export_cache_key, (ExportStatus.QUEUED, None))
-        return (0, None)
+        return (ExportStatus.QUEUED, None)
