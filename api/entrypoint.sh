@@ -5,11 +5,16 @@ STAGING="staging"
 DATABASE_HOST=database
 DATABASE_PORT=5432
 
+CRON_START_COMMAND="echo $CONTAINER_PASSWORD | sudo -S service cron start"
+CRON_SET_ENV_FOR_SYSTEM_COMMAND="printenv | grep -Ev 'LANG=' | sudo tee -a /etc/environment > /dev/null"
+
 echo "Waiting for postgres..."
 
 if [[ -n $BUILD  && $BUILD == $PRODUCTION ]]; then
     DATABASE_HOST=$POSTGRES_HOST
     DATABASE_PORT=$POSTGRES_PORT
+    CRON_START_COMMAND="service cron start"
+    CRON_SET_ENV_FOR_SYSTEM_COMMAND="printenv | grep -Ev 'LANG=' | tee -a /etc/environment > /dev/null"
 fi
 
 while ! nc -z $DATABASE_HOST $DATABASE_PORT; do
@@ -42,10 +47,10 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     python manage.py runscript program_review_tool.utils.review.tableau.scripts.authenticate_with_tableau
 
     # Start the cron service.
-    echo $CONTAINER_PASSWORD | sudo -S service cron start
+    eval "$CRON_START_COMMAND"    
     # Copy environment variables into the shared environment.
     # NOTE: Needed for cron.
-    printenv | grep -Ev 'LANG=' | sudo tee -a /etc/environment > /dev/null   
+    eval "$CRON_SET_ENV_FOR_SYSTEM_COMMAND"
     # Add cron jobs specified in CRON JOBS to the crontab.
     python manage.py crontab add
 
