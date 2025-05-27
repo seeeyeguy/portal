@@ -99,6 +99,7 @@ class Portfolio:
 
         Accepts:
             * portfolio_id (int): The id of the portfolio being updated.
+            * user (AuthModels.User): The `User` that is updating the portfolio.
             * name (str): The name being updated on the portfolio.
             * programs (List[int]): The ids of the `Program`s being linked
                 to the portfolio.
@@ -112,14 +113,27 @@ class Portfolio:
             LOGGER.info(
                 (
                     f"Updating Portfolio(id={portfolio_id}) with name: {name} "
-                    f"and Programs: {programs}."
+                    f"and Programs: {programs} "
+                    f"for user: {user.email if user.is_authenticated else 'None'}."
                 )
             )
+
+            # Ensure `User` is authenticated.
+            if not (user and user.is_authenticated):
+                raise exceptions.ProgramReviewToolError(
+                    "Authentication required.", status=401
+                )
 
             # Fetch `Portfolio` record by id and user.
             portfolio: models.Portfolio = models.Portfolio.objects.get(
                 id=portfolio_id, user=user
             )
+
+            # Ensure a `Portfolio` name is given.
+            if not name.strip():
+                err_msg = "No name given for Portfolio."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
 
             # Ensure `Program` ids list is not empty.
             if not programs:
