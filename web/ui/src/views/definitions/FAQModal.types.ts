@@ -1,6 +1,6 @@
-import React from "react"
+import React from "react";
 
 export interface FAQ {
-  question: string,
-  answer: React.ReactElement
+  question: string;
+  answer: React.ReactElement;
 }

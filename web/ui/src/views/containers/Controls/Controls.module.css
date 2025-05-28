@@ -47,13 +47,13 @@
   margin-left: 3rem;
 }
 
-@media screen and (min-width: 568px) {
+@container (min-width: 568px) {
   .role-buttons-background {
     height: 10rem;
   }
 }
 
-@media screen and (min-width: 745px) {
+@container (min-width: 751px) {
   .role-buttons h1 {
     display: block;
   }
@@ -63,7 +63,7 @@
   }
 }
 
-@media screen and (min-width: 1110px) {
+@container (min-width: 1110px) {
   .role-buttons-background {
     background-image: url("/banner/nexus.svg");
     background-position: 100% 0px;
@@ -71,7 +71,7 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@container (min-width: 1200px) {
   .role-buttons-background {
     background-position: calc(100% + 100px) -90px;
     background-size: 600px;

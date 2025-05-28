@@ -1,4 +1,5 @@
 @import url("colors.css");
+@import url("zIndex.css");
 html {
   height: 100%;
   overflow-y: hidden;
@@ -20,6 +21,7 @@ body {
 }
 
 #page-content {
+  container-type: inline-size;
   display: flex;
   flex: 1;
   flex-direction: column;

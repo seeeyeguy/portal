@@ -6,7 +6,7 @@
   border: solid 1px var(--color-gray);
 }
 
-@media screen and (min-width: 1110px) {
+@container (min-width: 1110px) {
   .resource-search-results > section:nth-of-type(1) > details > summary {
     background-image: url(/banner/nexus.svg);
     background-position: calc(100% + 2.5rem) 108%;
@@ -15,7 +15,7 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@container (min-width: 1200px) {
   .resource-search-results > section:nth-of-type(1) > details > summary {
     background-image: url(/banner/nexus.svg);
     background-position: calc(100% + 100px + 2.5rem) 81.5%;
