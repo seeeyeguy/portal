@@ -37,6 +37,7 @@ class TestUpdateResource(MultiDBTestCase):
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/roles.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/resources.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/transitions.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/dispositions.json",
@@ -263,6 +264,37 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.UPDATE_RESOURCE_TAG_DNE_IDS,
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
+            }
+            _, _ = Resource.update_resource(params)
+
+    @tag("controllers.resource.update_resource_empty_point_of_contacts")
+    def test_update_resource_empty_point_of_contacts(self) -> None:
+        """Fail Case: Update a `Resource` record without supplying emails
+        for point of contacts."""
+
+        with pytest.raises(DirectoryError):
+            params: UpdateResourceParams = {
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "point_of_contacts": [],
+                "user": AuthModels.User.objects.get(
+                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                ),
+            }
+            _, _ = Resource.update_resource(params)
+
+    @tag("controllers.resource.update_resource_point_of_contact_dne")
+    def test_update_resource_point_of_contact_dne(self) -> None:
+        """Fail Case: Update a `Resource` record with a given `User` email for
+        a point of contact where an appropriate `User` for that `PointOfContact`
+        does not exist."""
+
+        with pytest.raises(DirectoryError):
+            params: UpdateResourceParams = {
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "point_of_contacts": arguments.UPDATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE,
                 "user": AuthModels.User.objects.get(
                     email=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),

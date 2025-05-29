@@ -1,37 +1,51 @@
 """
-Arguments to be shared for Request's create
+Arguments to be shared for Request's update
 controller pytests.
 """
 
 from django.core.files.base import File
 
-from request.controllers.Request.Request import CreateRequestParams
+from request.controllers.Request.Request import UpdateRequestParams
 
-# User email used when testing `Request` create.
-CREATE_REQUEST_USER_EMAIL: str = "May.Parker@harris.com"
+# User email used when testing `Request` update.
+UPDATE_REQUEST_USER_EMAIL: str = "May.Parker@harris.com"
 
-# User email used when testing `Request` create with a
+# User email used when testing `Request` update with a
 # `User` that does not have `Access` with a valid `Role`.
-CREATE_REQUEST_USER_EMAIL_INVALID_ROLE: str = "Gwen.Stacy@harris.com"
+UPDATE_REQUEST_USER_EMAIL_INVALID_ROLE: str = "Gwen.Stacy@harris.com"
 
-# Base parameters used for successful `Resource` creation.
-BASE_CREATE_REQUEST_STRUCTURE_PARAMS: CreateRequestParams = {
-    "uid": None,
-    "previous_revision": None,
-    "name": "Test Create Name",
-    "description": "Test resource description for create tests.",
+# User email used when testing `Request` update with a
+# `User` that is not the originator for the request.
+UPDATE_REQUEST_USER_EMAIL_NOT_ORIGINATOR: str = "Peter.Parker@harris.com"
+
+# `Request` ID used when testing `Request` update.
+VALID_UPDATE_REQUEST_ID_DRAFT: int = 1
+
+# `Request` ID used when testing `Request` update for a SUBMITTED request.
+INVALID_UPDATE_REQUEST_ID_SUBMITTED: int = 2
+
+# `Request` ID used when testing `Request` update for a request that does not exist.
+INVALID_UPDATE_REQUEST_ID_DNE: int = 3
+
+# Base parameters used for successful `Request` update.
+BASE_UPDATE_REQUEST_STRUCTURE_PARAMS: UpdateRequestParams = {
+    "request_id": VALID_UPDATE_REQUEST_ID_DRAFT,
+    "name": "Test Update Name",
+    "description": "Test resource description for update tests.",
     "url": "https://www.test-site.com",
     "thumbnail": File(b""),  # type: ignore[typeddict-item,unused-ignore,arg-type]
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
-    "type": "test create type",
+    "point_of_contacts": ["May.Parker@harris.com"],
+    "type": "test update type",
     "download": False,
-    "originator": CREATE_REQUEST_USER_EMAIL,
+    "user": UPDATE_REQUEST_USER_EMAIL,  # type: ignore
     "stage": "DRAFT",
 }
 
-VALID_CREATED_REQUEST_DRAFT = {
+VALID_UPDATE_REQUEST_DRAFT = {
+    "id": 1,
     "resource": {
         "employee_levels": [
             {
@@ -94,11 +108,11 @@ VALID_CREATED_REQUEST_DRAFT = {
             },
         ],
         "primary_point_of_contact": "May.Parker@harris.com",
-        "description": "Test resource description for create tests.",
+        "description": "Test resource description for update tests.",
         "revision_number": None,
-        "name": "Test Create Name",
+        "name": "Test Update Name",
         "url": "https://www.test-site.com",
-        "type": "test create type",
+        "type": "test update type",
         "download": False,
         "active": False,
         "previous_revision": None,
@@ -128,7 +142,8 @@ VALID_CREATED_REQUEST_DRAFT = {
     "status": "PENDING",
 }
 
-VALID_CREATED_REQUEST_SUBMITTED = {
+VALID_UPDATE_REQUEST_SUBMITTED = {
+    "id": 1,
     "resource": {
         "employee_levels": [
             {
@@ -191,11 +206,11 @@ VALID_CREATED_REQUEST_SUBMITTED = {
             },
         ],
         "primary_point_of_contact": "May.Parker@harris.com",
-        "description": "Test resource description for create tests.",
+        "description": "Test resource description for update tests.",
         "revision_number": None,
-        "name": "Test Create Name",
+        "name": "Test Update Name",
         "url": "https://www.test-site.com",
-        "type": "test create type",
+        "type": "test update type",
         "download": False,
         "active": False,
         "previous_revision": None,

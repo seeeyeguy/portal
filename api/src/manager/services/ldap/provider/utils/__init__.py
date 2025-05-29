@@ -76,8 +76,8 @@ def fetch_authorized_employee(email: str) -> Optional[models.User]:
     try:
         with transaction.atomic():
             new_user = User.objects.create(
-                email=user_info["email"],
-                username=user_info["email"],
+                email=email.lower(),
+                username=email.lower(),
                 first_name=user_info["firstName"],
                 last_name=user_info["lastName"],
             )

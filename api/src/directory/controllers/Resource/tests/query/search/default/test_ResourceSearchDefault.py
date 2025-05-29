@@ -35,6 +35,7 @@ class TestResourceSearchDefault(TestCaseUtility):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/search/default/fixtures/resources.json",
+        "directory/controllers/Resource/tests/query/search/default/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/query/search/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/query/search/default/fixtures/transitions.json",
         "directory/controllers/Resource/tests/query/search/default/fixtures/dispositions.json",

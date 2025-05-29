@@ -35,6 +35,8 @@ class TestCreateDisposition(MultiDBTestCase):
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/accesses.json",
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/resources.json",
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/resources_error_cases.json",
+        "request/controllers/Disposition/tests/mutations/create/default/fixtures/pointofcontacts.json",
+        "request/controllers/Disposition/tests/mutations/create/default/fixtures/pointofcontacts_error_cases.json",
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/requests.json",
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/requests_error_cases.json",
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/transitions.json",

@@ -77,6 +77,9 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
         * tags (models.ManyToManyField[directory.models.Tag]): A set of `Tag`s that
             relate to this `Resource`. Tag helps to classify a resource, and
             provide metadata.
+        * point_of_contacts (models.ManyToManyField[directory.models.PointOfContact]): A
+            set of `User`s that relate to this `Resource`. PointOfContact confers
+            who may be contacted for more information regarding this resource.
         * type (models.CharField): A source for a `Resource`. Where the content may be
             stored.
         * download (models.BooleanField): Whether this `Resource` provides downloadable
@@ -105,6 +108,10 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     )
     tags: models.ManyToManyField = models.ManyToManyField(
         "directory.Tag", db_table="directory_resource_tags"
+    )
+    point_of_contacts: models.ManyToManyField = models.ManyToManyField(
+        "auth.User",
+        through="directory.PointOfContact",
     )
     type: models.CharField = models.CharField(max_length=512)
     download: models.BooleanField = models.BooleanField(default=False)

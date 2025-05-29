@@ -33,6 +33,7 @@ class TestCreateVisit(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "analytics/controllers/Visit/tests/mutations/create/default/fixtures/resources.json",
+        "analytics/controllers/Visit/tests/mutations/create/default/fixtures/pointofcontacts.json",
         "analytics/controllers/Visit/tests/mutations/create/default/fixtures/requests.json",
         "analytics/controllers/Visit/tests/mutations/create/default/fixtures/transitions.json",
         "analytics/controllers/Visit/tests/mutations/create/default/fixtures/dispositions.json",

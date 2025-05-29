@@ -10,7 +10,7 @@ from django.test import tag
 
 from directory import models as DirectoryModels
 from request import controllers, exceptions, models
-from request.controllers.Request.test.mutations.create.default import arguments
+from request.controllers.Request.tests.mutations.create.default import arguments
 
 from portal.models.fixtures import COMMON_FIXTURES
 
@@ -30,7 +30,7 @@ class TestCreateRequest(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
-        "request/controllers/Request/test/mutations/create/default/fixtures/users.json",
+        "request/controllers/Request/tests/mutations/create/default/fixtures/users.json",
     ]
 
     @tag("controllers.request.create_request")

@@ -14,7 +14,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from request import models
-from request.controllers.Request.test.mutations.create.default import arguments
+from request.controllers.Request.tests.mutations.create.default import arguments
 
 from portal.models.fixtures import COMMON_FIXTURES
 
@@ -58,6 +58,7 @@ class TestCreateRequest(MultiDBTestCase):
         self.params["employee_levels"] = json.dumps(self.params["employee_levels"])
         self.params["subfunctions"] = json.dumps(self.params["subfunctions"])
         self.params["tags"] = json.dumps(self.params["tags"])
+        self.params["point_of_contacts"] = json.dumps(self.params["point_of_contacts"])
 
         self.params["thumbnail"] = SimpleUploadedFile(
             name="thumbnail.png",
@@ -69,7 +70,7 @@ class TestCreateRequest(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
-        "request/controllers/Request/test/mutations/create/default/fixtures/users.json",
+        "request/controllers/Request/tests/mutations/create/default/fixtures/users.json",
     ]
 
     url: str = reverse("request.request")

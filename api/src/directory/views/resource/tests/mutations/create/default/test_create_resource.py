@@ -40,6 +40,7 @@ class TestCreateResource(MultiDBTestCase):
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/roles.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/resources.json",
+        "directory/controllers/Resource/tests/mutations/create/default/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/transitions.json",
         "directory/controllers/Resource/tests/mutations/create/default/fixtures/dispositions.json",
@@ -271,6 +272,39 @@ class TestCreateResource(MultiDBTestCase):
             data={
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
                 "tags": arguments.CREATE_RESOURCE_TAG_DNE_IDS,
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @tag("views.resource.create_resource_empty_point_of_contacts")
+    def test_create_resource_empty_point_of_contacts(self) -> None:
+        """Fail Case: Create a `Resource` record without supplying emails
+        for point of contacts."""
+
+        response = self.client.post(
+            self.url,
+            data={
+                **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
+                "point_of_contacts": [],
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @tag("views.resource.create_resource_point_of_contact_dne")
+    def test_create_resource_point_of_contact_dne(self) -> None:
+        """Fail Case: Create a `Resource` record with a given `User` email for
+        a point of contact where an appropriate `User` for that `PointOfContact`
+        does not exist."""
+
+        response = self.client.post(
+            self.url,
+            data={
+                **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS_JSON_SERIALIZABLE,
+                "point_of_contacts": arguments.CREATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE,
             },
             content_type="application/json",
         )

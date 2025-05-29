@@ -1,0 +1,128 @@
+[
+    {
+        "model": "directory.pointofcontact",
+        "pk": 1,
+        "fields": {
+            "resource": 1,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 2,
+        "fields": {
+            "resource": 2,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 3,
+        "fields": {
+            "resource": 3,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 4,
+        "fields": {
+            "resource": 4,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 5,
+        "fields": {
+            "resource": 5,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 6,
+        "fields": {
+            "resource": 6,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 7,
+        "fields": {
+            "resource": 7,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 8,
+        "fields": {
+            "resource": 8,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 9,
+        "fields": {
+            "resource": 9,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 10,
+        "fields": {
+            "resource": 10,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 11,
+        "fields": {
+            "resource": 11,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 12,
+        "fields": {
+            "resource": 12,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 13,
+        "fields": {
+            "resource": 13,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 14,
+        "fields": {
+            "resource": 14,
+            "contact": 1,
+            "primary": true
+        }
+    }
+]

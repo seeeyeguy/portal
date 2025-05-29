@@ -1,0 +1,47 @@
+[
+    {
+        "model": "directory.pointofcontact",
+        "pk": 1,
+        "fields": {
+            "resource": 1,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 2,
+        "fields": {
+            "resource": 2,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 3,
+        "fields": {
+            "resource": 3,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 4,
+        "fields": {
+            "resource": 4,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 5,
+        "fields": {
+            "resource": 5,
+            "contact": 1,
+            "primary": true
+        }
+    }
+]

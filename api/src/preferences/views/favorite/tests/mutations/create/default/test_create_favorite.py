@@ -37,6 +37,7 @@ class TestCreateFavorite(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "preferences/controllers/Favorite/tests/mutations/create/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/mutations/create/default/fixtures/pointofcontacts.json",
         "preferences/controllers/Favorite/tests/mutations/create/default/fixtures/requests.json",
         "preferences/controllers/Favorite/tests/mutations/create/default/fixtures/transitions.json",
         "preferences/controllers/Favorite/tests/mutations/create/default/fixtures/dispositions.json",

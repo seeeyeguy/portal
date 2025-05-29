@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from request import models
-from request.controllers.Request.test.mutations.update.default import arguments
+from request.controllers.Request.tests.mutations.update.default import arguments
 
 from portal.models.fixtures import COMMON_FIXTURES
 
@@ -60,6 +60,7 @@ class TestUpdateRequest(MultiDBTestCase):
         self.params["employee_levels"] = json.dumps(self.params["employee_levels"])
         self.params["subfunctions"] = json.dumps(self.params["subfunctions"])
         self.params["tags"] = json.dumps(self.params["tags"])
+        self.params["point_of_contacts"] = json.dumps(self.params["point_of_contacts"])
 
         self.params["thumbnail"] = SimpleUploadedFile(
             name="thumbnail.png",
@@ -71,10 +72,10 @@ class TestUpdateRequest(MultiDBTestCase):
 
     fixtures: List[str] = [
         *COMMON_FIXTURES,
-        "request/controllers/Request/test/mutations/update/default/fixtures/users.json",
-        "request/controllers/Request/test/mutations/update/default/fixtures/resources.json",
-        "request/controllers/Request/test/mutations/update/default/fixtures/requests.json",
-        "request/controllers/Request/test/mutations/update/default/fixtures/transitions.json",
+        "request/controllers/Request/tests/mutations/update/default/fixtures/users.json",
+        "request/controllers/Request/tests/mutations/update/default/fixtures/resources.json",
+        "request/controllers/Request/tests/mutations/update/default/fixtures/requests.json",
+        "request/controllers/Request/tests/mutations/update/default/fixtures/transitions.json",
     ]
 
     url: str = reverse("request.request")

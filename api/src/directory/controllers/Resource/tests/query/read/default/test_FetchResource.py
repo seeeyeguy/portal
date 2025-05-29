@@ -34,6 +34,7 @@ class TestFetchResource(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/read/default/fixtures/resources.json",
+        "directory/controllers/Resource/tests/query/read/default/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/query/read/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/query/read/default/fixtures/transitions.json",
         "directory/controllers/Resource/tests/query/read/default/fixtures/dispositions.json",
