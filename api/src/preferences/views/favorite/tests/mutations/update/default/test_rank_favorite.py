@@ -36,6 +36,7 @@ class TestRankFavorite(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "preferences/controllers/Favorite/tests/mutations/update/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/mutations/update/default/fixtures/pointofcontacts.json",
         "preferences/controllers/Favorite/tests/mutations/update/default/fixtures/requests.json",
         "preferences/controllers/Favorite/tests/mutations/update/default/fixtures/transitions.json",
         "preferences/controllers/Favorite/tests/mutations/update/default/fixtures/dispositions.json",

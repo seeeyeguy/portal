@@ -29,6 +29,9 @@ from directory.utils import validate_url
 from request.models import Request, Stage, Transition
 from users.models import Role
 
+from manager.services.ldap.provider.utils import fetch_authorized_employee
+from manager.settings import ApplicationBuild, BUILD
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -86,6 +89,7 @@ class BaseResourceParams(TypedDict):
     employee_levels: List[int]
     subfunctions: List[int]
     tags: List[int]
+    point_of_contacts: List[str]
     type: str
     download: bool
     user: AuthModels.User
@@ -260,6 +264,49 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 404)
 
+            # Verify `PointOfContact` emails were given.
+            if not params["point_of_contacts"]:
+                err_msg = "Resource must have at least one PointOfContact."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Dynamically construct filter params for an efficient query.
+            primary_point_of_contact_email = params["point_of_contacts"][0]
+            filter_params = Q(email__iexact=primary_point_of_contact_email)
+            for email in params["point_of_contacts"][1:]:
+                filter_params |= Q(email__iexact=email)
+
+            # Fetch `User` records.
+            users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(
+                filter_params
+            )
+            # Ensure each record exists.
+            if users_records.count() != len(params["point_of_contacts"]):
+                unverified_users = set(params["point_of_contacts"]) - set(
+                    users_records.values_list("email", flat=True)
+                )
+                if BUILD != ApplicationBuild.TEST:
+                    for unverified_user in unverified_users:
+                        verified_user = fetch_authorized_employee(email=unverified_user)
+                        if verified_user:
+                            unverified_users.remove(verified_user.email)
+                if unverified_users:
+                    err_msg = (
+                        f"Some PointOfContacts (emails={unverified_users})"
+                        " do not exist."
+                    )
+                    LOGGER.error(err_msg)
+                    raise exceptions.DirectoryError(err_msg, 404)
+
+            # Filter records for primary point of contact.
+            primary_point_of_contact = users_records.filter(
+                email__iexact=primary_point_of_contact_email
+            ).first()
+            # Filter records for secondary point of contacts.
+            secondary_point_of_contacts = users_records.filter(
+                ~Q(email__in=primary_point_of_contact_email)
+            )
+
             # Verify a thumbnail was given.
             if params["thumbnail"]:
                 # Validate thumbnail is a file.
@@ -281,10 +328,16 @@ class Resource:
                 active=False,
             )
 
-            # Add `EmployeeLevel`s, `SubFunction`s, and `Tag`s.
+            # Add `EmployeeLevel`s, `SubFunction`s, `Tag`s and `PointOfContact`s.
             resource.employee_levels.add(*employee_level_records)
             resource.subfunctions.add(*subfunction_records)
             resource.tags.add(*tag_records)
+            resource.point_of_contacts.add(
+                primary_point_of_contact, through_defaults={"primary": True}
+            )
+            resource.point_of_contacts.add(
+                *secondary_point_of_contacts, through_defaults={"primary": False}
+            )
 
             return resource
         except ResourceModel.DoesNotExist as exc:
@@ -410,6 +463,7 @@ class Resource:
             employee_levels: List[int] = new_params.pop("employee_levels")
             subfunctions: List[int] = new_params.pop("subfunctions")
             tags: List[int] = new_params.pop("tags")
+            point_of_contacts: List[str] = new_params.pop("point_of_contacts")
 
             # Verify `EmployeeLevel` ids were given.
             if not employee_levels:
@@ -461,6 +515,46 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 404)
 
+            # Verify `PointOfContact` emails were given.
+            if not point_of_contacts:
+                err_msg = "Resource must have at least one PointOfContact."
+                LOGGER.error(err_msg)
+                raise exceptions.DirectoryError(err_msg, 400)
+
+            # Dynamically construct filter params for an efficient query.
+            primary_point_of_contact_email = point_of_contacts[0]
+            filter_params = Q(email__iexact=primary_point_of_contact_email)
+            for email in point_of_contacts[1:]:
+                filter_params |= Q(email__iexact=email)
+
+            # Fetch `User` records.
+            users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(
+                filter_params
+            )
+            # Ensure each records exists.
+            if users_records.count() != len(point_of_contacts):
+                unverified_users = set(point_of_contacts) - set(
+                    users_records.values_list("email", flat=True)
+                )
+                if BUILD != ApplicationBuild.TEST:
+                    for unverified_user in unverified_users:
+                        verified_user = fetch_authorized_employee(email=unverified_user)
+                        if verified_user:
+                            unverified_users.remove(verified_user.email)
+                if unverified_users:
+                    err_msg = f"Some PointOfContacts (emails={unverified_users}) do not exist."
+                    LOGGER.error(err_msg)
+                    raise exceptions.DirectoryError(err_msg, 404)
+
+            # Filter records for primary point of contact.
+            primary_point_of_contact = users_records.filter(
+                email__iexact=primary_point_of_contact_email
+            ).first()
+            # Filter records for secondary point of contacts.
+            secondary_point_of_contacts = users_records.filter(
+                ~Q(email__in=primary_point_of_contact_email)
+            )
+
             # Get the thumbnail.
             thumbnail = new_params.pop("thumbnail")
             # Verify a thumbnail was given.
@@ -495,10 +589,17 @@ class Resource:
                 **new_params
             )
 
-            # Set `Function`s, `EmployeeLevel`s, and `Tag`s.
+            # Set `Function`s, `EmployeeLevel`s, `Tag`s and `PointOfContact`s.
             resource.subfunctions.set(subfunction_records)
             resource.employee_levels.set(employee_level_records)
             resource.tags.set(tag_records)
+            resource.point_of_contacts.clear()
+            resource.point_of_contacts.add(
+                primary_point_of_contact, through_defaults={"primary": True}
+            )
+            resource.point_of_contacts.add(
+                *secondary_point_of_contacts, through_defaults={"primary": False}
+            )
 
             resource.refresh_from_db()
 

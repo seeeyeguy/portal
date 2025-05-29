@@ -39,6 +39,7 @@ class TestFetchQueryFilterState(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "preferences/controllers/QueryFilterState/tests/query/read/default/fixtures/resources.json",
+        "preferences/controllers/QueryFilterState/tests/query/read/default/fixtures/pointofcontacts.json",
         "preferences/controllers/QueryFilterState/tests/query/read/default/fixtures/requests.json",
         "preferences/controllers/QueryFilterState/tests/query/read/default/fixtures/transitions.json",
         "preferences/controllers/QueryFilterState/tests/query/read/default/fixtures/dispositions.json",

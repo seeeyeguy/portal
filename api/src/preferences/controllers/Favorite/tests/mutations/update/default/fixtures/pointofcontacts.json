@@ -1,0 +1,20 @@
+[
+    {
+        "model": "directory.pointofcontact",
+        "pk": 1,
+        "fields": {
+            "resource": 1,
+            "contact": 1,
+            "primary": true
+        }
+    },
+    {
+        "model": "directory.pointofcontact",
+        "pk": 2,
+        "fields": {
+            "resource": 2,
+            "contact": 1,
+            "primary": true
+        }
+    }
+]

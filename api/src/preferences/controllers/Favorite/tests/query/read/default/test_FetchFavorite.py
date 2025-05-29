@@ -34,6 +34,7 @@ class TestFetchFavorite(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "preferences/controllers/Favorite/tests/query/read/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/query/read/default/fixtures/pointofcontacts.json",
         "preferences/controllers/Favorite/tests/query/read/default/fixtures/requests.json",
         "preferences/controllers/Favorite/tests/query/read/default/fixtures/transitions.json",
         "preferences/controllers/Favorite/tests/query/read/default/fixtures/dispositions.json",

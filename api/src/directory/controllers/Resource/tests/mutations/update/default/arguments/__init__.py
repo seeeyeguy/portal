@@ -34,6 +34,7 @@ BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS: UpdateResourceParams = {
     "employee_levels": [2],
     "subfunctions": [1],
     "tags": [1, 5],
+    "point_of_contacts": ["May.Parker@harris.com"],
     "type": "test update type",
     "download": False,
 }
@@ -70,6 +71,12 @@ UPDATE_RESOURCE_SUBFUNCTION_DNE_IDS: List[int] = [60, 70]
 
 # DNE `Tag` ids used for testing failure case.
 UPDATE_RESOURCE_TAG_DNE_IDS: List[int] = [80, 90]
+
+# DNE `Access` `User` emails for `PointOfContact`s used for testing failure case.
+UPDATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE: List[str] = [
+    "May.Parker@harris.com",
+    "DNE.User@harris.com",
+]
 
 VALID_UPDATED_RESOURCE: dict = {
     "id": 2,

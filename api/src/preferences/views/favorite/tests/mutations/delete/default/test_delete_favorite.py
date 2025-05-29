@@ -36,6 +36,7 @@ class TestDeleteFavorite(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/resources.json",
+        "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/pointofcontacts.json",
         "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/requests.json",
         "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/transitions.json",
         "preferences/controllers/Favorite/tests/mutations/delete/default/fixtures/dispositions.json",

@@ -37,6 +37,7 @@ class TestResourceSearchFunctree(TestCaseUtility):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "directory/controllers/Resource/tests/query/search/functree/fixtures/resources.json",
+        "directory/controllers/Resource/tests/query/search/functree/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/requests.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/transitions.json",
         "directory/controllers/Resource/tests/query/search/functree/fixtures/dispositions.json",

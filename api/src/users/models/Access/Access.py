@@ -33,8 +33,11 @@ class Access(models.Model):
             granted access with this particular role.
         * access_revoked_date (models.DateTimeField): The date & time this access was
             revoked for this particular role.
-        * stage (models.ManyToManyField[request.models.Stage]): The stage at which
+        * stage (models.ManyToManyField[request.models.Stage]): The stages at which
             the user with this `Access` is permitted to submit a `Disposition`.
+        * subfunctions (models.ManyToManyField[directory.models.SubFunction]): The
+            subfunctions for which this `Access` is permitted to create/update a
+            `Request` for a `Resource` or submit a `Disposition`.
     """
 
     user: models.ForeignKey = models.ForeignKey(

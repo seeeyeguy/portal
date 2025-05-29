@@ -41,6 +41,7 @@ class TestUpdateResource(MultiDBTestCase):
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/roles.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/accesses.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/resources.json",
+        "directory/controllers/Resource/tests/mutations/update/default/fixtures/pointofcontacts.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/requests.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/transitions.json",
         "directory/controllers/Resource/tests/mutations/update/default/fixtures/dispositions.json",
@@ -281,6 +282,43 @@ class TestUpdateResource(MultiDBTestCase):
             data={
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.UPDATE_RESOURCE_TAG_DNE_IDS,
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @tag("views.resource.update_resource_empty_point_of_contacts")
+    def test_update_resource_empty_point_of_contacts(self) -> None:
+        """Fail Case: Update a `Resource` record without supplying emails
+        for point of contacts."""
+
+        request_url = f"{self.url}?id={arguments.UPDATE_RESOURCE_ID}"
+
+        response = self.client.put(
+            request_url,
+            data={
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "point_of_contacts": [],
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @tag("views.resource.update_resource_point_of_contact_dne")
+    def test_update_resource_point_of_contact_dne(self) -> None:
+        """Fail Case: Update a `Resource` record with a given `User` email for
+        a point of contact where an appropriate `User` for that `PointOfContact`
+        does not exist."""
+
+        request_url = f"{self.url}?id={arguments.UPDATE_RESOURCE_ID}"
+
+        response = self.client.put(
+            request_url,
+            data={
+                **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
+                "point_of_contacts": arguments.UPDATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE,
             },
             content_type="application/json",
         )

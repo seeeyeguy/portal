@@ -36,6 +36,7 @@ BASE_CREATE_RESOURCE_STRUCTURE_PARAMS: CreateResourceParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
+    "point_of_contacts": ["May.Parker@harris.com"],
     "type": "test create type",
     "download": False,
 }
@@ -51,6 +52,7 @@ BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS: CreateResourceParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
+    "point_of_contacts": ["May.Parker@harris.com"],
     "type": "resource type 1",
     "download": False,
 }
@@ -98,6 +100,12 @@ CREATE_RESOURCE_SUBFUNCTION_DNE_IDS: List[int] = [60, 70]
 
 # DNE `Tag` ids used for testing failure case.
 CREATE_RESOURCE_TAG_DNE_IDS: List[int] = [80, 90]
+
+# DNE `Access` `User` emails for `PointOfContact`s used for testing failure case.
+CREATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE: List[str] = [
+    "May.Parker@harris.com",
+    "DNE.User@harris.com",
+]
 
 VALID_CREATED_RESOURCE: dict = {
     "id": 4,
@@ -161,7 +169,7 @@ VALID_CREATED_RESOURCE: dict = {
             "label": "restricted::department:GeoSpatial",
         },
     ],
-    "primary_point_of_contact": None,
+    "primary_point_of_contact": "May.Parker@harris.com",
     "revision_number": None,
     "name": "Test Create Name",
     "description": "Test resource description for create tests.",
@@ -235,7 +243,7 @@ VALID_CREATED_RESOURCE_REVISION: dict = {
             "label": "restricted::department:GeoSpatial",
         },
     ],
-    "primary_point_of_contact": None,
+    "primary_point_of_contact": "May.Parker@harris.com",
     "uid": "4878469f-6d52-46da-aee3-77905002cd12",
     "revision_number": None,
     "name": "Resource 1 Revision 2",

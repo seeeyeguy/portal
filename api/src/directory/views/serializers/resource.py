@@ -18,6 +18,7 @@ class BaseResourceRequest(serializers.Serializer):
     tags = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, default=[]
     )
+    point_of_contacts = serializers.ListField(child=serializers.EmailField())
     type = serializers.CharField(max_length=512)
     download = serializers.BooleanField()
 

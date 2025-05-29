@@ -32,6 +32,7 @@ class TestTransitionRequest(MultiDBTestCase):
     fixtures: List[str] = [
         *COMMON_FIXTURES,
         "request/utils/transitions/tests/mutations/create/default/fixtures/resources.json",
+        "request/utils/transitions/tests/mutations/create/default/fixtures/pointofcontacts.json",
         "request/utils/transitions/tests/mutations/create/default/fixtures/requests.json",
         "request/utils/transitions/tests/mutations/create/default/fixtures/transitions.json",
         "request/utils/transitions/tests/mutations/create/default/fixtures/dispositions.json",
