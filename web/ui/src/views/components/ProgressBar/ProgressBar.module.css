@@ -26,6 +26,7 @@
 }
 
 .progress-bar-apply-striped :global(.p-progressbar-value) {
+  animation: move-stripes 0.5s linear infinite;
   background-image: linear-gradient(
     45deg,
     rgba(255, 255, 255, 0.25) 25%,
@@ -58,4 +59,13 @@
 .progress-bar-stage-label {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@keyframes move-stripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 1rem 0;
+  }
 }

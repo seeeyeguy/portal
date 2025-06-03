@@ -1,16 +1,17 @@
 import {
-  ApiProgram,
+  IApiProgram,
   transformProgramRecord,
-} from "utils/portal/programReviewTool/ProgramTransformUtility";
-import { ApiUser } from "utils/SsoTransformUtility";
-import Portfolio from "state/types/program_review_tool/Portfolio";
+} from "state/query/api/portal/programReviewTool/ProgramHelper";
+import { IApiUser } from "state/query/api/portal/users/UsersHelper";
+
+import { IPortfolio } from "views/definitions/ProgramReviewTool.types";
 
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 
-export interface ApiPortfolio {
+export interface IApiPortfolio {
   id: number;
-  user: ApiUser;
-  programs: ApiProgram[];
+  user: IApiUser;
+  programs: IApiProgram[];
   name: string;
   created: Date;
   modified: Date;
@@ -22,8 +23,8 @@ export interface ApiPortfolio {
  * @param data A `program_review_tool.Portfolio` record.
  * @returns A `program_review_tool.Portfolio` record with desired casing.
  */
-export function transformPortfolioRecord(data: ApiPortfolio): Portfolio {
+export function transformPortfolioRecord(data: IApiPortfolio): IPortfolio {
   const programs =
     data?.programs.map((program) => transformProgramRecord(program)) ?? [];
-  return snakeCaseToCamelCase({ ...data, programs }) as unknown as Portfolio;
+  return snakeCaseToCamelCase({ ...data, programs }) as unknown as IPortfolio;
 }

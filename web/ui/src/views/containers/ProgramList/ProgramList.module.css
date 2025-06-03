@@ -1,0 +1,98 @@
+.program-controls {
+  align-items: center;
+  display: flex;
+  width: 4.5rem;
+}
+
+.program-controls > button {
+  border: none;
+  border-radius: 20%;
+  flex: 1;
+  font-size: large;
+  height: 3rem;
+  opacity: 60%;
+  transition: background-color 0.2s ease;
+  visibility: hidden;
+}
+
+.program-controls > button:hover:not(:disabled) {
+  background: var(--color-grayscale-2);
+}
+
+.program-controls > button svg[data-icon="eye-low-vision"] {
+  visibility: visible;
+}
+
+.program-item {
+  display: flex;
+  gap: 0.3em;
+}
+
+.program-item:hover > .program-controls > button {
+  visibility: visible;
+}
+
+.program-portfolio-list {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  height: 97.5%;
+  margin: 1rem 0 0 0;
+  overflow: auto;
+  padding: 0 1rem;
+}
+
+@media screen and (min-width: 0px) {
+  .program-controls {
+    width: 3rem;
+  }
+
+  .program-controls > button {
+    font-size: small;
+  }
+
+  .program-portfolio-list.condensed {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.2em;
+    order: 2;
+  }
+
+  .program-portfolio-list.condensed button {
+    height: 3em;
+  }
+
+  .program-portfolio-list:not(.condensed) {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .program-portfolio-list.condensed {
+    flex-wrap: wrap;
+    order: 1;
+  }
+}
+
+@media screen and (min-width: 1450px) {
+  .program-controls {
+    width: 4.5rem;
+  }
+
+  .program-controls > button {
+    font-size: large;
+  }
+}
+
+@media screen and (min-width: 1650px) {
+  .program-portfolio-list.condensed {
+    display: none;
+  }
+
+  .program-portfolio-list:not(.condensed) {
+    display: flex;
+  }
+}

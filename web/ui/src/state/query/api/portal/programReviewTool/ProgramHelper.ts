@@ -1,8 +1,8 @@
-import Program from "state/types/program_review_tool/Program";
+import { IProgram } from "views/definitions/ProgramReviewTool.types";
 
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 
-export interface ApiProgram {
+export interface IApiProgram {
   id: number;
   pa_number: string;
   name: string;
@@ -22,6 +22,6 @@ export interface ApiProgram {
  * @param data A `program_review_tool.Program` record.
  * @returns A `program_review_tool.Program` record with desired casing.
  */
-export function transformProgramRecord(data: ApiProgram): Program {
-  return snakeCaseToCamelCase({ ...data }) as unknown as Program;
+export function transformProgramRecord(data: IApiProgram): IProgram {
+  return snakeCaseToCamelCase({ ...data }) as unknown as IProgram;
 }

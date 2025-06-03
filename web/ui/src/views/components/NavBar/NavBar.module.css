@@ -10,6 +10,11 @@
   width: 2rem;
 }
 
+nav[class*="search-bar-container"] ul {
+  align-items: center;
+  min-height: 2.8em;
+}
+
 nav button.reset-view-button {
   background: none;
   border: none;

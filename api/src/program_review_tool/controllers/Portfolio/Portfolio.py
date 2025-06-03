@@ -9,6 +9,7 @@ from typing import cast, List, Tuple
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from program_review_tool import exceptions, models
 
@@ -164,7 +165,7 @@ class Portfolio:
             # Update the `Portfolio` record.
             rows_affected: int = models.Portfolio.objects.filter(
                 id=portfolio.id
-            ).update(name=name)
+            ).update(name=name, modified=timezone.now())
 
             portfolio.programs.set(program_records)
             portfolio.refresh_from_db()
