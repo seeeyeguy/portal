@@ -1320,6 +1320,59 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchPortfoliosPermissionsDeniedResponse"
+    put:
+      tags:
+        - "program_review_tool.portfolio.update"
+      summary: "Update a Portfolio for user."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: "Primary key of the `Portfolio` record
+            to be updated."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePortfolioRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdatePortfolioResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdatePortfolioDuplicatePortfolioNameForUserResponse"
+                  - $ref: "#/components/schemas/UpdatePortfolioEmptyProgramsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdatePortfolioUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdatePortfolioPermissionsDeniedResponse"
+        "404":
+          description: "`Program` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdatePortfolioProgramDoesNotExistResponse"
     delete:
       tags:
         - "program_review_tool.portfolio.delete"
@@ -3778,6 +3831,94 @@ components:
     FetchPortfoliosPermissionsDeniedResponse:
       title: "Fetch `Portfolio` error response due to invalid permissions."
       example: "Permissions Denied."
+    
+    UpdatePortfolioRequest:
+      title: "Update `Portfolio` for user request."
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the `Portfolio` being updated.
+          default: "Update Portfolio 1"
+        programs:
+          type: array[int]
+          description: Ids of `Program`s being linked to the `Portfolio`
+            being updated.
+          default: []
+    
+    UpdatePortfolioResponse:
+      title: "Update `Portfolio` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "name": "Updated Portfolio Name 1",
+              "user": {
+                  "id": 1,
+                  "username": "May.Parker@harris.com",
+                  "email": "May.Parker@harris.com",
+                  "first_name": "May",
+                  "last_name": "Parker",
+                  "is_active": True,
+              },
+              "programs": [
+                  {
+                      "id": 1,
+                      "segment": "SPACE & AIRBORNE SYSTEMS",
+                      "name": "Aegis AIN 987 Demo Ops_10LR #1",
+                      "created": "2025-03-08T06:37:32-05:00",
+                      "modified": "2024-05-01T12:19:00-04:00",
+                      "pa_number": "4X25J",
+                      "sector": "Air Defense",
+                      "division": "North Command",
+                      "tier": 2,
+                      "contract_value": 606545312,
+                      "active_status": True,
+                  },
+                  {
+                      "id": 2,
+                      "segment": "SPACE & AIRBORNE SYSTEMS",
+                      "name": "Poseidon GIN 007 Demo Ops_10LR #2",
+                      "created": "2024-08-21T04:40:34-04:00",
+                      "modified": "2024-06-02T03:55:11-04:00",
+                      "pa_number": "4R010S",
+                      "sector": "Missile Systems",
+                      "division": "Tech Arm",
+                      "tier": 4,
+                      "contract_value": 813759728,
+                      "active_status": True,
+                  },
+                  ...
+                ],
+                "created": "2025-05-04T12:00:00-04:00",
+                "modified": "2024-05-04T12:00:00-04:00",
+              }
+
+    UpdatePortfolioDuplicatePortfolioNameForUserResponse:
+      title: "Update `Portfolio` error response due to supplying a name for a `Portfolio`
+        that already exists for the user."
+      example: "Portfolio (name={name}, user={user}) already exists."
+    
+    UpdatePortfolioEmptyProgramsResponse:
+      title: "Update `Portfolio` error response due to not supplying `Program`
+        ids."
+      example: "Portfolio must be associated with at least one Program."
+
+    UpdatePortfolioUnauthorizedResponse:
+      title: "Update `Portfolio` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdatePortfolioPermissionsDeniedResponse:
+      title: "Update `Portfolio` error response due to invalid permissions."
+      example: "Permissions Denied."
+
+    UpdatePortfolioProgramDoesNotExistResponse:
+      title: "Update `Portfolio` error response due to supplying an id
+        for a `Program` that does not exist."
+      example: "Some Programs (ids={programs}) do not exist."
 
     DeletePortfolioResponse:
       title: "Delete `Portfolio` response."
