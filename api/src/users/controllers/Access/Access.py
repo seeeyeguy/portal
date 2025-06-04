@@ -224,11 +224,49 @@ class Access:
                 This `User` must have an `Access` with the role `Superuser`.
 
         Returns:
-            * access (models.Access): An updated `Access` record for the given user.
+            * access_record (models.Access): An updated `Access` record for the given user.
             * rows_affected (int): The number of records affected.
         """
 
-        return models.Access(), 1
+        try:
+
+            if not (admin and admin.is_authenticated):
+                err_msg = "Authentication required."
+                LOGGER.error(err_msg)
+                raise exceptions.UsersError(err_msg, 401)
+
+            # Verify the permissions of the `admin`.
+            if not models.Access.objects.filter(
+                user=admin,
+                role__level=models.Role.RoleLevels.SUPERUSER,
+                access_revoked_date__isnull=True,
+            ).exists():
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.UsersError(err_msg, 403)
+
+            # Fetch `Access` record.
+            access_record: models.Access = models.Access.objects.get(id=access)
+
+            # Verify the `Access` being revoked does not belong
+            # to the `admin`.
+            if access_record.user.email == admin.email:
+                err_msg = "Admins can't revoke one of their accesses."
+                LOGGER.error(err_msg)
+                raise exceptions.UsersError(err_msg, 400)
+
+            # Revoke the target `Access`.
+            rows_affected = models.Access.objects.filter(id=access_record.id).update(
+                access_revoked_date=timezone.now()
+            )
+
+            access_record.refresh_from_db()
+
+            return access_record, rows_affected
+        except models.Access.DoesNotExist as exc:
+            err_msg = f"Access (id={access}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_accesses(

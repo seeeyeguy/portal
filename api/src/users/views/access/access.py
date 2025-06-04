@@ -65,7 +65,7 @@ class Access(View):
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
     @method_decorator(login_required())
-    def put(self, request: DjangoHttpRequest, _: dict) -> http.JsonResponse:
+    def put(self, request: DjangoHttpRequest) -> http.JsonResponse:
         """Endpoint for PUT /v1/users/access."""
 
         try:
