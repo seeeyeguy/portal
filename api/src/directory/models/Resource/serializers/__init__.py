@@ -20,9 +20,9 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance: Resource) -> dict:
         record: dict = super().to_representation(instance)
-        primary_point_of_contact: Union[PointOfContact, None] = (
-            PointOfContact.objects.filter(resource=instance, primary=True).first()
-        )
+        primary_point_of_contact: Union[
+            PointOfContact, None
+        ] = PointOfContact.objects.filter(resource=instance, primary=True).first()
         record["primary_point_of_contact"] = (
             primary_point_of_contact.contact.email if primary_point_of_contact else None
         )
