@@ -63,6 +63,9 @@ paths:
           schema:
             type: integer
           description: Maximum number of `Query` records to return.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -178,6 +181,9 @@ paths:
             type: integer
           description: Primary key of the `EmployeeLevel` record
             to fetch.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -257,6 +263,9 @@ paths:
             type: integer
           description: Primary key of the `EmployeeLevel` record
             to delete.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -329,6 +338,9 @@ paths:
             type: integer
           description: Primary key of the `Function` record
             to fetch.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -408,6 +420,9 @@ paths:
             type: integer
           description: Primary key of the `Function` record
             to be deleted.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -514,6 +529,9 @@ paths:
           schema:
             type: integer
           description: Maximum number of `Resource` records to return.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -707,6 +725,9 @@ paths:
             type: integer
           description: Primary key of the `SubFunction` record
             to fetch.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -787,6 +808,9 @@ paths:
             type: integer
           description: Primary key of the `SubFunction` record
             to be deleted.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -863,6 +887,9 @@ paths:
           schema:
             type: integer
           description: Maximum number of `Tag` records to return.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -943,6 +970,9 @@ paths:
             type: integer
           description: Primary key of the `Tag` record
             to be deleted.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -969,6 +999,9 @@ paths:
           schema:
             type: string
           description: "Label that will be used to search for Tags."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1027,6 +1060,9 @@ paths:
           schema:
             type: string
           description: "User's email related to the desired `Favorite`s."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1107,6 +1143,9 @@ paths:
           schema:
             type: integer
           description: "Primary key of the `Favorite` record to be deleted."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1168,6 +1207,9 @@ paths:
           schema:
             type: string
           description: "User's email related to the desired `QueryFilterState`."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1298,6 +1340,9 @@ paths:
           schema:
             type: string
           description: "User's email related to the desired portfolios."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1383,6 +1428,9 @@ paths:
           schema:
             type: integer
           description: "Id related to the desired portfolio."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1429,6 +1477,9 @@ paths:
           schema:
             type: integer
           description: Maximum number of `Program` records to return.
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
@@ -1718,6 +1769,9 @@ paths:
           schema:
             type: string
           description: "User's email related the desired profile."
+      requestBody:
+        content:
+          application/json: {}
       responses:
         "200":
           description: "OK"
