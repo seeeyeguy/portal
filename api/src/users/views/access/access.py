@@ -101,7 +101,7 @@ class Access(View):
 
         try:
             log_msg = (
-                f"GET /v1/users/access?id={body['access']}",
+                f"GET /v1/users/access?id={body['id']}",
                 f"&user={body['user']}&role_levels={body['role_levels']}"
                 f"&subfunctions={body['subfunctions']}&include_revoked={body['include_revoked']}",
             )
@@ -109,7 +109,7 @@ class Access(View):
 
             # Fetch `Access` records.
             access_records = controllers.Access.fetch_accesses(
-                access=body["access"],
+                access=body["id"],
                 user=body["user"],
                 role_levels=body["role_levels"],
                 subfunctions=body["subfunctions"],
@@ -117,7 +117,7 @@ class Access(View):
                 admin=request.user,
             )
 
-            many: bool = body["access"] is None
+            many: bool = body["id"] is None
 
             # Serialize `Access` record(s).
             data: Union[dict, List[dict]] = AccessSerializer(

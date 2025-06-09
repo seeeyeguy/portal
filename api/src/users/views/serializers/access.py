@@ -29,7 +29,7 @@ class RevokeAccessRequestQueryParams(serializers.Serializer):
 class FetchAccessRequest(serializers.Serializer):
     """Request serializer for GET /v1/users/access."""
 
-    access = serializers.IntegerField(allow_null=True, default=None)
+    id = serializers.IntegerField(allow_null=True, default=None)
     user = serializers.EmailField(allow_null=True, default=None)
     role_levels = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, default=[]
