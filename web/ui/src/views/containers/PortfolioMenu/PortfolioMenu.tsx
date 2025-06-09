@@ -109,7 +109,7 @@ export default function PortfolioMenu({
     }
 
     if (
-      Object.values(portfolios).some(
+      Object.values(portfolios ?? {}).some(
         (portfolio) =>
           portfolio.name.toLowerCase() ===
             selectedPortfolioName.toLowerCase() &&
@@ -145,9 +145,9 @@ export default function PortfolioMenu({
         return;
       }
 
-      const currentPrograms = Object.keys(selectedPortfolio.programs);
+      const currentPrograms = Object.keys(selectedPortfolio?.programs ?? {});
       const storedPrograms = Object.keys(
-        portfolios[selectedPortfolio?.id]?.programs || {}
+        (portfolios ?? {})[selectedPortfolio?.id]?.programs || {}
       );
 
       // Confirm when portfolio's current programs do not match stored portfolio programs.

@@ -121,7 +121,7 @@ class Portfolio(View):
 
             user = req.validated_data.get("user")
 
-            if request.user.username != user:
+            if request.user.username.lower() != user.lower():
                 return http.JsonResponse(
                     "Permissions Denied.", status=status.HTTP_403_FORBIDDEN, safe=False
                 )

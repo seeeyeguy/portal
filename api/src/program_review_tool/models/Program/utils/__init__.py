@@ -18,6 +18,8 @@ from manager.settings import ApplicationBuild, BUILD
 
 LOGGER = logging.getLogger(__name__)
 
+FDW_WHERE_IN_LIMIT: int = 1000
+
 
 class AcceptedExternalDatabases:
     """Supported External Databases."""
@@ -80,29 +82,29 @@ def transform_segments(segment: str) -> Union[int, None]:
     """Given a segment, return the corresponding primary key
     for that segment in our database."""
 
-    if segment.upper() in AR:
+    if str(segment).upper() in AR:
         return AR[0]
-    if segment.upper() in CS:
+    if str(segment).upper() in CS:
         return CS[0]
-    if segment.upper() in IMS:
+    if str(segment).upper() in IMS:
         return IMS[0]
-    if segment.upper() in SAS:
+    if str(segment).upper() in SAS:
         return SAS[0]
 
     return None
 
 
-def transform_contract_value(contract_value: float) -> int:
+def transform_contract_value(contract_value: float) -> Union[int, None]:
     """Given contract_value as a float, return a rounded int."""
 
-    return round(contract_value)
+    return round(contract_value) if contract_value is not None else None
 
 
 def transform_active_status(status: str) -> bool:
     """Given a status as a string, return a boolean indicating
     whether the status is active(True) or inactive(False)."""
 
-    return status.lower() == "active"
+    return str(status).lower() == "active"
 
 
 def query_programs_from_axis(pa_numbers: List[str]) -> List[dict]:
@@ -127,7 +129,7 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
 
     try:
         conn = ExternalDatabaseConnector("fdw")
-        sql = f"""
+        base_sql = f"""
         SELECT bcom.PROJECT_ID AS pa_number,
             bcom.PROGRAM_NAME AS program_name,
             bcom.SEGMENT AS segment,
@@ -138,10 +140,40 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
             bcom.ACTIVEINACTIVE AS active_status
         FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom
         JOIN
-        BUSANA.PROGRAM_TIER p ON p.PA_ID = bcom.PROJECT_ID
-        WHERE bcom.PROJECT_ID IN {tuple(pa_numbers)}
+        BUSANA.PROGRAM_TIER p ON p.PA_ID = bcom.PROJECT_ID        
         """
-        df = conn.query_db(sql=sql)
+
+        df = pd.DataFrame()
+        if pa_numbers:
+            if len(pa_numbers) < FDW_WHERE_IN_LIMIT:
+                sql = f"""
+                {base_sql}
+                WHERE bcom.PROJECT_ID IN {tuple(pa_numbers)}
+                """
+                df = conn.query_db(sql=sql)
+            else:
+                i, j = 0, FDW_WHERE_IN_LIMIT
+                while i < len(pa_numbers):
+                    sql = f"""
+                        {base_sql}
+                        WHERE bcom.PROJECT_ID IN {tuple(pa_numbers[i:j])}
+                        """
+                    query_df = conn.query_db(sql=sql)
+                    df = pd.concat([df, query_df])
+
+                    i, j = j, j + FDW_WHERE_IN_LIMIT
+        else:
+            df = conn.query_db(sql=base_sql)
+
+        df = df.loc[
+            ~(
+                (df["segment"].isnull())
+                | (df["sector"].isnull())
+                | (df["division"].isnull())
+                | (df["tier"].isnull())
+                | (df["contract_value"].isnull())
+            )
+        ]
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
         df["active_status"] = df["active_status"].apply(transform_active_status)
@@ -169,6 +201,14 @@ def update_programs_from_external_database() -> None:
         records = query_programs_from_fdw(existing_pa_numbers)
 
     for record in records:
-        Program.objects.filter(pa_number=record["pa_number"]).update(**record)
+        Program.objects.filter(pa_number=record["pa_number"]).update(
+            name=record["program_name"],
+            segment=record["segment"],
+            sector=record["sector"],
+            division=record["division"],
+            tier=record["tier"],
+            contract_value=record["contract_value"],
+            active_status=record["active_status"],
+        )
 
     return None

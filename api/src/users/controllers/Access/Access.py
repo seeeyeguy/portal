@@ -72,7 +72,7 @@ def _validate_stages_for_role(role_level: int, stages: QuerySet[Stage]) -> None:
     if invalid_stages_for_role:
         err_msg = (
             f"Invalid Stages (levels={invalid_stages_for_role}) for "
-            f"Role (level={role_level}))."
+            f"Role (level={role_level})."
         )
         LOGGER.error(err_msg)
         raise exceptions.UsersError(err_msg, 400)

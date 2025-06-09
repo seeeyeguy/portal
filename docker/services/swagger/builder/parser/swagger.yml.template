@@ -1757,7 +1757,59 @@ paths:
                   - $ref: "#/components/schemas/UpdateResourceSubFunctionDoesNotExistResponse"
                   - $ref: "#/components/schemas/UpdateResourceTagDoesNotExistResponse"
                   - $ref: "#/components/schemas/UpdateResourcePointOfContactDoesNotExistResponse"
-                  
+  /users/access:
+    post:
+      tags:
+        - "users.access.create"
+      summary: "Create `Access` for User based on the given `Role` level."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccessRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessDuplicateAccessErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessRoleNotAllowedSubFunctionsErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessTerminalStagesNotPermittedErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessDraftStageNotPermittedErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessInvalidStagesForRoleErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessUnauthorizedResponse"
+        "403":          
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessForbiddenErrorResponse"
+        "404":
+          description: "User, Role, Stage or SubFunction does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessUserDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessRoleDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessStageDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessSubFunctionDoesNotExistResponse"
   /users/profile:
     get:
       tags:
@@ -4072,6 +4124,123 @@ components:
       title: "Fetch `Program` error response due to fetching a `Program` record
       for ids that do not exist."
       example: "Programs (ids={ids}) do not exist."
+
+    CreateAccessRequest:
+      title: "Create `Access` request."
+      type: object
+      properties:
+        user:
+          type: string
+          description: E-mail of the `User` to be applied to the `Access` being
+            created.
+          default: ""
+        role_level:
+          type: integer
+          description: Level of the `Role` to be applied to the `Access` being
+            created.
+          default: null
+        subfunctions:
+          type: array[int]
+          description: Ids of `SubFunction`s to be applied to the `Access` being
+            created.
+          default: []
+        stage_levels:
+          type: array[int]
+          description: Levels of `Stages`s to be applied to the `Access` being
+            created.
+          default: []
+    
+    CreateAccessResponse:
+      title: "Create `Access` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "user": {
+                "id": 1,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "role": {
+                "id": 2,
+                "created": "2024-08-27T12:00:00-04:00",
+                "name": "Business Process Expert",
+                "description": "Business Process Expert.",
+                "level": 2,
+              },
+              "access_granted_date": "2025-01-01T12:00:00-04:00",
+              "access_revoked_date": None,
+              "stage": [
+                {
+                  "id": 2,
+                  "name": "Submitted",
+                  "description": "A resource was submitted.",
+                  "level": 2,
+                },
+              ],
+              "subfunctions": [1, 2],
+            }
+  
+    CreateAccessDuplicateAccessErrorResponse:
+      title: "Create `Access` error response due to supplying 
+        a `User` email and `Role` level for an existing `Access`."
+      example: "Access for User(email={user_email}) & Role(level={role_level})
+        already exists."
+    
+    CreateAccessRoleNotAllowedSubFunctionsErrorResponse:
+      title: "Create `Access` error response due to supplying
+        `SubFunction` ids for a `Role` that does not allow `SubFunction`s."
+      example: "Superusers do not need subfunctions."
+
+    CreateAccessTerminalStagesNotPermittedErrorResponse:
+      title: "Create `Access` error response due to supplying
+        `Stage` levels that include a terminal `Stage`."
+      example: "Terminal Stages are not permitted."
+        
+    CreateAccessDraftStageNotPermittedErrorResponse:
+      title: "Create `Access` error response due to supplying
+        `Stage` levels that include the `DRAFT` Stage."
+      example: "Draft Stage is not permitted."
+
+    CreateAccessInvalidStagesForRoleErrorResponse:
+      title: "Create `Access` error response due to supplying
+        invalid `Stage` levels for the `Role` level provided."
+      example: Invalid Stages (levels={stage_levels}) for
+        Role (level={role_level})."
+
+    CreateAccessUnauthorizedResponse:
+      title: "Create `Access` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    CreateAccessForbiddenErrorResponse:
+      title: "Create `Access` error response due to forbidden access."
+      example: "Permissions Denied."
+    
+    CreateAccessUserDoesNotExistResponse:
+      title: "Fetch `Access` error response due to using an email
+        for a `User` that does not exist."
+      example: "User (email={user_email}) does not exist."
+    
+    CreateAccessRoleDoesNotExistResponse:
+      title: "Fetch `Access` error response due to using a level
+        for a `Role` that does not exist."
+      example: "Role (level={role_level}) does not exist."
+    
+    CreateAccessSubFunctionDoesNotExistResponse:
+      title: "Create `Access` error response due to supplying an id
+        for a `SubFunction` that does not exist."
+      example: "Some SubFunctions (ids={subfunctions}) do not exist."
+
+    CreateAccessStageDoesNotExistResponse:
+      title: "Create `Resource` error response due to supplying a level
+        for a `Stage` that does not exist."
+      example: "Some Stages (levels={stage_levels}) do not exist."      
 
     FetchProfileResponse:
       title: "Fetch `Profile` response."
