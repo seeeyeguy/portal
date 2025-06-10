@@ -90,4 +90,4 @@ class Visit(View):
             page=body["page"],
             limit=body["limit"],
         )
-        return http.JsonResponse(visits, status=status.HTTP_200_OK)
+        return http.JsonResponse(visits, status=status.HTTP_200_OK, safe=False)

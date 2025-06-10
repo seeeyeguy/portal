@@ -10,7 +10,7 @@ import { useTypedSelector } from "state/store/store";
 import { IFunction } from "definitions/portal/directory/Function.types";
 import { ITag } from "definitions/portal/directory/Tag.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 
 import { transformToOption } from "views/utils/OptionsUtility";
 

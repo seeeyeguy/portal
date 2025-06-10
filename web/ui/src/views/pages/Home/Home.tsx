@@ -16,7 +16,7 @@ import { useAppDispatch } from "state/store/store";
 
 import { ITag } from "definitions/portal/directory/Tag.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 import type { IUser } from "definitions/Sso.types";
 
 const FILTER_PREFIX = "filter::";

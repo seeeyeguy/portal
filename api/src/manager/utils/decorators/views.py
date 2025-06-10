@@ -39,7 +39,14 @@ def with_serializer(serializer_class: Type[Serializer], many: bool = False) -> C
                     # If the value for this key is a string containing an array
                     # or object, use json.loads to convert it to a list or dict.
                     if isinstance(value, str) and re.search(r"[\[{]", value):
-                        value = json.loads(value)
+                        try:
+                            value = json.loads(value)
+                        except json.decoder.JSONDecodeError:
+                            err_msg = f"Invalid value for {key}: {value}"
+                            LOGGER.error(err_msg)
+                            return http.JsonResponse(
+                                err_msg, status=status.HTTP_400_BAD_REQUEST, safe=False
+                            )
                     body[key] = value
                 for key in request.FILES:
                     body[key] = request.FILES[key]

@@ -9,7 +9,7 @@ import NavBar from "views/components/NavBar/NavBar";
 import PortfolioMenu from "views/containers/PortfolioMenu/PortfolioMenu";
 import ProgramList from "views/containers/ProgramList/ProgramList";
 
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 import type { IUser } from "definitions/Sso.types";
 import { IProgressMarker } from "views/components/ProgressBar/ProgressBar";
 import {

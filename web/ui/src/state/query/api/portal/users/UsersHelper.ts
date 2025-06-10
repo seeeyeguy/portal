@@ -1,6 +1,6 @@
 import { transformApiUser as transformUserRecord } from "state/query/api/auth/AuthHelper";
 
-import { IProfile, ISegment } from "definitions/portal/Users.types";
+import { IProfile, ISegment } from "definitions/portal/users/Users.types";
 
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 

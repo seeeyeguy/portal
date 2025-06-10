@@ -1,3 +1,4 @@
+import { DELETE, POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
 import { IApiEmployeeLevel } from "state/query/api/portal/directory/EmployeeLevelHelper";
 import api from "state/query/api";
@@ -5,19 +6,48 @@ import api from "state/query/api";
 import { IEmployeeLevel } from "definitions/portal/directory/EmployeeLevel.types";
 
 type TApiEmployeeLevelResponse = {
-  data: IEmployeeLevel | IEmployeeLevel[];
+  data: IEmployeeLevel | IEmployeeLevel[] | number;
   status: number | undefined;
 };
 
-type TApiEmployeeLevelRequest = number | null;
+export type TApiPostEmployeeLevelRequest = {
+  name: string;
+  description: string;
+  level: number;
+};
+
+export type TApiFetchEmployeeLevelRequest = number | null;
+
+export type TApiPutEmployeeLevelRequest = {
+  name: string;
+  description: string;
+};
 
 const employeeLevelApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    addEmployeeLevel: builder.mutation<
+      TApiEmployeeLevelResponse,
+      TApiPostEmployeeLevelRequest
+    >({
+      query: (body: TApiPostEmployeeLevelRequest) => ({
+        url: endpoints.PORTAL.DIRECTORY.EMPLOYEE_LEVELS(),
+        method: POST,
+        body,
+      }),
+      transformResponse: (
+        response: IApiEmployeeLevel,
+        meta
+      ): TApiEmployeeLevelResponse => ({
+        data: response as IEmployeeLevel,
+        status: meta?.response?.status,
+      }),
+      invalidatesTags: ["EmployeeLevel"],
+    }),
     getEmployeeLevels: builder.query<
       TApiEmployeeLevelResponse,
-      TApiEmployeeLevelRequest
+      TApiFetchEmployeeLevelRequest
     >({
-      query: (id: TApiEmployeeLevelRequest = null) =>
+      query: (id: TApiFetchEmployeeLevelRequest = null) =>
         endpoints.PORTAL.DIRECTORY.EMPLOYEE_LEVELS(id),
       transformResponse: (
         response: IApiEmployeeLevel | IApiEmployeeLevel[],
@@ -26,9 +56,47 @@ const employeeLevelApi = api.injectEndpoints({
         data: response as IEmployeeLevel | IEmployeeLevel[],
         status: meta?.response?.status,
       }),
+      providesTags: ["EmployeeLevel"],
+    }),
+    updateEmployeeLevel: builder.mutation<
+      TApiEmployeeLevelResponse,
+      { body: TApiPutEmployeeLevelRequest } & { id: number }
+    >({
+      query: ({
+        body,
+        id,
+      }: { body: TApiPutEmployeeLevelRequest } & { id: number }) => ({
+        url: endpoints.PORTAL.DIRECTORY.EMPLOYEE_LEVELS(id),
+        method: PUT,
+        body,
+      }),
+      transformResponse: (
+        response: IApiEmployeeLevel,
+        meta
+      ): TApiEmployeeLevelResponse => ({
+        data: response as IEmployeeLevel,
+        status: meta?.response?.status,
+      }),
+      invalidatesTags: ["EmployeeLevel"],
+    }),
+    removeEmployeeLevel: builder.mutation<TApiEmployeeLevelResponse, number>({
+      query: (id: number) => ({
+        url: endpoints.PORTAL.DIRECTORY.EMPLOYEE_LEVELS(id),
+        method: DELETE,
+      }),
+      transformResponse: (response: number, meta) => ({
+        data: response,
+        status: meta?.response?.status,
+      }),
+      invalidatesTags: ["EmployeeLevel"],
     }),
   }),
 });
 
 export default employeeLevelApi;
-export const { useGetEmployeeLevelsQuery } = employeeLevelApi;
+export const {
+  useAddEmployeeLevelMutation,
+  useGetEmployeeLevelsQuery,
+  useRemoveEmployeeLevelMutation,
+  useUpdateEmployeeLevelMutation,
+} = employeeLevelApi;

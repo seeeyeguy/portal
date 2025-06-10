@@ -23,6 +23,7 @@ export default defineConfig({
     __APP_TITLE__: JSON.stringify(process.env.APP_TITLE),
     __DATA_ENCRYPTION_KEY__: JSON.stringify(process.env.DATA_ENCRYPTION_KEY),
     __SCHEME__: JSON.stringify(process.env.SCHEME),
+    __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
     __WEB_HOST__: JSON.stringify(process.env.WEB_HOST),
     __WEB_PORT__: JSON.stringify(process.env.WEB_PORT),
   },
