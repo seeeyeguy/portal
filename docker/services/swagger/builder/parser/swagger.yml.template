@@ -1810,6 +1810,56 @@ paths:
                   - $ref: "#/components/schemas/CreateAccessRoleDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateAccessStageDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateAccessSubFunctionDoesNotExistResponse"
+    put:
+      tags:
+        - "users.access.update"
+      summary: "Revoke `Access` for the given id."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Access` record
+            to revoke.
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessAccessBelongsToAdminErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessUnauthorizedResponse"
+        "403":          
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessForbiddenErrorResponse"
+        "404":
+          description: "Access does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessAccessDoesNotExistResponse"
   /users/profile:
     get:
       tags:
@@ -4184,7 +4234,23 @@ components:
                   "level": 2,
                 },
               ],
-              "subfunctions": [1, 2],
+              "subfunctions": [
+                {
+                  "id": 1,
+                  "function": {
+                    "id": 1,
+                    "name": "Human Resources",
+                    "description": "Function 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  "name": "Training",
+                  "description": "Function 1 SubFunction 1.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00",
+                },
+                ...
+              ],
             }
   
     CreateAccessDuplicateAccessErrorResponse:
@@ -4240,7 +4306,79 @@ components:
     CreateAccessStageDoesNotExistResponse:
       title: "Create `Resource` error response due to supplying a level
         for a `Stage` that does not exist."
-      example: "Some Stages (levels={stage_levels}) do not exist."      
+      example: "Some Stages (levels={stage_levels}) do not exist."
+
+    RevokeAccessResponse:
+      title: "Revoke `Access` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "user": {
+                "id": 1,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "role": {
+                "id": 2,
+                "created": "2024-08-27T12:00:00-04:00",
+                "name": "Business Process Expert",
+                "description": "Business Process Expert.",
+                "level": 2,
+              },
+              "access_granted_date": "2025-01-01T12:00:00-04:00",
+              "access_revoked_date": "2025-01-02T12:00:00-04:00",
+              "stage": [
+                {
+                  "id": 2,
+                  "name": "Submitted",
+                  "description": "A resource was submitted.",
+                  "level": 2,
+                },
+              ],
+              "subfunctions": [
+                {
+                  "id": 1,
+                  "function": {
+                    "id": 1,
+                    "name": "Human Resources",
+                    "description": "Function 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  "name": "Training",
+                  "description": "Function 1 SubFunction 1.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00",
+                },
+                ...
+              ],
+            }
+
+    RevokeAccessAccessBelongsToAdminErrorResponse:
+      title: "Revoke `Access` error response due to supplying 
+        the id of an `Access` that belongs to the admin making
+        the request."
+      example: "Admins can't revoke one of their accesses."
+
+    RevokeAccessUnauthorizedResponse:
+      title: "Revoke `Access` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+    
+    RevokeAccessForbiddenErrorResponse:
+      title: "Revoke `Access` error response due to forbidden access."
+      example: "Permissions Denied."
+    
+    RevokeAccessUserDoesNotExistResponse:
+      title: "Revoke `Access` error response due to using an email
+        for a `User` that does not exist."
+      example: "User (email={user_email}) does not exist."
 
     FetchProfileResponse:
       title: "Fetch `Profile` response."
@@ -5063,134 +5201,151 @@ components:
             {
               "id": 1,
               "resource": {
-                  "id": 1,
-                  "employee_levels": [
-                      {
-                          "id": 3,
-                          "name": "Executive",
-                          "description": "Executive Level 1.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "level": 3,
-                      }
-                  ],
-                  "subfunctions": [
-                      {
-                          "id": 5,
-                          "function": {
-                              "id": 3,
-                              "name": "Finance",
-                              "description": "Function 3.",
-                              "created": "2024-08-27T12:00:00-04:00",
-                              "modified": "2024-08-27T12:00:00-04:00",
-                          },
-                          "name": "Capital",
-                          "description": "Function 3 SubFunction 1.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                      },
-                      {
-                          "id": 2,
-                          "function": {
-                              "id": 1,
-                              "name": "Human Resources",
-                              "description": "Function 1.",
-                              "created": "2024-08-27T12:00:00-04:00",
-                              "modified": "2024-08-27T12:00:00-04:00",
-                          },
-                          "name": "Recruiting",
-                          "description": "Function 1 SubFunction 2.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                      },
-                  ],
-                  "tags": [
-                      {
-                          "id": 1,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "filter::site:Melbourne",
-                      },
-                      {
-                          "id": 2,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "filter::site:Rochester",
-                      },
-                      {
-                          "id": 3,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "restricted::department:GeoSpatial",
-                      },
-                  ],
-                  "primary_point_of_contact": "Test.User@harris.com",
-                  "description": "Test resource description for create tests.",
-                  "created": "2025-04-24T11:59:30.789539-04:00",
-                  "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
-                  "revision_number": None,
-                  "name": "Test Create Name",
-                  "url": "https://www.test-site.com",
-                  "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
-                  "type": "test create type",
-                  "download": False,
-                  "active": False,
-                  "previous_revision": None,
+                "id": 1,
+                "employee_levels": [
+                    {
+                      "id": 3,
+                      "name": "Executive",
+                      "description": "Executive Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 3,
+                    }
+                ],
+                "subfunctions": [
+                  {
+                    "id": 5,
+                    "function": {
+                      "id": 3,
+                      "name": "Finance",
+                      "description": "Function 3.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Capital",
+                    "description": "Function 3 SubFunction 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  {
+                    "id": 2,
+                    "function": {
+                      "id": 1,
+                      "name": "Human Resources",
+                      "description": "Function 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Recruiting",
+                    "description": "Function 1 SubFunction 2.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "filter::site:Melbourne",
+                  },
+                  {
+                    "id": 2,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "filter::site:Rochester",
+                  },
+                  {
+                    "id": 3,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "restricted::department:GeoSpatial",
+                  },
+                ],
+                "primary_point_of_contact": "Test.User@harris.com",
+                "description": "Test resource description for create tests.",
+                "created": "2025-04-24T11:59:30.789539-04:00",
+                "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
+                "revision_number": None,
+                "name": "Test Create Name",
+                "url": "https://www.test-site.com",
+                "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
+                "type": "test create type",
+                "download": False,
+                "active": False,
+                "previous_revision": None,
               },
               "originator": {
+                "id": 3,
+                "user": {
+                  "id": 1,
+                  "username": "Test.User@harris.com",
+                  "email": "Test.User@harris.com",
+                  "first_name": "Test",
+                  "last_name": "User",
+                  "is_active": True,
+                },
+                "role": {
                   "id": 3,
-                  "user": {
-                      "id": 1,
-                      "username": "Test.User@harris.com",
-                      "email": "Test.User@harris.com",
-                      "first_name": "Test",
-                      "last_name": "User",
-                      "is_active": True,
-                  },
-                  "role": {
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "name": "Data Steward",
+                  "description": "Data Steward.",
+                  "level": 3,
+                },
+                "stage": [],
+                "subfunctions": [
+                  {
+                    "id": 5,
+                    "function": {
                       "id": 3,
+                      "name": "Finance",
+                      "description": "Function 3.",
                       "created": "2024-08-27T12:00:00-04:00",
-                      "name": "Data Steward",
-                      "description": "Data Steward.",
-                      "level": 3,
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Capital",
+                    "description": "Function 3 SubFunction 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
                   },
-                  "stage": [],
-                  "access_granted_date": "2024-08-27T12:00:00-04:00",
-                  "access_revoked_date": None,
+                  ...
+                ],
+                "access_granted_date": "2024-08-27T12:00:00-04:00",
+                "access_revoked_date": None,
               },
               "created": "2025-04-24T11:59:30.796324-04:00",
               "modified": "2025-04-24T11:59:30.796357-04:00",
               "status": "PENDING",
               "transitions": {
-                  "latest": 3,
-                  "nodes": {
-                      "3": {
-                          "id": 3,
-                          "request": 2,
-                          "stage": {
-                              "id": 2,
-                              "name": "Submitted",
-                              "description": "A resource was submitted.",
-                              "level": 2,
-                          },
-                          "previous_transition": 2,
-                          "created": "2025-04-24T11:59:30.805896-04:00",
-                          "dispositions": [],
-                      },
-                      "2": {
-                          "id": 2,
-                          "request": 2,
-                          "stage": {
-                              "id": 1,
-                              "name": "Draft",
-                              "description": "A resource was created.",
-                              "level": 1,
-                          },
-                          "previous_transition": None,
-                          "created": "2025-04-24T11:59:30.799683-04:00",
-                          "dispositions": [],
-                      },
+                "latest": 3,
+                "nodes": {
+                  "3": {
+                    "id": 3,
+                    "request": 2,
+                    "stage": {
+                      "id": 2,
+                      "name": "Submitted",
+                      "description": "A resource was submitted.",
+                      "level": 2,
+                    },
+                    "previous_transition": 2,
+                    "created": "2025-04-24T11:59:30.805896-04:00",
+                    "dispositions": [],
                   },
+                  "2": {
+                    "id": 2,
+                    "request": 2,
+                    "stage": {
+                      "id": 1,
+                      "name": "Draft",
+                      "description": "A resource was created.",
+                      "level": 1,
+                    },
+                    "previous_transition": None,
+                    "created": "2025-04-24T11:59:30.799683-04:00",
+                    "dispositions": [],
+                  },
+                },
               },
             }
 
@@ -5276,98 +5431,115 @@ components:
             {
               "id": 1,
               "resource": {
-                  "id": 1,
-                  "employee_levels": [
-                      {
-                          "id": 3,
-                          "name": "Executive",
-                          "description": "Executive Level 1.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "level": 3,
-                      }
-                  ],
-                  "subfunctions": [
-                      {
-                          "id": 5,
-                          "function": {
-                              "id": 3,
-                              "name": "Finance",
-                              "description": "Function 3.",
-                              "created": "2024-08-27T12:00:00-04:00",
-                              "modified": "2024-08-27T12:00:00-04:00",
-                          },
-                          "name": "Capital",
-                          "description": "Function 3 SubFunction 1.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                      },
-                      {
-                          "id": 2,
-                          "function": {
-                              "id": 1,
-                              "name": "Human Resources",
-                              "description": "Function 1.",
-                              "created": "2024-08-27T12:00:00-04:00",
-                              "modified": "2024-08-27T12:00:00-04:00",
-                          },
-                          "name": "Recruiting",
-                          "description": "Function 1 SubFunction 2.",
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                      },
-                  ],
-                  "tags": [
-                      {
-                          "id": 1,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "filter::site:Melbourne",
-                      },
-                      {
-                          "id": 2,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "filter::site:Rochester",
-                      },
-                      {
-                          "id": 3,
-                          "created": "2024-08-27T12:00:00-04:00",
-                          "modified": "2024-08-27T12:00:00-04:00",
-                          "label": "restricted::department:GeoSpatial",
-                      },
-                  ],
-                  "primary_point_of_contact": "Test.User@harris.com",
-                  "description": "Test resource description for update tests.",
-                  "created": "2025-04-24T11:59:30.789539-04:00",
-                  "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
-                  "revision_number": None,
-                  "name": "Test Update Name",
-                  "url": "https://www.test-site.com",
-                  "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
-                  "type": "test update type",
-                  "download": False,
-                  "active": False,
-                  "previous_revision": None,
+                "id": 1,
+                "employee_levels": [
+                  {
+                    "id": 3,
+                    "name": "Executive",
+                    "description": "Executive Level 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "level": 3,
+                  }
+                ],
+                "subfunctions": [
+                  {
+                    "id": 5,
+                    "function": {
+                      "id": 3,
+                      "name": "Finance",
+                      "description": "Function 3.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Capital",
+                    "description": "Function 3 SubFunction 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  {
+                    "id": 2,
+                    "function": {
+                      "id": 1,
+                      "name": "Human Resources",
+                      "description": "Function 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Recruiting",
+                    "description": "Function 1 SubFunction 2.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "filter::site:Melbourne",
+                  },
+                  {
+                    "id": 2,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "filter::site:Rochester",
+                  },
+                  {
+                    "id": 3,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "restricted::department:GeoSpatial",
+                  },
+                ],
+                "primary_point_of_contact": "Test.User@harris.com",
+                "description": "Test resource description for update tests.",
+                "created": "2025-04-24T11:59:30.789539-04:00",
+                "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
+                "revision_number": None,
+                "name": "Test Update Name",
+                "url": "https://www.test-site.com",
+                "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
+                "type": "test update type",
+                "download": False,
+                "active": False,
+                "previous_revision": None,
               },
               "originator": {
                   "id": 3,
                   "user": {
-                      "id": 1,
-                      "username": "Test.User@harris.com",
-                      "email": "Test.User@harris.com",
-                      "first_name": "Test",
-                      "last_name": "User",
-                      "is_active": True,
+                    "id": 1,
+                    "username": "Test.User@harris.com",
+                    "email": "Test.User@harris.com",
+                    "first_name": "Test",
+                    "last_name": "User",
+                    "is_active": True,
                   },
                   "role": {
-                      "id": 3,
-                      "created": "2024-08-27T12:00:00-04:00",
-                      "name": "Data Steward",
-                      "description": "Data Steward.",
-                      "level": 3,
+                    "id": 3,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "name": "Data Steward",
+                    "description": "Data Steward.",
+                    "level": 3,
                   },
                   "stage": [],
+                  "subfunctions": [
+                    {
+                      "id": 5,
+                      "function": {
+                        "id": 3,
+                        "name": "Finance",
+                        "description": "Function 3.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      "name": "Capital",
+                      "description": "Function 3 SubFunction 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    ...
+                  ],
                   "access_granted_date": "2024-08-27T12:00:00-04:00",
                   "access_revoked_date": None,
               },
@@ -5375,35 +5547,35 @@ components:
               "modified": "2025-04-24T11:59:30.796357-04:00",
               "status": "PENDING",
               "transitions": {
-                  "latest": 3,
-                  "nodes": {
-                      "3": {
-                          "id": 3,
-                          "request": 2,
-                          "stage": {
-                              "id": 2,
-                              "name": "Submitted",
-                              "description": "A resource was submitted.",
-                              "level": 2,
-                          },
-                          "previous_transition": 2,
-                          "created": "2025-04-24T11:59:30.805896-04:00",
-                          "dispositions": [],
-                      },
-                      "2": {
-                          "id": 2,
-                          "request": 2,
-                          "stage": {
-                              "id": 1,
-                              "name": "Draft",
-                              "description": "A resource was created.",
-                              "level": 1,
-                          },
-                          "previous_transition": None,
-                          "created": "2025-04-24T11:59:30.799683-04:00",
-                          "dispositions": [],
-                      },
+                "latest": 3,
+                "nodes": {
+                  "3": {
+                    "id": 3,
+                    "request": 2,
+                    "stage": {
+                      "id": 2,
+                      "name": "Submitted",
+                      "description": "A resource was submitted.",
+                      "level": 2,
+                    },
+                    "previous_transition": 2,
+                    "created": "2025-04-24T11:59:30.805896-04:00",
+                    "dispositions": [],
                   },
+                  "2": {
+                    "id": 2,
+                    "request": 2,
+                    "stage": {
+                      "id": 1,
+                      "name": "Draft",
+                      "description": "A resource was created.",
+                      "level": 1,
+                    },
+                    "previous_transition": None,
+                    "created": "2025-04-24T11:59:30.799683-04:00",
+                    "dispositions": [],
+                  },
+                },
               },
             }
 

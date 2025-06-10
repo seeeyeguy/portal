@@ -61,5 +61,34 @@ CREATE_ACCESS_EXPECTED_ACCESS: dict = {
             "level": 2,
         },
     ],
-    "subfunctions": [4, 3],
+    "subfunctions": [
+        {
+            "id": 4,
+            "function": {
+                "id": 2,
+                "name": "Engineering",
+                "description": "Function 2.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+            },
+            "name": "Mechanical Engineering",
+            "description": "Function 2 SubFunction 2.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+        },
+        {
+            "id": 3,
+            "function": {
+                "id": 2,
+                "name": "Engineering",
+                "description": "Function 2.",
+                "created": "2024-08-27T12:00:00-04:00",
+                "modified": "2024-08-27T12:00:00-04:00",
+            },
+            "name": "Software Engineering",
+            "description": "Function 2 SubFunction 1.",
+            "created": "2024-08-27T12:00:00-04:00",
+            "modified": "2024-08-27T12:00:00-04:00",
+        },
+    ],
 }
