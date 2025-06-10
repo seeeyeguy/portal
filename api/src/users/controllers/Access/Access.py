@@ -13,7 +13,7 @@ and ultimately approved by a `User` with an appropriate
 """
 
 import logging
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Set, Tuple, Union
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
@@ -276,7 +276,7 @@ class Access:
         subfunctions: Optional[List[int]],
         include_revoked: Optional[bool],
         admin: AuthModels.User,
-    ) -> QuerySet[models.Access]:
+    ) -> Union[models.Access, QuerySet[models.Access]]:
         """
         Fetch an `Access` record, given its id. If an id is not given,
         fetch all `Access` records, filtering by `user`, `role_levels`
@@ -298,4 +298,42 @@ class Access:
                 queryset of `Access` records, filtered by the given params.
         """
 
-        return models.Access.objects.all()
+        if not (admin and admin.is_authenticated):
+            err_msg = "Authentication required."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 401)
+
+        # Verify the permissions of the `admin`.
+        if not models.Access.objects.filter(
+            user=admin,
+            role__level=models.Role.RoleLevels.SUPERUSER,
+            access_revoked_date__isnull=True,
+        ).exists():
+            err_msg = "Permissions Denied."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 403)
+
+        # Fetch `access`, given an `Access` id.
+        if access:
+            return models.Access.objects.get(id=access)
+
+        # Fetch `Access` records.
+        accesses: QuerySet[models.Access] = models.Access.objects.all()
+
+        # Exclude revoked `Access` records if `include_revoked` not set.
+        if not include_revoked:
+            accesses = accesses.filter(access_revoked_date__isnull=True)
+
+        # Filter records by `User`, given a `User`'s email.
+        if user:
+            accesses = accesses.filter(user__email__iexact=user)
+
+        # Filter records by `Role`, given a set of `role_levels`.
+        if role_levels:
+            accesses = accesses.filter(role__level__in=role_levels)
+
+        # Filter records by `Subfunction`, given a set of `Subfunction` ids.
+        if subfunctions:
+            accesses = accesses.filter(subfunctions__id__in=subfunctions)
+
+        return accesses
