@@ -2,6 +2,7 @@ import type { Preview } from "@storybook/react";
 
 import "/src/views/styles/global/colors.css";
 import "/src/views/styles/global/root.css";
+import "/src/views/styles/global/zIndex.css";
 import "/.storybook/storybook.css";
 
 const preview: Preview = {

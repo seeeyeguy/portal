@@ -1,0 +1,17 @@
+:root {
+  /* Base Layer. */
+  --z-index-base: 0;
+
+  /* Drop Downs. */
+  --z-index-dropdown-menu: 1;
+
+  /* Navigation. */
+  --z-index-side-bar-backdrop: 1;
+  --z-index-side-bar: 2;
+
+  /* Modals. */
+  --z-index-modals: 5;
+
+  /* Notification. */
+  --z-index-toasty: 9999;
+}

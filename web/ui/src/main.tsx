@@ -12,6 +12,7 @@ import { toastContainerConfig } from "definitions/ReactToastifyConstants";
 import "react-toastify/dist/ReactToastify.css";
 import "views/styles/global/colors.css";
 import "views/styles/global/root.css";
+import "views/styles/global/zIndex.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

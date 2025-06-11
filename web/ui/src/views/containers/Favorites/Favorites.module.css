@@ -31,7 +31,7 @@
     min-height: 12.85rem;
   }
 
-  @media screen and (min-width: 1110px) {
+  @container (min-width: 1110px) {
     .favorite-accordion summary {
       background-image: url(/banner/nexus.svg);
       background-position: calc(100% + 2.5rem) 87.2%;
@@ -39,7 +39,7 @@
     }
   }
 
-  @media screen and (min-width: 1200px) {
+  @container (min-width: 1200px) {
     .favorite-accordion summary {
       background-position: calc(100% + 100px + 2.5rem) 68%;
       background-size: 600px;
