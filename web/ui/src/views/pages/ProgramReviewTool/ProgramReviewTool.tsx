@@ -64,10 +64,11 @@ const GENERATE_REVIEW_PROGRESS_MARKERS = [
   },
 ];
 const PORTFOLIO_POLL_INTERVAL = 10000;
+const PORTFOLIO_POLL_MAX_REQUESTS = 18;
 
 export default function ProgramReviewTool() {
   const loaderData = useLoaderData() as { user: IUser };
-  const [polling, setPolling] = React.useState<number | null>(null);
+  const [polling, setPolling] = React.useState<number>(0);
   const [currentMarker, setCurrentMarker] = React.useState<number | null>(null);
   const [progressMarkers, setProgressMarkers] = React.useState<
     IProgressMarker[]
@@ -119,7 +120,7 @@ export default function ProgramReviewTool() {
 
       // Portfolio generation is complete.
       if (ProgramReviewResponse.data?.data === EReviewStatus.COMPLETE) {
-        setPolling(null);
+        setPolling(0);
         setProgressMarkers([]);
         setCurrentMarker(null);
         toast.success("Portfolio Generation Complete.");
@@ -132,10 +133,19 @@ export default function ProgramReviewTool() {
         ProgramReviewResponse.data?.data === EReviewStatus.ERROR ||
         ProgramReviewResponse.error
       ) {
-        setPolling(null);
+        setPolling(0);
         setProgressMarkers([]);
         setCurrentMarker(null);
         toast.error(`Error: Portfolio generation failed.`);
+        return;
+      }
+
+      // Polling time out.
+      if (polling > PORTFOLIO_POLL_MAX_REQUESTS) {
+        setPolling(0);
+        setProgressMarkers([]);
+        setCurrentMarker(null);
+        toast.error(`Portfolio generation timed out.`);
         return;
       }
 
@@ -148,8 +158,9 @@ export default function ProgramReviewTool() {
       );
 
       setCurrentMarker(newStatus);
+      setPolling((prevCount) => prevCount + 1);
     },
-    [setProgressMarkers, setCurrentMarker]
+    [polling, setProgressMarkers, setCurrentMarker]
   );
 
   // Poll progress of portfolio generation.
@@ -157,7 +168,7 @@ export default function ProgramReviewTool() {
     if (currentMarker !== null && reviewName && reviewPrograms) {
       getPortfolioStatus(reviewPrograms, reviewName);
     }
-  }, polling);
+  }, polling && PORTFOLIO_POLL_INTERVAL);
 
   const handleGeneratePortfolio = React.useCallback(async () => {
     if (!lodash.isEmpty(currentPortfolio.programs)) {
@@ -181,7 +192,7 @@ export default function ProgramReviewTool() {
         }
       }
 
-      setPolling(PORTFOLIO_POLL_INTERVAL);
+      setPolling(1);
       setProgressMarkers(GENERATE_REVIEW_PROGRESS_MARKERS);
       setCurrentMarker(EReviewStatus.SUBMITTED);
       setReviewName(createdReviewName);
