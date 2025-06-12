@@ -914,6 +914,7 @@ class Directory:
                     "type": resource_type,
                     "download": download,
                     "active": True,
+                    "deleted": False,
                     "created": datetime.now().isoformat(),
                 },
             }

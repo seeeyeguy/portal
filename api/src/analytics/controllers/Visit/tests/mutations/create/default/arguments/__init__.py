@@ -66,6 +66,7 @@ VALID_CREATED_VISIT: dict = {
         "type": "Resource Type 1",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     "user": "May.Parker@harris.com",

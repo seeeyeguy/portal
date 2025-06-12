@@ -10,7 +10,7 @@ before any change can be made in `BI Portal`'s published
 """
 
 import logging
-from typing import cast, Optional, Tuple, Union
+from typing import cast, Optional, Tuple, TypedDict, Union
 
 # NEED TO REMOVE pylint-disable AFTER IMPLEMENTATION.
 # pylint: disable=unused-argument,unused-variable,logging-fstring-interpolation,no-member
@@ -23,10 +23,14 @@ from directory.controllers.Resource.Resource import (
     Resource as ResourceController,
     UpdateResourceParams,
 )
+
+
 from directory import exceptions as DirectoryExceptions, models as DirectoryModels
+from directory.models.Resource.serializers import ResourceSerializer
 from request import exceptions, models
 from request.utils.transitions import transition_request
 from users import models as UsersModels
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,6 +56,16 @@ class UpdateRequestParams(BaseResourceParams):
 
     request_id: int
     stage: str
+
+
+class DeleteRequestParams(TypedDict):
+    """
+    Type annotation for delete Request controller
+    function params.
+    """
+
+    resource_id: int
+    originator: AuthModels.User
 
 
 class Request:
@@ -266,6 +280,130 @@ class Request:
             )
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=exc.status) from exc
+
+    @staticmethod
+    def delete_request(params: DeleteRequestParams) -> models.Request:
+        """
+        Create a `Request` to delete a `Resource` record with
+        the given params.
+
+        Accepts:
+            * params (DeleteRequestParams): The parameters used to create
+                a `Request` to delete a related `Resource` record.
+
+        Returns:
+            * request (models.Request): The new `Request` record.
+        """
+
+        try:
+            resource_params = cast(dict, params.copy())
+
+            log_msg = (
+                f" Creating a Request to delete"
+                f" Resource(id={params['resource_id']})"
+                f" for Originator(email={params['originator']})."
+            )
+            LOGGER.info(log_msg)
+
+            # Fetch `Access` record for originator.
+            originator: AuthModels.User = resource_params.pop("originator")
+            accepted_roles = [
+                UsersModels.Role.RoleLevels.DATA_STEWARD,
+                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+                UsersModels.Role.RoleLevels.SUPERUSER,
+            ]
+            originator_access: Union[UsersModels.Access, None] = (
+                UsersModels.Access.objects.filter(
+                    user=originator,
+                    role__level__in=accepted_roles,
+                    access_revoked_date__isnull=True,
+                )
+                .order_by("-role__level")
+                .first()
+            )
+
+            # Ensure originator has the appropriate permissions.
+            if not originator_access:
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.RequestError(err_msg, 403)
+
+            resource_id: int = resource_params.pop("resource_id")
+
+            resource_record = DirectoryModels.Resource.objects.get(id=resource_id)
+
+            delete_resource_params = ResourceSerializer(resource_record).data
+
+            # Remove unused properties.
+            delete_resource_params.pop("id")
+            delete_resource_params.pop("active")
+            point_of_contacts = [delete_resource_params.pop("primary_point_of_contact")]
+
+            # Flatten employee levels.
+            employee_levels = [
+                level["id"]
+                for level in delete_resource_params.get("employee_levels", [])
+            ]
+
+            # Flatten subfunctions.
+            subfunctions = [
+                subfunction["id"]
+                for subfunction in delete_resource_params.get("subfunctions", [])
+            ]
+
+            # Flatten tags.
+            tags = [tag["id"] for tag in delete_resource_params.get("tags", [])]
+
+            # Update properties.
+            delete_resource_params.update(
+                {
+                    # Updated.
+                    "previous_revision": resource_id,
+                    "deleted": True,
+                    "user": originator,
+                    # Flattened.
+                    "point_of_contacts": point_of_contacts,
+                    "employee_levels": employee_levels,
+                    "subfunctions": subfunctions,
+                    "tags": tags,
+                }
+            )
+
+            # Create the related `Resource` record.
+            resource: DirectoryModels.Resource = ResourceController.create_resource(
+                cast(CreateResourceParams, delete_resource_params)
+            )
+
+            # Create the `Request` record.
+            request = models.Request.objects.create(
+                resource=resource,
+                originator=originator_access,
+                status=models.Request.RequestStatus.PENDING,
+            )
+
+            # Transition `Request` to `DRAFT`.
+            transition_request(request_id=request.id)
+
+            # Transition `Request` to `SUBMITTED`.
+            transition_request(request_id=request.id)
+
+            return request
+        except KeyError as exc:
+            err_msg: str = f"Invalid parameters given. {exc}"
+            LOGGER.error(err_msg)
+            raise exceptions.RequestError(err_msg, 400) from exc
+        except DirectoryExceptions.DirectoryError as exc:
+            err_msg: str = (
+                f"Resource(id={params['resource_id']})",
+                " for Request was not created. There is an issue with the Resource's",
+                f" attributes. {exc.message}",
+            )
+            LOGGER.error(err_msg)
+            raise exceptions.RequestError(err_msg, status=exc.status) from exc
+        except DirectoryModels.Resource.DoesNotExist as exc:
+            err_msg = f"Resource (id={params['resource_id']}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.RequestError(err_msg, 404) from exc
 
     @staticmethod
     def fetch_requests(

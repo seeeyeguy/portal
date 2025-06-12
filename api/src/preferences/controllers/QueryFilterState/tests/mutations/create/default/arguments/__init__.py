@@ -87,6 +87,7 @@ VALID_CREATED_QUERY_FILTER_STATE: dict = {
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,
+                "deleted": False,
                 "previous_revision": None,
             }
         ],

@@ -27,3 +27,4 @@ class ResourceModelType:
     type: models.CharField
     download: models.BooleanField
     active: models.BooleanField
+    deleted: models.BooleanField

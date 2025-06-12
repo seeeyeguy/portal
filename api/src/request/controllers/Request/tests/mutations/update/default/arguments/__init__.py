@@ -115,6 +115,7 @@ VALID_UPDATE_REQUEST_DRAFT = {
         "type": "test update type",
         "download": False,
         "active": False,
+        "deleted": False,
         "previous_revision": None,
     },
     "originator": {
@@ -326,6 +327,7 @@ VALID_UPDATE_REQUEST_SUBMITTED = {
         "type": "test update type",
         "download": False,
         "active": False,
+        "deleted": False,
         "previous_revision": None,
     },
     "originator": {

@@ -16,6 +16,7 @@
             "type": "Resource Type 1",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     },
@@ -36,6 +37,7 @@
             "type": "Resource Type 2",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -56,6 +58,7 @@
             "type": "Resource Type 3",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     },
@@ -76,6 +79,7 @@
             "type": "Resource Type 4",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     },
@@ -96,6 +100,7 @@
             "type": "Resource Type 5",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     }

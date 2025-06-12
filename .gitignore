@@ -50,6 +50,7 @@ storage/media/
 .vite
 api/bin
 api/ca-bundle.crt
+api/certchain.pem
 api/CloudServicesRootCA.crt
 api/lib
 api/lib64

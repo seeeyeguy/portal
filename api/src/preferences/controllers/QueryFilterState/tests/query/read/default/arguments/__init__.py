@@ -151,6 +151,7 @@ VALID_QUERYFILTERSTATE_RECORD: dict = {
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,
+                "deleted": False,
                 "previous_revision": None,
             }
         ],
