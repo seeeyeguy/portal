@@ -69,7 +69,7 @@ class TestDeleteRequest(MultiDBTestCase):
         )
 
     @tag("controllers.request.delete_request_user_permissions_denied")
-    def test_create_request_user_permissions_denied(self) -> None:
+    def test_delete_request_user_permissions_denied(self) -> None:
         """Fail Case: Create a `Request` record with a `User` that
         does not have the appropriate permissions."""
 
@@ -106,6 +106,6 @@ class TestDeleteRequest(MultiDBTestCase):
             _ = controllers.Request.delete_request(
                 {
                     **arguments.BASE_DELETE_REQUEST_STRUCTURE_PARAMS,
-                    "resource_id": 999,
+                    "resource_id": arguments.DELETE_REQUEST_RESOURCE_ID_DNE,
                 }
             )

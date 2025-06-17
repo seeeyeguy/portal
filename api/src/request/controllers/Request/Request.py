@@ -401,7 +401,9 @@ class Request:
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=exc.status) from exc
         except DirectoryModels.Resource.DoesNotExist as exc:
-            err_msg = f"Resource (id={params['resource_id']}) does not exist."
+            err_msg = (
+                f"Delete Request (resource_id={params['resource_id']}) does not exist."
+            )
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, 404) from exc
 

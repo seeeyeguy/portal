@@ -13,6 +13,10 @@ DELETE_REQUEST_USER_EMAIL: str = "May.Parker@harris.com"
 # Resource ID used when testing `Request` delete for a `Resource`.
 DELETE_REQUEST_RESOURCE_ID: int = 1
 
+# Resource ID used when testing `Request` delete for a `Resource`
+# that does not exist.
+DELETE_REQUEST_RESOURCE_ID_DNE: int = 999
+
 # User email used when testing `Request` delete with a
 # `User` that does not have an `Access` with a valid `Role`.
 DELETE_REQUEST_USER_EMAIL_INVALID_ROLE: str = "Gwen.Stacy@harris.com"

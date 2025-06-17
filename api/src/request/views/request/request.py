@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 
 from request.controllers.Request.Request import (
     CreateRequestParams,
+    DeleteRequestParams,
     Request as RequestController,
     UpdateRequestParams,
 )
@@ -123,6 +124,37 @@ class Request(APIView):
             data: dict = RequestSerializer(request_record).data
 
             return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+        except RequestError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
+
+    @method_decorator(login_required())
+    @method_decorator(with_serializer(serializers.DeleteRequestRequestQueryParams))
+    def delete(self, request: DjangoHttpRequest, _body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/request/request."""
+
+        try:
+            req = serializers.DeleteRequestRequestQueryParams(data=request.GET)
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            resource_id = req.validated_data.get("id")
+
+            log_msg = f"DELETE /v1/request/request?id={resource_id}."
+
+            LOGGER.info(log_msg)
+
+            delete_params: DeleteRequestParams = DeleteRequestParams(
+                resource_id=resource_id,
+                originator=request.user,
+            )
+
+            # Create a `Request` to delete a `Resource` record.
+            _ = RequestController.delete_request(delete_params)
+
+            return http.JsonResponse(1, status=status.HTTP_202_ACCEPTED, safe=False)
         except RequestError as exc:
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)

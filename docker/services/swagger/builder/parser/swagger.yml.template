@@ -1829,6 +1829,55 @@ paths:
                   - $ref: "#/components/schemas/UpdateResourceSubFunctionDoesNotExistResponse"
                   - $ref: "#/components/schemas/UpdateResourceTagDoesNotExistResponse"
                   - $ref: "#/components/schemas/UpdateResourcePointOfContactDoesNotExistResponse"
+    delete:
+      tags:
+        - "request.request.delete"
+      summary: "Create a Request to delete a Resource."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Id related to the desired 'Resource'.
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteRequestResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteRequestInvalidParamsResponse"      
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteRequestUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteRequestForbiddenErrorResponse"
+        "404":
+          description: "Resource does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteRequestResourceDoesNotExistResponse"   
   /users/access:
     post:
       tags:
@@ -2062,6 +2111,7 @@ components:
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
+                    "deleted": False,
                     "previous_revision": None,
                   },
                   {
@@ -2126,6 +2176,7 @@ components:
                     "type": "Resource Type 2",
                     "download": False,
                     "active": True,
+                    "deleted": False,
                     "previous_revision": None,
                   },
                   ...,
@@ -2206,6 +2257,7 @@ components:
                     "type": "Resource Type 1",
                     "download": false,
                     "active": true,
+                    "deleted": False,
                     "created": "1970-01-01T12:00:00-04:00",
                   }
                 ],
@@ -2281,6 +2333,7 @@ components:
                   "type": "Resource Type 1",
                   "download": false,
                   "active": true,
+                  "deleted": False,
                   "created": "1970-01-01T12:00:00-04:00",
                 }
               ],
@@ -2380,6 +2433,7 @@ components:
                   "type": "Resource Type 1",
                   "download": false,
                   "active": true,
+                  "deleted": False,
                   "created": "1970-01-01T12:00:00-04:00",
                 },
               "user": "Test.User@harris.com"
@@ -2497,6 +2551,7 @@ components:
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
+                "deleted": False,
                 "created": "1970-01-01T12:00:00-04:00",
               },
               ...
@@ -2563,6 +2618,7 @@ components:
                     "type": "Resource Type 1",
                     "download": false,
                     "active": true,
+                    "deleted": False,
                     "created": "1970-01-01T12:00:00-04:00",
                     "favorited_by": ["Some.User@harris.com", "Test.User@harris.com", ...],
                     "site": ["Location 1", "Location 2", ...],
@@ -2696,6 +2752,7 @@ components:
                   "type": "Resource Type 3",
                   "download": false,
                   "active": true,
+                  "deleted": False,
                   "previous_revision": null
               },
               "created": "2025-01-14T10:26:59.958472-05:00",
@@ -2789,6 +2846,7 @@ components:
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
+                  "deleted": False,
                   "previous_revision": None,
                 },
                 "rank": 1,
@@ -2899,6 +2957,7 @@ components:
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
+                  "deleted": False,
                   "previous_revision": None,
                 },
                 "rank": 1,
@@ -3034,6 +3093,7 @@ components:
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
+                    "deleted": False,
                     "previous_revision": None,
                   },
                   ...
@@ -3396,6 +3456,7 @@ components:
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
+                "deleted": False,
                 "previous_revision": None,
               }
 
@@ -3546,6 +3607,7 @@ components:
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
+                "deleted": False,
                 "previous_revision": None,
               },
               ...
@@ -3613,6 +3675,7 @@ components:
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
+                "deleted": False,
                 "previous_revision": None,
               }
 
@@ -3732,6 +3795,7 @@ components:
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,
+                "deleted": False,
                 "previous_revision": None,
               }
 
@@ -3884,6 +3948,7 @@ components:
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
+                    "deleted": False,
                     "previous_revision": None,
                   },
                   ...
@@ -5049,6 +5114,7 @@ components:
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
+                    "deleted": False,
                     "previous_revision": None,
                   },
                   ...
@@ -5345,6 +5411,7 @@ components:
                 "type": "test create type",
                 "download": False,
                 "active": False,
+                "deleted": False,
                 "previous_revision": None,
               },
               "originator": {
@@ -5846,6 +5913,7 @@ components:
                 "type": "test update type",
                 "download": False,
                 "active": False,
+                "deleted": False,
                 "previous_revision": None,
               },
               "originator": {
@@ -5949,3 +6017,26 @@ components:
       title: "Update `Request` error response due to supplying an id
         for a `Request` that does not exist."
       example: "Request(id={request_id}) does not exist."
+
+    DeleteRequestResponse:
+      title: "Delete `Resource` response."
+      type: integer
+      example: 1
+
+    DeleteRequestInvalidParamsResponse:
+      title: "Delete `Request` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    DeleteRequestUnauthorizedResponse:
+      title: "Delete `Request` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    DeleteRequestForbiddenErrorResponse:
+      title: "Delete `Request` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    DeleteRequestResourceDoesNotExistResponse:
+      title: "Delete `Resource` error response due to a given resource
+        id where that `Resource` does not exist."
+      example: "Delete Request (resource_id={resource_id}) does not exist."
