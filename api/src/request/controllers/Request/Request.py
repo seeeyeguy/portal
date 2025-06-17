@@ -10,12 +10,12 @@ before any change can be made in `BI Portal`'s published
 """
 
 import logging
-from typing import cast, Optional, Tuple, TypedDict, Union
+from typing import cast, List, Optional, Set, Tuple, TypedDict, Union
 
-# NEED TO REMOVE pylint-disable AFTER IMPLEMENTATION.
-# pylint: disable=unused-argument,unused-variable,logging-fstring-interpolation,no-member
 from django.contrib.auth import models as AuthModels
-from django.db.models import QuerySet
+from django.core.paginator import Page, Paginator
+from django.db.models import Q, QuerySet
+from django.utils import timezone
 
 from directory.controllers.Resource.Resource import (
     BaseResourceParams,
@@ -23,7 +23,6 @@ from directory.controllers.Resource.Resource import (
     Resource as ResourceController,
     UpdateResourceParams,
 )
-
 
 from directory import exceptions as DirectoryExceptions, models as DirectoryModels
 from directory.models.Resource.serializers import ResourceSerializer
@@ -36,6 +35,16 @@ LOGGER = logging.getLogger(__name__)
 
 DRAFT = "DRAFT"
 SUBMITTED = "SUBMITTED"
+
+VALID_ROLE_LEVELS_FOR_REQUESTS: Set[int] = {
+    UsersModels.Role.RoleLevels.DATA_STEWARD,
+    UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+    UsersModels.Role.RoleLevels.SUPERUSER,
+}
+
+# Default page length used when using
+# pagination on the fetch.
+DEFAULT_PAGE_LENGTH: int = 10
 
 
 class CreateRequestParams(CreateResourceParams):
@@ -104,15 +113,10 @@ class Request:
 
             # Fetch `Access` record for originator.
             originator: AuthModels.User = resource_params.pop("originator")
-            accepted_roles = [
-                UsersModels.Role.RoleLevels.DATA_STEWARD,
-                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
-                UsersModels.Role.RoleLevels.SUPERUSER,
-            ]
             originator_access: Union[UsersModels.Access, None] = (
                 UsersModels.Access.objects.filter(
                     user=originator,
-                    role__level__in=accepted_roles,
+                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
                     access_revoked_date__isnull=True,
                 )
                 .order_by("-role__level")
@@ -140,6 +144,7 @@ class Request:
                 resource=resource,
                 originator=originator_access,
                 status=models.Request.RequestStatus.PENDING,
+                modified=timezone.now(),
             )
 
             # Transition `Request` to `DRAFT`.
@@ -196,15 +201,10 @@ class Request:
 
             # Fetch `Access` record for requester.
             requester: AuthModels.User = resource_params.pop("user")
-            accepted_roles = [
-                UsersModels.Role.RoleLevels.DATA_STEWARD,
-                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
-                UsersModels.Role.RoleLevels.SUPERUSER,
-            ]
             requester_access: Union[UsersModels.Access, None] = (
                 UsersModels.Access.objects.filter(
                     user=requester,
-                    role__level__in=accepted_roles,
+                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
                     access_revoked_date__isnull=True,
                 )
                 .order_by("-role__level")
@@ -261,6 +261,9 @@ class Request:
             if stage == SUBMITTED:
                 _, _ = transition_request(request_id=request.id)
 
+            # Update the `modified` field of the `Request` record.
+            models.Request.objects.filter(id=request.id).update(modified=timezone.now())
+
             # Refresh the `Request` record.
             request.refresh_from_db()
             return request, rows_affected
@@ -307,15 +310,10 @@ class Request:
 
             # Fetch `Access` record for originator.
             originator: AuthModels.User = resource_params.pop("originator")
-            accepted_roles = [
-                UsersModels.Role.RoleLevels.DATA_STEWARD,
-                UsersModels.Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
-                UsersModels.Role.RoleLevels.SUPERUSER,
-            ]
             originator_access: Union[UsersModels.Access, None] = (
                 UsersModels.Access.objects.filter(
                     user=originator,
-                    role__level__in=accepted_roles,
+                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
                     access_revoked_date__isnull=True,
                 )
                 .order_by("-role__level")
@@ -433,7 +431,7 @@ class Request:
             * stage (int | None): Optional parameter to filter `Request` records
                 by their current stage. If specified, we will only return `Request`
                 records at the given `stage`.
-            * status (str): Optional parameter to filter `Request` records by their
+            * status (str | None): Optional parameter to filter `Request` records by their
                 status. A `Request` status may be `PENDING`, `APPROVED` or `REJECTED`.
                 If specified, we will only return `Request` records with the given
                 `status`.
@@ -465,7 +463,95 @@ class Request:
 
             LOGGER.info(f"Fetching `Request` record{log_msg}.")
 
-            requests = models.Request.objects.all()
+            # If request id is given, along with a page
+            # or limit, then throw an invalid parameters error.
+            if request_id and (page or limit):
+                raise exceptions.RequestError("Invalid parameters given.", 400)
+
+            # If request id is given, return the associated `Request` record.
+            if request_id:
+                return models.Request.objects.get(id=request_id)
+
+            # Fetch all `Request` records.
+            requests = models.Request.objects.prefetch_related("transitions").all()
+
+            # If not `include_archived`, filter the `Request` records
+            # to only include ones that are linked with active
+            # `Resource` records.
+            if not include_archived:
+                requests = requests.filter(
+                    ~Q(
+                        status=models.Request.RequestStatus.APPROVED,
+                        resource__active=False,
+                    )
+                )
+
+            # If `originator` is given, proceed to fetch the associated
+            # `User` record and validate the `User` has an active
+            # `Access` record. Finally, filter the `Request` records by
+            # those belonging to the `originator`.
+            if originator:
+                user_record: AuthModels.User = AuthModels.User.objects.get(
+                    email__iexact=originator
+                )
+
+                access_records: QuerySet[
+                    UsersModels.Access
+                ] = UsersModels.Access.objects.filter(
+                    user=user_record,
+                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
+                    access_revoked_date__isnull=True,
+                )
+                if not access_records.exists():
+                    raise UsersModels.Access.DoesNotExist()
+
+                requests = requests.filter(
+                    originator__id__in=set(access_records.values_list("id", flat=True))
+                )
+
+            # If `stage` is given, filter the `Request` records by the
+            # ones that have an associated `Transition` linked to a `Stage`
+            # record with matching level.
+            if stage:
+                requests_with_latest_transition_at_stage_ids: List[int] = []
+                for request in requests:
+                    latest_request_transition = request.transitions.order_by(
+                        "-created"
+                    ).first()
+                    if (
+                        latest_request_transition
+                        and latest_request_transition.stage.level == stage
+                    ):
+                        requests_with_latest_transition_at_stage_ids.append(request.id)
+                requests = requests.filter(
+                    id__in=requests_with_latest_transition_at_stage_ids
+                )
+
+            # If `status` is given, filter the `Request` records to those
+            # with a matching status.
+            if status:
+                requests = requests.filter(status=status)
+
+            # If `limit` is given, limit the `Request` records.
+            requests = requests[:limit] if limit else requests
+
+            if page:
+                # Create a Paginator to paginate the collection
+                # of `Resource`s.
+                paginator: Paginator = Paginator(requests, DEFAULT_PAGE_LENGTH)
+
+                # If `page` number supplied in the params is greater
+                # than the number of available pages, then return an
+                # empty `Request` Queryset.
+                if page > paginator.num_pages:
+                    return models.Request.objects.none()
+
+                # Get the corresponding Page.
+                request_page: Page = paginator.page(page)
+
+                # Assign the page's `Request` QuerySet to
+                # `requests`.
+                requests = cast(QuerySet[models.Request], request_page.object_list)
 
             return requests
         except models.Request.DoesNotExist as exc:

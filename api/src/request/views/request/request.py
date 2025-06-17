@@ -13,6 +13,7 @@ import logging
 from typing import List, Union
 
 from django import http
+from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -33,6 +34,7 @@ from manager.utils.types.request import DjangoHttpRequest
 LOGGER = logging.getLogger(__name__)
 
 
+@method_decorator(never_cache, name="dispatch")
 class Request(APIView):
     """
     Handle user requests to create, fetch, or update `Request`
@@ -51,7 +53,7 @@ class Request(APIView):
         try:
             LOGGER.info("POST /v1/request/request.")
 
-            create_params: CreateRequestParams = CreateRequestParams(
+            create_params: CreateRequestParams = CreateRequestParams(  # type: ignore[typeddict-item]
                 uid=body["uid"],
                 name=body["name"],
                 description=body["description"],

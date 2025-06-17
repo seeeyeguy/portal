@@ -30,7 +30,7 @@ class UpdateRequestRequestQueryParams(BaseRequestRequestQueryParams):
 
 
 class DeleteRequestRequestQueryParams(BaseRequestRequestQueryParams):
-    """Request serializer for DELETE /v1/request/request."""
+    """Request serializer for DELETE /v1/request/request query params."""
 
 
 class FetchRequestRequest(serializers.Serializer):

@@ -1,0 +1,25 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "username": "Ben.Parker@harris.com",
+      "first_name": "Ben",
+      "last_name": "Parker",
+      "email": "Ben.Parker@harris.com",
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+      "username": "Miles.Morales@harris.com",
+      "first_name": "Miles",
+      "last_name": "Morales",
+      "email": "Miles.Morales@harris.com",
+      "is_superuser": false
+    }
+  }
+
+]

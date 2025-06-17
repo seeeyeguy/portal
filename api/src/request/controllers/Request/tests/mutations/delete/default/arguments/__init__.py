@@ -10,7 +10,7 @@ from request.controllers.Request.Request import DeleteRequestParams
 # User email used when testing `Request` delete.
 DELETE_REQUEST_USER_EMAIL: str = "May.Parker@harris.com"
 
-# Resource ID used when testing `Request` delete for a `Resource`
+# Resource ID used when testing `Request` delete for a `Resource`.
 DELETE_REQUEST_RESOURCE_ID: int = 1
 
 # User email used when testing `Request` delete with a
