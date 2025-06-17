@@ -10,19 +10,13 @@
       "description": "Resource 1 description.",
       "url": "example.org",
       "thumbnail": "resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2024_08_27__16_00_00/resource_1.png",
-      "employee_levels": [
-        1,
-        2
-      ],
-      "subfunctions": [
-        1
-      ],
-      "tags": [
-        1
-      ],
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
       "type": "Resource Type 1",
       "download": false,
       "active": false,
+      "deleted": false,
       "created": "2024-08-27T16:00:00Z"
     }
   },
@@ -37,19 +31,13 @@
       "description": "Resource 2 description.",
       "url": "example-2.org",
       "thumbnail": "resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/2024_08_27__16_00_00/resource_2.png",
-      "employee_levels": [
-        1,
-        2
-      ],
-      "subfunctions": [
-        1
-      ],
-      "tags": [
-        1
-      ],
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
       "type": "Resource Type 2",
       "download": false,
       "active": false,
+      "deleted": false,
       "created": "2024-08-27T16:00:00Z"
     }
   },
@@ -64,21 +52,13 @@
       "description": "Resource 3 description.",
       "url": "example-3.org",
       "thumbnail": "resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/2024_08_27__16_00_00/resource_3.png",
-      "employee_levels": [
-        2
-      ],
-      "subfunctions": [
-        7,
-        8
-      ],
-      "tags": [
-        3,
-        4,
-        7
-      ],
+      "employee_levels": [2],
+      "subfunctions": [7, 8],
+      "tags": [3, 4, 7],
       "type": "Resource Type 3",
       "download": false,
       "active": true,
+      "deleted": false,
       "created": "2024-08-27T16:00:00Z"
     }
   },
@@ -93,21 +73,13 @@
       "description": "Resource 4 description.",
       "url": "example-4.org",
       "thumbnail": "resources/thumbnails/c8af6937-f266-4e04-87ca-9dea839b4540/2024_08_27__16_00_00/resource_4.png",
-      "employee_levels": [
-        2
-      ],
-      "subfunctions": [
-        7,
-        8
-      ],
-      "tags": [
-        3,
-        4,
-        7
-      ],
+      "employee_levels": [2],
+      "subfunctions": [7, 8],
+      "tags": [3, 4, 7],
       "type": "Resource Type 4",
       "download": false,
       "active": false,
+      "deleted": false,
       "created": "2024-08-27T16:00:00Z"
     }
   },
@@ -122,21 +94,13 @@
       "description": "Resource 4 revision 2 description.",
       "url": "example-4.org",
       "thumbnail": "resources/thumbnails/c8af6937-f266-4e04-87ca-9dea839b4540/2024_08_27__16_00_00/resource_4.png",
-      "employee_levels": [
-        2
-      ],
-      "subfunctions": [
-        7,
-        8
-      ],
-      "tags": [
-        3,
-        4,
-        7
-      ],
+      "employee_levels": [2],
+      "subfunctions": [7, 8],
+      "tags": [3, 4, 7],
       "type": "Resource Type 4",
       "download": false,
       "active": true,
+      "deleted": false,
       "created": "2024-08-27T16:00:00Z"
     }
   }

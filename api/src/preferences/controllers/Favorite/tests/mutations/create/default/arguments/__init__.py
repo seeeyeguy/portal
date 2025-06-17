@@ -112,6 +112,7 @@ CREATE_FAVORITE_EXPECTED_VALUES: dict = {
         "type": "Resource Type 3",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     "rank": 3,

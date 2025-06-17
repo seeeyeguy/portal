@@ -11,7 +11,7 @@ import logging
 import os
 import requests
 from PIL import Image
-from typing import cast, List, Literal, Set, Tuple, TypedDict, Union
+from typing import cast, List, Literal, Optional, Set, Tuple, TypedDict, Union
 from uuid import uuid4
 
 from django.contrib.auth import models as AuthModels
@@ -103,6 +103,7 @@ class CreateResourceParams(BaseResourceParams):
 
     previous_revision: int | None
     uid: str | None
+    deleted: Optional[bool]
 
 
 class UpdateResourceParams(BaseResourceParams):
@@ -326,6 +327,7 @@ class Resource:
                 type=params["type"].lower(),
                 download=params["download"],
                 active=False,
+                deleted=params.get("deleted", False),
             )
 
             # Add `EmployeeLevel`s, `SubFunction`s, `Tag`s and `PointOfContact`s.

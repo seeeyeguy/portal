@@ -178,6 +178,7 @@ VALID_CREATED_RESOURCE: dict = {
     "type": "test create type",
     "download": False,
     "active": False,
+    "deleted": False,
     "previous_revision": None,
 }
 
@@ -253,5 +254,6 @@ VALID_CREATED_RESOURCE_REVISION: dict = {
     "type": "resource type 1",
     "download": False,
     "active": False,
+    "deleted": False,
     "previous_revision": 1,
 }

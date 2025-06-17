@@ -102,6 +102,7 @@ VALID_CREATED_REQUEST_DRAFT = {
         "type": "test create type",
         "download": False,
         "active": False,
+        "deleted": False,
         "previous_revision": None,
     },
     "originator": {
@@ -312,6 +313,7 @@ VALID_CREATED_REQUEST_SUBMITTED = {
         "type": "test create type",
         "download": False,
         "active": False,
+        "deleted": False,
         "previous_revision": None,
     },
     "originator": {

@@ -188,6 +188,7 @@ VALID_RESOURCE_MAP: dict = {
         "type": "Resource Type 1",
         "download": False,
         "active": True,
+        "deleted": False,
         "created": "2024-08-28T12:00:00-04:00",
     },
     RESOURCE_2_REVISION_2_ID: {
@@ -273,6 +274,7 @@ VALID_RESOURCE_MAP: dict = {
         "type": "Resource Type 2",
         "download": False,
         "active": True,
+        "deleted": False,
         "created": "2024-08-28T12:00:00-04:00",
     },
     RESOURCE_3_REVISION_1_ID: {
@@ -342,6 +344,7 @@ VALID_RESOURCE_MAP: dict = {
         "type": "Resource Type 3",
         "download": True,
         "active": True,
+        "deleted": False,
         "created": "2024-08-28T12:00:00-04:00",
     },
     RESOURCE_4_REVISION_1_ID: {
@@ -417,6 +420,7 @@ VALID_RESOURCE_MAP: dict = {
         "type": "Resource Type 4",
         "download": False,
         "active": True,
+        "deleted": False,
         "created": "2024-08-28T12:00:00-04:00",
     },
     RESOURCE_5_REVISION_1_ID: {
@@ -492,6 +496,7 @@ VALID_RESOURCE_MAP: dict = {
         "type": "Resource Type 5",
         "download": True,
         "active": True,
+        "deleted": False,
         "created": "2024-08-28T12:00:00-04:00",
     },
 }

@@ -85,6 +85,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
         * download (models.BooleanField): Whether this `Resource` provides downloadable
             content.
         * active (model.BooleanField): Whether this `Resource` is available to the user.
+        * deleted (model.BooleanField): Whether this `Resource` has been deleted.
         * created (models.DateTimeField): The date & time this `Resource` was created.
     """
 
@@ -116,6 +117,7 @@ class Resource(BasicInformationAbstractModel, DateTimeAbstractModel):
     type: models.CharField = models.CharField(max_length=512)
     download: models.BooleanField = models.BooleanField(default=False)
     active: models.BooleanField = models.BooleanField(default=False)
+    deleted: models.BooleanField = models.BooleanField(default=False)
     modified = None  # type: ignore[assignment]
 
     def __str__(self) -> str:

@@ -16,6 +16,7 @@
             "type": "Resource Type 1",
             "download": false,
             "active": false,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     },
@@ -36,6 +37,7 @@
             "type": "Resource Type 2",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -56,6 +58,7 @@
             "type": "Resource Type 3",
             "download": false,
             "active": false,
+            "deleted": false,
             "created": "2024-08-27T16:00:00Z"
         }
     },
@@ -76,6 +79,7 @@
             "type": "Resource Type 4",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -96,6 +100,7 @@
             "type": "Resource Type 5",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -116,6 +121,7 @@
             "type": "Resource Type 6",
             "download": false,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -136,6 +142,7 @@
             "type": "Resource Type 7",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -156,6 +163,7 @@
             "type": "Resource Type 8",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -176,6 +184,7 @@
             "type": "Resource Type 9",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -196,6 +205,7 @@
             "type": "Resource Type 10",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -216,6 +226,7 @@
             "type": "Resource Type 11",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -236,6 +247,7 @@
             "type": "Resource Type 12",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -256,6 +268,7 @@
             "type": "Resource Type 13",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     },
@@ -276,6 +289,7 @@
             "type": "Resource Type 14",
             "download": true,
             "active": true,
+            "deleted": false,
             "created": "2024-08-28T16:00:00Z"
         }
     }

@@ -19,10 +19,18 @@ class UpdateRequestRequest(UpdateResourceRequest, CreateRequestRequest):
     """Request serializer for PUT /v1/request/request."""
 
 
-class UpdateRequestRequestQueryParams(serializers.Serializer):
-    """Request serializer for PUT /v1/request/request query params."""
+class BaseRequestRequestQueryParams(serializers.Serializer):
+    """Base Request serializer for PUT and DELETE /v1/request/request query params."""
 
     id = serializers.IntegerField(min_value=1)
+
+
+class UpdateRequestRequestQueryParams(BaseRequestRequestQueryParams):
+    """Request serializer for PUT /v1/request/request query params."""
+
+
+class DeleteRequestRequestQueryParams(BaseRequestRequestQueryParams):
+    """Request serializer for DELETE /v1/request/request."""
 
 
 class FetchRequestRequest(serializers.Serializer):

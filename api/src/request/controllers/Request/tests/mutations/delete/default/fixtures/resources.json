@@ -1,0 +1,65 @@
+[
+  {
+    "model": "directory.Resource",
+    "pk": 1,
+    "fields": {
+      "uid": "f6a31db2-5271-401a-901e-9220e0e4cda2",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Test Delete Name",
+      "description": "Test resource description for delete tests.",
+      "url": "https://www.test-site.com",
+      "thumbnail": null,
+      "employee_levels": [3],
+      "subfunctions": [2],
+      "tags": [1, 2, 3],
+      "type": "test delete type",
+      "download": false,
+      "active": true,
+      "deleted": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 2,
+    "fields": {
+      "uid": "2ca5ca29-5dbb-4333-99d3-750e30b1ed48",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Test Delete Name 2",
+      "description": "Test resource description for delete tests.",
+      "url": "https://www.test-site-2.com",
+      "thumbnail": null,
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "test delete type",
+      "download": false,
+      "active": true,
+      "deleted": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.Resource",
+    "pk": 3,
+    "fields": {
+      "uid": "2ca5ca29-5dbb-4333-99d3-750e30b1ed48",
+      "previous_revision": 2,
+      "revision_number": null,
+      "name": "Test Delete Name 2",
+      "description": "Test resource description for delete tests.",
+      "url": "https://www.test-site-2.com",
+      "thumbnail": null,
+      "employee_levels": [1, 2],
+      "subfunctions": [1],
+      "tags": [1],
+      "type": "Resource Type 2",
+      "download": false,
+      "active": false,
+      "deleted": false,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  }
+]

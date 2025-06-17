@@ -126,6 +126,7 @@ VALID_RESOURCE_RECORDS: dict = {
         "type": "Resource Type 1",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     RESOURCE_ID_2: {
@@ -183,6 +184,7 @@ VALID_RESOURCE_RECORDS: dict = {
         "type": "Resource Type 2",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     RESOURCE_ID_3: {
@@ -240,6 +242,7 @@ VALID_RESOURCE_RECORDS: dict = {
         "type": "Resource Type 3",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     RESOURCE_ID_4: {
@@ -297,6 +300,7 @@ VALID_RESOURCE_RECORDS: dict = {
         "type": "Resource Type 4",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
     RESOURCE_ID_5: {
@@ -354,6 +358,7 @@ VALID_RESOURCE_RECORDS: dict = {
         "type": "Resource Type 5",
         "download": False,
         "active": True,
+        "deleted": False,
         "previous_revision": None,
     },
 }

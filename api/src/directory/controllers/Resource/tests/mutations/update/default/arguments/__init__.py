@@ -130,6 +130,7 @@ VALID_UPDATED_RESOURCE: dict = {
     "type": "test update type",
     "download": False,
     "active": False,
+    "deleted": False,
     "previous_revision": 1,
     "created": "2025-03-01T13:00:00-05:00",
 }

@@ -16,6 +16,7 @@
       "type": "Resource Type 1",
       "download": false,
       "active": true,
+      "deleted": false,
       "created": "2025-01-01T16:00:00Z"
     }
   }

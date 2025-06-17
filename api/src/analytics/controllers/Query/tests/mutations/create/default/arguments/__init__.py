@@ -81,6 +81,7 @@ VALID_CREATED_QUERY: dict = {
             "type": "Resource Type 1",
             "download": False,
             "active": True,
+            "deleted": False,
             "previous_revision": None,
         },
         {
@@ -138,6 +139,7 @@ VALID_CREATED_QUERY: dict = {
             "type": "Resource Type 2",
             "download": False,
             "active": True,
+            "deleted": False,
             "previous_revision": None,
         },
     ],

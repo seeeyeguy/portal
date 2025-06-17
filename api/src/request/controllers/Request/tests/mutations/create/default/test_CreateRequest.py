@@ -76,6 +76,7 @@ class TestCreateRequest(MultiDBTestCase):
                 "stage": "SUBMITTED",
             }
         )
+
         self.assertIsInstance(request, models.Request)
         self.assertTrue(request.resource)
         self.assertIsInstance(request.resource, DirectoryModels.Resource)
