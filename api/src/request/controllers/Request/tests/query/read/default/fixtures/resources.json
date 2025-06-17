@@ -1,0 +1,128 @@
+[
+  {
+    "model": "directory.resource",
+    "pk": 1,
+    "fields": {
+      "uid": "8020c8de-c1f0-42d0-9edc-d4e6f80537c9",
+      "previous_revision": null,
+      "revision_number": null,
+      "name": "Resource 1",
+      "description": "Resource 1 Description.",
+      "url": "example.org",
+      "thumbnail": "resources/thumbnails/8020c8de-c1f0-42d0-9edc-d4e6f80537c9/2025_06_01__16_00_00/resource_1.png",
+      "employee_levels": [1],
+      "subfunctions": [1],
+      "tags": [],
+      "type": "Resource Type 1",
+      "download": false,
+      "active": false,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.resource",
+    "pk": 2,
+    "fields": {
+      "uid": "4b18845e-1923-478f-b65a-46fe55c259eb",
+      "previous_revision": null,
+      "revision_number": null,
+      "name": "Resource 2",
+      "description": "Resource 2 Description.",
+      "url": "example-2.org",
+      "thumbnail": "resources/thumbnails/4b18845e-1923-478f-b65a-46fe55c259eb/2025_06_01__16_00_00/resource_2.png",
+      "employee_levels": [2],
+      "subfunctions": [3],
+      "tags": [],
+      "type": "Resource Type 2",
+      "download": false,
+      "active": false,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.resource",
+    "pk": 3,
+    "fields": {
+      "uid": "51a28a35-ff27-42c3-b249-1960003070fc",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 3",
+      "description": "Resource 3 Description.",
+      "url": "example-3.org",
+      "thumbnail": "resources/thumbnails/51a28a35-ff27-42c3-b249-1960003070fc/2025_06_01__16_00_00/resource_3.png",
+      "employee_levels": [3],
+      "subfunctions": [4],
+      "tags": [],
+      "type": "Resource Type 3",
+      "download": false,
+      "active": true,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.resource",
+    "pk": 4,
+    "fields": {
+      "uid": "72a1531d-06a1-451c-b3b8-1144a998436a",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 4",
+      "description": "Resource 4 Description.",
+      "url": "example-4.org",
+      "thumbnail": "resources/thumbnails/72a1531d-06a1-451c-b3b8-1144a998436a/2025_06_01__16_00_00/resource_4.png",
+      "employee_levels": [2],
+      "subfunctions": [6],
+      "tags": [],
+      "type": "Resource Type 4",
+      "download": false,
+      "active": true,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.resource",
+    "pk": 5,
+    "fields": {
+      "uid": "d085a72c-b564-4e12-b7c3-eb9d5bd33932",
+      "previous_revision": null,
+      "revision_number": 1,
+      "name": "Resource 5",
+      "description": "Resource 5 Description.",
+      "url": "example-5.org",
+      "thumbnail": "resources/thumbnails/d085a72c-b564-4e12-b7c3-eb9d5bd33932/2025_06_01__16_00_00/resource_5.png",
+      "employee_levels": [1],
+      "subfunctions": [5],
+      "tags": [],
+      "type": "Resource Type 5",
+      "download": false,
+      "active": false,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "directory.resource",
+    "pk": 6,
+    "fields": {
+      "uid": "d085a72c-b564-4e12-b7c3-eb9d5bd33932",
+      "previous_revision": 5,
+      "revision_number": 2,
+      "name": "Resource 5",
+      "description": "Resource 5 Description Updated.",
+      "url": "example-5.org",
+      "thumbnail": "resources/thumbnails/d085a72c-b564-4e12-b7c3-eb9d5bd33932/2025_06_01__16_00_00/resource_5.png",
+      "employee_levels": [1],
+      "subfunctions": [5],
+      "tags": [],
+      "type": "Resource Type 5",
+      "download": false,
+      "active": true,
+      "deleted": false,
+      "created": "2025-06-01T16:00:00Z"
+    }
+  }
+]

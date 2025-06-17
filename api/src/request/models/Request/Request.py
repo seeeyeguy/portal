@@ -78,7 +78,7 @@ class Request(DateTimeAbstractModel):
             models.Index(fields=["originator"], name="request_originator"),
             models.Index(fields=["id"], name="request_id"),
         ]
-        ordering = ["-resource"]
+        ordering = ["-modified"]
         verbose_name = "request"
         verbose_name_plural = "requests"
 

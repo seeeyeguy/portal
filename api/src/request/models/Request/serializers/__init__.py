@@ -25,9 +25,7 @@ class RequestSerializer(serializers.ModelSerializer):
         record: dict = super().to_representation(instance)
         graph: dict[str, Union[dict[str, dict], None]] = {"latest": None, "nodes": {}}
 
-        transitions = Transition.objects.filter(request__id=record["id"]).order_by(
-            "-created"
-        )
+        transitions = instance.transitions.order_by("-created")
         transitions: List[dict] = TransitionSerializer(transitions, many=True).data
 
         for i, transition in enumerate(transitions):
