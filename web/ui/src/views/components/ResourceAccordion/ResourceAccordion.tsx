@@ -11,7 +11,7 @@ import type {
 } from "adas-react-components/types";
 import { IResource } from "definitions/portal/directory/Resource.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 
 import styles from "views/components/ResourceAccordion/ResourceAccordion.module.css";
 

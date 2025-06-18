@@ -7,7 +7,7 @@ import lodash from "lodash";
 
 import { SERVER_ERROR } from "definitions/StatusCodeConstants";
 import visitApi, {
-  TApiVisitRequest,
+  TApiPostVisitRequest,
 } from "state/query/api/portal/analytics/AnalyticsApi";
 import favoriteApi, {
   TApiFavoriteRequest,
@@ -122,7 +122,7 @@ export default function ResourceLink({
   }, []);
 
   const onLinkClick = React.useCallback(async () => {
-    const body: TApiVisitRequest = { resource: id };
+    const body: TApiPostVisitRequest = { resource: id };
     const promise = dispatch(visitApi.endpoints.addVisit.initiate(body));
     await promise;
   }, [id, dispatch]);

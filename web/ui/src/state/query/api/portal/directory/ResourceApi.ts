@@ -1,17 +1,34 @@
+import lodash from "lodash";
+
 import endpoints from "services/api";
 import { POST } from "definitions/RequestConstants";
 import {
+  transformResourceRecord,
   transformResourceRecords,
   IApiResource,
   ApiResourceFunctreeResponse,
 } from "state/query/api/portal/directory/ResourceHelper";
 import api from "state/query/api";
 
-import { TResourceRecords } from "definitions/portal/directory/Resource.types";
+import {
+  IResource,
+  TResourceRecords,
+} from "definitions/portal/directory/Resource.types";
 
-type TApiResourceResponse = {
+type TBaseApiResourceResponse = {
+  data: IResource | IResource[];
+  status: number | undefined;
+};
+
+type TSearchApiResourceResponse = {
   data: TResourceRecords;
   status: number | undefined;
+};
+
+export type TApiFetchResourceRequest = {
+  id?: number | null;
+  page?: number | null;
+  limit?: number | null;
 };
 
 export type TApiSearchResourceRequest = {
@@ -32,11 +49,37 @@ type TApiSearchResourceRequestOptional = {
 
 const resourceApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getResources: builder.query<
+      TBaseApiResourceResponse,
+      TApiFetchResourceRequest
+    >({
+      query: ({
+        id = null,
+        page = null,
+        limit = null,
+      }: TApiFetchResourceRequest) =>
+        endpoints.PORTAL.DIRECTORY.RESOURCES.BASE(id, page, limit),
+      transformResponse: (
+        response: IApiResource | IApiResource[],
+        meta
+      ): TBaseApiResourceResponse => ({
+        data: lodash.isArray(response)
+          ? response.map((record) => transformResourceRecord(record))
+          : transformResourceRecord(response),
+        status: meta?.response?.status,
+      }),
+    }),
     searchResources: builder.query<
-      TApiResourceResponse,
+      TSearchApiResourceResponse,
       { body: TApiSearchResourceRequest } & TApiSearchResourceRequestOptional
     >({
-      query: ({ body, page = null, limit = null }) => ({
+      query: ({
+        body,
+        page = null,
+        limit = null,
+      }: {
+        body: TApiSearchResourceRequest;
+      } & TApiSearchResourceRequestOptional) => ({
         url: endpoints.PORTAL.DIRECTORY.RESOURCES.SEARCH(page, limit),
         method: POST,
         body: {
@@ -56,4 +99,4 @@ const resourceApi = api.injectEndpoints({
 });
 
 export default resourceApi;
-export const { useSearchResourcesQuery } = resourceApi;
+export const { useGetResourcesQuery, useSearchResourcesQuery } = resourceApi;

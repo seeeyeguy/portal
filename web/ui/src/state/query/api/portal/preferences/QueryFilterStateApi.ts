@@ -42,7 +42,14 @@ const queryFilterStateApi = api.injectEndpoints({
         id: number | null | undefined;
       }
     >({
-      query: ({ body, post = true, id = null }) => ({
+      query: ({
+        body,
+        post = true,
+        id = null,
+      }: { body: TApiQueryFilterStateMutationRequest } & {
+        post: boolean;
+        id: number | null | undefined;
+      }) => ({
         url: endpoints.PORTAL.PREFERENCES.QUERY_FILTER_STATE(id),
         method: post ? POST : PUT,
         body: {

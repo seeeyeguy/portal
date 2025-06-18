@@ -15,7 +15,7 @@ import menuItems from "views/components/NavBar/NavBarProps";
 import endpoints from "services/api";
 import { updateSearchStateTerm } from "state/actions/ResourceSearchActions";
 import queryApi, {
-  TApiQueryRequest,
+  TApiPostQueryRequest,
 } from "state/query/api/portal/analytics/AnalyticsApi";
 import resourceApi, {
   TApiSearchResourceRequest,
@@ -27,7 +27,7 @@ import {
 import store, { useAppDispatch, useTypedSelector } from "state/store/store";
 
 import { IResource } from "definitions/portal/directory/Resource.types";
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 
 import { transformToOption } from "views/utils/OptionsUtility";
 import { DEFAULT_API_ERROR_MESSAGE } from "definitions/ApiConstants";
@@ -153,7 +153,7 @@ export default function NavBar({
   const onSubmitSearch = React.useCallback(async (newSearchTerm: string) => {
     store.dispatch(updateSearchStateTerm(newSearchTerm));
 
-    const body: TApiQueryRequest = { searchTerm: newSearchTerm };
+    const body: TApiPostQueryRequest = { searchTerm: newSearchTerm };
     const promise = store.dispatch(queryApi.endpoints.addQuery.initiate(body));
     const { error } = await promise;
     const isError = !!error;

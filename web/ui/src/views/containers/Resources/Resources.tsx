@@ -18,7 +18,7 @@ import {
 import { IFilterOptions } from "views/definitions/Resources.types";
 import { IResourceFunctree } from "definitions/portal/directory/Resource.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/Users.types";
+import { IProfile } from "definitions/portal/users/Users.types";
 
 export interface IResourcesProps {
   title: string;

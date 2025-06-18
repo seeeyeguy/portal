@@ -3,12 +3,14 @@ export const RESOURCE_PATHS = {
   DIRECTORY: "directory",
   PREFERENCES: "preferences",
   PROGRAM_REVIEW_TOOL: "program-review-tool",
+  REQUEST: "request",
   USERS: "users",
 } as const;
 
 type RESOURCE_PATHS_KEYS = keyof typeof RESOURCE_PATHS;
 type RESOURCE_PATHS = (typeof RESOURCE_PATHS)[RESOURCE_PATHS_KEYS];
 
+type ANALYTICS_RESOURCE = "queries" | "visits";
 type DIRECTORY_RESOURCE =
   | "employee-levels"
   | "functions"
@@ -17,16 +19,28 @@ type DIRECTORY_RESOURCE =
   | "tags";
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
 type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program";
+type REQUEST_RESOURCE = "disposition" | "request";
+type USERS_RESOURCE = "access";
 type RESOURCE =
+  | ANALYTICS_RESOURCE
   | DIRECTORY_RESOURCE
   | PREFERENCES_RESOURCE
-  | PROGRAM_REVIEW_TOOL_RESOURCE;
+  | PROGRAM_REVIEW_TOOL_RESOURCE
+  | REQUEST_RESOURCE
+  | USERS_RESOURCE;
 
 type SUFFIX = "search" | "review" | null;
 
-type PARAM = "id" | "ids" | "label" | "page" | "user";
+type PARAM =
+  | "id"
+  | "ids"
+  | "label"
+  | "page"
+  | "role_levels"
+  | "subfunctions"
+  | "user";
 
-const acceptedParamArrays = new Set(["ids"]);
+const acceptedParamArrays = new Set(["ids", "role_levels", "subfunctions"]);
 
 /**
  * Build a URL for an endpoint, given its application path,
@@ -88,6 +102,32 @@ export const buildQueryResourceByIdsURL = (
 ) => buildQueryResourceURL(path, resource, suffix, "ids");
 
 /**
+ * Build a URL with an optional array of role levels for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of role levels and returns the appropriate URL.
+ */
+export const buildQueryResourceByRoleLevelsURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "role_levels");
+
+/**
+ * Build a URL with an optional array of subfunctions for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of subfunctions and returns the appropriate URL.
+ */
+export const buildQueryResourceBySubFunctionsURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "subfunctions");
+
+/**
  * Build a URL with an optional user for an endpoint, given its application path, and
  * resource name.
  * @param path The path/prefix denoting the resource's application domain.
@@ -122,3 +162,19 @@ export const buildSearchForResourceByPageURL = (
   path: RESOURCE_PATHS,
   resource: RESOURCE
 ) => buildQueryResourceURL(path, resource, "search", "page");
+
+/**
+ * General utility to append a query param to a URL.
+ * @param base The base URL.
+ * @param param The name of the query param to append.
+ * @param paramValue The value of the query param to append.
+ * @param matchPattern The pattern to match as to determine whether to append with an `&` or `?`.
+ * @returns The URL with appended query param.
+ */
+export const appendQueryParamToURL = (
+  base: string,
+  param: string,
+  paramValue: string | number | boolean | null,
+  matchPattern: RegExp | null
+) =>
+  `${base}${matchPattern && base.match(matchPattern) ? "&" : "?"}${param}=${paramValue}`;

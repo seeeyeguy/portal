@@ -20,7 +20,7 @@ type TApiProgramResponse = {
   status: number | undefined;
 };
 
-type TApiProgramReviewRequest = {
+export type TApiProgramReviewRequest = {
   programs: number[];
   name: string;
 };

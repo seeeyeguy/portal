@@ -6,12 +6,30 @@ const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${window.location.origin}/api/v1/`,
     prepareHeaders: (headers: Headers) => {
-      headers.set("Content-Type", "application/json");
+      const multipartEndpoints = new Set(["api/v1/request/request"]);
+      if (
+        !headers.has("Content-Type") &&
+        !multipartEndpoints.has(headers.get("Path") ?? "")
+      ) {
+        headers.set("Content-Type", "application/json");
+      }
       headers.set("X-CSRFToken", getCookie("csrftoken"));
       return headers;
     },
   }),
-  tagTypes: ["Favorite", "Portfolio", "Query", "QueryFilterState", "Visit"],
+  tagTypes: [
+    "Access",
+    "EmployeeLevel",
+    "Favorite",
+    "Function",
+    "Portfolio",
+    "Request",
+    "Query",
+    "QueryFilterState",
+    "SubFunction",
+    "Tag",
+    "Visit",
+  ],
   endpoints: () => ({}),
 });
 

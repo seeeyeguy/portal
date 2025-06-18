@@ -26,7 +26,7 @@ const portfolioApi = api.injectEndpoints({
   endpoints: (builder) => ({
     addPortfolio: builder.mutation<TApiPortfolioResponse, TApiPortfolioRequest>(
       {
-        query: (body) => ({
+        query: (body: TApiPortfolioRequest) => ({
           url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(),
           method: POST,
           body,
@@ -85,7 +85,11 @@ const portfolioApi = api.injectEndpoints({
       TApiPortfolioResponse,
       { id: number } & TApiPortfolioRequest
     >({
-      query: ({ id, name, programs }) => ({
+      query: ({
+        id,
+        name,
+        programs,
+      }: { id: number } & TApiPortfolioRequest) => ({
         url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PORTFOLIO(id),
         method: PUT,
         body: {

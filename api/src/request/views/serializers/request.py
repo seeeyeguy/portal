@@ -37,7 +37,7 @@ class FetchRequestRequest(serializers.Serializer):
     """Request serializer for GET /v1/request/request."""
 
     id = serializers.IntegerField(allow_null=True, default=None)
-    originator = serializers.CharField(max_length=512, allow_null=True, default=None)
+    originator = serializers.EmailField(max_length=512, allow_null=True, default=None)
     stage = serializers.IntegerField(allow_null=True, default=None)
     status = serializers.CharField(max_length=512, allow_null=True, default=None)
     page = serializers.IntegerField(allow_null=True, default=None)
