@@ -9,6 +9,7 @@
 }
 
 .progress-bar :global(.p-progressbar) {
+  height: 2rem;
   width: 100%;
 }
 
