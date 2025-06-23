@@ -328,7 +328,9 @@ class Request:
 
             resource_id: int = resource_params.pop("resource_id")
 
-            resource_record = DirectoryModels.Resource.objects.get(id=resource_id)
+            resource_record = DirectoryModels.Resource.objects.get(
+                id=resource_id, active=True, deleted=False
+            )
 
             delete_resource_params = ResourceSerializer(resource_record).data
 
@@ -470,7 +472,9 @@ class Request:
 
             # If request id is given, return the associated `Request` record.
             if request_id:
-                return models.Request.objects.get(id=request_id)
+                return models.Request.objects.get(
+                    id=request_id, resource__deleted=False
+                )
 
             # Fetch all `Request` records.
             requests = models.Request.objects.prefetch_related("transitions").all()

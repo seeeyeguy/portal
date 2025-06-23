@@ -51,7 +51,7 @@ class Visit:
 
             # Fetch the `Resource` record.
             resource_record: DirectoryModels.Resource = (
-                DirectoryModels.Resource.objects.get(id=resource)
+                DirectoryModels.Resource.objects.get(id=resource, deleted=False)
             )
 
             # Create the `Visit` record.
