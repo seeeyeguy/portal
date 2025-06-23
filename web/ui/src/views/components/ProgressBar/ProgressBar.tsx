@@ -46,6 +46,9 @@ export interface IProgressBarProps {
 
   /** Enable diagonal striped styling. */
   striped?: boolean;
+
+  /** Enable label to appear in center of bar regardless of value. */
+  centeredLabel?: boolean;
 }
 
 const MAX_PERCENTAGE_VALUE = 100;
@@ -56,6 +59,7 @@ export default function IProgressBar({
   discreteUnit,
   showValue = true,
   striped = false,
+  centeredLabel = false,
   currentMarker,
   totalCompletionLabel = "Completed",
   markerCompleteLabel = "Complete",
@@ -93,7 +97,7 @@ export default function IProgressBar({
     const completionState = `${completedMarkers}/${totalMarkers} ${discreteUnit}`;
 
     let progressLabel: string = "";
-    if (currentProgress === MAX_PERCENTAGE_VALUE) {
+    if (currentProgress === MAX_PERCENTAGE_VALUE && totalCompletionLabel) {
       // EX: "Completed".
       progressLabel = totalCompletionLabel;
     } else if (currentProgressMarker) {
@@ -153,6 +157,22 @@ export default function IProgressBar({
         } as React.CSSProperties
       }
     >
+      {centeredLabel && (
+        <div
+          className={styles["progress-bar-center-label"]}
+          aria-description="progress bar label"
+          style={
+            {
+              "--progress-bar-label-color": progressLabelColor,
+            } as React.CSSProperties
+          }
+        >
+          {!lodash.isUndefined(discreteUnit)
+            ? discreteTemplate()
+            : `${currentProgress}%`}
+        </div>
+      )}
+
       <ProgressBar
         value={
           currentProgress === 0 && !lodash.isUndefined(discreteUnit)
@@ -160,9 +180,11 @@ export default function IProgressBar({
             : currentProgress
         }
         displayValueTemplate={
-          !lodash.isUndefined(discreteUnit) ? discreteTemplate : undefined
+          !lodash.isUndefined(discreteUnit) && !centeredLabel
+            ? discreteTemplate
+            : undefined
         }
-        showValue={showValue}
+        showValue={showValue && !centeredLabel}
       ></ProgressBar>
     </div>
   );

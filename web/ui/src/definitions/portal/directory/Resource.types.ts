@@ -9,12 +9,12 @@ interface IRestricted {
 export interface IResource {
   id: number;
   uid: string;
-  previousRevision: number;
-  revisionNumber: number;
+  previousRevision: number | null;
+  revisionNumber: number | null;
   name: string;
   description: string;
   url: string;
-  thumbnail: string;
+  thumbnail: string | null;
   primaryPointOfContact: string;
   employeeLevels: IEmployeeLevel[];
   subfunctions: ISubFunction[];
@@ -22,6 +22,7 @@ export interface IResource {
   type: string;
   download: boolean;
   active: boolean;
+  deleted: boolean;
   created: Date;
   favoritedBy: string[];
   restricted?: IRestricted;
