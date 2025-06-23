@@ -152,7 +152,7 @@ class Query:
 
             # If `resource_id` is provided, filter all queries by the given `Resource`.
             if resource_id:
-                _ = Resource.objects.get(id=resource_id)
+                _ = Resource.objects.get(id=resource_id, deleted=False)
                 queries: QuerySet[models.Query, models.Query] = queries.filter(
                     resources__in=[resource_id]
                 )

@@ -1687,6 +1687,78 @@ paths:
                   - $ref: "#/components/schemas/CreateResourceSubFunctionDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateResourceTagDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateResourcePointOfContactDoesNotExistResponse"
+    get:
+      tags:
+        - "request.request.fetch"
+      summary: "Fetch `Request` records."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Request` record.
+        - in: query
+          name: originator
+          schema:
+            type: string
+          description: User's email related to the desired `Request` records.
+        - in: query
+          name: stage
+          schema:
+            type: integer
+          description: Stage level of the latest `Transition` of the desired
+            `Request` records.
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Status of the desired `Request` records.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of
+            `Request` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Request` records to return.
+        - in: query
+          name: include_archived
+          schema:
+            type: boolean
+          description: Flag dictating whether archived `Request` records
+            should be included in the return or not.
+          default: false
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRequestResponse"
+                  - $ref: "#/components/schemas/FetchRequestByIdResponse"
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRequestInvalidParametersResponse"
+                  - $ref: "#/components/schemas/FetchRequestOriginatorDoesNotHaveAccess"
+        "404":
+          description: "`Resource`, or `User` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRequestByIdRequestDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchRequestWithOriginatorUserDoesNotExistResponse"
     put:
       tags:
         - "request.request.update"
@@ -5366,6 +5438,277 @@ components:
     CreateRequestForbiddenErrorResponse:
       title: "Create `Request` error response due to forbidden access."
       example: "Permissions Denied."
+
+    FetchRequestResponse:
+      title: "Fetch `Resource` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "resource": {
+                  "id": 1,
+                  "employee_levels": [
+                    {
+                      "id": 3,
+                      "name": "Executive",
+                      "description": "Executive Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 3,
+                    }
+                  ],
+                  "subfunctions": [
+                    {
+                      "id": 5,
+                      "function": {
+                        "id": 3,
+                        "name": "Finance",
+                        "description": "Function 3.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      "name": "Capital",
+                      "description": "Function 3 SubFunction 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    ...
+                  ],
+                  "tags": [
+                    {
+                      "id": 1,
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "label": "filter::site:Melbourne",
+                    },
+                    ...
+                  ],
+                  "primary_point_of_contact": "Test.User@harris.com",
+                  "description": "Test Resource Description.",
+                  "created": "2026-06-06T11:59:30.789539-04:00",
+                  "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
+                  "revision_number": null,
+                  "name": "Test Resource Name",
+                  "url": "https://www.test-site.com",
+                  "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
+                  "type": "Test Resource Type",
+                  "download": false,
+                  "active": false,
+                  "deleted": false,
+                  "previous_revision": null,
+                },
+                "originator": {
+                  "id": 3,
+                  "user": {
+                    "id": 1,
+                    "username": "Test.User@harris.com",
+                    "email": "Test.User@harris.com",
+                    "first_name": "Test",
+                    "last_name": "User",
+                    "is_active": true,
+                  },
+                  "role": {
+                    "id": 3,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "name": "Data Steward",
+                    "description": "Data Steward.",
+                    "level": 3,
+                  },
+                  "stage": [],
+                  "subfunctions": [
+                    {
+                      "id": 5,
+                      "function": {
+                        "id": 3,
+                        "name": "Finance",
+                        "description": "Function 3.",
+                        "created": "2024-08-27T12:00:00-04:00",
+                        "modified": "2024-08-27T12:00:00-04:00",
+                      },
+                      "name": "Capital",
+                      "description": "Function 3 SubFunction 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    ...
+                  ],
+                  "access_granted_date": "2024-08-27T12:00:00-04:00",
+                  "access_revoked_date": null,
+                },
+                "created": "2025-06-01T11:59:30.796324-04:00",
+                "modified": "2025-06-01T11:59:30.796357-04:00",
+                "status": "PENDING",
+                "transitions": {
+                  "latest": 3,
+                  "nodes": {
+                    "3": {
+                      "id": 3,
+                      "request": 2,
+                      "stage": {
+                        "id": 2,
+                        "name": "Submitted",
+                        "description": "A resource was submitted.",
+                        "level": 2,
+                      },
+                      "previous_transition": 2,
+                      "created": "2025-06-01T11:59:30.805896-04:00",
+                      "dispositions": [],
+                    },
+                    ...
+                  },
+                },
+              },
+            ...
+          ]
+    
+    FetchRequestByIdResponse:
+      title: "Fetch `Request` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "resource": {
+                "id": 1,
+                "employee_levels": [
+                    {
+                      "id": 3,
+                      "name": "Executive",
+                      "description": "Executive Level 1.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                      "level": 3,
+                    }
+                ],
+                "subfunctions": [
+                  {
+                    "id": 5,
+                    "function": {
+                      "id": 3,
+                      "name": "Finance",
+                      "description": "Function 3.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Capital",
+                    "description": "Function 3 SubFunction 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  ...
+                ],
+                "tags": [
+                  {
+                    "id": 1,
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                    "label": "filter::site:Melbourne",
+                  },
+                  ...
+                ],
+                "primary_point_of_contact": "Test.User@harris.com",
+                "description": "Test Resource Description.",
+                "created": "2026-06-06T11:59:30.789539-04:00",
+                "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
+                "revision_number": null,
+                "name": "Test Resource Name",
+                "url": "https://www.test-site.com",
+                "thumbnail": "/v1/media/resources/thumbnails/80e00922-8b90-4754-8ea3-a8176a8e3f56/2025_04_24__15_59_30/thumbnail.png",
+                "type": "Test Resource Type",
+                "download": false,
+                "active": false,
+                "deleted": false,
+                "previous_revision": null,
+              },
+              "originator": {
+                "id": 3,
+                "user": {
+                  "id": 1,
+                  "username": "Test.User@harris.com",
+                  "email": "Test.User@harris.com",
+                  "first_name": "Test",
+                  "last_name": "User",
+                  "is_active": true,
+                },
+                "role": {
+                  "id": 3,
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "name": "Data Steward",
+                  "description": "Data Steward.",
+                  "level": 3,
+                },
+                "stage": [],
+                "subfunctions": [
+                  {
+                    "id": 5,
+                    "function": {
+                      "id": 3,
+                      "name": "Finance",
+                      "description": "Function 3.",
+                      "created": "2024-08-27T12:00:00-04:00",
+                      "modified": "2024-08-27T12:00:00-04:00",
+                    },
+                    "name": "Capital",
+                    "description": "Function 3 SubFunction 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  ...
+                ],
+                "access_granted_date": "2024-08-27T12:00:00-04:00",
+                "access_revoked_date": null,
+              },
+              "created": "2025-06-01T11:59:30.796324-04:00",
+              "modified": "2025-06-01T11:59:30.796357-04:00",
+              "status": "PENDING",
+              "transitions": {
+                "latest": 3,
+                "nodes": {
+                  "3": {
+                    "id": 3,
+                    "request": 2,
+                    "stage": {
+                      "id": 2,
+                      "name": "Submitted",
+                      "description": "A resource was submitted.",
+                      "level": 2,
+                    },
+                    "previous_transition": 2,
+                    "created": "2025-06-01T11:59:30.805896-04:00",
+                    "dispositions": [],
+                  },
+                  ...
+                },
+              },
+            }
+
+    FetchRequestInvalidParametersResponse:
+      title: "Fetch `Request` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    FetchRequestOriginatorDoesNotHaveAccess:
+      title: "Fetch `Request` error response due to providing an email for
+        a `User` that does not have an `Access`."
+      example: "Originator (email={originator}) has not created a request."
+    
+    FetchRequestByIdRequestDoesNotExistResponse:
+      title: "Fetch `Request` error response due to providing an id for
+        a `Request` that does not exist."
+      example: "Request(id={request_id}) does not exist."
+
+    FetchRequestWithOriginatorUserDoesNotExistResponse:
+      title: "Fetch `Request` error response due to providing an email for
+        a `User` that does not exist."
+      example: "Originator (email={originator}) does not exist."
 
     UpdateRequestRequest:
       title: "Update `Request` request." 

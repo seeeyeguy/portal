@@ -672,9 +672,9 @@ class Resource:
 
             # If a resource id is given, fetch the corresponding `Resource` record.
             if resource_id:
-                return ResourceModel.objects.get(id=resource_id)
+                return ResourceModel.objects.get(id=resource_id, deleted=False)
 
-            resources = ResourceModel.objects.all()
+            resources = ResourceModel.objects.filter(deleted=False)
 
             # If `limit` is given, then limit the `Resource` records.
             resources = resources[:limit] if limit else resources
@@ -754,6 +754,7 @@ class ResourceSearch:
                 "employee_levels", "subfunctions", "subfunctions__function", "tags"
             ).filter(
                 active=True,
+                deleted=False,
                 requests__status=Request.RequestStatus.APPROVED,
             )
 
