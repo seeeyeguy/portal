@@ -298,42 +298,47 @@ class Access:
                 queryset of `Access` records, filtered by the given params.
         """
 
-        if not (admin and admin.is_authenticated):
-            err_msg = "Authentication required."
+        try:
+            if not (admin and admin.is_authenticated):
+                err_msg = "Authentication required."
+                LOGGER.error(err_msg)
+                raise exceptions.UsersError(err_msg, 401)
+
+            # Verify the permissions of the `admin`.
+            if not models.Access.objects.filter(
+                user=admin,
+                role__level=models.Role.RoleLevels.SUPERUSER,
+                access_revoked_date__isnull=True,
+            ).exists():
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.UsersError(err_msg, 403)
+
+            # Fetch `Access`, given an `Access` id.
+            if access:
+                return models.Access.objects.get(id=access)
+
+            # Fetch `Access` records.
+            accesses: QuerySet[models.Access] = models.Access.objects.all()
+
+            # Exclude revoked `Access` records if `include_revoked` not set.
+            if not include_revoked:
+                accesses = accesses.filter(access_revoked_date__isnull=True)
+
+            # Filter records by `User`, given a `User`'s email.
+            if user:
+                accesses = accesses.filter(user__email__iexact=user)
+
+            # Filter records by `Role`, given a set of `role_levels`.
+            if role_levels:
+                accesses = accesses.filter(role__level__in=role_levels)
+
+            # Filter records by `Subfunction`, given a set of `Subfunction` ids.
+            if subfunctions:
+                accesses = accesses.filter(subfunctions__id__in=subfunctions).distinct()
+
+            return accesses
+        except models.Access.DoesNotExist as exc:
+            err_msg = f"Access (id={access}) does not exist."
             LOGGER.error(err_msg)
-            raise exceptions.UsersError(err_msg, 401)
-
-        # Verify the permissions of the `admin`.
-        if not models.Access.objects.filter(
-            user=admin,
-            role__level=models.Role.RoleLevels.SUPERUSER,
-            access_revoked_date__isnull=True,
-        ).exists():
-            err_msg = "Permissions Denied."
-            LOGGER.error(err_msg)
-            raise exceptions.UsersError(err_msg, 403)
-
-        # Fetch `access`, given an `Access` id.
-        if access:
-            return models.Access.objects.get(id=access)
-
-        # Fetch `Access` records.
-        accesses: QuerySet[models.Access] = models.Access.objects.all()
-
-        # Exclude revoked `Access` records if `include_revoked` not set.
-        if not include_revoked:
-            accesses = accesses.filter(access_revoked_date__isnull=True)
-
-        # Filter records by `User`, given a `User`'s email.
-        if user:
-            accesses = accesses.filter(user__email__iexact=user)
-
-        # Filter records by `Role`, given a set of `role_levels`.
-        if role_levels:
-            accesses = accesses.filter(role__level__in=role_levels)
-
-        # Filter records by `Subfunction`, given a set of `Subfunction` ids.
-        if subfunctions:
-            accesses = accesses.filter(subfunctions__id__in=subfunctions)
-
-        return accesses
+            raise exceptions.UsersError(err_msg, 404) from exc
