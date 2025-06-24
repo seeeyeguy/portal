@@ -9,6 +9,7 @@ by `BI Portal`.
 # pylint: disable=wrong-import-order
 import logging
 import os
+import re
 import requests
 from PIL import Image
 from typing import cast, List, Literal, Optional, Set, Tuple, TypedDict, Union
@@ -800,6 +801,10 @@ class ResourceSearch:
                 search_term: str = (
                     name_search_term if name_search_term else description_search_term
                 )
+
+                # Escape special characters in the search term to prevent an error
+                # with full-text search.
+                search_term = re.escape(search_term)
 
                 # Construct the query expression from the `search_term` by creating
                 # a string where each word has the `:*` suffix for wildcard matching
