@@ -1,0 +1,38 @@
+[
+    {
+        "model": "users.access",
+        "pk": 4,
+        "fields": {
+            "user": "Ben.Reilly@harris.com",
+            "role": 2,
+            "access_granted_date": "2025-04-01T12:21:05.063375-04:00",
+            "access_revoked_date": null,
+            "stage": [],
+            "subfunctions": [1, 2, 3]
+        }
+    },
+    {
+        "model": "users.access",
+        "pk": 5,
+        "fields": {
+            "user": "Ben.Reilly@harris.com",
+            "role": 3,
+            "access_granted_date": "2025-04-01T12:21:05.063375-04:00",
+            "access_revoked_date": null,
+            "stage": [],
+            "subfunctions": [4]
+        }
+    },
+    {
+        "model": "users.access",
+        "pk": 6,
+        "fields": {
+            "user": "Bruce.Banner@harris.com",
+            "role": 3,
+            "access_granted_date": "2025-04-01T12:21:05.063375-04:00",
+            "access_revoked_date": "2025-04-02T12:21:05.063420-04:00",
+            "stage": [],
+            "subfunctions": [4]
+        }
+    }
+]
