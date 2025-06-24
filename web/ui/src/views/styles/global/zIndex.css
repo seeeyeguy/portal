@@ -4,6 +4,7 @@
 
   /* Drop Downs. */
   --z-index-dropdown-menu: 1;
+  --z-index-tooltip: 1;
 
   /* Navigation. */
   --z-index-side-bar-backdrop: 1;

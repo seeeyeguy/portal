@@ -1,0 +1,88 @@
+.accordion-arrow {
+  margin: 1rem;
+  margin-left: auto;
+}
+
+.locked-tooltip-content,
+.resource-tooltip-content {
+  background: var(--color-stealth);
+  border-radius: 0.25rem;
+  max-width: 16rem;
+  z-index: var(--z-index-tooltip);
+}
+
+.request-accordion {
+  background: var(--color-white);
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.request-accordion-content {
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 0.75rem;
+}
+
+.request-accordion-current-status {
+  width: 8.5rem;
+}
+
+.request-accordion-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.request-accordion-name,
+.request-accordion-url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+}
+
+.request-accordion-progress-bar {
+  flex-grow: 1;
+  max-width: 26rem;
+}
+
+.request-accordion-progress-bar [class*="progress-bar"] {
+  height: 1.4rem;
+}
+
+.request-accordion-status {
+  display: flex;
+  gap: 1rem;
+}
+
+.request-accordion-summary {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.request-progress-bar {
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  margin: 0.1rem 0;
+}
+
+.request-progress-bar
+  > [class*="p-progressbar"]
+  > [class*="p-progressbar-value"] {
+  border-radius: 4px 0 0 4px;
+}
+
+.thumbnail-link-img {
+  border: 0.15rem solid var(--color-black);
+  border-radius: 4px;
+  display: block;
+}
+
+.top-accordion-details {
+  display: flex;
+  gap: 1rem;
+}

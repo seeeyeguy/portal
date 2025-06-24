@@ -25,7 +25,7 @@ const resourceTypeThumbnailPaths: { [key: string]: string } = {
  * @param resource A resource record.
  * @returns {string} A path to a thumbnail for the given resource.
  */
-function getThumbnailPath(resource: IResource) {
+export function getThumbnailPath(resource: IResource) {
   if (resource.thumbnail?.length) {
     return `/api${resource.thumbnail}`;
   }

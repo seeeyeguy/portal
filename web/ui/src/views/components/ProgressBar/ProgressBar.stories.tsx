@@ -94,6 +94,23 @@ export const DiscreteWithCompleteMarker: Story = {
   },
 };
 
+export const DiscreteCentered: Story = {
+  args: {
+    progressMarkers: [
+      { id: 1, name: "Step 1", complete: true },
+      { id: 2, name: "Step 2", complete: true },
+      { id: 3, name: "Step 3", complete: false },
+      { id: 4, name: "Step 4", complete: false },
+    ],
+    discreteUnit: "Steps",
+    currentMarker: 3,
+    centeredLabel: true,
+  },
+  render: (args) => {
+    return <ProgressBar {...args} />;
+  },
+};
+
 export const NoDisplayedValue: Story = {
   args: {
     progressMarkers: [
