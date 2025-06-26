@@ -39,7 +39,6 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
-  padding: auto;
   transition: background-color 0.2s ease;
   width: 100%;
 }
@@ -90,15 +89,19 @@
   margin: 5px;
 }
 
+.portfolio-table {
+  border: solid 1px var(--color-light-gray);
+  overflow: hidden;
+}
+
+.portfolio-table [class*="p-component-overlay"] {
+  background: none;
+}
+
 .portfolio-table [class*="p-datatable-emptymessage"] {
   height: 5rem;
   pointer-events: none;
   text-align: center;
-}
-
-.portfolio-table {
-  border: solid 1px var(--color-light-gray);
-  overflow: hidden;
 }
 
 .portfolio-table tbody > tr {
@@ -115,9 +118,12 @@
 
 .portfolio-table th {
   background: var(--color-light-gray);
+  padding: 0;
 }
 
 .portfolio-table th > div {
+  color: var(--color-black);
+  font-weight: 700;
   gap: 0.3rem;
   padding: 0.2rem 0.7rem;
 }
@@ -129,6 +135,7 @@ svg.portfolio-menu-icon {
 
 @media screen and (min-width: 0px) {
   .button-td {
+    border: none;
     width: 2rem;
   }
 
@@ -172,7 +179,17 @@ svg.portfolio-menu-icon {
   }
 
   .standard-td {
+    border: none;
+    color: var(--color-black);
+    font-weight: 400;
     padding: 0.2rem 0.7rem;
+  }
+}
+
+@media screen and (min-width: 0px) {
+  .portfolio-progress-bar :global(.p-progressbar),
+  .portfolio-progress-bar :global(.p-progressbar-label) {
+    min-height: 2rem;
   }
 }
 
@@ -183,8 +200,8 @@ svg.portfolio-menu-icon {
   }
 
   .portfolio-progress-bar {
+    height: 1rem;
     margin: 0.3rem 0.5rem;
-    min-height: 1rem;
   }
 }
 
@@ -217,6 +234,12 @@ svg.portfolio-menu-icon {
   .portfolio-progress-bar {
     margin: 1rem 0.5rem;
     min-height: 2rem;
+  }
+
+  .portfolio-progress-bar :global(.p-progressbar),
+  .portfolio-progress-bar :global(.p-progressbar-label) {
+    align-items: center;
+    height: 2rem;
   }
 
   .portfolio-table table {

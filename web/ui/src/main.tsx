@@ -9,6 +9,9 @@ import router from "routes";
 import store from "state/store/store";
 import { toastContainerConfig } from "definitions/ReactToastifyConstants";
 
+import "primeicons/primeicons.css";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "views/styles/global/colors.css";
 import "views/styles/global/root.css";

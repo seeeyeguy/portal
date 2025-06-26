@@ -23,6 +23,8 @@ services:
         environment:
             APP_NAME: ${APP_NAME}
             IBM_TELEMETRY_DISABLED: true
+            WEB_HOST: ${WEB_HOST}
+            STORYBOOK_WEB_PORT: ${STORYBOOK_WEB_PORT}
         ports:
             - ${STORYBOOK_WEB_PORT}:6006
         volumes:

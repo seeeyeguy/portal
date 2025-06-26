@@ -6,3 +6,7 @@
 .docs-story {
   background: var(--color-light-gray);
 }
+
+.sb-main-padded {
+  overflow: auto;
+}

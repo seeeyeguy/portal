@@ -20,6 +20,12 @@
   overflow: auto;
 }
 
+.menu-content .menu-items {
+  border: none;
+  padding: 0;
+  width: 100%;
+}
+
 .menu-header {
   align-items: center;
   background: inherit;
@@ -77,8 +83,12 @@
   border-radius: 4px;
 }
 
-.menu-items li[class*="p-menuitem"] [class*="p-menuitem-link"] {
+.menu-items li[class*="p-submenu-header"],
+.menu-items li [class*="p-menuitem-link"],
+.menu-items li [class*="p-menuitem-link"] svg,
+.menu-items li [class*="p-menuitem-link"] [class*="p-menuitem-text"] {
   color: black;
+  padding: 0;
 }
 
 .menu-items li[class*="p-submenu-header"] {

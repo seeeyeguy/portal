@@ -1,4 +1,7 @@
 import type { Preview } from "@storybook/react";
+import "primeicons/primeicons.css";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
 
 import "/src/views/styles/global/colors.css";
 import "/src/views/styles/global/root.css";

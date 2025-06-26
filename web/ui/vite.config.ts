@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // Shared config settings.
-const SHARED = {
+export const SHARED = {
   host: "0.0.0.0",
   proxy: {
     "/api": {
@@ -14,6 +14,10 @@ const SHARED = {
       rewrite: (path: string) => path.replace(/^\/api/, ""),
     },
   },
+  allowedHosts: [
+    process.env.WEB_HOST as string,
+    // Add other allowed hosts if needed
+  ],
 };
 
 // https://vitejs.dev/config/
