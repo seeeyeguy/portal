@@ -1,0 +1,56 @@
+.form-card {
+  background: var(--color-white);
+  border: 1px solid;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  gap: 0.8em;
+  min-width: 40rem;
+}
+
+.form-container {
+  padding: 0.5rem;
+  width: 80%;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding: 0.6rem;
+  width: 20%;
+  height: 3.5rem;
+}
+
+.button-container button {
+  align-items: center;
+  background: var(--color-white);
+  border-radius: 4px;
+  border-width: 2px;
+  font-weight: 700Q;
+  margin-right: 0.5rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  justify-content: center;
+  width: 100%;
+}
+
+.delete-form-card-button {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.delete-form-card-button:hover {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+.update-form-card-button {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.update-form-card-button:hover {
+  background: var(--color-warning);
+  color: var(--color-white);
+}
