@@ -9,8 +9,8 @@ import NavBar from "views/components/NavBar/NavBar";
 import PortfolioMenu from "views/containers/PortfolioMenu/PortfolioMenu";
 import ProgramList from "views/containers/ProgramList/ProgramList";
 
-import { IProfile } from "definitions/portal/users/Users.types";
-import type { IUser } from "definitions/Sso.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
+import type { IAuthUser } from "definitions/Sso.types";
 import { IProgressMarker } from "views/components/ProgressBar/ProgressBar";
 import {
   DEFAULT_PORTFOLIO_ID,
@@ -67,7 +67,7 @@ const PORTFOLIO_POLL_INTERVAL = 10000;
 const PORTFOLIO_POLL_MAX_REQUESTS = 18;
 
 export default function ProgramReviewTool() {
-  const loaderData = useLoaderData() as { user: IUser };
+  const loaderData = useLoaderData() as { user: IAuthUser };
   const [polling, setPolling] = React.useState<number>(0);
   const [currentMarker, setCurrentMarker] = React.useState<number | null>(null);
   const [progressMarkers, setProgressMarkers] = React.useState<

@@ -1,6 +1,10 @@
 import { redirect } from "react-router-dom";
 import type { SearchBarMenuItem } from "adas-react-components/types";
-import { faHome, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHome,
+  faQuestion,
+  faUserGear,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default [
   {
@@ -8,6 +12,12 @@ export default [
     path: "/",
     icon: faHome,
     onClick: () => redirect("/"),
+  },
+  {
+    label: "Admin",
+    path: "/admin",
+    icon: faUserGear,
+    onClick: () => redirect("/admin"),
   },
   {
     label: "FAQ",

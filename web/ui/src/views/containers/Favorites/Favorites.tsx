@@ -5,7 +5,7 @@ import lodash from "lodash";
 import ResourceLinks from "views/components/ResourceLinks/ResourceLinks";
 
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/users/Users.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
 
 import styles from "views/containers/Favorites/Favorites.module.css";
 

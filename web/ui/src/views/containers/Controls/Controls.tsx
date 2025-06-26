@@ -13,7 +13,7 @@ import { useTypedSelector } from "state/store/store";
 
 import { IEmployeeLevel } from "definitions/portal/directory/EmployeeLevel.types";
 import { IFunction } from "definitions/portal/directory/Function.types";
-import { IUser } from "definitions/Sso.types";
+import { IAuthUser } from "definitions/Sso.types";
 
 import styles from "views/containers/Controls/Controls.module.css";
 
@@ -28,7 +28,7 @@ export default function Controls() {
     []) as IEmployeeLevel[];
   const functions = (rtkFunctionsQuery.data?.data ?? []) as IFunction[];
 
-  const loaderData = useLoaderData() as { user: IUser };
+  const loaderData = useLoaderData() as { user: IAuthUser };
 
   const { data: queryFilterStateApiResponse } = useGetQueryFilterStateQuery(
     loaderData.user.email

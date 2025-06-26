@@ -5,7 +5,7 @@ import {
 } from "state/query/api/portal/users/UsersHelper";
 import api from "state/query/api";
 
-import { IProfile } from "definitions/portal/users/Users.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
 
 type TApiProfileResponse = { data: IProfile; status: number | undefined };
 

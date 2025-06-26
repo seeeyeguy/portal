@@ -1,5 +1,5 @@
 import { IQuery } from "definitions/portal/Analytics.types";
-import { IUser } from "definitions/Sso.types";
+import { IUser } from "definitions/portal/users/User.types";
 
 export interface IQueryFilterState {
   id: number;

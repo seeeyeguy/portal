@@ -5,8 +5,8 @@ import ResourceLink from "views/components/ResourceLinks/ResourceLink";
 import { TResourceFavoriteMap } from "views/definitions/ResourceLinks.types";
 
 import { IResource } from "definitions/portal/directory/Resource.types";
-import { IProfile, ISegment } from "definitions/portal/users/Users.types";
-import { IUser } from "definitions/Sso.types";
+import { IProfile, ISegment } from "definitions/portal/users/Profile.types";
+import { IUser } from "definitions/portal/users/User.types";
 
 const resourceTypeThumbnailPaths: { [key: string]: string } = {
   "command media": "command media/command_media_default_icon.png",

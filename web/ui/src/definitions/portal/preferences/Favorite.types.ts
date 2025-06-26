@@ -1,5 +1,5 @@
 import { IResource } from "definitions/portal/directory/Resource.types";
-import { IUser } from "definitions/Sso.types";
+import { IUser } from "definitions/portal/users/User.types";
 
 export interface IFavorite {
   id: number;

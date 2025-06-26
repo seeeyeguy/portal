@@ -1,9 +1,10 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { SearchBar } from "adas-react-components";
 import type {
   Option,
+  SearchBarMenuItem,
   Profile as SearchBarProfile,
 } from "adas-react-components/types";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +28,8 @@ import {
 import store, { useAppDispatch, useTypedSelector } from "state/store/store";
 
 import { IResource } from "definitions/portal/directory/Resource.types";
-import { IProfile } from "definitions/portal/users/Users.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
+import { IAuthUser } from "definitions/Sso.types";
 
 import { transformToOption } from "views/utils/OptionsUtility";
 import { DEFAULT_API_ERROR_MESSAGE } from "definitions/ApiConstants";
@@ -43,6 +45,8 @@ const PROFILE: SearchBarProfile = {
   citizenship: "",
   icon: null,
 };
+
+const RESTRICTED_PATHS = new Set(["/admin"]);
 
 export interface INavBarProps {
   profile: IProfile;
@@ -62,6 +66,7 @@ export default function NavBar({
   };
 
   const dispatch = useAppDispatch();
+  const loaderData = useLoaderData() as { user: IAuthUser };
   const navigate = useNavigate();
 
   const searchTerm = useTypedSelector(
@@ -70,14 +75,26 @@ export default function NavBar({
 
   const menuLinks = React.useMemo(
     () =>
-      menuItems.map((menuItem) => ({
-        ...menuItem,
-        onClick: (event: React.MouseEvent) => {
-          event.preventDefault();
-          navigate(menuItem.path);
-        },
-      })),
-    [navigate]
+      menuItems.reduce((acc, menuItem) => {
+        if (
+          RESTRICTED_PATHS.has(menuItem.path) &&
+          !loaderData.user.isAdmin &&
+          !loaderData.user.accesses.length
+        ) {
+          return acc;
+        }
+        return [
+          ...acc,
+          {
+            ...menuItem,
+            onClick: (event: React.MouseEvent) => {
+              event.preventDefault();
+              navigate(menuItem.path);
+            },
+          },
+        ];
+      }, [] as SearchBarMenuItem[]),
+    [loaderData, navigate]
   );
 
   const clearSearchForSession = React.useCallback(
@@ -170,7 +187,7 @@ export default function NavBar({
   return (
     <SearchBar
       siteName=""
-      icon="icon/portal-logo.png"
+      icon="/icon/portal-logo.png"
       iconHeight={37}
       iconWidth={150}
       menuProfileButtonIcon={

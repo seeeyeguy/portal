@@ -5,7 +5,7 @@ import lodash from "lodash";
 import { TResourceFavoriteMap } from "views/definitions/ResourceLinks.types";
 import { IResource } from "definitions/portal/directory/Resource.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/users/Users.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
 
 import { createResourceCollection } from "views/utils/ResourceLinksUtility";
 
