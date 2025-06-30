@@ -3,14 +3,8 @@ import { RJSFSchema, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import {
-  newTagCustomValidate,
-  newTagSchema,
-  newTagUiSchema,
-} from "views/schemas/newTagSchema";
-
 const meta: Meta<typeof Form> = {
-  title: "React JSON Schema Form",
+  title: "React JSON Schema Form/Example",
   component: Form,
   tags: ["autodocs"],
   parameters: {
@@ -163,27 +157,6 @@ export const Default: Story = {
       onChange={(e) => console.log("Form data onChange:", e.formData)}
       onSubmit={(formResult) => {
         console.log("Form data onSubmit:", formResult.formData);
-      }}
-    />
-  ),
-};
-
-export const NewTag: Story = {
-  args: {
-    schema: newTagSchema,
-    uiSchema: newTagUiSchema,
-    customValidate: newTagCustomValidate,
-    showErrorList: false,
-    noHtml5Validate: true,
-  },
-  render: (args) => (
-    <Form
-      {...args}
-      validator={validator}
-      onChange={(e) => console.log("Form data onChange:", e.formData)}
-      onSubmit={(formResult) => {
-        console.log("Form data onSubmit:", formResult.formData);
-        alert("Successfully Submitted NewTag.");
       }}
     />
   ),

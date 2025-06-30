@@ -1,0 +1,48 @@
+import { WidgetProps } from "@rjsf/utils";
+
+import {
+  InputNumber,
+  InputNumberValueChangeEvent,
+} from "primereact/inputnumber";
+
+/** Properties for the UpDownWidget component. */
+export interface UpDownWidgetProps extends WidgetProps {
+  /** Extended options allowing numbers to be automatically skipped in the input. */
+  options: { skipNumbers?: number[] };
+}
+
+/**
+ * UpDownWidget component for React JSON Schema Form.
+ * This widget uses PrimeReact's InputNumber component and skips specified numbers.
+ *
+ * @param {WidgetProps} props - The properties passed to the widget.
+ * @returns {JSX.Element} The rendered UpDownWidget component.
+ */
+export default function UpDownWidget({
+  value,
+  onChange,
+  options,
+}: WidgetProps) {
+  // Destructure options to avoid passing invalid options to the DOM element.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { enumOptions: _, skipNumbers, ...restOptions } = options || {};
+
+  // Skip numbers that that exist in the skipNumbers option array.
+  const handleChange = (e: InputNumberValueChangeEvent) => {
+    let newValue = e.value as number;
+    while (skipNumbers?.includes(newValue)) {
+      newValue = newValue > (value as number) ? newValue + 1 : newValue - 1;
+    }
+    onChange(newValue);
+  };
+
+  return (
+    <InputNumber
+      value={value as number}
+      onValueChange={handleChange}
+      showButtons
+      inputStyle={{ pointerEvents: "none" }}
+      {...restOptions}
+    />
+  );
+}
