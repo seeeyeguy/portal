@@ -1,16 +1,17 @@
-import { transformApiUser as transformUserRecord } from "state/query/api/auth/AuthHelper";
-
-import { IProfile, ISegment } from "definitions/portal/users/Users.types";
+import { IProfile, ISegment } from "definitions/portal/users/Profile.types";
+import { IUser } from "definitions/portal/users/User.types";
 
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 
 export interface IApiSegment extends ISegment {}
 
 export interface IApiUser {
+  id: number;
+  username: string;
   email: string;
   first_name: string;
   last_name: string;
-  is_superuser: boolean;
+  is_active: boolean;
 }
 
 export interface IApiProfile {
@@ -34,6 +35,18 @@ export interface IApiProfile {
 }
 
 /**
+ * Transforms a `portal.users.User` record from snake_casing
+ * to camelCasing.
+ * @param data A `portal.users.User` record.
+ * @returns A `portal.users.User` record with desired casing.
+ */
+export function transformUserRecord(data: IApiUser): IUser {
+  return {
+    ...snakeCaseToCamelCase({ ...data }),
+  } as unknown as IUser;
+}
+
+/**
  * Transforms a `portal.users.Profile` record from snake_casing
  * to camelCasing.
  * @param data A `portal.users.Profile` record.
@@ -45,5 +58,3 @@ export function transformProfileRecord(data: IApiProfile): IProfile {
     user: transformUserRecord(data.user),
   } as unknown as IProfile;
 }
-
-export { transformUserRecord };

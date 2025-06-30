@@ -31,7 +31,7 @@ export function transformQueryRecord(data: IApiQuery): IQuery {
 
 export interface IApiVisit {
   id: number;
-  user: IApiUser;
+  user: string;
   resource: IApiResource;
   created: Date;
 }
@@ -45,6 +45,6 @@ export interface IApiVisit {
 export function transformVisitRecord(data: IApiVisit) {
   return {
     ...snakeCaseToCamelCase({ ...data }),
-    user: transformUserRecord(data.user),
+    user: data.user,
   } as unknown as IVisit;
 }

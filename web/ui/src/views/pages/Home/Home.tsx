@@ -16,13 +16,13 @@ import { useAppDispatch } from "state/store/store";
 
 import { ITag } from "definitions/portal/directory/Tag.types";
 import { IFavorite } from "definitions/portal/preferences/Favorite.types";
-import { IProfile } from "definitions/portal/users/Users.types";
-import type { IUser } from "definitions/Sso.types";
+import { IProfile } from "definitions/portal/users/Profile.types";
+import type { IAuthUser } from "definitions/Sso.types";
 
 const FILTER_PREFIX = "filter::";
 
 export default function Home() {
-  const loaderData = useLoaderData() as { user: IUser };
+  const loaderData = useLoaderData() as { user: IAuthUser };
 
   const dispatch = useAppDispatch();
 

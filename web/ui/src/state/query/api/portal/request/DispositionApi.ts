@@ -44,7 +44,9 @@ const dispositionWebSocketsApi = api.injectEndpoints({
               draft.push(transformDispositionRecord(message));
             });
             const { refetch } = store.dispatch(
-              requestApi.endpoints.getRequests.initiate(getRequestArgs ?? {})
+              requestApi.endpoints.getRequests.initiate(
+                (getRequestArgs as object | null | undefined) ?? {}
+              )
             );
             refetch();
           };

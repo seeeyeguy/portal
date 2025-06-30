@@ -69,16 +69,21 @@ const requestApi = api.injectEndpoints({
           "employeeLevels",
           "pointOfContacts",
         ]);
-        let apiBody: { [k: string]: ValueOf<TApiPostRequestRequest> } =
-          Object.entries(body).reduce((acc, [key, value]) => {
-            if (!camelCaseKeys.has(key)) {
-              return {
-                ...acc,
-                [key]: value,
-              };
-            }
-            return acc;
-          }, {});
+        let apiBody: Partial<{
+          [k in
+            | keyof TApiPostRequestRequest
+            | "previous_revision"
+            | "employee_levels"
+            | "point_of_contacts"]: ValueOf<TApiPostRequestRequest>;
+        }> = Object.entries(body).reduce((acc, [key, value]) => {
+          if (!camelCaseKeys.has(key)) {
+            return {
+              ...acc,
+              [key]: value,
+            };
+          }
+          return acc;
+        }, {});
         apiBody = {
           ...apiBody,
           previous_revision: body.previousRevision,
@@ -89,8 +94,11 @@ const requestApi = api.injectEndpoints({
         };
 
         for (const key in apiBody) {
-          if (!IGNORED_FORM_DATA_VALUES.has(apiBody[key as string])) {
-            formData.append(key, apiBody[key as string]);
+          const formDataKey = key as keyof TApiPostRequestRequest;
+          if (
+            !IGNORED_FORM_DATA_VALUES.has(apiBody[formDataKey] as string | null)
+          ) {
+            formData.append(key, apiBody[formDataKey] as string);
           }
         }
 
@@ -156,16 +164,21 @@ const requestApi = api.injectEndpoints({
           "employeeLevels",
           "pointOfContacts",
         ]);
-        let apiBody: { [k: string]: ValueOf<TApiPutRequestRequest> } =
-          Object.entries(body).reduce((acc, [key, value]) => {
-            if (!camelCaseKeys.has(key)) {
-              return {
-                ...acc,
-                [key]: value,
-              };
-            }
-            return acc;
-          }, {});
+
+        let apiBody: Partial<{
+          [k in
+            | keyof TApiPutRequestRequest
+            | "employee_levels"
+            | "point_of_contacts"]: ValueOf<TApiPutRequestRequest>;
+        }> = Object.entries(body).reduce((acc, [key, value]) => {
+          if (!camelCaseKeys.has(key)) {
+            return {
+              ...acc,
+              [key]: value,
+            };
+          }
+          return acc;
+        }, {});
         apiBody = {
           ...apiBody,
           employee_levels: JSON.stringify(body.employeeLevels),
@@ -175,8 +188,11 @@ const requestApi = api.injectEndpoints({
         };
 
         for (const key in apiBody) {
-          if (!IGNORED_FORM_DATA_VALUES.has(apiBody[key as string])) {
-            formData.append(key, apiBody[key as string]);
+          const formDataKey = key as keyof TApiPutRequestRequest;
+          if (
+            !IGNORED_FORM_DATA_VALUES.has(apiBody[formDataKey] as string | null)
+          ) {
+            formData.append(key, apiBody[formDataKey] as string);
           }
         }
 

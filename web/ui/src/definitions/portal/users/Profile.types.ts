@@ -1,4 +1,4 @@
-import { IUser } from "definitions/Sso.types";
+import { IUser } from "definitions/portal/users/User.types";
 
 export interface ISegment {
   id: number;

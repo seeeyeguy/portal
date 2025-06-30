@@ -3,8 +3,8 @@ API view module for SSO service. Module provides
 `AuthenticatedUser` view to process an authentication
 check request from the client. If the client is not authenticated,
 the view returns a proxy url that may be used for redirection
-to the SSO service (ADFS). If the client is authenticated, the 
-view will return relevant user data. 
+to the SSO service (ADFS). If the client is authenticated, the
+view will return relevant user data.
 """
 
 import json
@@ -12,6 +12,8 @@ import json
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from users.models import Access, Role
 
 from manager.settings import (
     ApplicationBuild,
@@ -21,6 +23,12 @@ from manager.settings import (
     SSO_SERVICE_APP_URL,
 )
 from manager.utils.types import request
+
+ADMIN_ROLE_LEVELS = [
+    Role.RoleLevels.DATA_STEWARD,
+    Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
+    Role.RoleLevels.SUPERUSER,
+]
 
 
 class AuthenticatedUser(APIView):
@@ -37,6 +45,7 @@ class AuthenticatedUser(APIView):
                 f"{SSO_DEVELOPMENT_USER['last_name']}@l3harris.com"
             ),
             "is_superuser": True,
+            "accesses": [],
         }
 
         if BUILD == ApplicationBuild.DEVELOPMENT:
@@ -51,10 +60,26 @@ class AuthenticatedUser(APIView):
             return Response(data, status=status.HTTP_200_OK)
 
         if request.user.is_authenticated:
+            accesses = Access.objects.filter(
+                user__email__iexact=request.user.email,
+                role__level__in=ADMIN_ROLE_LEVELS,
+                access_revoked_date__isnull=True,
+            )
+            accesses = [
+                {
+                    "role": {"name": access.role.name, "level": access.role.level},
+                    "stages": list(access.stage.values_list("level", flat=True)),
+                    "subfunctions": list(
+                        access.subfunctions.values_list("id", flat=True)
+                    ),
+                }
+                for access in accesses
+            ]
             data["first_name"] = request.user.first_name
             data["last_name"] = request.user.last_name
             data["email"] = request.user.email
             data["is_superuser"] = request.user.is_superuser
+            data["accesses"] = accesses
             return Response(data, status=status.HTTP_200_OK)
 
         # pylint: disable=line-too-long
