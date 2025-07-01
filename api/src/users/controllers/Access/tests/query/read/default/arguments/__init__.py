@@ -23,8 +23,8 @@ FETCH_ACCESSES_VALID_ACCESS_RECORD_IDS: List[int] = [1, 2, 3, 4, 5]
 # `Role` levels to fetch `Access` records used in testing success case.
 FETCH_ACCESSES_WITH_ROLE_LEVELS_ROLE_LEVELS: List[int] = [2]
 
-# Record count for fetching `Access` records with `Role` levels.
-FETCH_ACCESSES_WITH_ROLE_LEVELS_RECORDS_COUNT: int = 2
+# Valid `Access` record ids used in testing success case when fetching with `Role` levels.
+FETCH_ACCESSES_FOR_ROLE_LEVELS_ACCESS_RECORD_IDS: List[int] = [2, 4]
 
 # Valid `Access` record ids used in testing success case when fetching with `User`.
 FETCH_ACCESSES_FOR_USER_ACCESS_RECORD_IDS: List[int] = [4, 5]
@@ -32,8 +32,8 @@ FETCH_ACCESSES_FOR_USER_ACCESS_RECORD_IDS: List[int] = [4, 5]
 # `Subfunction`s to fetch `Access` records used in testing success case.
 FETCH_ACCESSES_WITH_SUBFUNCTIONS_SUBFUNCTIONS: List[int] = [1, 2]
 
-# Record count for fetching `Access` records with `Subfunction`s.
-FETCH_ACCESSES_WITH_SUBFUNCTIONS_RECORDS_COUNT: int = 3
+# Valid `Access` record ids used in testing success case when fetching with `Subfunction`s.
+FETCH_ACCESSES_FOR_SUBFUNCTIONS_ACCESS_RECORD_IDS: List[int] = [2, 3, 4]
 
 # Email to fetch `Access` records with `User` and `Role`s.
 FETCH_ACCESSES_WITH_USER_AND_ROLES_USER_EMAIL: str = "Ben.Reilly@harris.com"
@@ -42,8 +42,9 @@ FETCH_ACCESSES_WITH_USER_AND_ROLES_USER_EMAIL: str = "Ben.Reilly@harris.com"
 # in testing success case.
 FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_ROLE_LEVELS: List[int] = [2]
 
-# Record count for fetching `Access` records with `User` and `Role` levels.
-FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_RECORDS_COUNT: int = 1
+# Valid `Access` record ids used in testing success case when fetching with `User`
+# and `Role` levels.
+FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_ACCESS_RECORD_IDS: List[int] = [4]
 
 # Email to fetch `Access` records with `User` and `Subfunction`s.
 FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_USER_EMAIL: str = "Ben.Reilly@harris.com"
@@ -51,8 +52,9 @@ FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_USER_EMAIL: str = "Ben.Reilly@harris.c
 # `Subfunction`s to fetch `Access` records with `User` and `Subfunction`s.
 FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_SUBFUNCTIONS: List[int] = [4]
 
-# Record count for fetching `Access` records with `User` and `Subfunction`s.
-FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_RECORDS_COUNT: int = 1
+# Valid `Access` record ids used in testing success case when fetching with `User`
+# and `Subfunction`s.
+FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS: List[int] = [5]
 
 # Email to fetch `Access` records with `User`, `Role`s, and `Subfunction`s.
 FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_USER_EMAIL: str = (
@@ -67,9 +69,9 @@ FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_ROLE_LEVELS: List[int] = [
 # `Subfunction`s used in testing success case.
 FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_SUBFUNCTIONS: List[int] = [4]
 
-# Record count for fetching `Access` records with `User`, `Role` levels, and
-# `Subfunction`s.
-FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_RECORDS_COUNT: int = 1
+# Valid `Access` record ids used in testing success case when fetching with `User`
+# `Role` levels, and `Subfunction`s.
+FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS: List[int] = [5]
 
 # Id for an `Access` that does not exist used for testing failure case.
 FETCH_ACCESS_BY_ID_ACCESS_DNE: int = 99
