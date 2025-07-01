@@ -1,6 +1,7 @@
 import React from "react";
 
-import Form, { FormProps } from "@rjsf/core";
+import FormType, { FormProps } from "@rjsf/core";
+import { Form } from "@rjsf/primereact";
 import validator from "@rjsf/validator-ajv8";
 
 import styles from "views/components/FormCard/FormCard.module.css";
@@ -41,7 +42,7 @@ export default function FormCard({
   updateButtonLabel = "Update",
   deleteButtonLabel = "Delete",
 }: IFormCardProps) {
-  const formRef = React.useRef<Form | null>(null);
+  const formRef = React.useRef<FormType | null>(null);
 
   const handleUpdate = React.useCallback(() => {
     if (formRef?.current) {
@@ -61,7 +62,14 @@ export default function FormCard({
         <Form
           onSubmit={onSubmit}
           ref={formRef}
-          {...{ ...DEFAULT_FORM_PROPS, ...formProps }}
+          {...{
+            ...DEFAULT_FORM_PROPS,
+            ...formProps,
+            uiSchema: {
+              ...DEFAULT_FORM_PROPS?.uiSchema,
+              ...formProps?.uiSchema,
+            },
+          }}
         />
       </div>
       <div
