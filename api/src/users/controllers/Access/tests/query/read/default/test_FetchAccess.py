@@ -99,7 +99,7 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(access_id, arguments.FETCH_ACCESSES_VALID_ACCESS_RECORD_IDS)
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -138,7 +138,9 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id, arguments.FETCH_ACCESSES_FOR_USER_ACCESS_RECORD_IDS
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -167,7 +169,7 @@ class TestFetchAccess(MultiDBTestCase):
 
         self.assertEqual(
             access_records.count(),  # type: ignore[union-attr]
-            arguments.FETCH_ACCESSES_WITH_ROLE_LEVELS_RECORDS_COUNT,
+            len(arguments.FETCH_ACCESSES_FOR_ROLE_LEVELS_ACCESS_RECORD_IDS),
         )
 
         for access in access_records:  # type: ignore[union-attr]
@@ -175,7 +177,9 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id, arguments.FETCH_ACCESSES_FOR_ROLE_LEVELS_ACCESS_RECORD_IDS
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -203,7 +207,7 @@ class TestFetchAccess(MultiDBTestCase):
         self.assertIsInstance(access_records, QuerySet[models.Access])
         self.assertEqual(
             access_records.count(),  # type: ignore[union-attr]
-            arguments.FETCH_ACCESSES_WITH_SUBFUNCTIONS_RECORDS_COUNT,
+            len(arguments.FETCH_ACCESSES_FOR_SUBFUNCTIONS_ACCESS_RECORD_IDS),
         )
 
         for access in access_records:  # type: ignore[union-attr]
@@ -211,7 +215,9 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id, arguments.FETCH_ACCESSES_FOR_SUBFUNCTIONS_ACCESS_RECORD_IDS
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -240,7 +246,7 @@ class TestFetchAccess(MultiDBTestCase):
 
         self.assertEqual(
             access_records.count(),  # type: ignore[union-attr]
-            arguments.FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_RECORDS_COUNT,
+            len(arguments.FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_ACCESS_RECORD_IDS),
         )
 
         for access in access_records:  # type: ignore[union-attr]
@@ -248,7 +254,10 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id,
+                arguments.FETCH_ACCESSES_WITH_USER_AND_ROLE_LEVELS_ACCESS_RECORD_IDS,
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -277,7 +286,7 @@ class TestFetchAccess(MultiDBTestCase):
 
         self.assertEqual(
             access_records.count(),  # type: ignore[union-attr]
-            arguments.FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_RECORDS_COUNT,
+            len(arguments.FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS),
         )
 
         for access in access_records:  # type: ignore[union-attr]
@@ -285,7 +294,10 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id,
+                arguments.FETCH_ACCESSES_WITH_USER_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS,
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -314,7 +326,9 @@ class TestFetchAccess(MultiDBTestCase):
 
         self.assertEqual(
             access_records.count(),  # type: ignore[union-attr]
-            arguments.FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_RECORDS_COUNT,
+            len(
+                arguments.FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS
+            ),
         )
 
         for access in access_records:  # type: ignore[union-attr]
@@ -322,7 +336,10 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(
+                access_id,
+                arguments.FETCH_ACCESSES_WITH_USER_ROLE_LEVELS_AND_SUBFUNCTIONS_ACCESS_RECORD_IDS,
+            )
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]
@@ -359,7 +376,7 @@ class TestFetchAccess(MultiDBTestCase):
 
             access_id: int = access.id
 
-            self.assertIn(access_id, self.access_records)
+            self.assertIn(access_id, arguments.FETCH_ACCESSES_ALL_ACCESS_ACCESS_IDS)
 
             serialized_access = AccessSerializer(access).data
             expected_access = self.access_records[access_id]

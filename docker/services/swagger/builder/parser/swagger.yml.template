@@ -1931,6 +1931,78 @@ paths:
                   - $ref: "#/components/schemas/CreateAccessRoleDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateAccessStageDoesNotExistResponse"
                   - $ref: "#/components/schemas/CreateAccessSubFunctionDoesNotExistResponse"
+    get:
+      tags:
+        - "users.access.fetch"
+      summary: "Fetch `Access` records."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Access` record.
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: E-mail of the `User` to be applied to the `Access` records 
+            being fetched.
+        - in: query
+          name: role_levels
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Levels of the `Role` to be applied to the `Access` records 
+            being fetched.
+        - in: query
+          name: subfunctions
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Ids of `SubFunction`s to be applied to the `Access` records
+            being fetched.
+        - in: query
+          name: include_revoked
+          schema:
+            type: boolean
+          description: Flag dictating whether revoked `Access` records
+            should be included.
+          default: null
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchAccessesResponse"
+                  - $ref: "#/components/schemas/FetchAccessByIdResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchAccessesUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchAccessesPermissionsDeniedResponse"
+        "404":
+          description: "`Access` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchAccessByIdDoesNotExistResponse"
     put:
       tags:
         - "users.access.update"
@@ -4444,6 +4516,110 @@ components:
       title: "Create `Resource` error response due to supplying a level
         for a `Stage` that does not exist."
       example: "Some Stages (levels={stage_levels}) do not exist."
+    
+    FetchAccessesResponse:
+      title: "Fetch `Access`es response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "user": {
+                  "id": 3,
+                  "username": "Test.User@harris.com",
+                  "email": "Test.User@harris.com",
+                  "first_name": "Test",
+                  "last_name": "User",
+                  "is_active": true
+                },
+                "role": {
+                  "id": 1,
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "name": "Superuser",
+                  "description": "Superuser.",
+                  "level": 1
+                },
+                "stage": [
+                    {
+                      "id": 2,
+                      "name": "Submitted",
+                      "description": "A resource was submitted.",
+                      "level": 2
+                    },
+                    {
+                      "id": 3,
+                      "name": "Approved by Business Process Expert",
+                      "description": "A resource was approved by the Business Process Expert.",
+                      "level": 3
+                    }
+                ],
+                "subfunctions": [],
+                "access_granted_date": "2024-08-27T12:00:00-04:00",
+                "access_revoked_date": null,
+              },
+              ...
+            ]
+    
+    FetchAccessByIdResponse:
+      title: "Fetch `Access` by id response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "user": {
+                "id": 3,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": true
+              },
+              "role": {
+                "id": 1,
+                "created": "2024-08-27T12:00:00-04:00",
+                "name": "Superuser",
+                "description": "Superuser.",
+                "level": 1
+              },
+              "stage": [
+                  {
+                    "id": 2,
+                    "name": "Submitted",
+                    "description": "A resource was submitted.",
+                    "level": 2
+                  },
+                  {
+                    "id": 3,
+                    "name": "Approved by Business Process Expert",
+                    "description": "A resource was approved by the Business Process Expert.",
+                    "level": 3
+                  }
+              ],
+              "subfunctions": [],
+              "access_granted_date": "2024-08-27T12:00:00-04:00",
+              "access_revoked_date": null,
+            }
+    
+    FetchAccessesUnauthorizedResponse:
+      title: "Fetch `Access` error response due to unauthorized access."
+      example: "Authentication required."
+    
+    FetchAccessesPermissionsDeniedResponse:
+      title: "Fetch `Access` error response due to forbidden access."
+      example: "Permissions Denied."
+    
+    FetchAccessByIdDoesNotExistResponse:
+      title: "Fetch `Access` error response due to providing an id for
+        an `Access` record that does not exist."
+      example: "Access (id={access_id}) does not exist."
 
     RevokeAccessResponse:
       title: "Revoke `Access` response."
