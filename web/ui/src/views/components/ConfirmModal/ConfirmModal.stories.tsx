@@ -153,3 +153,47 @@ export const CustomStyle: Story = {
     );
   },
 };
+
+export const AlternativeButton: Story = {
+  args: {
+    title: "Three Buttons",
+    children: <></>,
+    className: "",
+    acceptLabel: <>Submit</>,
+    rejectLabel: <>Cancel</>,
+    alternativeLabel: <>Save</>,
+    acceptClassName: "",
+    rejectClassName: "",
+    alternativeClassName: "",
+    onHide: null,
+  },
+  render: (args) => {
+    const [showModal, setShowModal] = React.useState(false);
+
+    return (
+      <>
+        <ConfirmModal
+          {...args}
+          open={showModal}
+          onAccept={() => {
+            console.log("SUBMITTED");
+            setShowModal(false);
+          }}
+          onReject={() => {
+            console.log("REJECTED");
+            setShowModal(false);
+          }}
+          onAlternative={() => {
+            console.log("SAVED");
+          }}
+        />
+        <button
+          className="storybook-test-button"
+          onClick={() => setShowModal(true)}
+        >
+          Open Modal
+        </button>
+      </>
+    );
+  },
+};

@@ -8,7 +8,7 @@ import { IResource } from "definitions/portal/directory/Resource.types";
 import { IProfile, ISegment } from "definitions/portal/users/Profile.types";
 import { IUser } from "definitions/portal/users/User.types";
 
-const resourceTypeThumbnailPaths: { [key: string]: string } = {
+export const resourceTypeThumbnailPaths: { [key: string]: string } = {
   "command media": "command media/command_media_default_icon.png",
   excel: "excel/excel_default_icon.png",
   palantir: "palantir/palantir_default_icon.png",

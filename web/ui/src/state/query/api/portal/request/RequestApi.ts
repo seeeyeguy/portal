@@ -13,12 +13,17 @@ import { IRequest } from "definitions/portal/request/Request.types";
 type ValueOf<T> = T[keyof T];
 
 type TApiRequestResponse = {
-  data: IRequest | IRequest[] | number;
+  data: IRequest | number;
+  status: number | undefined;
+};
+
+type TApiGetRequestResponse = {
+  data: IRequest[];
   status: number | undefined;
 };
 
 export type TApiPostRequestRequest = {
-  uid: string;
+  uid: string | null;
   name: string;
   description: string;
   previousRevision: number | null;
@@ -47,7 +52,7 @@ export type TApiPutRequestRequest = {
   name: string;
   description: string;
   url: string;
-  thumbnail: File;
+  thumbnail: File | null;
   employeeLevels: number[];
   subfunctions: number[];
   tags: number[];
@@ -120,36 +125,38 @@ const requestApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Request"],
     }),
-    getRequests: builder.query<TApiRequestResponse, TApiFetchRequestRequest>({
-      query: ({
-        id = null,
-        originator = null,
-        stage = null,
-        status = null,
-        page = null,
-        limit = null,
-        includeArchived = null,
-      }: TApiFetchRequestRequest) =>
-        endpoints.PORTAL.REQUEST.REQUEST(
-          id,
-          originator,
-          stage,
-          status,
-          page,
-          limit,
-          includeArchived
-        ),
-      transformResponse: (
-        response: IApiRequest | IApiRequest[],
-        meta
-      ): TApiRequestResponse => ({
-        data: lodash.isArray(response)
-          ? response.map((record) => transformRequestRecord(record))
-          : transformRequestRecord(response),
-        status: meta?.response?.status,
-      }),
-      providesTags: ["Request"],
-    }),
+    getRequests: builder.query<TApiGetRequestResponse, TApiFetchRequestRequest>(
+      {
+        query: ({
+          id = null,
+          originator = null,
+          stage = null,
+          status = null,
+          page = null,
+          limit = null,
+          includeArchived = null,
+        }: TApiFetchRequestRequest) =>
+          endpoints.PORTAL.REQUEST.REQUEST(
+            id,
+            originator,
+            stage,
+            status,
+            page,
+            limit,
+            includeArchived
+          ),
+        transformResponse: (
+          response: IApiRequest[],
+          meta
+        ): TApiGetRequestResponse => ({
+          data: lodash.isArray(response)
+            ? response.map((record) => transformRequestRecord(record))
+            : [transformRequestRecord(response)],
+          status: meta?.response?.status,
+        }),
+        providesTags: ["Request"],
+      }
+    ),
     updateRequest: builder.mutation<
       TApiRequestResponse,
       { body: TApiPutRequestRequest } & { id: number }
