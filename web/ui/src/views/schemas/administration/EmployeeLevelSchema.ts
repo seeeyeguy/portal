@@ -4,7 +4,7 @@ import UpDownWidget from "views/components/UpDownWidget/UpDownWidget";
 export interface EmployeeLevelFormData {
   name: string;
   level: number;
-  description?: string;
+  description: string;
 }
 
 export const employeeLevelSchema: RJSFSchema = {
@@ -24,7 +24,7 @@ export const employeeLevelSchema: RJSFSchema = {
       title: "Description",
     },
   },
-  required: ["name", "level"],
+  required: ["name", "level", "description"],
 };
 
 export const employeeLevelUiSchema: UiSchema = {
@@ -33,14 +33,14 @@ export const employeeLevelUiSchema: UiSchema = {
     "ui:row": {
       children: [
         {
-          "ui:columns": {
+          "ui:col": {
             sm: 6,
             children: ["name", "level"],
           },
         },
         {
           "ui:col": {
-            sm: 12,
+            sm: 6,
             children: ["description"],
           },
         },
@@ -53,6 +53,7 @@ export const employeeLevelUiSchema: UiSchema = {
   },
   level: {
     "ui:widget": "UpDownWidget",
+    "ui:disabled": true,
     "ui:options": {
       min: 1,
       skipNumbers: [], // Numbers to skip
