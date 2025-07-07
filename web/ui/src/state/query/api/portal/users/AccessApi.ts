@@ -16,8 +16,8 @@ type TApiAccessResponse = {
 };
 
 export type TApiPostAccessRequest = {
-  user: string;
-  roleLevel: number;
+  user: string | null;
+  roleLevel: number | null;
   subfunctions: number[];
   stageLevels: number[];
 };
@@ -37,7 +37,8 @@ const accessApi = api.injectEndpoints({
         url: endpoints.PORTAL.USERS.ACCESS(),
         method: POST,
         body: {
-          ...body,
+          user: body.user,
+          subfunctions: body.subfunctions,
           role_level: body.roleLevel,
           stage_levels: body.stageLevels,
         },

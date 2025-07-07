@@ -1,11 +1,12 @@
 """
 API view module for LDAP requests. Proxy the LDAP service
 with `search_term`, `limit`, & `offset` and return
-matching entries to the client. 
+matching entries to the client.
 """
 
 import json
 import logging
+import requests
 
 from django import http
 from django.views import View
@@ -40,3 +41,7 @@ class LDAPSearch(View):
             )
         except LDAPServiceError as err:
             return http.JsonResponse(data=err.message, status=err.status, safe=False)
+        except requests.HTTPError:
+            return http.JsonResponse(
+                data=[], status=status.HTTP_404_NOT_FOUND, safe=False
+            )

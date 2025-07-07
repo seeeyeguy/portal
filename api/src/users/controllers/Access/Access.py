@@ -13,6 +13,7 @@ and ultimately approved by a `User` with an appropriate
 """
 
 import logging
+from requests.exceptions import ConnectionError
 from typing import List, Optional, Set, Tuple, Union
 
 from django.contrib.auth import models as AuthModels
@@ -22,6 +23,8 @@ from django.utils import timezone
 from directory.models import SubFunction
 from request.models import Stage
 from users import exceptions, models
+
+from manager.services.ldap.provider.utils import fetch_authorized_employee
 
 LOGGER = logging.getLogger(__name__)
 
@@ -130,9 +133,9 @@ class Access:
                 raise exceptions.UsersError(err_msg, 403)
 
             # Fetch `User` record.
-            user_record: AuthModels.User = AuthModels.User.objects.get(
-                email__iexact=user
-            )
+            user_record: Optional[AuthModels.User] = fetch_authorized_employee(user)
+            if not user_record:
+                raise AuthModels.User.DoesNotExist()
 
             # Verify the `User` does not have already
             # have an `Access` for the given `role_level`.
@@ -204,7 +207,7 @@ class Access:
             access.subfunctions.add(*subfunction_records)
 
             return access
-        except AuthModels.User.DoesNotExist as exc:
+        except (AuthModels.User.DoesNotExist, ConnectionError) as exc:
             err_msg = f"User (email={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.UsersError(err_msg, 404) from exc
@@ -327,7 +330,11 @@ class Access:
 
             # Filter records by `User`, given a `User`'s email.
             if user:
-                accesses = accesses.filter(user__email__iexact=user)
+                try:
+                    domain_index = user.index("@")
+                except IndexError:
+                    domain_index = 0
+                accesses = accesses.filter(user__email__istartswith=user[:domain_index])
 
             # Filter records by `Role`, given a set of `role_levels`.
             if role_levels:

@@ -16,6 +16,7 @@ from typing import List, Union
 from django import http
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 from rest_framework import status
 
 from users import controllers, exceptions
@@ -28,6 +29,7 @@ from manager.utils.types.request import DjangoHttpRequest
 LOGGER = logging.getLogger(__name__)
 
 
+@method_decorator(never_cache, name="dispatch")
 class Access(View):
     """
     Handle user requests to create, fetch, or update `Access`

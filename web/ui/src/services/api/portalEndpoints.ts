@@ -241,7 +241,7 @@ export default {
       if (!id) {
         let arrayParams = "";
 
-        if (roleLevels) {
+        if (roleLevels?.length) {
           const baseWithRoleLevels = buildQueryResourceByRoleLevelsURL(
             RESOURCE_PATHS.USERS,
             "access"
@@ -249,7 +249,7 @@ export default {
           arrayParams = `${/\?(.*)/.exec(baseWithRoleLevels)?.[1] ?? ""}`;
         }
 
-        if (subfunctions) {
+        if (subfunctions?.length) {
           const baseWithSubFunctions = buildQueryResourceBySubFunctionsURL(
             RESOURCE_PATHS.USERS,
             "access"
@@ -258,13 +258,14 @@ export default {
         }
 
         base = user ? appendQueryParamToURL(base, "user", user, null) : base;
+
         base =
           includeRevoked !== null
             ? appendQueryParamToURL(
                 base,
                 "include_revoked",
                 includeRevoked,
-                /user/
+                /\?user/
               )
             : base;
         base = arrayParams.length

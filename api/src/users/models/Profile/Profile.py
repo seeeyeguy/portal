@@ -10,7 +10,7 @@ import requests
 
 # pylint: disable=imported-auth-user,too-many-instance-attributes,no-member,unused-argument
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, DatabaseError
 
 from users.models.Segment.Segment import Segment
 
@@ -132,12 +132,15 @@ class Profile(models.Model):
 
         self.account_type = str(user_info.get("accountType", "")).upper()
         self.status = str(user_info.get("employmentStatus", "")).upper()
-
-        segment_instance = Segment.objects.filter(
-            name__icontains=str(user_info["segment"])
-        )
-        if segment_instance.exists():
-            self.segment = segment_instance.first()
+        try:
+            model_db = self._state.db
+            segment_instance = Segment.objects.using(model_db).filter(
+                name__icontains=str(user_info["segment"])
+            )
+            if segment_instance.exists():
+                self.segment = segment_instance.first()
+        except DatabaseError:
+            pass
         self.division = user_info.get("division", "")
         self.business_unit = user_info.get("businessUnit", "")
         self.department = user_info.get("department", "")
