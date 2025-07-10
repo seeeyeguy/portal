@@ -104,7 +104,7 @@ def transform_active_status(status: str) -> bool:
     """Given a status as a string, return a boolean indicating
     whether the status is active(True) or inactive(False)."""
 
-    return str(status).lower() == "active"
+    return str(status).lower() in {"active", "o", "l", "y"}
 
 
 def query_programs_from_axis(pa_numbers: List[str]) -> List[dict]:

@@ -30,6 +30,7 @@ from program_review_tool.utils.review.export.ppt_generator import (
     populate_title_slide,
     process_tableau_slides,
     remove_multi_pa_slides,
+    remove_single_pa_slides,
 )
 from program_review_tool.utils.review.tableau import (
     sign_in_to_tableau,
@@ -226,6 +227,8 @@ def generate_program_review_powerpoint(
     # For single `Program` reports, remove extra slides.
     if not is_multi_pa:
         remove_multi_pa_slides(presentation, tableau_slide_mapping_df)
+    else:
+        remove_single_pa_slides(presentation, tableau_slide_mapping_df)
 
     # Construct the path for the sub-directory, where the presentation
     # will be saved within the export directory, and create it.
