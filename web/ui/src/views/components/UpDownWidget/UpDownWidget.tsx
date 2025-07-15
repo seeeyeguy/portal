@@ -20,16 +20,17 @@ export interface UpDownWidgetProps extends WidgetProps {
  */
 export default function UpDownWidget({
   value,
-  onChange,
   options,
+  disabled,
+  onChange,
 }: WidgetProps) {
   // Destructure options to avoid passing invalid options to the DOM element.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { enumOptions: _, skipNumbers, ...restOptions } = options || {};
 
   // Skip numbers that that exist in the skipNumbers option array.
-  const handleChange = (e: InputNumberValueChangeEvent) => {
-    let newValue = e.value as number;
+  const handleChange = (event: InputNumberValueChangeEvent) => {
+    let newValue = event.value as number;
     while (skipNumbers?.includes(newValue)) {
       newValue = newValue > (value as number) ? newValue + 1 : newValue - 1;
     }
@@ -42,6 +43,7 @@ export default function UpDownWidget({
       onValueChange={handleChange}
       showButtons
       inputStyle={{ pointerEvents: "none" }}
+      disabled={disabled}
       {...restOptions}
     />
   );

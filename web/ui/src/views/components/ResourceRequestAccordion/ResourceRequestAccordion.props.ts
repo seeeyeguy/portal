@@ -129,7 +129,7 @@ export const ExampleRequest: IRequest = {
         },
         previousTransition: null,
         created: new Date("2025-04-01T12:21:39.411497-04:00"),
-        disposition: [],
+        dispositions: [],
       },
     },
   },

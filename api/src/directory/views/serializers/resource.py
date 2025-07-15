@@ -12,7 +12,7 @@ class BaseResourceRequest(serializers.Serializer):
     name = serializers.CharField(max_length=512)
     description = serializers.CharField(min_length=30, max_length=8192)
     url = serializers.URLField()
-    thumbnail = serializers.ImageField(allow_null=True)
+    thumbnail = serializers.ImageField(allow_null=True, default=None)
     employee_levels = serializers.ListField(child=serializers.IntegerField())
     subfunctions = serializers.ListField(child=serializers.IntegerField())
     tags = serializers.ListField(

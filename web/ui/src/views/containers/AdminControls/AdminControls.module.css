@@ -1,0 +1,146 @@
+
+
+[class*="rjsf-field"] > div {
+  gap: 0.1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+[class*="rjsf-field-boolean"] > div > label {
+  visibility: hidden;
+}
+
+.admin-button {
+  align-items: center;
+  background: var(--color-white);
+  border-radius: 4px;
+  border-width: 2px;
+  cursor: pointer;
+  display: flex;
+  font-weight: 700;
+  gap: 0.5rem;
+  justify-content: center;
+  min-width: 8rem;
+  padding: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.admin-button-cancel {
+  border-color: var(--color-black);
+  color: var(--color-black);
+  justify-self: start;
+}
+
+.admin-button-cancel:hover {
+  background: var(--color-grayscale-2);
+}
+
+.admin-button-delete {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.admin-button-delete:hover {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+.admin-button-save {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+  margin-left: auto;
+}
+
+.admin-button-save:hover {
+  background: var(--color-warning);
+  color: var(--color-white);
+}
+
+.admin-button-submit {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.admin-button-submit:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.admin-controls {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  height: 4rem;
+}
+
+.admin-filter {
+  background-color: inherit;
+  border: none;
+  display: flex;
+  min-width: 10rem;
+}
+
+.admin-filter [class="p-multiselect-header"] {
+  display: none;
+}
+
+.admin-filter [class="p-multiselect-trigger"] {
+  align-items: center;
+  order: -1;
+}
+
+.admin-filter [class="p-multiselect-label"] > div {
+  background-color: var(--color-land-3);
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+div.admin-content > main .admin-filter [class="p-multiselect-label"] > div:first-child {
+  background-color: var(--color-air-3);
+}
+
+.admin-filter-loading {
+  height: 3rem;
+}
+
+.admin-loading {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+}
+
+.admin-paginator {
+  background-color: inherit;
+}
+
+.button-container {
+  display: flex;
+  height: 3.5rem;
+  gap: 2rem;
+  padding: 0.6rem 10rem 0 0;
+}
+
+.card-list > ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style-type: none;
+  overflow: auto;
+  padding: 0;
+}
+
+.new-modal-form {
+  margin: 3% auto;
+  width: 70%;
+}
+
+.new-modal-form footer {
+  display: flex;
+  gap: 2rem;
+  margin-right: 8%;
+}
+
+.new-modal-form header {
+  border-bottom: solid 2px var(--color-black);
+  margin-bottom: 1rem;
+}

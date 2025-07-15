@@ -6,7 +6,7 @@ export interface ITransition {
   request: number;
   stage: IStage;
   previousTransition: number | null;
-  disposition?: IDisposition[] | number[];
+  dispositions?: IDisposition[] | number[];
   created: Date;
 }
 

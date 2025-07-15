@@ -1,3 +1,4 @@
+import ResourceControls from "views/containers/AdminControls/ResourceControls/ResourceControls";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminResources() {
@@ -7,7 +8,7 @@ export default function AdminResources() {
         <header>
           <h1>Resources</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <ResourceControls />
       </main>
     </AdminPanel>
   );

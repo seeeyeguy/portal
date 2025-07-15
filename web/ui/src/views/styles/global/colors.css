@@ -20,6 +20,9 @@
   --color-warning: #e99002;
   --color-danger: #ff0000;
 
+  /* Disabled Button Colors*/
+  --color-disabled-light-blue: #c0ddfc;
+
   /* L3Harris Official Colors */
   /* Primary Palette */
   --color-vibrant-red: #ff000a;

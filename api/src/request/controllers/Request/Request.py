@@ -538,26 +538,26 @@ class Request:
             if status:
                 requests = requests.filter(status=status)
 
-            # If `limit` is given, limit the `Request` records.
-            requests = requests[:limit] if limit else requests
-
             if page:
-                # Create a Paginator to paginate the collection
-                # of `Resource`s.
-                paginator: Paginator = Paginator(requests, DEFAULT_PAGE_LENGTH)
+                # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
+                page_length = limit if limit else DEFAULT_PAGE_LENGTH
 
-                # If `page` number supplied in the params is greater
-                # than the number of available pages, then return an
-                # empty `Request` Queryset.
+                # Create a Paginator to paginate the collection of `Resource`s.
+                paginator: Paginator = Paginator(requests, page_length)
+
+                # If `page` number supplied in the params is greater than the number of available pages,
+                # then return an empty `Request` Queryset.
                 if page > paginator.num_pages:
                     return models.Request.objects.none()
 
                 # Get the corresponding Page.
                 request_page: Page = paginator.page(page)
 
-                # Assign the page's `Request` QuerySet to
-                # `requests`.
+                # Assign the page's `Request` QuerySet to `requests`.
                 requests = cast(QuerySet[models.Request], request_page.object_list)
+            elif limit:
+                # If no page is provided but limit is provided, limit the `Request` records.
+                requests = requests[:limit]
 
             return requests
         except models.Request.DoesNotExist as exc:

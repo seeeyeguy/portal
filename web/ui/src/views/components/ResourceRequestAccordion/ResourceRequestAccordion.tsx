@@ -101,14 +101,21 @@ const getLatestTransitions = (transitions: ITransitionGraph): ITransition[] => {
 
   while (currentTransitionId) {
     const currentNode: ITransition = transitions.nodes[currentTransitionId];
-    nodes.push(currentNode);
-    if (
-      currentNode.stage.id === ERequestStage.DRAFT ||
-      currentNode.stage.id === ERequestStage.REVISE
-    ) {
-      // Stop collecting transitions if we reach a Draft or Revise stage.
+
+    // If a transition stage is DRAFT then we will push one more transition before breaking.
+    if (currentNode.stage.id === ERequestStage.DRAFT) {
+      // Check for a REVISION stage and push that instead of the DRAFT stage.
+      if (currentNode.previousTransition) {
+        nodes.push(transitions.nodes[currentNode.previousTransition]);
+      } else {
+        nodes.push(currentNode);
+      }
+
+      // Stop collecting transitions once we push a Draft or Revise stage.
       break;
     }
+
+    nodes.push(currentNode);
     currentTransitionId = currentNode.previousTransition;
   }
 
@@ -202,7 +209,7 @@ export default function ResourceRequestAccordion({
   return (
     <>
       <details
-        className={`${className} ${styles["request-accordion"]}`}
+        className={`${className || ""} ${styles["request-accordion"]}`}
         aria-description={`container for ${request.resource.name} request`}
       >
         <summary

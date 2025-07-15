@@ -24,11 +24,17 @@ interface IConfirmModalProps {
   /** Label for the `Reject` button. */
   rejectLabel?: JSX.Element;
 
+  /** Label for the `Alternative` button. */
+  alternativeLabel?: JSX.Element;
+
   /** Class selector for the `Accept` button component. */
   acceptClassName?: string;
 
   /** Class selector for the `Reject` button component. */
   rejectClassName?: string;
+
+  /** Class selector for the `Alternative` button component. */
+  alternativeClassName?: string;
 
   /** Callback to invoke when the `Accept` button is clicked. */
   onAccept: () => Promise<void> | void;
@@ -38,6 +44,9 @@ interface IConfirmModalProps {
 
   /** Callback to invoke when the dialog box is hidden. */
   onHide?: (() => void) | null;
+
+  /** Callback to invoke when the `Alternative` button is clicked. */
+  onAlternative?: () => Promise<void> | void;
 }
 
 export default function ConfirmModal({
@@ -47,12 +56,19 @@ export default function ConfirmModal({
   className = "",
   acceptLabel = <>Confirm</>,
   rejectLabel = <>Cancel</>,
+  alternativeLabel,
   acceptClassName = "",
   rejectClassName = "",
+  alternativeClassName = "",
   onAccept,
   onReject,
   onHide = null,
+  onAlternative = () => {},
 }: IConfirmModalProps) {
+  const handleAlternative = React.useCallback(async () => {
+    await onAlternative();
+  }, [onAlternative]);
+
   const handleAccept = React.useCallback(async () => {
     await onAccept();
   }, [onAccept]);
@@ -99,6 +115,15 @@ export default function ConfirmModal({
           >
             {rejectLabel}
           </button>
+          {alternativeLabel && (
+            <button
+              type="button"
+              className={`${styles["alternative-button"]} ${alternativeClassName}`}
+              onClick={handleAlternative}
+            >
+              {alternativeLabel}
+            </button>
+          )}
           <button
             type="button"
             className={`${styles["confirm-button"]} ${acceptClassName}`}
