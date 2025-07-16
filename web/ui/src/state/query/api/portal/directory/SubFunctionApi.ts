@@ -56,7 +56,7 @@ const subfunctionApi = api.injectEndpoints({
       }),
       providesTags: ["SubFunction"],
     }),
-    updateFunction: builder.mutation<
+    updateSubFunction: builder.mutation<
       TApiSubFunctionResponse,
       { body: TApiPutSubFunctionRequest } & { id: number }
     >({
@@ -96,5 +96,5 @@ export const {
   useAddSubFunctionMutation,
   useGetSubFunctionsQuery,
   useRemoveSubFunctionMutation,
-  useUpdateFunctionMutation,
+  useUpdateSubFunctionMutation,
 } = subfunctionApi;

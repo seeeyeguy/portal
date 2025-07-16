@@ -1,9 +1,8 @@
 import { RJSFSchema, UiSchema } from "@rjsf/utils";
-
 export interface SubFunctionFormData {
   name: string;
   function: number;
-  description?: string;
+  description: string;
 }
 
 export const subFunctionSchema: RJSFSchema = {
@@ -24,7 +23,7 @@ export const subFunctionSchema: RJSFSchema = {
       title: "Description",
     },
   },
-  required: ["name", "function"],
+  required: ["name", "function", "description"],
 };
 
 export const subFunctionUiSchema: UiSchema = {
@@ -33,14 +32,15 @@ export const subFunctionUiSchema: UiSchema = {
     "ui:row": {
       children: [
         {
-          "ui:columns": {
+          "ui:col": {
             sm: 6,
             children: ["name", "function"],
           },
         },
+
         {
           "ui:col": {
-            sm: 12,
+            sm: 6,
             children: ["description"],
           },
         },
@@ -50,6 +50,9 @@ export const subFunctionUiSchema: UiSchema = {
   name: {
     "ui:widget": "text",
     "ui:placeholder": "Enter Sub-Function Name",
+    "ui:options": {
+      label: true,
+    },
   },
   function: {
     "ui:widget": "select",
@@ -57,5 +60,6 @@ export const subFunctionUiSchema: UiSchema = {
   },
   description: {
     "ui:widget": "textarea",
+    "ui:placeholder": "Enter description",
   },
 };
