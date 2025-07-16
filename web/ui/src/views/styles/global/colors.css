@@ -20,6 +20,12 @@
   --color-warning: #e99002;
   --color-danger: #ff0000;
 
+  /* Theme Colors*/
+  --color-prime-react-border: #ced4da;
+  --color-prime-react-focus: #a6d5fa;
+  --color-prime-react-hover: #2196f3;
+  --color-prime-react-icon: #6c757d;
+
   /* Disabled Button Colors*/
   --color-disabled-light-blue: #c0ddfc;
 

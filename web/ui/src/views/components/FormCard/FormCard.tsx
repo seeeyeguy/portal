@@ -1,6 +1,6 @@
 import React from "react";
 
-import FormType, { FormProps } from "@rjsf/core";
+import FormType, { FormProps, IChangeEvent } from "@rjsf/core";
 import { Form } from "@rjsf/primereact";
 import validator from "@rjsf/validator-ajv8";
 
@@ -14,7 +14,7 @@ export interface IFormCardProps {
   onDelete?: () => void;
 
   /** Optional callback to invoke when the `Update` button is clicked. */
-  onSubmit?: () => Promise<void> | void;
+  onSubmit?: (event?: IChangeEvent) => void;
 
   /** Optional label for the `Delete`/`Revoke` button. */
   updateButtonLabel?: string;

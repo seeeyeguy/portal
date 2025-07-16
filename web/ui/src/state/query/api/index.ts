@@ -28,6 +28,7 @@ const api = createApi({
     "QueryFilterState",
     "SubFunction",
     "Tag",
+    "TagSearch",
     "Visit",
   ],
   endpoints: () => ({}),

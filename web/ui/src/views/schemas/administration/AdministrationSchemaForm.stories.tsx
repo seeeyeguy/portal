@@ -51,7 +51,7 @@ export const TagFormSchema: Story = {
     formData: {
       name: "Obi Wan",
       category: "Jedi",
-      subCategory: "Master",
+      subcategory: "Master",
     },
     schema: tagSchema,
     uiSchema: tagUiSchema,
@@ -65,7 +65,7 @@ export const TagFormSchema: Story = {
       (args.schema.properties.category as any).examples = ["Sith", "Jedi"];
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (args.schema.properties.subCategory as any).examples = [
+      (args.schema.properties.subcategory as any).examples = [
         "Master",
         "Apprentice",
         "Padawan",

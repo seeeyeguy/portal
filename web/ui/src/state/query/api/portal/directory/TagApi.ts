@@ -32,7 +32,7 @@ const tagApi = api.injectEndpoints({
         data: response as ITag,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Tag"],
+      invalidatesTags: ["Tag", "TagSearch"],
     }),
     getTags: builder.query<TApiTagResponse, TApiFetchTagRequest>({
       query: (id: TApiFetchTagRequest = null) =>
@@ -49,6 +49,7 @@ const tagApi = api.injectEndpoints({
         data: response as ITag[],
         status: meta?.response?.status,
       }),
+      providesTags: ["TagSearch"],
     }),
     updateTag: builder.mutation<
       TApiTagResponse,
@@ -63,7 +64,7 @@ const tagApi = api.injectEndpoints({
         data: response as ITag,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Tag"],
+      invalidatesTags: ["Tag", "TagSearch"],
     }),
     removeTag: builder.mutation<TApiTagResponse, number>({
       query: (id: number) => ({
@@ -74,7 +75,7 @@ const tagApi = api.injectEndpoints({
         data: response,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Tag"],
+      invalidatesTags: ["Tag", "TagSearch"],
     }),
   }),
 });
