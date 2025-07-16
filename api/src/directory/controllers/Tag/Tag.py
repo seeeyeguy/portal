@@ -164,27 +164,30 @@ class Tag:
                 else models.Tag.objects.all()
             )
 
-            # If `limit` is given, then limit the `Tag` records.
-            tags = tags[:limit] if limit else tags  # type: ignore[index]
+            # If a single Tag instance, return it.
+            if isinstance(tags, models.Tag):
+                return tags
 
             if page:
-                # Create a Paginator to paginate the collection
-                # of `Tag`s.
-                # pylint: disable=line-too-long
-                paginator: Paginator = Paginator(tags, DEFAULT_PAGE_LENGTH)  # type: ignore[arg-type]
+                # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
+                page_length = limit if limit else DEFAULT_PAGE_LENGTH
 
-                # If `page` number supplied in the params is greater
-                # than the number of available pages, then return an
-                # empty `Tag` QuerySet.
+                # Create a Paginator to paginate the collection of `Tag`s.
+                paginator: Paginator = Paginator(tags, page_length)
+
+                # If `page` number supplied in the params is greater than the number of available pages,
+                # then return an empty `Tag` Queryset.
                 if page > paginator.num_pages:
                     return models.Tag.objects.none()
 
                 # Get the corresponding Page.
                 tag_page: Page = paginator.page(page)
 
-                # Assign the page's `Tag` QuerySet to
-                # `tags`.
+                # Assign the page's `Tag`s QuerySet to `tags`.
                 tags = cast(QuerySet[models.Tag], tag_page.object_list)
+            elif limit:
+                # If no page is provided but limit is provided, limit the `Tag` records.
+                tags = tags[:limit]
 
             return tags
         except models.Tag.DoesNotExist as exc:
@@ -211,4 +214,4 @@ class Tag:
 
         LOGGER.info(f"Searching for Tags with label: {label}.")
 
-        return models.Tag.objects.filter(label__istartswith=label)
+        return models.Tag.objects.filter(label__icontains=label)

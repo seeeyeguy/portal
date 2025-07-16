@@ -3,7 +3,7 @@ import { RJSFSchema, UiSchema } from "@rjsf/utils";
 export interface TagFormData {
   name: string;
   category?: string;
-  subCategory?: string;
+  subcategory?: string;
 }
 
 export const tagSchema: RJSFSchema = {
@@ -19,7 +19,7 @@ export const tagSchema: RJSFSchema = {
       title: "Category",
       examples: [], // Overwrite with Categories at render time.
     },
-    subCategory: {
+    subcategory: {
       type: "string",
       title: "Sub-Category",
       examples: [], // Overwrite with Sub-Categories at render time.
@@ -35,20 +35,20 @@ export const tagUiSchema: UiSchema = {
       children: [
         {
           "ui:col": {
-            sm: 6,
+            sm: 3,
             children: ["name"],
           },
         },
         {
           "ui:col": {
-            sm: 6,
-            children: [],
+            sm: 4,
+            children: ["category"],
           },
         },
         {
-          "ui:columns": {
-            sm: 6,
-            children: ["category", "subCategory"],
+          "ui:col": {
+            sm: 4,
+            children: ["subcategory"],
           },
         },
       ],
@@ -62,7 +62,7 @@ export const tagUiSchema: UiSchema = {
     "ui:widget": "text",
     "ui:placeholder": "Select Category",
   },
-  subCategory: {
+  subcategory: {
     "ui:widget": "text",
     "ui:placeholder": "Select Sub-Category",
   },
@@ -70,12 +70,12 @@ export const tagUiSchema: UiSchema = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function tagCustomValidate(formData: TagFormData, errors: any) {
-  if (formData.category && !formData.subCategory) {
-    errors.subCategory.addError(
+  if (formData.category && !formData.subcategory) {
+    errors.subcategory.addError(
       "Sub-Category is required if a Category is used"
     );
   }
-  if (!formData.category && formData.subCategory) {
+  if (!formData.category && formData.subcategory) {
     errors.category.addError("Category is required if a Sub-Category is used");
   }
   return errors;

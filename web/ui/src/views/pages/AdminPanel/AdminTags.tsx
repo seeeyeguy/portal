@@ -1,3 +1,5 @@
+
+import TagControls from "views/containers/AdminControls/TagControls/TagControls";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminTags() {
@@ -7,7 +9,7 @@ export default function AdminTags() {
         <header>
           <h1>Tags</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <TagControls/>
       </main>
     </AdminPanel>
   );

@@ -47,7 +47,7 @@ export default function FilterableResourceLinks({
         const resourceFilters = new Set(
           resources.reduce((acc: string[], resource) => {
             const filterValues = resource[filterKey] as string[];
-            return [...acc, ...filterValues];
+            return [...acc, ...(filterValues ?? [])];
           }, [])
         );
         // Use those filter values obtained above to filter out

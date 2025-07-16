@@ -28,7 +28,7 @@ export interface TagSelectionWidgetProps extends WidgetProps {
 
 /**
  * UpDownWidget component for React JSON Schema Form.
- * This widget uses PrimeReact's InputNumber component and skips specified numbers.
+ * This widget decomposed tag labels into individual filtering and selectable elements.
  */
 export default function TagSelectionWidget({
   value,
@@ -37,8 +37,7 @@ export default function TagSelectionWidget({
   onChange,
 }: WidgetProps) {
   // Destructure tags out of options.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { tags, ..._restOptions } = options || {};
+  const { tags } = options || {};
 
   const decomposedTags = parseTags(tags);
 
