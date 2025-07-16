@@ -62,12 +62,18 @@ def fetch_authorized_employee(email: str) -> Optional[models.User]:
         An instance of `User` if found, `None` otherwise.
     """
 
-    user = User.objects.filter(email__iexact=email)
+    if "@" not in email:
+        return None
+
+    domain_index = email.index("@")
+    employee_email = f"{email[:domain_index]}@harris.com"
+
+    user = User.objects.filter(email__iexact=employee_email)
     if user.exists():
         return user.first()
 
     # Fetch user data from LDAP.
-    user_info = fetch_employee_record_from_ldap(email=email)
+    user_info = fetch_employee_record_from_ldap(email=employee_email)
     if not user_info:
         return None
 
@@ -76,8 +82,8 @@ def fetch_authorized_employee(email: str) -> Optional[models.User]:
     try:
         with transaction.atomic():
             new_user = User.objects.create(
-                email=email.lower(),
-                username=email.lower(),
+                email=employee_email.lower(),
+                username=employee_email.lower(),
                 first_name=user_info["firstName"],
                 last_name=user_info["lastName"],
             )
@@ -85,7 +91,7 @@ def fetch_authorized_employee(email: str) -> Optional[models.User]:
             return new_user
     except IntegrityError as exc:
         LOGGER.error(f"User ({email}) already exists: {exc}")
-        return User.objects.filter(email__iexact=email).first()
+        return User.objects.filter(email__iexact=employee_email).first()
     except DatabaseError:
-        LOGGER.error(f"Could not create User ({email}).")
+        LOGGER.error(f"Could not create User ({employee_email}).")
         return None

@@ -1,3 +1,4 @@
+import AccessControls from "views/containers/AdminControls/AccessControls/AccessControls";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminAccesses() {
@@ -7,7 +8,7 @@ export default function AdminAccesses() {
         <header>
           <h1>Accesses</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <AccessControls />
       </main>
     </AdminPanel>
   );
