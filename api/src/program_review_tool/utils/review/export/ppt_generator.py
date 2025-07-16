@@ -69,9 +69,9 @@ def populate_title_slide(
     slide = presentation.slides[0]
     try:
         slide.placeholders[0].text = title_slide_name
-        slide.placeholders[1].text = period
-        slide.placeholders[10].text = datetime.now().strftime("%b %d %Y")
-        slide.placeholders[11].text = reviewer_name
+        slide.placeholders[1].text = format_period(period)
+        slide.placeholders[10].text = datetime.now().strftime("%B, %-d %Y")
+        slide.placeholders[11].text = "Program Manager: "
     except Exception as exc:
         err_msg = f"Error populating title slide placeholders: {exc}"
         LOGGER.error(err_msg)
@@ -300,7 +300,7 @@ def remove_multi_pa_slides(
     tableau_slide_mapping_df: pd.DataFrame,
 ) -> None:
     """
-    Removes slides that are not applicable for single-project reports.
+    Removes slides that are not applicable for single PA reports.
 
     Accepts:
         * presentation (pptx.Presentation): The presentation object.
@@ -323,3 +323,38 @@ def remove_multi_pa_slides(
             LOGGER.warning(
                 f"Slide to delete with title '{row.slide_title}' was not found."
             )
+
+def remove_single_pa_slides(
+    presentation: Presentation,
+    tableau_slide_mapping_df: pd.DataFrame,
+) -> None:
+    """
+    Removes slides that are not applicable for multi-PA reports.
+
+    Accepts:
+        * presentation (pptx.Presentation): The presentation object.
+        * tableau_slide_mapping_df (pd.DataFrame): Mapping DataFrame indicating slide applicability.
+
+    Returns:
+        * None
+    """
+
+    for row in tableau_slide_mapping_df[
+        ~tableau_slide_mapping_df["isMultiPa"]
+    ].itertuples():
+        slide_pair = find_slide_index_and_slide_by_title(presentation, row.slide_title)
+        if slide_pair is not None:
+            slide_index, _ = slide_pair
+            # Adjust slide index to 0-based index when deleting.
+            delete_slide(presentation, slide_index - 1)
+            LOGGER.info(f"Deleted slide number: {slide_index}")
+        else:
+            LOGGER.warning(
+                f"Slide to delete with title '{row.slide_title}' was not found."
+            )
+            
+def format_period(yyyymm: str) -> str:
+    """Convert a YYYYMM string into YYYY-PMM format."""
+    year = yyyymm[:4]
+    month = yyyymm[4:]
+    return f"{year}-P{month}"
