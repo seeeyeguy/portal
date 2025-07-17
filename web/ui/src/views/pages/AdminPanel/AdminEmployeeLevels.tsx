@@ -1,3 +1,4 @@
+import EmployeeLevelsControls from "views/containers/AdminControls/EmployeeLevelControls/EmployeeLevelControls";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminEmployeeLevels() {
@@ -7,7 +8,7 @@ export default function AdminEmployeeLevels() {
         <header>
           <h1>Employee Levels</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <EmployeeLevelsControls />
       </main>
     </AdminPanel>
   );
