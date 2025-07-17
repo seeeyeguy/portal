@@ -92,7 +92,7 @@ class Function:
                 .exclude(id=function_id)
                 .exists()
             ):
-                err_msg: str = f"Function name({name}) is duplicate."
+                err_msg: str = f"Function name ({name}) is duplicate."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 
