@@ -2,7 +2,7 @@ import { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 export interface FunctionFormData {
   name: string;
-  description?: string;
+  description: string;
 }
 
 export const functionSchema: RJSFSchema = {
@@ -18,7 +18,7 @@ export const functionSchema: RJSFSchema = {
       title: "Description",
     },
   },
-  required: ["name"],
+  required: ["name", "description"],
 };
 
 export const functionUiSchema: UiSchema = {
@@ -34,7 +34,7 @@ export const functionUiSchema: UiSchema = {
         },
         {
           "ui:col": {
-            sm: 12,
+            sm: 6,
             children: ["description"],
           },
         },
@@ -44,8 +44,12 @@ export const functionUiSchema: UiSchema = {
   name: {
     "ui:widget": "text",
     "ui:placeholder": "Enter Function Name",
+    "ui:options": {
+      label: true,
+    },
   },
   description: {
     "ui:widget": "textarea",
+    "ui:placeholder": "Enter description",
   },
 };

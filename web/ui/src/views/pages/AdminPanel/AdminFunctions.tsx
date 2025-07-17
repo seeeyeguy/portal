@@ -1,3 +1,4 @@
+import Functions from "views/containers/AdminControls/Functions/Functions";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminFunctions() {
@@ -7,7 +8,7 @@ export default function AdminFunctions() {
         <header>
           <h1>Functions</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <Functions />
       </main>
     </AdminPanel>
   );
