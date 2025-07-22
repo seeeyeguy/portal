@@ -20,6 +20,7 @@ import { IEmployeeLevel } from "definitions/portal/directory/EmployeeLevel.types
 import { ISubFunction } from "definitions/portal/directory/SubFunction.types";
 import { IAuthUser } from "definitions/Sso.types";
 
+import { searchForEmployees } from "services/auth/ldapService";
 import { useGetEmployeeLevelsQuery } from "state/query/api/portal/directory/EmployeeLevelApi";
 import { useGetSubFunctionsQuery } from "state/query/api/portal/directory/SubFunctionApi";
 import { useGetTagsQuery } from "state/query/api/portal/directory/TagApi";
@@ -42,6 +43,7 @@ import {
   transformResourceToFormData,
 } from "views/schemas/administration/ResourceSchema";
 
+import { debounce } from "utils/PromiseUtility";
 import { base64ImageToFile } from "views/utils/ImageUtility";
 import {
   getThumbnailPath,
@@ -72,6 +74,12 @@ export default function AdminResources() {
         (access) => access.role.level == ROLE_LEVELS.SUPERUSER
       ) || loaderData.user.isAdmin,
     [loaderData]
+  );
+
+  const [primaryPocSearch, setPrimaryPocSearch] = React.useState<string[]>([]);
+
+  const [secondaryPocSearch, setSecondaryPocSearch] = React.useState<string[]>(
+    []
   );
 
   // Multi-Select filter options, non-superusers get their resources
@@ -161,6 +169,62 @@ export default function AdminResources() {
   const { data: subfunctions } = useGetSubFunctionsQuery(null);
   const resourceTypes = Object.keys(resourceTypeThumbnailPaths);
 
+  const fetchUserOptions = React.useCallback(
+    async (searchTerm: string, secondaryPreviousPoc?: string) => {
+      if (!searchTerm?.length) {
+        setPrimaryPocSearch([]);
+        return;
+      }
+
+      let data = null;
+      try {
+        let modifiedSearchTerm = searchTerm;
+        if (
+          modifiedSearchTerm.includes(".") &&
+          modifiedSearchTerm[0] !== "." &&
+          !modifiedSearchTerm.includes("@")
+        ) {
+          const splitSearchTerm = modifiedSearchTerm.split(".");
+          const [firstName, ...lastName] = splitSearchTerm;
+          modifiedSearchTerm = firstName.trim();
+          if (
+            splitSearchTerm.length > 1 &&
+            lastName?.length &&
+            lastName[lastName.length - 1].trim()?.length
+          ) {
+            modifiedSearchTerm = `${modifiedSearchTerm} ${lastName[lastName.length - 1].trim()}`;
+          }
+        }
+        data = await searchForEmployees(modifiedSearchTerm, 1, 25);
+      } catch (err) {
+        data = {};
+      }
+      if (secondaryPreviousPoc) {
+        // Extract the part of the poc string up to and including the last comma.
+        const prefix = secondaryPreviousPoc.includes(",")
+          ? secondaryPreviousPoc.substring(
+              0,
+              secondaryPreviousPoc.lastIndexOf(",") + 1
+            )
+          : "";
+
+        setSecondaryPocSearch(
+          (data?.data ?? []).map((employee) => `${prefix}${employee.email}`)
+        );
+      } else {
+        setPrimaryPocSearch(
+          (data?.data ?? []).map((employee) => employee.email)
+        );
+      }
+    },
+    []
+  );
+
+  const debouncedFetchPoc = React.useMemo(
+    () => debounce(fetchUserOptions, 300),
+    [fetchUserOptions]
+  );
+
   // Schema Options.
   const updatedUiSchema = React.useMemo(() => {
     if (tags) {
@@ -202,13 +266,19 @@ export default function AdminResources() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (newSchema.properties?.primaryPoc as any).examples = primaryPocSearch;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (newSchema.properties?.secondaryPoc as any).examples = secondaryPocSearch;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (newSchema.properties?.type as any).oneOf = resourceTypes.map((type) => ({
       const: type,
       title: type,
     }));
 
     return newSchema;
-  }, [employeeLevels, subfunctions, resourceTypes]);
+  }, [employeeLevels, primaryPocSearch, secondaryPocSearch, subfunctions, resourceTypes]);
 
   const formRefs = React.useRef(new Map());
   const [formKeys, setFormKeys] = React.useState(new Map());
@@ -452,6 +522,21 @@ export default function AdminResources() {
                           showErrorList={false}
                           noHtml5Validate={true}
                           widgets={resourceWidgets}
+                          onChange={(event) => {
+                            debouncedFetchPoc(event.formData.primaryPoc);
+                            // Only search on the last Poc in the list.
+                            if (event.formData.secondaryPoc) {
+                              debouncedFetchPoc(
+                                event.formData.secondaryPoc.includes(",")
+                                  ? event.formData.secondaryPoc
+                                      .split(",")
+                                      .pop()!
+                                      .trim()
+                                  : event.formData.secondaryPoc,
+                                event.formData.secondaryPoc
+                              );
+                            }
+                          }}
                         />
                         {EDITABLE_STAGES.includes(
                           request.transitions.nodes[request.transitions.latest]
@@ -562,6 +647,18 @@ export default function AdminResources() {
           showErrorList={false}
           noHtml5Validate={true}
           widgets={resourceWidgets}
+          onChange={(event) => {
+            debouncedFetchPoc(event.formData.primaryPoc);
+            // Only search on the last Poc in the list.
+            if (event.formData.secondaryPoc) {
+              debouncedFetchPoc(
+                event.formData.secondaryPoc.includes(",")
+                  ? event.formData.secondaryPoc.split(",").pop()!.trim()
+                  : event.formData.secondaryPoc,
+                event.formData.secondaryPoc
+              );
+            }
+          }}
         />
       </ConfirmModal>
     </>
