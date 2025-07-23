@@ -849,15 +849,17 @@ class ResourceSearch:
                     "-visits__count"
                 )
 
-            # If `limit` is given, then limit the results.
-            resources = resources[: params["limit"]] if params["limit"] else resources
-
+            # Get the limit from `params`.
+            limit: Union[int, None] = params["limit"]
             # Get the page number from `params`.
             page_num: Union[int, None] = params["page"]
             if page_num:
+                # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
+                page_length = limit if limit else DEFAULT_PAGE_LENGTH
+
                 # Create a Paginator to paginate the collection
                 # of `Resource`s.
-                paginator: Paginator = Paginator(resources, DEFAULT_PAGE_LENGTH)
+                paginator: Paginator = Paginator(resources, page_length)
 
                 # If `page` number supplied in the params is greater
                 # than the number of available pages, then return an
@@ -877,6 +879,11 @@ class ResourceSearch:
                 # `resources`.
                 resources = cast(
                     QuerySet[ResourceModel, ResourceModel], page.object_list
+                )
+            elif limit:
+                # If `limit` is given, then limit the results.
+                resources = (
+                    resources[: params["limit"]] if params["limit"] else resources
                 )
 
             # If the `structure` value given in `params` is
