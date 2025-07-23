@@ -401,6 +401,28 @@ class TestFetchRequest(MultiDBTestCase):
 
             self.assertEqual(serialized_request, expected_request)
 
+    @tag("controllers.request.fetch_requests_originator_access_dne")
+    def test_fetch_requests_originator_access_dne(self) -> None:
+        """Success Case: Fetch `Request` records where an appropriate
+        `Access` does not exist for the given originator."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE_USER_EMAIL,
+            stages=None,
+            subfunctions=None,
+            status=None,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+        self.assertEqual(
+            requests.count(),  # type: ignore[union-attr]
+            arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE,
+        )
+
     @tag("controllers.request.fetch_requests_at_stage")
     def test_fetch_requests_at_stage(self) -> None:
         """Success Case: Fetch all `Request` records at the
@@ -887,23 +909,6 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=None,
                 originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_DNE_USER_EMAIL,
-                stages=None,
-                subfunctions=None,
-                status=None,
-                page=None,
-                limit=None,
-                include_archived=False,
-            )
-
-    @tag("controllers.request.fetch_requests_originator_access_dne")
-    def test_fetch_requests_originator_access_dne(self) -> None:
-        """Fail Case: Fetch `Request` records where an appropriate
-        `Access` does not exist for the given originator."""
-
-        with pytest.raises(RequestError):
-            _ = Request.fetch_requests(
-                request_id=None,
-                originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE_USER_EMAIL,
                 stages=None,
                 subfunctions=None,
                 status=None,

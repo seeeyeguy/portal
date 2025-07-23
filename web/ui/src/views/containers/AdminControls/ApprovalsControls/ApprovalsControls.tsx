@@ -39,6 +39,7 @@ import {
   transformResourceToFormData,
 } from "views/schemas/administration/ResourceSchema";
 
+import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
 import {
   getThumbnailPath,
   resourceTypeThumbnailPaths,
@@ -82,12 +83,6 @@ const REQUEST_STATUSES = {
   REJECTED: "REJECTED",
 };
 
-const ROLE_LEVELS = {
-  SUPERUSER: 1,
-  BUSINESS_PROCESS_EXPERT: 2,
-  DATA_STEWARD: 3,
-};
-
 const STAGE_LEVELS = {
   DRAFT: 1,
   SUBMITTED: 2,
@@ -102,10 +97,7 @@ export default function ApprovalsControls() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () =>
-      loaderData.user.accesses?.some(
-        (access) => access.role.level == ROLE_LEVELS.SUPERUSER
-      ),
+    () => hasNeededSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 

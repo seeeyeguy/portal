@@ -1,0 +1,8 @@
+.custom-badge {
+  background-color: green;
+  pointer-events: all;
+}
+
+.custom-badge:hover {
+  background-color: red;
+}

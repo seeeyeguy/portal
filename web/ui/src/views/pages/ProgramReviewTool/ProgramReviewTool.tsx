@@ -238,10 +238,11 @@ export default function ProgramReviewTool() {
     <>
       <FAQModal />
       <NavBar profile={profile} hideSearchBar={true} />
-      <header className={styles["program-review-header"]}>
-        <h1>Program Review Tool</h1>
-      </header>
+
       <div id="page-content">
+        <header className={styles["program-review-header"]}>
+          <h1>Program Review Tool</h1>
+        </header>
         <div
           className={styles["program-review-container"]}
           aria-description="container for program review content"

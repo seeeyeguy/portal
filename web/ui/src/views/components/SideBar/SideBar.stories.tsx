@@ -1,3 +1,4 @@
+import { BrowserRouter as Router } from "react-router-dom";
 import type { Meta, StoryObj } from "@storybook/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,7 +15,7 @@ import {
 
 import SideBar, { IMenuLink } from "views/components/SideBar/SideBar";
 
-const MENU_LINKS: IMenuLink[] = [
+const DEFAULT_MENU_LINKS: IMenuLink[] = [
   {
     label: "Administration",
     icon: <FontAwesomeIcon icon={faListCheck} />,
@@ -22,7 +23,6 @@ const MENU_LINKS: IMenuLink[] = [
       {
         label: "Add Resource",
         command: () => console.log("TEST"),
-        icon: <FontAwesomeIcon icon={faCirclePlus} />,
       },
       {
         label: "Approve Request",
@@ -30,28 +30,30 @@ const MENU_LINKS: IMenuLink[] = [
         icon: <FontAwesomeIcon icon={faSquareCheck} />,
       },
     ],
+    path: null,
     customContent: (
       <div
         aria-description="test links"
         style={{ display: "flex", flexDirection: "column", flex: 1 }}
       >
-        <a href="url">How to approve a resource?</a>
-        <a href="url">Where to get permissions?</a>
-        <a href="url">Who is my admin?</a>
+        <a href="#">How to approve a resource?</a>
+        <a href="#">Where to get permissions?</a>
+        <a href="#">Who is my admin?</a>
         <hr></hr>
-        <a href="url">My Links</a>
-        <a href="url">My Tools</a>
-        <a href="url">My Favorites</a>
+        <a href="#">My Links</a>
+        <a href="#">My Tools</a>
+        <a href="#">My Favorites</a>
         <hr></hr>
-        <a href="url">My Links</a>
-        <a href="url">My Tools</a>
-        <a href="url">My Favorites</a>
+        <a href="#">My Links</a>
+        <a href="#">My Tools</a>
+        <a href="#">My Favorites</a>
       </div>
     ),
   },
   {
     label: "Program",
     icon: <FontAwesomeIcon icon={faChartLine} />,
+    path: null,
     items: [
       {
         label: "Program Review",
@@ -94,6 +96,63 @@ const MENU_LINKS: IMenuLink[] = [
     label: "My Super Amazing Low Latency Database",
     icon: <FontAwesomeIcon icon={faDatabase} />,
     items: [],
+    path: null,
+  },
+];
+
+const TOP_LEVEL_MENU_LINKS: IMenuLink[] = [
+  {
+    label: "Administration",
+    icon: <FontAwesomeIcon icon={faListCheck} />,
+    path: null,
+    items: [
+      {
+        label: "Add Resource",
+        command: () => console.log("TEST"),
+        icon: <FontAwesomeIcon icon={faCirclePlus} />,
+      },
+      {
+        label: "Approve Request",
+        command: () => console.log("TEST"),
+        icon: <FontAwesomeIcon icon={faSquareCheck} />,
+      },
+    ],
+    customContent: (
+      <div
+        aria-description="test links"
+        style={{ display: "flex", flexDirection: "column", flex: 1 }}
+      >
+        <a href="#">How to approve a resource?</a>
+        <a href="#">Where to get permissions?</a>
+        <a href="#">Who is my admin?</a>
+        <hr></hr>
+        <a href="#">My Links</a>
+        <a href="#">My Tools</a>
+        <a href="#">My Favorites</a>
+        <hr></hr>
+        <a href="#">My Links</a>
+        <a href="#">My Tools</a>
+        <a href="#">My Favorites</a>
+      </div>
+    ),
+  },
+  {
+    label: "PRT",
+    url: "/?path=/docs/programcard-programcard",
+    icon: <FontAwesomeIcon icon={faCalendarDays} />,
+    path: null,
+  },
+  {
+    label: "Risk Assessment",
+    url: "/?path=/docs/programcard-programcard",
+    icon: <FontAwesomeIcon icon={faTriangleExclamation} />,
+    path: null,
+  },
+  {
+    label: "Program Performance",
+    url: "/?path=/docs/programcard-programcard",
+    icon: <FontAwesomeIcon icon={faChartSimple} />,
+    path: null,
   },
 ];
 
@@ -113,7 +172,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     header: "Storybook Side Bar Expandable Menu",
-    menuLinks: MENU_LINKS,
+    menuLinks: DEFAULT_MENU_LINKS,
   },
   render: (args) => {
     return (
@@ -129,7 +188,35 @@ export const Default: Story = {
             }
           `}
         </style>
-        <SideBar {...args} />
+        <Router>
+          <SideBar {...args} />
+        </Router>
+      </>
+    );
+  },
+};
+
+export const TopLevelLinks: Story = {
+  args: {
+    menuLinks: TOP_LEVEL_MENU_LINKS,
+  },
+  render: (args) => {
+    return (
+      <>
+        <style>
+          {`
+            [class*="side-bar_"] {
+              margin-top: 0;
+              height: 100%;
+            }
+            .sb-show-main {
+              padding: 0 !important;
+            }
+          `}
+        </style>
+        <Router>
+          <SideBar {...args} />
+        </Router>
       </>
     );
   },

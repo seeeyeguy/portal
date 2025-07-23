@@ -43,6 +43,7 @@ import {
   transformResourceToFormData,
 } from "views/schemas/administration/ResourceSchema";
 
+import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
 import { debounce } from "utils/PromiseUtility";
 import { base64ImageToFile } from "views/utils/ImageUtility";
 import {
@@ -59,20 +60,11 @@ const REVISABLE_STAGES = [99];
 const DRAFT = "DRAFT";
 const SUBMITTED = "SUBMITTED";
 
-const ROLE_LEVELS = {
-  SUPERUSER: 1,
-  BUSINESS_PROCESS_EXPERT: 2,
-  DATA_STEWARD: 3,
-};
-
 export default function AdminResources() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () =>
-      loaderData.user.accesses?.some(
-        (access) => access.role.level == ROLE_LEVELS.SUPERUSER
-      ) || loaderData.user.isAdmin,
+    () => hasNeededSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 

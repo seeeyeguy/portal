@@ -396,6 +396,30 @@ class TestFetchRequest(MultiDBTestCase):
 
             self.assertEqual(request, expected_request)
 
+    @tag("views.request.fetch_requests_originator_access_dne")
+    def test_fetch_requests_originator_access_dne(self) -> None:
+        """Success Case: Fetch `Request` records where an appropriate
+        `Access` does not exist for the given originator."""
+
+        params: dict = {
+            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE_USER_EMAIL,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE,
+        )
+
     @tag("views.request.fetch_requests_at_stage")
     def test_fetch_requests_at_stage(self) -> None:
         """Success Case: Fetch all `Request` records at the
@@ -897,18 +921,3 @@ class TestFetchRequest(MultiDBTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @tag("views.request.fetch_requests_originator_access_dne")
-    def test_fetch_requests_originator_access_dne(self) -> None:
-        """Fail Case: Fetch `Request` records where an appropriate
-        `Access` does not exist for the given originator."""
-
-        params: dict = {
-            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE_USER_EMAIL,
-        }
-
-        response = self.client.get(
-            self.url, params, headers={"content_type": "application/json"}
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

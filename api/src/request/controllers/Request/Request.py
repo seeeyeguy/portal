@@ -515,7 +515,7 @@ class Request:
                     access_revoked_date__isnull=True,
                 )
                 if not access_records.exists():
-                    raise UsersModels.Access.DoesNotExist()
+                    return models.Request.objects.none()
 
                 requests = requests.filter(
                     originator__id__in=set(access_records.values_list("id", flat=True))
@@ -586,7 +586,3 @@ class Request:
             err_msg: str = f"Originator(email={originator}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=404) from exc
-        except UsersModels.Access.DoesNotExist as exc:
-            err_msg: str = f"Originator(email={originator}) has not created a request."
-            LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, status=400) from exc
