@@ -4,12 +4,12 @@ Collection of pytests for Request's fetch view endpoint.
 
 from typing import List
 
+# pylint: disable=line-too-long
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from request.controllers.Request.tests.query.read.default import arguments
-from request.exceptions import RequestError
 from request.models.Request.Request import Request as RequestModel
 from request.models.Request.serializers import RequestSerializer
 
@@ -149,7 +149,7 @@ class TestFetchRequest(MultiDBTestCase):
 
         params: dict = {
             "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
-            "stage": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_STAGE_LEVEL,
+            "stages": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_STAGE_LEVELS,
         }
 
         response = self.client.get(
@@ -180,6 +180,45 @@ class TestFetchRequest(MultiDBTestCase):
 
             self.assertEqual(request, expected_request)
 
+    @tag("views.request.fetch_requests_with_originator_and_subfunctions")
+    def test_fetch_requests_with_originator_and_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator with `Resource`s related to the given subfunctions."""
+
+        params: dict = {
+            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            "subfunctions": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_SUBFUNCTIONS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
     @tag("views.request.fetch_requests_with_originator_at_stage_with_status")
     def test_fetch_requests_with_originator_at_stage_with_status(self) -> None:
         """Success Case: Fetch all `Request` records initiated by
@@ -188,7 +227,7 @@ class TestFetchRequest(MultiDBTestCase):
 
         params: dict = {
             "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
-            "stage": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STAGE_LEVEL,
+            "stages": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STAGE_LEVELS,
             "status": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STATUS,
         }
 
@@ -223,13 +262,147 @@ class TestFetchRequest(MultiDBTestCase):
 
             self.assertEqual(request, expected_request)
 
+    @tag("views.request.fetch_requests_with_originator_subfunctions_and_status")
+    def test_fetch_requests_with_originator_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator with `Resource`s related to the given subfunctions and with
+        the given status."""
+
+        params: dict = {
+            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            "subfunctions": arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            "status": arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_STATUS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
+    @tag("views.request.fetch_requests_with_originator_at_stage_with_subfunctions")
+    def test_fetch_requests_with_originator_at_stage_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator at the given stage with `Resource`s related to the given
+        subfunctions."""
+
+        params: dict = {
+            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            "stages": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_STAGE_LEVELS,
+            "subfunctions": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_SUBFUNCTIONS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
+    @tag(
+        "views.request.fetch_requests_with_originator_at_stage_with_subfunctions_and_status"
+    )
+    def test_fetch_requests_with_originator_at_stage_with_subfunctions_and_status(
+        self,
+    ) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given originator
+        at the given stage with `Resource`s related to the given subfunctions and with
+        the given status."""
+
+        params: dict = {
+            "originator": arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            "stages": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STAGE_LEVELS,
+            "subfunctions": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            "status": arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STATUS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
     @tag("views.request.fetch_requests_at_stage")
     def test_fetch_requests_at_stage(self) -> None:
         """Success Case: Fetch all `Request` records at the
         given stage."""
 
         params: dict = {
-            "stage": arguments.FETCH_REQUEST_AT_STAGE_STAGE_LEVEL,
+            "stages": arguments.FETCH_REQUEST_AT_STAGE_STAGE_LEVELS,
         }
 
         response = self.client.get(
@@ -260,13 +433,52 @@ class TestFetchRequest(MultiDBTestCase):
 
             self.assertEqual(request, expected_request)
 
+    @tag("views.request.fetch_requests_at_stage_with_subfunctions")
+    def test_fetch_requests_at_stage_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records at the
+        given stage with `Resource`s related to the given subfunctions."""
+
+        params: dict = {
+            "stages": arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_STAGE_LEVELS,
+            "subfunctions": arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_SUBFUNCTIONS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
     @tag("views.request.fetch_requests_at_stage_with_status")
     def test_fetch_requests_at_stage_with_status(self) -> None:
         """Success Case: Fetch all `Request` records at the
         given stage with the given status."""
 
         params: dict = {
-            "stage": arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STAGE_LEVEL,
+            "stages": arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STAGE_LEVELS,
             "status": arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STATUS,
         }
 
@@ -292,6 +504,126 @@ class TestFetchRequest(MultiDBTestCase):
             self.assertIn(
                 request_id,
                 arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
+    @tag("views.request.fetch_requests_at_stage_with_subfunctions_and_status")
+    def test_fetch_requests_at_stage_with_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records at the
+        given stage with `Resource`s related to the given subfunctions and
+        with the given status."""
+
+        params: dict = {
+            "stages": arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STAGE_LEVELS,
+            "subfunctions": arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            "status": arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STATUS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
+    @tag("views.request.fetch_requests_with_subfunctions")
+    def test_fetch_requests_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records with `Resource`s
+        related to the given subfunctions."""
+
+        params: dict = {
+            "subfunctions": arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_SUBFUNCTIONS
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_REQUEST_IDS,
+            )
+
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(request, expected_request)
+
+    @tag("views.request.fetch_requests_with_subfunctions_and_status")
+    def test_fetch_requests_with_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records with `Resource`s
+        related to the given subfunctions and with the given status."""
+
+        params: dict = {
+            "subfunctions": arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            "status": arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_STATUS,
+        }
+
+        response = self.client.get(
+            self.url, params, headers={"content_type": "application/json"}
+        )
+
+        requests = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(requests, list)
+
+        self.assertEqual(
+            len(requests),
+            len(arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS),
+        )
+
+        for request in requests:
+            self.assertIsInstance(request, dict)
+
+            request_id: int = request["id"]
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
             )
 
             expected_request = self.requests_records[request_id]

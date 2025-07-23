@@ -45,7 +45,13 @@ class AuthenticatedUser(APIView):
                 f"{SSO_DEVELOPMENT_USER['last_name']}@l3harris.com"
             ),
             "is_superuser": True,
-            "accesses": [],
+            "accesses": [
+                {
+                    "role": {"name": "Superuser", "level": Role.RoleLevels.SUPERUSER},
+                    "stages": [2, 3],
+                    "subfunctions": [],
+                }
+            ],
         }
 
         if BUILD == ApplicationBuild.DEVELOPMENT:

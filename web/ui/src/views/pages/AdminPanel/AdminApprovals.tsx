@@ -1,3 +1,4 @@
+import ApprovalsControls from "views/containers/AdminControls/ApprovalsControls/ApprovalsControls";
 import AdminPanel from "views/pages/AdminPanel/AdminPanel";
 
 export default function AdminApprovals() {
@@ -7,7 +8,7 @@ export default function AdminApprovals() {
         <header>
           <h1>Approvals</h1>
         </header>
-        {/* PLACE CONTENT HERE */}
+        <ApprovalsControls />
       </main>
     </AdminPanel>
   );

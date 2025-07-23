@@ -3,14 +3,14 @@ import { useLoaderData } from "react-router";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
-import lodash from "lodash";
 import { faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import lodash from "lodash";
+import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
+import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
 import FormType from "@rjsf/core";
 import Form from "@rjsf/primereact";
 import validator from "@rjsf/validator-ajv8";
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
-import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
 
 import ConfirmModal from "views/components/ConfirmModal/ConfirmModal";
 import ResourceRequestAccordion from "views/components/ResourceRequestAccordion/ResourceRequestAccordion";
@@ -146,10 +146,12 @@ export default function AdminResources() {
       (selectedFilters.find((filter) => lodash.isString(filter)) as string) ??
       null,
     // Filter request stage by number value in selected filters.
-    stage:
-      (selectedFilters.find(
-        (filter) => lodash.isNumber(filter) && filter > 0
-      ) as number) ?? null,
+    stages: selectedFilters.reduce((acc, filter) => {
+      if (lodash.isNumber(filter) && filter > 0 && !acc.length) {
+        return [...acc, filter];
+      }
+      return acc;
+    }, [] as number[]),
     page: page,
     limit: rows,
   });

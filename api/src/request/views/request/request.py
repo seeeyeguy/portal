@@ -166,8 +166,9 @@ class Request(APIView):
         try:
             log_msg = (
                 f"GET /v1/request/request?id={body['id']}",
-                f"&originator={body['originator']}&stage={body['stage']}",
-                f"&status={body['status']}&page={body['page']}&limit={body['limit']}",
+                f"&originator={body['originator']}&stages={body['stages']}",
+                f"&subfunctions={body['subfunctions']}&status={body['status']}",
+                f"&page={body['page']}&limit={body['limit']}",
                 f"&include_archived={body['include_archived']}",
             )
             LOGGER.info(log_msg)
@@ -176,7 +177,8 @@ class Request(APIView):
             request_records = RequestController.fetch_requests(
                 request_id=body["id"],
                 originator=body["originator"],
-                stage=body["stage"],
+                stages=body["stages"],
+                subfunctions=body["subfunctions"],
                 status=body["status"],
                 page=body["page"],
                 limit=body["limit"],

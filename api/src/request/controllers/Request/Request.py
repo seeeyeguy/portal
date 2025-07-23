@@ -411,7 +411,8 @@ class Request:
     def fetch_requests(
         request_id: Optional[int] = None,
         originator: Optional[str] = None,
-        stage: Optional[int] = None,
+        stages: Optional[List[int]] = None,
+        subfunctions: Optional[List[int]] = None,
         status: Optional[str] = None,
         page: Optional[int] = None,
         limit: Optional[int] = None,
@@ -420,9 +421,10 @@ class Request:
         """
         Fetch a `Request` record from the database with the given id
         or if no id is specified return all `Request` records. If
-        `originator`, `stage` or `status` is provided, filter records
-        appropriately. If page is specified, return that page of records.
-        If limit is specified, return up to `limit` number of records.
+        `originator`, `stages`, `subfunctions` or `status` is provided,
+        filter records appropriately. If page is specified, return that
+        page of records. If limit is specified, return up to `limit`
+        number of records.
 
         Accepts:
             * request_id (int | None): Optional parameter to either return a
@@ -432,9 +434,13 @@ class Request:
                 `Request` records by the `originator`. If specified, we will only
                 return `Request` records related to the given `originator`
                 (i.e the user that made the request).
-            * stage (int | None): Optional parameter to filter `Request` records
+            * stages (List[int] | None): Optional parameter to filter `Request` records
                 by their current stage. If specified, we will only return `Request`
-                records at the given `stage`.
+                records at the given `stages`.
+            * subfunctions (List[int] | None): Optional parameter to filter `Request` records
+                by the subfunctions of their related `Resource` records. If specified, we
+                will only return `Request` records with `Resource`s within the given
+                `subfunctions`.
             * status (str | None): Optional parameter to filter `Request` records by their
                 status. A `Request` status may be `PENDING`, `APPROVED` or `REJECTED`.
                 If specified, we will only return `Request` records with the given
@@ -452,7 +458,7 @@ class Request:
                     originator,
                     lambda m: f"{m} with originator(email={originator_email})",
                 ),
-                (stage, lambda m: f"{m} at stage(level={stage})"),
+                (stages, lambda m: f"{m} at stages(levels={stages})"),
                 (status, lambda m: f"{m} with status: {status}"),
                 (page, lambda m: f"{m} with page: {page}"),
                 (limit, lambda m: f"{m} {'and' if page else 'with'} limit: {limit}"),
@@ -501,12 +507,12 @@ class Request:
                     email__iexact=originator
                 )
 
-                access_records: QuerySet[
-                    UsersModels.Access
-                ] = UsersModels.Access.objects.filter(
-                    user=user_record,
-                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
-                    access_revoked_date__isnull=True,
+                access_records: QuerySet[UsersModels.Access] = (
+                    UsersModels.Access.objects.filter(
+                        user=user_record,
+                        role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
+                        access_revoked_date__isnull=True,
+                    )
                 )
                 if not access_records.exists():
                     raise UsersModels.Access.DoesNotExist()
@@ -515,10 +521,10 @@ class Request:
                     originator__id__in=set(access_records.values_list("id", flat=True))
                 )
 
-            # If `stage` is given, filter the `Request` records by the
+            # If `stages` is given, filter the `Request` records by the
             # ones that have an associated `Transition` linked to a `Stage`
-            # record with matching level.
-            if stage:
+            # record with a matching level.
+            if stages:
                 requests_with_latest_transition_at_stage_ids: List[int] = []
                 for request in requests:
                     latest_request_transition = request.transitions.order_by(
@@ -526,12 +532,24 @@ class Request:
                     ).first()
                     if (
                         latest_request_transition
-                        and latest_request_transition.stage.level == stage
+                        and latest_request_transition.stage.level in stages
                     ):
                         requests_with_latest_transition_at_stage_ids.append(request.id)
+
                 requests = requests.filter(
                     id__in=requests_with_latest_transition_at_stage_ids
                 )
+
+            # If `subfunctions` is given, filter the `Request` records by the
+            # ones that have a `Resource` related to a `Subfunction` within
+            # the given list of `Subfunction`s.
+            if subfunctions:
+                subfunction_resources = (
+                    DirectoryModels.SubFunction.objects.prefetch_related("resource")
+                    .filter(id__in=subfunctions)
+                    .values_list("resources", flat=True)
+                )
+                requests = requests.filter(resource__in=subfunction_resources)
 
             # If `status` is given, filter the `Request` records to those
             # with a matching status.

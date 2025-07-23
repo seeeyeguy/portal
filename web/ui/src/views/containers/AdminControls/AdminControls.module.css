@@ -47,6 +47,16 @@
   color: var(--color-white);
 }
 
+.admin-button-revise {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.admin-button-revise:hover {
+  background: var(--color-warning);
+  color: var(--color-white);
+}
+
 .admin-button-save {
   border-color: var(--color-warning);
   color: var(--color-warning);
@@ -148,6 +158,10 @@
   height: 3.5rem;
   gap: 2rem;
   padding: 0.6rem 10rem 0 0;
+}
+
+.button-container-evenly-spaced {
+  justify-content: space-between;
 }
 
 .card-list > ul {

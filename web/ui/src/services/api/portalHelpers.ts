@@ -1,3 +1,5 @@
+import lodash from "lodash";
+
 export const RESOURCE_PATHS = {
   ANALYTICS: "analytics",
   DIRECTORY: "directory",
@@ -38,9 +40,15 @@ type PARAM =
   | "page"
   | "role_levels"
   | "subfunctions"
+  | "stages"
   | "user";
 
-const acceptedParamArrays = new Set(["ids", "role_levels", "subfunctions"]);
+const acceptedParamArrays = new Set([
+  "ids",
+  "role_levels",
+  "subfunctions",
+  "stages",
+]);
 
 /**
  * Build a URL for an endpoint, given its application path,
@@ -128,6 +136,19 @@ export const buildQueryResourceBySubFunctionsURL = (
 ) => buildQueryResourceURL(path, resource, suffix, "subfunctions");
 
 /**
+ * Build a URL with an optional array of stages for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of stages and returns the appropriate URL.
+ */
+export const buildQueryResourceByStagesURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "stages");
+
+/**
  * Build a URL with an optional user for an endpoint, given its application path, and
  * resource name.
  * @param path The path/prefix denoting the resource's application domain.
@@ -175,6 +196,8 @@ export const appendQueryParamToURL = (
   base: string,
   param: string,
   paramValue: string | number | boolean | null,
-  matchPattern: RegExp | null
+  matchPattern: RegExp | null = /\?(.*?)=/
 ) =>
-  `${base}${matchPattern && base.match(matchPattern) ? "&" : "?"}${param}=${paramValue}`;
+  !lodash.isNil(paramValue)
+    ? `${base}${matchPattern && matchPattern.test(base) ? "&" : "?"}${param}=${paramValue}`
+    : base;

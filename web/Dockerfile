@@ -45,7 +45,7 @@ RUN npm ci && \
 ### Build Stage #2 -- Copy App into Server Image
 ###
 
-FROM nginx:1.27-alpine AS production
+FROM nginx:stable-perl AS production
 
 # We need to declare these here again as
 # nginx does not inherit from the

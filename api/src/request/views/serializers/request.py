@@ -38,7 +38,8 @@ class FetchRequestRequest(serializers.Serializer):
 
     id = serializers.IntegerField(allow_null=True, default=None)
     originator = serializers.EmailField(max_length=512, allow_null=True, default=None)
-    stage = serializers.IntegerField(allow_null=True, default=None)
+    stages = serializers.ListField(child=serializers.IntegerField(), default=None)
+    subfunctions = serializers.ListField(child=serializers.IntegerField(), default=None)
     status = serializers.CharField(max_length=512, allow_null=True, default=None)
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)

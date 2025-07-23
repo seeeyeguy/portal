@@ -6,12 +6,14 @@ import {
   buildQueryResourceByIdURL,
   buildQueryResourceByIdsURL,
   buildQueryResourceByRoleLevelsURL,
+  buildQueryResourceByStagesURL,
   buildQueryResourceBySubFunctionsURL,
   buildQueryResourceByUserURL,
   buildSearchForResourceByLabelURL,
   buildSearchForResourceByPageURL,
 } from "services/api/portalHelpers";
 
+const SCHEME = __SCHEME__;
 const SERVER_PORT = __SERVER_PORT__;
 
 export default {
@@ -29,16 +31,10 @@ export default {
       )(id);
 
       if (!id) {
-        base = user ? appendQueryParamToURL(base, "user", user, null) : base;
-        base = resourceId
-          ? appendQueryParamToURL(base, "resource_id", resourceId, /user/)
-          : base;
-        base = page
-          ? appendQueryParamToURL(base, "page", page, /user|resource_id/)
-          : base;
-        base = limit
-          ? appendQueryParamToURL(base, "limit", limit, /user|resource_id|page/)
-          : base;
+        base = appendQueryParamToURL(base, "user", user);
+        base = appendQueryParamToURL(base, "resource_id", resourceId);
+        base = appendQueryParamToURL(base, "page", page);
+        base = appendQueryParamToURL(base, "limit", limit);
       }
 
       return base;
@@ -56,16 +52,10 @@ export default {
       )(id);
 
       if (!id) {
-        base = user ? appendQueryParamToURL(base, "user", user, null) : base;
-        base = resource
-          ? appendQueryParamToURL(base, "resource", resource, /user/)
-          : base;
-        base = page
-          ? appendQueryParamToURL(base, "page", page, /user|resource/)
-          : base;
-        base = limit
-          ? appendQueryParamToURL(base, "limit", limit, /user|resource|page/)
-          : base;
+        base = appendQueryParamToURL(base, "user", user);
+        base = appendQueryParamToURL(base, "resource", resource);
+        base = appendQueryParamToURL(base, "page", page);
+        base = appendQueryParamToURL(base, "limit", limit);
       }
 
       return base;
@@ -89,10 +79,8 @@ export default {
         )(id);
 
         if (!id) {
-          base = page ? appendQueryParamToURL(base, "page", page, null) : base;
-          base = limit
-            ? appendQueryParamToURL(base, "limit", limit, /page/)
-            : base;
+          base = appendQueryParamToURL(base, "page", page);
+          base = appendQueryParamToURL(base, "limit", limit);
         }
 
         return base;
@@ -103,9 +91,7 @@ export default {
           "resources"
         )(page);
 
-        base = limit
-          ? appendQueryParamToURL(base, "limit", limit, /page/)
-          : base;
+        base = appendQueryParamToURL(base, "limit", limit);
 
         return base;
       },
@@ -179,7 +165,8 @@ export default {
     REQUEST: (
       id: number | null = null,
       originator: string | null = null,
-      stage: number | null = null,
+      stages: number[] | null = null,
+      subfunctions: number[] | null = null,
       status: string | null = null,
       page: number | null = null,
       limit: number | null = null,
@@ -191,41 +178,46 @@ export default {
       )(id);
 
       if (!id) {
-        base = originator
-          ? appendQueryParamToURL(base, "originator", originator, null)
+        let arrayParams = "";
+
+        if (stages?.length) {
+          const baseWithStages = buildQueryResourceByStagesURL(
+            RESOURCE_PATHS.REQUEST,
+            "request"
+          )(stages);
+          arrayParams = `${/\?(.*)/.exec(baseWithStages)?.[1] ?? ""}`;
+        }
+
+        if (subfunctions?.length) {
+          const baseWithSubFunctions = buildQueryResourceBySubFunctionsURL(
+            RESOURCE_PATHS.REQUEST,
+            "request"
+          )(subfunctions);
+          arrayParams = `${arrayParams}${stages ? "&" : ""}${/\?(.*)/.exec(baseWithSubFunctions)?.[1] ?? ""}`;
+        }
+
+        base = appendQueryParamToURL(base, "originator", originator);
+        base = appendQueryParamToURL(base, "status", status);
+        base = appendQueryParamToURL(base, "page", page);
+        base = appendQueryParamToURL(base, "limit", limit);
+        base = appendQueryParamToURL(
+          base,
+          "include_archived",
+          includeArchived,
+          /originator|stage|status|page|limit/
+        );
+
+        base = arrayParams.length
+          ? `${base}${/\?(.*?)=/.test(base) ? "&" : "?"}${arrayParams}`
           : base;
-        base = stage
-          ? appendQueryParamToURL(base, "stage", stage, /originator/)
-          : base;
-        base = status
-          ? appendQueryParamToURL(base, "status", status, /originator|stage/)
-          : base;
-        base = page
-          ? appendQueryParamToURL(base, "page", page, /originator|stage|status/)
-          : base;
-        base = limit
-          ? appendQueryParamToURL(
-              base,
-              "limit",
-              limit,
-              /originator|stage|status|page/
-            )
-          : base;
-        base =
-          includeArchived !== null
-            ? appendQueryParamToURL(
-                base,
-                "include_archived",
-                includeArchived,
-                /originator|stage|status|page|limit/
-              )
-            : base;
       }
 
       return base;
     },
     DISPOSITION: {
-      WS: `ws://${window.location.hostname}:${SERVER_PORT}/ws/disposition`,
+      WS: SCHEME?.endsWith("s")
+        ? "/ws/disposition"
+        : `ws://${window.location.hostname}:${SERVER_PORT}/ws/disposition`,
     },
   },
   USERS: {
@@ -257,19 +249,16 @@ export default {
           arrayParams = `${arrayParams}${roleLevels ? "&" : ""}${/\?(.*)/.exec(baseWithSubFunctions)?.[1] ?? ""}`;
         }
 
-        base = user ? appendQueryParamToURL(base, "user", user, null) : base;
+        base = appendQueryParamToURL(base, "user", user);
+        base = appendQueryParamToURL(
+          base,
+          "include_revoked",
+          includeRevoked,
+          /\?user/
+        );
 
-        base =
-          includeRevoked !== null
-            ? appendQueryParamToURL(
-                base,
-                "include_revoked",
-                includeRevoked,
-                /\?user/
-              )
-            : base;
         base = arrayParams.length
-          ? `${base}${user || includeRevoked !== null ? "&" : "?"}${arrayParams}`
+          ? `${base}${/\?(.*?)=/.test(base) ? "&" : "?"}${arrayParams}`
           : base;
       }
 
