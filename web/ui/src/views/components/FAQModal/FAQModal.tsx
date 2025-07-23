@@ -3,11 +3,18 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { FAQs } from "views/components/FAQModal/FAQModalProps";
+import { FAQs, FAQ_CONTEXTS } from "views/components/FAQModal/FAQModalProps";
 
 import styles from "views/components/FAQModal/FAQModal.module.css";
 
-export default function FAQModal() {
+export interface IFAQModalProps {
+  /** Optional context for FAQs to be displayed. */
+  context?: string;
+}
+
+export default function FAQModal({
+  context = FAQ_CONTEXTS.PORTAL,
+}: IFAQModalProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -66,12 +73,18 @@ export default function FAQModal() {
         className={styles["faq-modal-content"]}
         aria-description="container for frequently asked questions"
       >
-        {FAQs.map((faq, i) => (
-          <details key={"faq" + i}>
-            <summary>{faq.question}</summary>
-            <p aria-description="faq answer">{faq.answer}</p>
-          </details>
-        ))}
+        {FAQs.reduce((acc: JSX.Element[], faq, i) => {
+          if (faq.contexts.includes(context)) {
+            return [
+              ...acc,
+              <details key={"faq" + i}>
+                <summary>{faq.question}</summary>
+                <p aria-description="faq answer">{faq.answer}</p>
+              </details>,
+            ];
+          }
+          return acc;
+        }, [])}
       </div>
     </dialog>
   );
