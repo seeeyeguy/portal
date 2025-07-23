@@ -6,6 +6,7 @@
   .favorites-resource-links-container {
     background: var(--color-white);
     padding: 1rem;
+    position: relative;
   }
 
   .favorite-accordion summary {
@@ -29,6 +30,34 @@
     font-weight: 700;
     justify-self: center;
     min-height: 12.85rem;
+  }
+
+  .resource-sort {
+    background: inherit;
+    border:none;
+    border-radius: 4px;
+    color: var(--color-black);
+    height: 2.4rem;
+    position: absolute;
+    right
+    : 1.6rem;
+  }
+
+  .resource-sort:active {
+    background: var(--color-grayscale-2);
+  }
+  
+  .resource-sort:hover {
+    background: var(--color-light-gray);
+  }
+
+  .resource-sort [class*="pi"]{
+    font-size: 1.7rem;
+    opacity: .6;
+  }
+  
+  .resource-sort-tooltip {
+    z-index: var(--z-index-tooltip);
   }
 
   @container (min-width: 1110px) {
