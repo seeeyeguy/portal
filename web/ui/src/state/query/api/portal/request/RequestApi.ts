@@ -41,7 +41,8 @@ export type TApiPostRequestRequest = {
 export type TApiFetchRequestRequest = {
   id?: number | null;
   originator?: string | null;
-  stage?: number | null;
+  stages?: number[] | null;
+  subfunctions?: number[] | null;
   status?: string | null;
   page?: number | null;
   limit?: number | null;
@@ -130,7 +131,8 @@ const requestApi = api.injectEndpoints({
         query: ({
           id = null,
           originator = null,
-          stage = null,
+          stages = null,
+          subfunctions = null,
           status = null,
           page = null,
           limit = null,
@@ -139,7 +141,8 @@ const requestApi = api.injectEndpoints({
           endpoints.PORTAL.REQUEST.REQUEST(
             id,
             originator,
-            stage,
+            stages,
+            subfunctions,
             status,
             page,
             limit,

@@ -1703,11 +1703,20 @@ paths:
             type: string
           description: User's email related to the desired `Request` records.
         - in: query
-          name: stage
+          name: stages
           schema:
-            type: integer
-          description: Stage level of the latest `Transition` of the desired
+            type: array
+            items:
+              type: integer
+          description: Stage levels of the latest `Transition` of the desired
             `Request` records.
+        - in: query
+          name: subfunctions
+          schema:
+            type: array
+            items:
+              type: integer
+          description: Ids for `SubFunction`s related to the `Resource`s of the desired `Request` records.
         - in: query
           name: status
           schema:

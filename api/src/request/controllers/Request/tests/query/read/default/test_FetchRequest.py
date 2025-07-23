@@ -5,6 +5,7 @@ Collection of pytests for Request's fetch controller.
 import pytest
 from typing import List
 
+# pylint: disable=line-too-long
 from django.db.models import QuerySet
 from django.test import tag
 
@@ -58,7 +59,8 @@ class TestFetchRequest(MultiDBTestCase):
         request = Request.fetch_requests(
             request_id=arguments.FETCH_REQUEST_BY_ID_REQUEST_ID,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -79,7 +81,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -89,8 +92,8 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_NON_ARCHIVED_REQUEST_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_NON_ARCHIVED_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -98,7 +101,7 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_NON_ARCHIVED_REQUEST_IDS)
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -113,7 +116,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -123,8 +127,8 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_ORIGINATOR_REQUEST_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_ORIGINATOR_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -132,7 +136,9 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(
+                request_id, arguments.FETCH_REQUEST_WITH_ORIGINATOR_REQUEST_IDS
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -147,7 +153,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
-            stage=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_STAGE_LEVEL,
+            stages=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_STAGE_LEVELS,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -157,8 +164,8 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_REQUEST_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -166,7 +173,48 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_REQUEST_IDS,
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_with_originator_and_subfunctions")
+    def test_fetch_requests_with_originator_and_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator with `Resource`s related to the given subfunctions."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            stages=None,
+            subfunctions=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_SUBFUNCTIONS,
+            status=None,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AND_SUBFUNCTIONS_REQUEST_IDS,
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -182,7 +230,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
-            stage=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STAGE_LEVEL,
+            stages=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STAGE_LEVELS,
+            subfunctions=None,
             status=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_STATUS,
             page=None,
             limit=None,
@@ -192,8 +241,10 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_REQUEST_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_REQUEST_IDS
+            ),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -201,7 +252,149 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_STATUS_REQUEST_IDS,
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_with_originator_subfunctions_and_status")
+    def test_fetch_requests_with_originator_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator with `Resource`s related to the given subfunctions and with
+        the given status."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            stages=None,
+            subfunctions=(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS
+            ),
+            status=arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_STATUS,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag(
+        "controllers.request.fetch_requests_with_originator_at_stage_with_subfunctions"
+    )
+    def test_fetch_requests_with_originator_at_stage_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given
+        originator at the given stage with `Resource`s related to the given
+        subfunctions."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            stages=arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_STAGE_LEVELS,
+            subfunctions=(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_SUBFUNCTIONS
+            ),
+            status=None,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS,
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag(
+        "controllers.request.fetch_requests_with_originator_at_stage_with_subfunctions_and_status"
+    )
+    def test_fetch_requests_with_originator_at_stage_with_subfunctions_and_status(
+        self,
+    ) -> None:
+        """Success Case: Fetch all `Request` records initiated by the given originator
+        at the given stage with `Resource`s related to the given subfunctions and with
+        the given status."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_USER_EMAIL,
+            stages=(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STAGE_LEVELS
+            ),
+            subfunctions=(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS
+            ),
+            status=(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STATUS
+            ),
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_ORIGINATOR_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -216,7 +409,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=arguments.FETCH_REQUEST_AT_STAGE_STAGE_LEVEL,
+            stages=arguments.FETCH_REQUEST_AT_STAGE_STAGE_LEVELS,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -226,8 +420,8 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_AT_STAGE_REQUEST_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_AT_STAGE_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -235,7 +429,45 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_AT_STAGE_REQUEST_IDS)
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_at_stage_with_subfunctions")
+    def test_fetch_requests_at_stage_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records at the
+        given stage with `Resource`s related to the given subfunctions."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=None,
+            stages=arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_STAGE_LEVELS,
+            subfunctions=arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_SUBFUNCTIONS,
+            status=None,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_REQUEST_IDS,
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -250,7 +482,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STAGE_LEVEL,
+            stages=arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STAGE_LEVELS,
+            subfunctions=None,
             status=arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_STATUS,
             page=None,
             limit=None,
@@ -259,9 +492,9 @@ class TestFetchRequest(MultiDBTestCase):
 
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
-        self.assertListEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_REQUEST_IDS,
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -269,7 +502,125 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(
+                request_id, arguments.FETCH_REQUEST_AT_STAGE_WITH_STATUS_REQUEST_IDS
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_at_stage_with_subfunctions_and_status")
+    def test_fetch_requests_at_stage_with_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records at the
+        given stage with `Resource`s related to the given subfunctions and
+        with the given status."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=None,
+            stages=arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STAGE_LEVELS,
+            subfunctions=arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            status=arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_STATUS,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS
+            ),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_AT_STAGE_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_with_subfunctions")
+    def test_fetch_requests_with_subfunctions(self) -> None:
+        """Success Case: Fetch all `Request` records with `Resource`s
+        related to the given subfunctions."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=None,
+            stages=None,
+            subfunctions=arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_SUBFUNCTIONS,
+            status=None,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_REQUEST_IDS),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id, arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_REQUEST_IDS
+            )
+
+            serialized_request = RequestSerializer(request).data
+            expected_request = self.requests_records[request_id]
+
+            self.assertEqual(serialized_request, expected_request)
+
+    @tag("controllers.request.fetch_requests_with_subfunctions_and_status")
+    def test_fetch_requests_with_subfunctions_and_status(self) -> None:
+        """Success Case: Fetch all `Request` records with `Resource`s
+        related to the given subfunctions and with the given status."""
+
+        requests = Request.fetch_requests(
+            request_id=None,
+            originator=None,
+            stages=None,
+            subfunctions=arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_SUBFUNCTIONS,
+            status=arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_STATUS,
+            page=None,
+            limit=None,
+            include_archived=False,
+        )
+
+        self.assertIsInstance(requests, QuerySet[RequestModel])
+
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS),
+        )
+
+        for request in requests:  # type: ignore[union-attr]
+            self.assertIsInstance(request, RequestModel)
+
+            request_id: int = request.id
+
+            self.assertIn(
+                request_id,
+                arguments.FETCH_REQUEST_WITH_SUBFUNCTIONS_AND_STATUS_REQUEST_IDS,
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -284,7 +635,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=arguments.FETCH_REQUEST_WITH_STATUS_STATUS,
             page=None,
             limit=None,
@@ -293,9 +645,9 @@ class TestFetchRequest(MultiDBTestCase):
 
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
-        self.assertListEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_STATUS_REQUEST_IDS,
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_STATUS_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -303,7 +655,7 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_WITH_STATUS_REQUEST_IDS)
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -318,7 +670,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=arguments.FETCH_REQUEST_WITH_PAGE_PAGE_NUMBER,
             limit=None,
@@ -327,9 +680,9 @@ class TestFetchRequest(MultiDBTestCase):
 
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
-        self.assertListEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_PAGE_REQUEST_IDS,
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_PAGE_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -337,7 +690,7 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_WITH_PAGE_REQUEST_IDS)
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -352,7 +705,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=None,
             limit=arguments.FETCH_REQUEST_WITH_LIMIT_LIMIT,
@@ -361,9 +715,9 @@ class TestFetchRequest(MultiDBTestCase):
 
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
-        self.assertListEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_LIMIT_REQUEST_IDS,
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_LIMIT_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -371,7 +725,7 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_WITH_LIMIT_REQUEST_IDS)
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -386,7 +740,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=arguments.FETCH_REQUEST_WITH_PAGE_AND_LIMIT_PAGE_NUMBER,
             limit=arguments.FETCH_REQUEST_WITH_PAGE_AND_LIMIT_LIMIT,
@@ -395,9 +750,9 @@ class TestFetchRequest(MultiDBTestCase):
 
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
-        self.assertListEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_WITH_PAGE_AND_LIMIT_REQUEST_IDS,
+        self.assertEqual(
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_WITH_PAGE_AND_LIMIT_REQUEST_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -405,7 +760,9 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(
+                request_id, arguments.FETCH_REQUEST_WITH_PAGE_AND_LIMIT_REQUEST_IDS
+            )
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -420,7 +777,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=None,
             limit=None,
@@ -430,8 +788,8 @@ class TestFetchRequest(MultiDBTestCase):
         self.assertIsInstance(requests, QuerySet[RequestModel])
 
         self.assertEqual(
-            list(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
-            arguments.FETCH_REQUEST_ALL_VALID_IDS,
+            len(requests.values_list("id", flat=True)),  # type: ignore[union-attr]
+            len(arguments.FETCH_REQUEST_ALL_VALID_IDS),
         )
 
         for request in requests:  # type: ignore[union-attr]
@@ -439,7 +797,7 @@ class TestFetchRequest(MultiDBTestCase):
 
             request_id: int = request.id
 
-            self.assertIn(request_id, self.requests_records)
+            self.assertIn(request_id, arguments.FETCH_REQUEST_ALL_VALID_IDS)
 
             serialized_request = RequestSerializer(request).data
             expected_request = self.requests_records[request_id]
@@ -454,7 +812,8 @@ class TestFetchRequest(MultiDBTestCase):
         requests = Request.fetch_requests(
             request_id=None,
             originator=None,
-            stage=None,
+            stages=None,
+            subfunctions=None,
             status=None,
             page=arguments.FETCH_REQUEST_WITH_PAGE_NUMBER_EXCEEDING_PAGE_COUNT_PAGE_NUM,
             limit=None,
@@ -477,7 +836,8 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=arguments.FETCH_REQUEST_BY_ID_REQUEST_ID,
                 originator=None,
-                stage=None,
+                stages=None,
+                subfunctions=None,
                 status=None,
                 page=arguments.FETCH_REQUEST_WITH_PAGE_PAGE_NUMBER,
                 limit=None,
@@ -493,7 +853,8 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=arguments.FETCH_REQUEST_BY_ID_REQUEST_ID,
                 originator=None,
-                stage=None,
+                stages=None,
+                subfunctions=None,
                 status=None,
                 page=None,
                 limit=arguments.FETCH_REQUEST_WITH_LIMIT_LIMIT,
@@ -509,7 +870,8 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=arguments.FETCH_REQUEST_BY_ID_REQUEST_ID_DNE,
                 originator=None,
-                stage=None,
+                stages=None,
+                subfunctions=None,
                 status=None,
                 page=None,
                 limit=None,
@@ -525,7 +887,8 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=None,
                 originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_DNE_USER_EMAIL,
-                stage=None,
+                stages=None,
+                subfunctions=None,
                 status=None,
                 page=None,
                 limit=None,
@@ -541,7 +904,8 @@ class TestFetchRequest(MultiDBTestCase):
             _ = Request.fetch_requests(
                 request_id=None,
                 originator=arguments.FETCH_REQUEST_WITH_ORIGINATOR_ACCESS_DNE_USER_EMAIL,
-                stage=None,
+                stages=None,
+                subfunctions=None,
                 status=None,
                 page=None,
                 limit=None,

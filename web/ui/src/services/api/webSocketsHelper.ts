@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 interface IWebSocketService<T, U> {
   connect(url: string): void;
   sendMessage(message: T): void;
@@ -45,6 +47,11 @@ class WebSocketService<T, U> implements IWebSocketService<T, U> {
     this.socket.onmessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event?.data ?? "{}");
+        if (data?.status && data?.status < 300) {
+          toast.success("Disposition was successful.");
+        } else {
+          toast.error(`${data?.content ?? "Disposition failed."}`);
+        }
         this.callbacks.forEach((cb) => cb(data));
       } catch (error) {
         console.error(`Error parsing WebSocket message: ${error}`);
