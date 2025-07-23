@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { FAQ } from "views/definitions/FAQModal.types";
 
+export const FAQ_CONTEXTS = {
+  PORTAL: "portal",
+};
+
 export const FAQs: FAQ[] = [
   {
     question:
@@ -19,6 +23,7 @@ export const FAQs: FAQ[] = [
         resource before submitting an access request.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
     question: "How do I request a new Tableau account?",
@@ -34,6 +39,7 @@ export const FAQs: FAQ[] = [
         ticket in ONEHub.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
     question: "How do I add/remove a resource to my favorites?",
@@ -43,6 +49,7 @@ export const FAQs: FAQ[] = [
         resource from your favorites.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
     question:
@@ -54,6 +61,7 @@ export const FAQs: FAQ[] = [
         the tooltip that appears when you hover over a resource.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
     question: "Who should I contact regarding technical difficulties?",
@@ -64,6 +72,7 @@ export const FAQs: FAQ[] = [
         <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
     question:
@@ -79,5 +88,6 @@ export const FAQs: FAQ[] = [
         ensure the site content remains comprehensive and accurate.
       </>
     ),
+    contexts: [FAQ_CONTEXTS.PORTAL],
   },
 ];
