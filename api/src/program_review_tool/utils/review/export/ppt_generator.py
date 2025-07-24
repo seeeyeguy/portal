@@ -324,6 +324,7 @@ def remove_multi_pa_slides(
                 f"Slide to delete with title '{row.slide_title}' was not found."
             )
 
+
 def remove_single_pa_slides(
     presentation: Presentation,
     tableau_slide_mapping_df: pd.DataFrame,
@@ -352,7 +353,8 @@ def remove_single_pa_slides(
             LOGGER.warning(
                 f"Slide to delete with title '{row.slide_title}' was not found."
             )
-            
+
+
 def format_period(yyyymm: str) -> str:
     """Convert a YYYYMM string into YYYY-PMM format."""
     year = yyyymm[:4]
