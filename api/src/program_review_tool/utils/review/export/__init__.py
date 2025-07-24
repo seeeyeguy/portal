@@ -15,9 +15,12 @@ from datetime import datetime, timedelta
 from pandas import DataFrame
 from typing import List
 
+import django_rq
 from django.core.cache import cache
 from django_rq import job as job_decorator
+from django.utils import timezone
 
+from program_review_tool import controllers
 from program_review_tool.exceptions import ProgramReviewToolError
 from program_review_tool.utils.review.export.config import (
     ASSETS_DIR,
@@ -41,6 +44,9 @@ from program_review_tool.utils.review.tableau import (
 
 
 LOGGER = logging.getLogger(__name__)
+
+# Program review complete usage job name.
+PROGRAM_REVIEW_COMPLETE_USAGE_JOB_NAME: str = "program_review_complete_usage"
 
 # Presentation template file path.
 PPT_TEMPLATE: str = os.path.join(ASSETS_DIR, "PRT.pptx")
@@ -68,6 +74,7 @@ def generate_program_review_powerpoint_wrapper(
     reviewer_name: str,
     portfolio_name: str,
     export_cache_key: str,
+    generation_id: str,
 ) -> None:
     """
     Enqueues a job to generate the Program review PowerPoint
@@ -103,10 +110,41 @@ def generate_program_review_powerpoint_wrapper(
         )
         cache_timeout = (expiration_time - current_time).total_seconds()
         cache.set(export_cache_key, (ExportStatus.DONE, export_path), cache_timeout)
+
+        # Get the scheduler and queue the job for
+        # completing usage.
+        scheduler = django_rq.get_scheduler("default")
+        scheduler.enqueue_in(
+            timedelta(seconds=1),
+            controllers.Usage.complete_usage,
+            usage_id=generation_id,
+            success=True,
+            finish_time=timezone.now(),
+            meta={
+                "job_name": PROGRAM_REVIEW_COMPLETE_USAGE_JOB_NAME,
+                "cache_key": export_cache_key,
+            },
+        )
     except ProgramReviewToolError as exc:
         err_msg = f"Export failed for: {export_cache_key} Reason: {exc.message}"
         LOGGER.error(err_msg)
         cache.set(export_cache_key, (ExportStatus.FAILED, None), 600)
+
+        # Get the scheduler and queue the job for
+        # completing usage.
+        scheduler = django_rq.get_scheduler("default")
+        scheduler.enqueue_in(
+            timedelta(seconds=1),
+            controllers.Usage.complete_usage,
+            usage_id=generation_id,
+            success=False,
+            error_msg=err_msg,
+            finish_time=timezone.now(),
+            meta={
+                "job_name": PROGRAM_REVIEW_COMPLETE_USAGE_JOB_NAME,
+                "cache_key": export_cache_key,
+            },
+        )
 
 
 def generate_program_review_powerpoint(

@@ -1,0 +1,26 @@
+[
+    {
+        "model": "program_review_tool.usage",
+        "pk": 1,
+        "fields": {
+            "user_id": "May.Parker@harris.com",
+            "programs": ["TEST1", "TEST2"],
+            "created": "2025-01-01T11:00:00Z",
+            "duration": "00:00:37.399048",
+            "success": false,
+            "error_msg": "This broke." 
+        }
+    },
+    {
+        "model": "program_review_tool.usage",
+        "pk": 2,
+        "fields": {
+            "user_id": "May.Parker@harris.com",
+            "programs": ["TEST1", "TEST2"],
+            "created": "2025-01-01T11:00:00Z",
+            "duration": null,
+            "success": null,
+            "error_msg": null
+        }
+    }
+]
