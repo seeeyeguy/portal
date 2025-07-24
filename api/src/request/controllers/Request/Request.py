@@ -507,12 +507,12 @@ class Request:
                     email__iexact=originator
                 )
 
-                access_records: QuerySet[UsersModels.Access] = (
-                    UsersModels.Access.objects.filter(
-                        user=user_record,
-                        role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
-                        access_revoked_date__isnull=True,
-                    )
+                access_records: QuerySet[
+                    UsersModels.Access
+                ] = UsersModels.Access.objects.filter(
+                    user=user_record,
+                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
+                    access_revoked_date__isnull=True,
                 )
                 if not access_records.exists():
                     raise UsersModels.Access.DoesNotExist()

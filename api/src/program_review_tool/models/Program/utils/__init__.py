@@ -10,8 +10,11 @@ import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
 from typing import List, Union
 
+from django.db import DatabaseError
+from django.utils import timezone
+
 from program_review_tool.models import Program
-from users.models.Segment.Segment import AR, CS, IMS, SAS
+from users.models.Segment.Segment import AR, CS, IMS, SAS, Segment
 
 from manager.db.config import AXIS, EXTERNAL_SOURCE_DATABASE, FDW
 from manager.settings import ApplicationBuild, BUILD
@@ -135,12 +138,10 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
             bcom.SEGMENT AS segment,
             bcom.SECTOR AS sector,
             bcom.DIVISION AS division,
-            p.FINAL_TIER AS tier,
+            bcom.PROGRAM_TIER AS tier,
             bcom.CV AS contract_value,
             bcom.ACTIVEINACTIVE AS active_status
-        FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom
-        JOIN
-        BUSANA.PROGRAM_TIER p ON p.PA_ID = bcom.PROJECT_ID        
+        FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom   
         """
 
         df = pd.DataFrame()
@@ -209,6 +210,67 @@ def update_programs_from_external_database() -> None:
             tier=record["tier"],
             contract_value=record["contract_value"],
             active_status=record["active_status"],
+        )
+
+    return None
+
+
+def ingest_new_programs_from_external_database() -> None:
+    """Ingest `Program` data from an external database."""
+
+    existing_pa_numbers: List[str] = list(
+        Program.objects.values_list("pa_number", flat=True)
+    )
+
+    existing_program_names: List[str] = list(
+        Program.objects.values_list("name", flat=True)
+    )
+
+    records: List[dict] = []
+    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS or BUILD in {
+        ApplicationBuild.DEVELOPMENT,
+        ApplicationBuild.TEST,
+    }:
+        records = query_programs_from_axis([])
+    elif EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.FDW:
+        records = query_programs_from_fdw([])
+
+    programs_to_ingest: List[Program] = []
+    for record in records:
+        if (
+            record["active_status"]
+            and record["pa_number"] not in existing_pa_numbers
+            and record["program_name"] not in existing_program_names
+        ):
+            programs_to_ingest.append(
+                Program(
+                    pa_number=record["pa_number"],
+                    name=record["program_name"],
+                    segment=Segment.objects.get(id=record["segment"]),
+                    sector=record["sector"],
+                    division=record["division"],
+                    tier=record["tier"],
+                    contract_value=record["contract_value"],
+                    active_status=record["active_status"],
+                    created=timezone.now(),
+                    modified=timezone.now(),
+                )
+            )
+
+    failed_ingested_programs = []
+    ingestion_count = 0
+    for program in programs_to_ingest:
+        try:
+            program.save()
+            ingestion_count += 1
+        except DatabaseError:
+            failed_ingested_programs.append(f"{program.pa_number} - {program.name}")
+
+    LOGGER.info(f"Ingested {ingestion_count} new programs.")
+
+    if len(failed_ingested_programs):
+        LOGGER.error(
+            f"Failed to ingest {len(failed_ingested_programs)} programs. {failed_ingested_programs}"
         )
 
     return None
