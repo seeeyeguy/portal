@@ -14,7 +14,7 @@ from django.core.cache import cache
 from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
 
-from program_review_tool import exceptions, models
+from program_review_tool import controllers, exceptions, models
 from program_review_tool.utils.review.export import (
     ExportStatus,
     generate_program_review_powerpoint_wrapper,
@@ -213,6 +213,8 @@ class Program:
         # of the `User`.
         reviewer_name: str = f"{user.first_name} {user.last_name}"
 
+        usage = controllers.Usage.create_usage(user_email, pa_numbers)
+
         # Get the scheduler and queue the job for
         # generating the PowerPoint export.
         scheduler = django_rq.get_scheduler("default")
@@ -224,6 +226,7 @@ class Program:
             reviewer_name,
             review_name,
             export_cache_key,
+            usage.id,
             meta={
                 "job_name": PROGRAM_REVIEW_EXPORT_JOB_NAME,
                 "cache_key": export_cache_key,

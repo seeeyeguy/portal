@@ -8,3 +8,4 @@ providing a consolidated insight into programs.
 
 from .Program import Program  # ordered to prevent potential circular dependency
 from .Portfolio import Portfolio
+from .Usage import Usage
