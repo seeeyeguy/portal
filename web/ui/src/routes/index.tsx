@@ -1,4 +1,6 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
+
+import RouteMenu from "views/containers/RouteMenu/RouteMenu";
 
 import {
   AdminAccesses,
@@ -20,7 +22,11 @@ import { IAuthUser } from "definitions/Sso.types";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <RouteMenu>
+        <Home />
+      </RouteMenu>
+    ),
     loader: async () => {
       const user = (await login()) as Response | IAuthUser;
       if ("status" in user && user.status === REDIRECT) {
@@ -34,7 +40,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminResources />,
+        element: (
+          <RouteMenu>
+            <AdminResources />
+          </RouteMenu>
+        ),
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -45,7 +55,12 @@ const router = createBrowserRouter([
       },
       {
         path: "accesses",
-        element: <AdminAccesses />,
+        element: (
+          <RouteMenu>
+            <AdminAccesses />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -56,7 +71,12 @@ const router = createBrowserRouter([
       },
       {
         path: "approvals",
-        element: <AdminApprovals />,
+        element: (
+          <RouteMenu>
+            <AdminApprovals />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -67,7 +87,12 @@ const router = createBrowserRouter([
       },
       {
         path: "employee-levels",
-        element: <AdminEmployeeLevels />,
+        element: (
+          <RouteMenu>
+            <AdminEmployeeLevels />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -78,7 +103,12 @@ const router = createBrowserRouter([
       },
       {
         path: "functions",
-        element: <AdminFunctions />,
+        element: (
+          <RouteMenu>
+            <AdminFunctions />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -89,11 +119,16 @@ const router = createBrowserRouter([
       },
       {
         path: "resources",
-        element: <Navigate to="/admin" />,
+        loader: () => redirect("/admin"),
       },
       {
         path: "subfunctions",
-        element: <AdminSubFunctions />,
+        element: (
+          <RouteMenu>
+            <AdminSubFunctions />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -104,7 +139,12 @@ const router = createBrowserRouter([
       },
       {
         path: "tags",
-        element: <AdminTags />,
+        element: (
+          <RouteMenu>
+            <AdminTags />
+          </RouteMenu>
+        ),
+
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -117,7 +157,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/prt",
-    element: <ProgramReviewTool />,
+    element: (
+      <RouteMenu>
+        <ProgramReviewTool />
+      </RouteMenu>
+    ),
     loader: async () => {
       const user = (await login()) as Response | IAuthUser;
       if ("status" in user && user.status === REDIRECT) {
@@ -128,7 +172,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/" />,
+    loader: () => redirect("/"),
   },
 ]);
 

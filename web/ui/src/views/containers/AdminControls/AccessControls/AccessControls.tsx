@@ -20,27 +20,22 @@ import {
   useGetAccessesQuery,
   useRevokeAccessMutation,
 } from "state/query/api/portal/users/AccessApi";
-import { transformToOption } from "views/utils/OptionsUtility";
+
+import { ROLE_LEVELS } from "utils/PermissionUtility";
 import { debounce } from "utils/PromiseUtility";
+import { transformToOption } from "views/utils/OptionsUtility";
 
 import styles from "views/containers/AdminControls/AccessControls/AccessControls.module.css";
 import adminStyles from "views/containers/AdminControls/AdminControls.module.css";
 
 type ReactSetStateHook = React.Dispatch<React.SetStateAction<Option[]>>;
-
 /**
  * ACCESS CONSTANTS.
  */
 
-const ROLE_LEVELS = {
-  SUPERUSER: 1,
-  BUSINESS_PROCESS_OWNER: 2,
-  DATA_STEWARD: 3,
-};
-
 const STAGE_LEVELS_FOR_ROLES = {
   [ROLE_LEVELS.DATA_STEWARD]: [],
-  [ROLE_LEVELS.BUSINESS_PROCESS_OWNER]: [2],
+  [ROLE_LEVELS.BUSINESS_PROCESS_EXPERT]: [2],
   [ROLE_LEVELS.SUPERUSER]: [2, 3],
 };
 
@@ -71,7 +66,7 @@ const ROLE_LEVELS_OPTIONS: Option[] = [
   transformToOption("Superuser", ROLE_LEVELS.SUPERUSER),
   transformToOption(
     "Business Process Expert",
-    ROLE_LEVELS.BUSINESS_PROCESS_OWNER
+    ROLE_LEVELS.BUSINESS_PROCESS_EXPERT
   ),
   transformToOption("Data Steward", ROLE_LEVELS.DATA_STEWARD),
 ];

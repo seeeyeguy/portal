@@ -1,0 +1,15 @@
+.icon-badge {
+  font-size: 14px;
+  height: 16px;
+  line-height: 16px;
+  min-width: 16px;
+  pointer-events: none;
+  position: absolute;
+  right: -10px;
+  top: -3px;
+}
+
+.icon-wrapper {
+  display: inline-block;
+  position: relative;
+}

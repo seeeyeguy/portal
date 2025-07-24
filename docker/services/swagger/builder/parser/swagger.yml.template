@@ -1759,7 +1759,6 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchRequestInvalidParametersResponse"
-                  - $ref: "#/components/schemas/FetchRequestOriginatorDoesNotHaveAccess"
         "404":
           description: "`Resource`, or `User` does not exist."
           content:
@@ -5946,11 +5945,6 @@ components:
       title: "Fetch `Request` error response due to providing invalid
         parameters."
       example: "Invalid parameters given."
-
-    FetchRequestOriginatorDoesNotHaveAccess:
-      title: "Fetch `Request` error response due to providing an email for
-        a `User` that does not have an `Access`."
-      example: "Originator (email={originator}) has not created a request."
     
     FetchRequestByIdRequestDoesNotExistResponse:
       title: "Fetch `Request` error response due to providing an id for

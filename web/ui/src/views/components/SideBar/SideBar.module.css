@@ -10,10 +10,12 @@
   max-height: 0px;
   overflow: hidden;
   transition: max-height 0.2s ease;
+  transition: padding-top 0.1s ease-in;
 }
 
 .menu-content.expanded {
   max-height: 90%;
+  padding-top: 0.5rem;
 }
 
 .menu-content.expanded.scrollable {
@@ -43,7 +45,7 @@
 }
 
 .menu-header:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .menu-header svg {
@@ -78,9 +80,33 @@
   visibility: hidden;
 }
 
+.menu-items li[class*="p-menuitem"] {
+  align-items: center;
+  display: flex;
+  height: 3rem;
+}
+
 .menu-items li[class*="p-menuitem"]:hover {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
+}
+
+.menu-items li[class*="p-menuitem"] [class*="p-menuitem-content"] {
+  border-radius: 4px;
+  height: 3rem;
+  width: 100%;
+}
+
+.menu-items li[class*="p-menuitem"] [class*="p-menuitem-text"] {
+  margin-left: 1rem;
+}
+
+.menu-items li[class*="p-menuitem"] svg {
+  margin-right: 0;
+}
+
+.menu-items li [class*="p-menuitem-link"] {
+  height: 100%;
 }
 
 .menu-items li[class*="p-submenu-header"],
@@ -88,6 +114,7 @@
 .menu-items li [class*="p-menuitem-link"] svg,
 .menu-items li [class*="p-menuitem-link"] [class*="p-menuitem-text"] {
   color: black;
+  overflow: visible;
   padding: 0;
 }
 
@@ -107,6 +134,11 @@
   height: var(--side-bar-svg-size);
   margin: 10px calc(var(--side-bar-rail-width) / 5);
   width: var(--side-bar-svg-size);
+}
+
+.selected-item {
+  background-color: rgba(0, 0, 0, 0.13);
+  border-radius: 4px;
 }
 
 .side-bar {
@@ -172,6 +204,18 @@
   padding: 20px calc(var(--side-bar-rail-width) / 7);
 }
 
+/* Force sidebar to close. */
+.side-bar-closed {
+  min-width: var(--side-bar-rail-width) !important;
+}
+
+/* Force sidebar to close. */
+.side-bar-closed .side-bar-header,
+.side-bar-closed .menu-header-label {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
 .side-bar-expanded {
   min-width: var(--side-bar-expanded-width);
 }
@@ -183,6 +227,7 @@
 
 .side-bar-header {
   display: flex;
+  height: 2.2rem;
   justify-content: center;
   margin: 35px calc(var(--side-bar-rail-width) / 2.8) 0px;
   position: relative;

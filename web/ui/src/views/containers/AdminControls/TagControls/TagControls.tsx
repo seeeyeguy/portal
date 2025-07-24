@@ -35,15 +35,10 @@ import {
   useUpdateTagMutation,
 } from "state/query/api/portal/directory/TagApi";
 
+import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
 import { parseTags } from "views/utils/TagUtility";
 
 import styles from "views/containers/AdminControls/AdminControls.module.css";
-
-const ROLE_LEVELS = {
-  SUPERUSER: 1,
-  BUSINESS_PROCESS_OWNER: 2,
-  DATA_STEWARD: 3,
-};
 
 const convertToTagLabel = (tagSubmission: TagFormData): string => {
   let tagLabel = "";
@@ -61,10 +56,7 @@ export default function TagControls() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () =>
-      loaderData.user.accesses?.some(
-        (access) => access.role.level == ROLE_LEVELS.SUPERUSER
-      ) || loaderData.user.isAdmin,
+    () => hasNeededSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 
