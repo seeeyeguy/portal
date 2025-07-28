@@ -21,11 +21,12 @@ class UsersConfig(AppConfig):
 
         # pylint: disable=import-outside-toplevel,invalid-name
         import logging
+        import pandas as pd
 
         from django.contrib.auth import get_user_model
         from django.core.management import call_command
 
-        from directory.models import Resource
+        from directory.models import Resource, Tag
         from request.models import Request
 
         from manager import settings
@@ -99,8 +100,62 @@ class UsersConfig(AppConfig):
             log_msg = f"Updated {row_count} Resource records..."
             LOGGER.info(log_msg)
 
+        def update_tag_labels(**kwargs: dict) -> None:
+            """Update label of each tag to match its source within `master.xlsx`."""
+
+            if settings.BUILD not in {
+                settings.ApplicationBuild.DEVELOPMENT,
+            }:
+                return None
+
+            if kwargs["using"] != DEFAULT_DATABASE_ALIAS:  # type: ignore[comparison-overlap]
+                return None
+
+            df = pd.read_excel(
+                "portal/db/init/scripts/source/master.xlsx", sheet_name="CURATED"
+            )
+
+            LOGGER.info("Reading Tag Labels...")
+
+            # Read normal tags from master source file.
+            df_tags = df.dropna(subset=["Tags"])
+
+            LOGGER.info("Updating Tag Labels...")
+
+            # Create de-duped list of normal tags from master source file.
+            tags = set()
+            for tag in df_tags["Tags"]:
+                labels = [label.strip() for label in tag.split(",")]
+                labels = [label for label in labels if len(label)]
+                tags |= set(labels)
+            tags = list(tags)
+
+            # Update tag labels to match those in the master source file.
+            for tag in tags:
+                Tag.objects.filter(label__iexact=tag).update(label=tag)
+
+            LOGGER.info("Reading Site Labels...")
+
+            # Read site tags from master source file.
+            df_sites = df.dropna(subset=["Site"])
+
+            LOGGER.info("Updating Site Labels...")
+
+            # Create a de-duped list of site tags from the master source file.
+            sites = set()
+            for tag in df_sites["Site"]:
+                sites.add(tag.strip())
+            sites = list(sites)
+
+            # Update site labels to match those in the master source file.
+            for tag in sites:
+                Tag.objects.filter(label__iexact=f"filter::site:{tag}").update(
+                    label=f"filter::site:{tag}"
+                )
+
         post_migrate.connect(load_initial_dataset, sender=self, weak=False)
         post_migrate.connect(create_development_user, sender=self, weak=False)
         post_migrate.connect(add_primary_point_of_contact, sender=self, weak=False)
+        post_migrate.connect(update_tag_labels, sender=self, weak=False)
 
         return super().ready()
