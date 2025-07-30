@@ -280,6 +280,8 @@ SSO_SERVICE_ENCRYPTION_KEY = os.getenv("SSO_SERVICE_ENCRYPTION_KEY", "secret-key
 CSRF_TRUSTED_ORIGINS = [
     f"{SCHEME}://{WEB_HOST}:{WEB_PORT}",
     f"{SCHEME}://{WEB_HOST}",
+    f"{SCHEME}://{DNS_NAME}:{WEB_PORT}",
+    f"{SCHEME}://{DNS_NAME}",
     f"http://{SERVER_HOST.lower()}:{SWAGGER_PORT}",
 ]
 
@@ -323,6 +325,7 @@ ALLOWED_HOSTS = [
     ".cs.myharris.net",
     ".gcsd.harris.com",
     ".rootforest.com",
+    ".l3harris.com",
     WEB_HOST,
     DNS_NAME,
 ]
