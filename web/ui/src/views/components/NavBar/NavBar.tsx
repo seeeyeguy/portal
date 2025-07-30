@@ -51,11 +51,13 @@ const RESTRICTED_PATHS = new Set(["/admin"]);
 export interface INavBarProps {
   profile: IProfile;
   hideSearchBar?: boolean;
+  navBarRefs?: React.RefObject<HTMLElement>[];
 }
 
 export default function NavBar({
   profile,
   hideSearchBar = false,
+  navBarRefs = [],
 }: INavBarProps) {
   const profileData = {
     ...PROFILE,
@@ -216,6 +218,7 @@ export default function NavBar({
       hideSearch={hideSearchBar}
       isSearchDisabled={false}
       initialInput={searchTerm}
+      navBarRefs={navBarRefs}
       searchOptions={loadSearchOptions}
       onSubmitSearch={onSubmitSearch}
       onSubmitSelect={onSubmitSearch}

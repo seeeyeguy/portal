@@ -26,6 +26,11 @@ export default function Home() {
 
   const dispatch = useAppDispatch();
 
+  // Refs to manipulate navbar profile menu.
+  const smNavBarRef = React.useRef<HTMLElement>(null);
+  const mdNavBarRef = React.useRef<HTMLElement>(null);
+  const lgNavBarRef = React.useRef<HTMLElement>(null);
+
   const filterData = React.useRef<{ [key: string]: string[] }>(
     JSON.parse(localStorage.getItem("filterData") ?? "{}")
   );
@@ -51,6 +56,18 @@ export default function Home() {
   const { data: tagsApiResponse } = useSearchTagsQuery(FILTER_PREFIX);
   const filterTags = (tagsApiResponse?.data ?? []) as ITag[];
 
+  const closeNavBarProfile = React.useCallback(() => {
+    if (smNavBarRef.current) {
+      smNavBarRef.current.click();
+    }
+    if (mdNavBarRef.current) {
+      mdNavBarRef.current.click();
+    }
+    if (lgNavBarRef.current) {
+      lgNavBarRef.current.click();
+    }
+  }, []);
+
   // Load initial user session data.
   React.useEffect(() => {
     dispatch(loadDirectoryResourceSearchState(loaderData.user.email));
@@ -61,10 +78,19 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div
+      className="app-container"
+      onClick={() => {
+        closeNavBarProfile();
+      }}
+      aria-description="container for main application"
+    >
       <FAQModal />
       <IntroModal />
-      <NavBar profile={profile} />
+      <NavBar
+        profile={profile}
+        navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
+      />
       <div id="page-content">
         <Controls />
         <Favorites favorites={favorites} profile={profile} />
@@ -75,6 +101,6 @@ export default function Home() {
           profile={profile}
         />
       </div>
-    </>
+    </div>
   );
 }
