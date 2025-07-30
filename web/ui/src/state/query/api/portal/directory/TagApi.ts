@@ -1,3 +1,5 @@
+import lodash from "lodash";
+
 import { DELETE, POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
 import { IApiTag } from "state/query/api/portal/directory/TagHelper";
@@ -64,7 +66,29 @@ const tagApi = api.injectEndpoints({
         data: response as ITag,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Tag", "TagSearch"],
+      invalidatesTags: ["TagSearch"],
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        // Perform optimistic update to cache entry.
+        const patchResult = dispatch(
+          tagApi.util.updateQueryData("getTags", null, (draft) => {
+            const updatedEntries = lodash
+              .cloneDeep(draft.data as ITag[])
+              .map((tag) => (tag.id === id ? { ...tag, ...patch?.body } : tag));
+            draft.data = updatedEntries;
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          /**
+           If failure occurs, undo the patch and invalidate the tag
+           to perform a re-fetch.
+          */
+          patchResult.undo();
+          dispatch(api.util.invalidateTags(["Tag"]));
+        }
+      },
     }),
     removeTag: builder.mutation<TApiTagResponse, number>({
       query: (id: number) => ({
@@ -75,7 +99,29 @@ const tagApi = api.injectEndpoints({
         data: response,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Tag", "TagSearch"],
+      invalidatesTags: ["TagSearch"],
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        // Perform optimistic update to cache entry.
+        const patchResult = dispatch(
+          tagApi.util.updateQueryData("getTags", null, (draft) => {
+            const updatedEntries = lodash
+              .cloneDeep(draft.data as ITag[])
+              .filter((tag) => tag.id !== id);
+            draft.data = updatedEntries;
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          /**
+           If failure occurs, undo the patch and invalidate the tag
+           to perform a re-fetch.
+          */
+          patchResult.undo();
+          dispatch(api.util.invalidateTags(["Tag"]));
+        }
+      },
     }),
   }),
 });

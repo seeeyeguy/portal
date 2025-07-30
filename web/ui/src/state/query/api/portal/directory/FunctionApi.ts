@@ -1,3 +1,5 @@
+import lodash from "lodash";
+
 import { DELETE, POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
 import { IApiFunction } from "state/query/api/portal/directory/FunctionHelper";
@@ -5,7 +7,7 @@ import api from "state/query/api";
 
 import { IFunction } from "definitions/portal/directory/Function.types";
 
-type TApiFunctionResponse = {
+export type TApiFunctionResponse = {
   data: IFunction | IFunction[] | number;
   status: number | undefined;
 };
@@ -69,7 +71,32 @@ const functionApi = api.injectEndpoints({
         data: response as IFunction,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Function"],
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        // Perform optimistic update to cache entry.
+        const patchResult = dispatch(
+          functionApi.util.updateQueryData("getFunctions", null, (draft) => {
+            const updatedEntries = lodash
+              .cloneDeep(draft.data as IFunction[])
+              .map((functionEntry) =>
+                functionEntry.id === id
+                  ? { ...functionEntry, ...patch?.body }
+                  : functionEntry
+              );
+            draft.data = updatedEntries;
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          /**
+           If failure occurs, undo the patch and invalidate the tag
+           to perform a re-fetch.
+          */
+          patchResult.undo();
+          dispatch(api.util.invalidateTags(["Function"]));
+        }
+      },
     }),
     removeFunction: builder.mutation<TApiFunctionResponse, number>({
       query: (id: number) => ({
@@ -80,7 +107,28 @@ const functionApi = api.injectEndpoints({
         data: response,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["Function"],
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        // Perform optimistic update to cache entry.
+        const patchResult = dispatch(
+          functionApi.util.updateQueryData("getFunctions", null, (draft) => {
+            const updatedEntries = lodash
+              .cloneDeep(draft.data as IFunction[])
+              .filter((functionEntry) => functionEntry.id !== id);
+            draft.data = updatedEntries;
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          /**
+           If failure occurs, undo the patch and invalidate the tag
+           to perform a re-fetch.
+          */
+          patchResult.undo();
+          dispatch(api.util.invalidateTags(["Function"]));
+        }
+      },
     }),
   }),
 });
