@@ -68,6 +68,12 @@ const PORTFOLIO_POLL_MAX_REQUESTS = 18;
 
 export default function ProgramReviewTool() {
   const loaderData = useLoaderData() as { user: IAuthUser };
+
+  // Refs to manipulate navbar profile menu.
+  const smNavBarRef = React.useRef<HTMLElement>(null);
+  const mdNavBarRef = React.useRef<HTMLElement>(null);
+  const lgNavBarRef = React.useRef<HTMLElement>(null);
+
   const [polling, setPolling] = React.useState<number>(0);
   const [currentMarker, setCurrentMarker] = React.useState<number | null>(null);
   const [progressMarkers, setProgressMarkers] = React.useState<
@@ -108,6 +114,18 @@ export default function ProgramReviewTool() {
   // Portfolio Review request properties.
   const [reviewName, setReviewName] = React.useState<string>();
   const [reviewPrograms, setReviewPrograms] = React.useState<number[]>([]);
+
+  const closeNavBarProfile = React.useCallback(() => {
+    if (smNavBarRef.current) {
+      smNavBarRef.current.click();
+    }
+    if (mdNavBarRef.current) {
+      mdNavBarRef.current.click();
+    }
+    if (lgNavBarRef.current) {
+      lgNavBarRef.current.click();
+    }
+  }, []);
 
   const getPortfolioStatus = React.useCallback(
     async (programs: number[], name: string) => {
@@ -235,9 +253,19 @@ export default function ProgramReviewTool() {
   }
 
   return (
-    <>
+    <div
+      className="app-container"
+      onClick={() => {
+        closeNavBarProfile();
+      }}
+      aria-description="container for program review tool application"
+    >
       <FAQModal />
-      <NavBar profile={profile} hideSearchBar={true} />
+      <NavBar
+        profile={profile}
+        hideSearchBar={true}
+        navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
+      />
 
       <div id="page-content">
         <header className={styles["program-review-header"]}>
@@ -287,6 +315,6 @@ export default function ProgramReviewTool() {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }
