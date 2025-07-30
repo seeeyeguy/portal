@@ -35,6 +35,8 @@ django-extensions==3.2.3
 # A module to help you type hint your django project
 # to work with different IDEs (VSCode, PyCharm, etc).
 django_hint==0.3.2
+# A full featured Redis cache and session backend for Django.
+django-redis==6.0.0
 # A powerful and flexible toolkit for building Web APIs.
 djangorestframework==3.15.2
 # A simple app that provides django integration for

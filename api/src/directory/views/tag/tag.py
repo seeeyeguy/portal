@@ -18,7 +18,11 @@ from directory import controllers, exceptions, models
 from directory.models.Tag.serializers import TagSerializer
 from directory.views import serializers
 
-from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
+from manager.cache.decorators import (
+    cache_request,
+    DEFAULT_TIMEOUT,
+    invalidate_request_cache,
+)
 from manager.utils.decorators import login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
@@ -34,6 +38,7 @@ class Tag(View):
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.CreateTagRequest))
+    @method_decorator(invalidate_request_cache())
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/tags."""
 
@@ -50,6 +55,7 @@ class Tag(View):
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.UpdateTagRequest))
+    @method_decorator(invalidate_request_cache())
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/tags."""
 
@@ -77,6 +83,7 @@ class Tag(View):
 
     @method_decorator(login_required())
     @method_decorator(with_serializer(serializers.DeleteTagRequest))
+    @method_decorator(invalidate_request_cache())
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/tags."""
 

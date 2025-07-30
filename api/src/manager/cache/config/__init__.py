@@ -18,7 +18,7 @@ import os
 class CACHE:
     """Application Cache Settings."""
 
-    BACKEND = "django.core.cache.backends.redis.RedisCache"
+    BACKEND = "django_redis.cache.RedisCache"
     PASSWORD = os.getenv("REDIS_CACHE_PASSWORD", "password")
     HOST = os.getenv("REDIS_CACHE_HOST", "cache")
     PORT = os.getenv("REDIS_CACHE_PORT", "6379")

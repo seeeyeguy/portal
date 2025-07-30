@@ -21,7 +21,11 @@ from directory.models.Function.serializers import FunctionSerializer
 from directory.views import serializers
 
 
-from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
+from manager.cache.decorators import (
+    cache_request,
+    DEFAULT_TIMEOUT,
+    invalidate_request_cache,
+)
 from manager.utils.decorators import admin_required, login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
@@ -39,6 +43,7 @@ class Function(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.CreateFunctionRequest))
+    @method_decorator(invalidate_request_cache())
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/functions."""
 
@@ -58,6 +63,7 @@ class Function(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.UpdateFunctionRequest))
+    @method_decorator(invalidate_request_cache())
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/functions."""
 
@@ -89,6 +95,7 @@ class Function(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.DeleteFunctionRequest))
+    @method_decorator(invalidate_request_cache())
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/functions."""
 

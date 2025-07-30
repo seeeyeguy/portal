@@ -18,7 +18,11 @@ from directory import controllers, exceptions
 from directory.models.EmployeeLevel.serializers import EmployeeLevelSerializer
 from directory.views import serializers
 
-from manager.cache.decorators import cache_request, DEFAULT_TIMEOUT
+from manager.cache.decorators import (
+    cache_request,
+    DEFAULT_TIMEOUT,
+    invalidate_request_cache,
+)
 from manager.utils.decorators import admin_required, login_required, with_serializer
 from manager.utils.types.request import DjangoHttpRequest
 
@@ -35,6 +39,7 @@ class EmployeeLevel(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.CreateEmployeeLevelRequest))
+    @method_decorator(invalidate_request_cache())
     def post(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for POST /v1/directory/employee-levels."""
 
@@ -56,6 +61,7 @@ class EmployeeLevel(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.UpdateEmployeeLevelRequest))
+    @method_decorator(invalidate_request_cache())
     def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for PUT /v1/directory/employee-levels."""
 
@@ -89,6 +95,7 @@ class EmployeeLevel(View):
     @method_decorator(login_required())
     @method_decorator(admin_required())
     @method_decorator(with_serializer(serializers.DeleteEmployeeLevelRequest))
+    @method_decorator(invalidate_request_cache())
     def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
         """Endpoint for DELETE /v1/directory/employee-levels."""
 
