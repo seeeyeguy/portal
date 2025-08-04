@@ -79,7 +79,7 @@ export default function Home() {
 
   return (
     <div
-      className="app-container"
+      id="app-container"
       onClick={() => {
         closeNavBarProfile();
       }}
