@@ -35,7 +35,7 @@ import {
   useUpdateTagMutation,
 } from "state/query/api/portal/directory/TagApi";
 
-import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
+import { hasSuperuserPermissions } from "utils/PermissionUtility";
 import { parseTags } from "views/utils/TagUtility";
 
 import styles from "views/containers/AdminControls/AdminControls.module.css";
@@ -56,7 +56,7 @@ export default function TagControls() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () => hasNeededSuperuserPermissions(loaderData.user),
+    () => hasSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 

@@ -11,7 +11,7 @@ import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 
 import {
   hasNeededBusinessProcessExpertPermissions,
-  hasNeededSuperuserPermissions,
+  hasSuperuserPermissions,
 } from "utils/PermissionUtility";
 
 import styles from "views/pages/AdminPanel/AdminPanel.module.css";
@@ -60,7 +60,7 @@ export default function AdminPanel({
     return <Navigate to="/" />;
   }
 
-  if (!hasNeededSuperuserPermissions(loaderData.user, path)) {
+  if (!hasSuperuserPermissions(loaderData.user, path)) {
     return <Navigate to="/admin" />;
   }
 

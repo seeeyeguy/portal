@@ -6,3 +6,7 @@
   right: -3px;
   top: -8px;
 }
+
+.warning-badge{
+  background-color: var(--color-warning)
+}
