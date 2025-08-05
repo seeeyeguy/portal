@@ -254,7 +254,7 @@ export default function ProgramReviewTool() {
 
   return (
     <div
-      className="app-container"
+      id="app-container"
       onClick={() => {
         closeNavBarProfile();
       }}
