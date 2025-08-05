@@ -31,7 +31,7 @@ import visitApi, {
 import { useGetRequestsQuery } from "state/query/api/portal/request/RequestApi";
 import { useAppDispatch } from "state/store/store";
 
-import { requiredPermissions } from "utils/PermissionUtility";
+import { hasSuperuserPermissions, requiredPermissions } from "utils/PermissionUtility";
 
 import styles from "views/containers/RouteMenu/RouteMenu.module.css";
 
@@ -51,28 +51,77 @@ export interface RouteMenuProps {
 const RESOURCE_LINKS = {
   PROGRAM_HEALTH_DASHBOARD: 59,
   RISK_TRACKER: 135,
-  SMART_PERFORMANCE_METRICS: 132
+  SMART_PERFORMANCE_METRICS: 132,
   // TODO: Add PRT ID when resource is created in production.
 };
 
 const DRAFT_STAGE = 1;
 const REVISE_STAGE = 4;
 
+const SUBMITTED = 2; 
+const APPROVED_BY_BPE = 3; 
+
+const REQUEST_STATUSES = {
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+};
+
 export default function RouteMenu({ children }: RouteMenuProps) {
   const loaderData = useLoaderData() as { user: IAuthUser };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const superuserPermissions = React.useMemo(
+    () => hasSuperuserPermissions(loaderData.user),
+    [loaderData]
+  );
+
+
+  const usersPermittedStages = React.useMemo(
+    () =>
+      Array.from(
+        loaderData.user.accesses?.reduce((acc, access) => {
+          access.stages.forEach((level) => {
+            acc.add(level);
+          });
+          return acc;
+        }, new Set<number>())
+      ),
+    [loaderData]
+  );
+
+  const usersPermittedSubFunctions = React.useMemo(
+    () =>
+      Array.from(
+        loaderData.user.accesses?.reduce((acc, access) => {
+          access.subfunctions.forEach((id) => {
+            if (!superuserPermissions) {
+              acc.add(id);
+            }
+          });
+          return acc;
+        }, new Set<number>())
+      ),
+    [loaderData, superuserPermissions]
+  );
+
   // Get User `Request`s in the draft stage.
-  const { data: requests } = useGetRequestsQuery({
+  const { data: revisionRequests } = useGetRequestsQuery({
     originator: loaderData.user.email,
     stages: [DRAFT_STAGE],
+  });
+
+  const { data: requestsAwaitingApproval } = useGetRequestsQuery({
+    stages: usersPermittedStages,
+    status: REQUEST_STATUSES.PENDING,
+    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions
   });
 
   // Count number of `Request`s awaiting revision owned by user.
   const requestNotifications = React.useMemo(
     () =>
-      requests?.data.reduce((count, request) => {
+      revisionRequests?.data.reduce((count, request) => {
         const previousTransition =
           request.transitions.nodes[request.transitions.latest]
             .previousTransition;
@@ -85,9 +134,32 @@ export default function RouteMenu({ children }: RouteMenuProps) {
         }
         return count;
       }, 0) ?? 0,
-    [requests]
+    [revisionRequests]
   );
 
+// Memoized values for Superuser and Business Process Expert notifications.
+const [superuserNotifications, businessProcessExpertNotifications] = React.useMemo<[number, number]>(() => {
+  const counts = requestsAwaitingApproval?.data.reduce(
+    (acc, request) => {
+      const latestTransitionIndex = request.transitions.latest;
+      const latestTransition = request.transitions.nodes[latestTransitionIndex];
+      
+      if (latestTransition) {
+        const stageLevel = latestTransition.stage.level;
+        if (stageLevel === APPROVED_BY_BPE) {
+          acc.superuser += 1;
+        } else if (stageLevel === SUBMITTED) {
+          acc.businessProcessExpert += 1;
+        }
+      }
+
+      return acc;
+    },
+    { superuser: 0, businessProcessExpert: 0 }
+  ) ?? { superuser: 0, businessProcessExpert: 0 };
+
+  return [counts.superuser, counts.businessProcessExpert];
+}, [requestsAwaitingApproval]);
 
   function processMenuItems(
     items: MenuItem[] | IMenuLink[]
@@ -118,7 +190,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
         // All permissions must be true for page to be visible.
         return {
           ...item,
-          visible: requiredPermissions(loaderData.user, pathToCheck)
+          visible: requiredPermissions(loaderData.user, pathToCheck),
         };
       })
       .filter(
@@ -129,11 +201,14 @@ export default function RouteMenu({ children }: RouteMenuProps) {
       );
   }
 
-  const onLinkClick = React.useCallback(async (id: number) => {
-    const body: TApiPostVisitRequest = { resource: id };
-    const promise = dispatch(visitApi.endpoints.addVisit.initiate(body));
-    await promise;
-  }, [dispatch]);
+  const onLinkClick = React.useCallback(
+    async (id: number) => {
+      const body: TApiPostVisitRequest = { resource: id };
+      const promise = dispatch(visitApi.endpoints.addVisit.initiate(body));
+      await promise;
+    },
+    [dispatch]
+  );
 
   const MENU_LINKS: IMenuLink[] = [
     {
@@ -177,7 +252,9 @@ export default function RouteMenu({ children }: RouteMenuProps) {
             );
           },
           icon: <FontAwesomeIcon icon={faMagnifyingGlassChart} />,
-          data: { path: "https://l3t.sharepoint.us/sites/Boots/Pub_Docs/Risk_Management.pdf" },
+          data: {
+            path: "https://l3t.sharepoint.us/sites/Boots/Pub_Docs/Risk_Management.pdf",
+          },
         },
         {
           label: "SMART  ",
@@ -199,8 +276,8 @@ export default function RouteMenu({ children }: RouteMenuProps) {
       icon: (
         <IconBadge
           icon={<FontAwesomeIcon icon={faUserGear} />}
-          badgeValue={requestNotifications > 0 ? " " : null}
-          badgeClassName={styles["header-badge"]}
+          badgeValue={requestNotifications || businessProcessExpertNotifications || superuserNotifications ? " " : null}
+          badgeClassName={`${styles["header-badge"]} ${superuserNotifications ? styles["warning-badge"]: ''}`}
         />
       ),
       path: null,
@@ -212,7 +289,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
             <IconBadge
               icon={<FontAwesomeIcon icon={faLink} />}
               badgeValue={
-                requestNotifications > 0
+                requestNotifications
                   ? requestNotifications?.toString()
                   : null
               }
@@ -250,7 +327,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           icon: (
             <IconBadge
               icon={<FontAwesomeIcon icon={faCheckToSlot} />}
-              badgeValue={null}
+              badgeValue={
+                superuserNotifications + businessProcessExpertNotifications > 0
+                  ? (superuserNotifications + businessProcessExpertNotifications).toString()
+                  : null
+              }
+              badgeClassName={superuserNotifications ? styles["warning-badge"]: ''}
             />
           ),
           data: { path: "/admin/approvals" },

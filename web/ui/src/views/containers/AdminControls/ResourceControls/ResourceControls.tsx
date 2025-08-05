@@ -43,7 +43,7 @@ import {
   transformResourceToFormData,
 } from "views/schemas/administration/ResourceSchema";
 
-import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
+import { hasSuperuserPermissions } from "utils/PermissionUtility";
 import { debounce } from "utils/PromiseUtility";
 import { base64ImageToFile } from "views/utils/ImageUtility";
 import {
@@ -64,7 +64,7 @@ export default function AdminResources() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () => hasNeededSuperuserPermissions(loaderData.user),
+    () => hasSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 

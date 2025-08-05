@@ -24,7 +24,7 @@ export const RESTRICTED_ADMIN_PAGES = {
  * @param {string} urlPath - The URL path to check permissions for.
  * @returns {boolean} - Returns true if the user has the necessary Superuser permissions, otherwise false.
  */
-export function hasNeededSuperuserPermissions(
+export function hasSuperuserPermissions(
   user: IAuthUser,
   urlPath?: string
 ): boolean {
@@ -109,7 +109,7 @@ export function hasNeededDataStewardPermissions(
  */
 export function requiredPermissions(user: IAuthUser, urlPath: string): boolean {
   return [
-    hasNeededSuperuserPermissions(user, urlPath),
+    hasSuperuserPermissions(user, urlPath),
     hasNeededBusinessProcessExpertPermissions(user, urlPath),
     hasNeededDataStewardPermissions(user, urlPath),
   ].every((permission) => permission);

@@ -39,7 +39,7 @@ import {
   transformResourceToFormData,
 } from "views/schemas/administration/ResourceSchema";
 
-import { hasNeededSuperuserPermissions } from "utils/PermissionUtility";
+import { hasSuperuserPermissions } from "utils/PermissionUtility";
 import {
   getThumbnailPath,
   resourceTypeThumbnailPaths,
@@ -97,7 +97,7 @@ export default function ApprovalsControls() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const superuserPermissions = React.useMemo(
-    () => hasNeededSuperuserPermissions(loaderData.user),
+    () => hasSuperuserPermissions(loaderData.user),
     [loaderData]
   );
 
