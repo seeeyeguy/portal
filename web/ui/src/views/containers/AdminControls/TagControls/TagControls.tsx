@@ -196,8 +196,11 @@ export default function TagControls() {
               ? { examples: categories }
               : {
                   oneOf: [
-                    { const: undefined, title: "Select Category" },
-                    ...categories.map((value) => ({ const: value })),
+                    { const: "", title: "Select Category" },
+                    ...categories.map((value) => ({
+                      const: value,
+                      title: value,
+                    })),
                   ],
                 }),
           },

@@ -10,7 +10,7 @@ import { IAuthUser } from "definitions/Sso.types";
 import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 
 import {
-  hasNeededBusinessProcessExpertPermissions,
+  hasBusinessProcessExpertPermissions,
   hasSuperuserPermissions,
 } from "utils/PermissionUtility";
 
@@ -64,7 +64,7 @@ export default function AdminPanel({
     return <Navigate to="/admin" />;
   }
 
-  if (!hasNeededBusinessProcessExpertPermissions(loaderData.user, path)) {
+  if (!hasBusinessProcessExpertPermissions(loaderData.user, path)) {
     return <Navigate to="/admin" />;
   }
 

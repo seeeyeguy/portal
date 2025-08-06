@@ -50,7 +50,7 @@ export function hasSuperuserPermissions(
  * @param {string} urlPath - The URL path to check permissions for.
  * @returns {boolean} - Returns true if the user has the necessary Business Process Expert permissions, otherwise false.
  */
-export function hasNeededBusinessProcessExpertPermissions(
+export function hasBusinessProcessExpertPermissions(
   user: IAuthUser,
   urlPath?: string
 ): boolean {
@@ -78,7 +78,7 @@ export function hasNeededBusinessProcessExpertPermissions(
  * @param {string} urlPath - The URL path to check permissions for.
  * @returns {boolean} - Returns true if the user has the necessary Data Steward permissions, otherwise false.
  */
-export function hasNeededDataStewardPermissions(
+export function hasDataStewardPermissions(
   user: IAuthUser,
   urlPath?: string
 ): boolean {
@@ -110,7 +110,7 @@ export function hasNeededDataStewardPermissions(
 export function requiredPermissions(user: IAuthUser, urlPath: string): boolean {
   return [
     hasSuperuserPermissions(user, urlPath),
-    hasNeededBusinessProcessExpertPermissions(user, urlPath),
-    hasNeededDataStewardPermissions(user, urlPath),
+    hasBusinessProcessExpertPermissions(user, urlPath),
+    hasDataStewardPermissions(user, urlPath),
   ].every((permission) => permission);
 }
