@@ -31,7 +31,11 @@ import visitApi, {
 import { useGetRequestsQuery } from "state/query/api/portal/request/RequestApi";
 import { useAppDispatch } from "state/store/store";
 
-import { hasSuperuserPermissions, requiredPermissions } from "utils/PermissionUtility";
+import {
+  hasBusinessProcessExpertPermissions,
+  hasSuperuserPermissions,
+  requiredPermissions,
+} from "utils/PermissionUtility";
 
 import styles from "views/containers/RouteMenu/RouteMenu.module.css";
 
@@ -58,8 +62,8 @@ const RESOURCE_LINKS = {
 const DRAFT_STAGE = 1;
 const REVISE_STAGE = 4;
 
-const SUBMITTED = 2; 
-const APPROVED_BY_BPE = 3; 
+const SUBMITTED = 2;
+const APPROVED_BY_BPE = 3;
 
 const REQUEST_STATUSES = {
   PENDING: "PENDING",
@@ -77,6 +81,10 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     [loaderData]
   );
 
+  const businessProcessExpertPermissions = React.useMemo(
+    () => hasBusinessProcessExpertPermissions(loaderData.user),
+    [loaderData]
+  );
 
   const usersPermittedStages = React.useMemo(
     () =>
@@ -115,7 +123,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
   const { data: requestsAwaitingApproval } = useGetRequestsQuery({
     stages: usersPermittedStages,
     status: REQUEST_STATUSES.PENDING,
-    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions
+    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions,
   });
 
   // Count number of `Request`s awaiting revision owned by user.
@@ -137,29 +145,35 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     [revisionRequests]
   );
 
-// Memoized values for Superuser and Business Process Expert notifications.
-const [superuserNotifications, businessProcessExpertNotifications] = React.useMemo<[number, number]>(() => {
-  const counts = requestsAwaitingApproval?.data.reduce(
-    (acc, request) => {
-      const latestTransitionIndex = request.transitions.latest;
-      const latestTransition = request.transitions.nodes[latestTransitionIndex];
-      
-      if (latestTransition) {
-        const stageLevel = latestTransition.stage.level;
-        if (stageLevel === APPROVED_BY_BPE) {
-          acc.superuser += 1;
-        } else if (stageLevel === SUBMITTED) {
-          acc.businessProcessExpert += 1;
-        }
-      }
+  // Memoized values for Superuser and Business Process Expert notifications.
+  const [superuserNotifications, businessProcessExpertNotifications] =
+    React.useMemo<[number, number]>(() => {
+      const counts = requestsAwaitingApproval?.data.reduce(
+        (acc, request) => {
+          const latestTransitionIndex = request.transitions.latest;
+          const latestTransition =
+            request.transitions.nodes[latestTransitionIndex];
 
-      return acc;
-    },
-    { superuser: 0, businessProcessExpert: 0 }
-  ) ?? { superuser: 0, businessProcessExpert: 0 };
+          if (latestTransition) {
+            const stageLevel = latestTransition.stage.level;
+            if (stageLevel === APPROVED_BY_BPE) {
+              acc.superuser += 1;
+            } else if (stageLevel === SUBMITTED) {
+              acc.businessProcessExpert += 1;
+            }
+          }
 
-  return [counts.superuser, counts.businessProcessExpert];
-}, [requestsAwaitingApproval]);
+          return acc;
+        },
+        { superuser: 0, businessProcessExpert: 0 }
+      ) ?? { superuser: 0, businessProcessExpert: 0 };
+
+      // Only return notifications if user has the correct permissions.
+      return [
+        superuserPermissions ? counts.superuser : 0,
+        businessProcessExpertPermissions ? counts.businessProcessExpert : 0,
+      ];
+    }, [businessProcessExpertPermissions, requestsAwaitingApproval, superuserPermissions]);
 
   function processMenuItems(
     items: MenuItem[] | IMenuLink[]
@@ -276,8 +290,14 @@ const [superuserNotifications, businessProcessExpertNotifications] = React.useMe
       icon: (
         <IconBadge
           icon={<FontAwesomeIcon icon={faUserGear} />}
-          badgeValue={requestNotifications || businessProcessExpertNotifications || superuserNotifications ? " " : null}
-          badgeClassName={`${styles["header-badge"]} ${superuserNotifications ? styles["warning-badge"]: ''}`}
+          badgeValue={
+            requestNotifications ||
+            businessProcessExpertNotifications ||
+            superuserNotifications
+              ? " "
+              : null
+          }
+          badgeClassName={`${styles["header-badge"]} ${superuserNotifications ? styles["warning-badge"] : ""}`}
         />
       ),
       path: null,
@@ -289,9 +309,7 @@ const [superuserNotifications, businessProcessExpertNotifications] = React.useMe
             <IconBadge
               icon={<FontAwesomeIcon icon={faLink} />}
               badgeValue={
-                requestNotifications
-                  ? requestNotifications?.toString()
-                  : null
+                requestNotifications ? requestNotifications?.toString() : null
               }
             />
           ),
@@ -329,10 +347,15 @@ const [superuserNotifications, businessProcessExpertNotifications] = React.useMe
               icon={<FontAwesomeIcon icon={faCheckToSlot} />}
               badgeValue={
                 superuserNotifications + businessProcessExpertNotifications > 0
-                  ? (superuserNotifications + businessProcessExpertNotifications).toString()
+                  ? (
+                      superuserNotifications +
+                      businessProcessExpertNotifications
+                    ).toString()
                   : null
               }
-              badgeClassName={superuserNotifications ? styles["warning-badge"]: ''}
+              badgeClassName={
+                superuserNotifications ? styles["warning-badge"] : ""
+              }
             />
           ),
           data: { path: "/admin/approvals" },

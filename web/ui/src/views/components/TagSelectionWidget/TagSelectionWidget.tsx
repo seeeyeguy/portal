@@ -196,6 +196,7 @@ export default function TagSelectionWidget({
           options={visibleTags}
           onChange={(event: DropdownChangeEvent) => setCurrentTag(event.value)}
           filter
+          filterInputAutoFocus
           placeholder="Select Tag"
           virtualScrollerOptions={{
             itemSize: 32,
