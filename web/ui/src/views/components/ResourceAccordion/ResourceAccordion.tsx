@@ -62,6 +62,7 @@ export default React.memo(function ResourceAccordion({
   return (
     <RecursiveAccordion
       title={title}
+      className={styles["resource-accordion"]}
       dataSet={resources}
       isLoading={isLoading}
       spinner="moon"
@@ -79,14 +80,14 @@ export default React.memo(function ResourceAccordion({
 
         // Sort resources if alphabetical sort is selected.
         if (sort === ESortTypes.ALPHABETICAL) {
-          resources = lodash.sortBy(resources, ['name']);
+          resources = lodash.sortBy(resources, ["name"]);
         }
 
         const tooltipText =
           sort === ESortTypes.POPULARITY
             ? "Sorted by popularity."
             : "Sorted by alphabetical.";
-            
+
         return (
           <div
             className={styles["filterable-resource-links-container"]}
@@ -97,7 +98,7 @@ export default React.memo(function ResourceAccordion({
               onClick={handleSortChange}
               data-tooltip-id={`resource-${containerId}-sort-tooltip`}
               data-tooltip-delay-show={200}
-              icon={`pi ${sort === ESortTypes.POPULARITY ? 'pi-sort-numeric-down' : 'pi-sort-alpha-down'}`}
+              icon={`pi ${sort === ESortTypes.POPULARITY ? "pi-sort-numeric-down" : "pi-sort-alpha-down"}`}
             />
             <Tooltip
               id={`resource-${containerId}-sort-tooltip`}
