@@ -1,3 +1,5 @@
+import lodash from "lodash";
+
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(() => resolve(true), ms));
 
@@ -35,3 +37,13 @@ export function debounce<T extends (...args: any[]) => Promise<any>>(
     });
   };
 }
+
+export const resolveApiErrorMessage = (apiMessage: string | object) =>
+  lodash.isObject(apiMessage)
+    ? Object.entries(apiMessage).reduce((acc, [key, value]) => {
+        const formattedValue = lodash.isArray(value)
+          ? `- ${value.join("\n- ")}`
+          : value;
+        return `${acc}\n${key}:\n${formattedValue}`;
+      }, "")
+    : apiMessage;

@@ -273,10 +273,12 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Dynamically construct filter params for an efficient query.
-            primary_point_of_contact_email = params["point_of_contacts"][0]
+            primary_point_of_contact_email = (
+                f"{params['point_of_contacts'][0].split('@')[0]}@harris.com"
+            )
             filter_params = Q(email__iexact=primary_point_of_contact_email)
             for email in params["point_of_contacts"][1:]:
-                filter_params |= Q(email__iexact=email)
+                filter_params |= Q(email__iexact=f"{email.split('@')[0]}@harris.com")
 
             # Fetch `User` records.
             users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(
@@ -525,10 +527,12 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Dynamically construct filter params for an efficient query.
-            primary_point_of_contact_email = point_of_contacts[0]
+            primary_point_of_contact_email = (
+                f"{params['point_of_contacts'][0].split('@')[0]}@harris.com"
+            )
             filter_params = Q(email__iexact=primary_point_of_contact_email)
             for email in point_of_contacts[1:]:
-                filter_params |= Q(email__iexact=email)
+                filter_params |= Q(email__iexact=f"{email.split('@')[0]}@harris.com")
 
             # Fetch `User` records.
             users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(

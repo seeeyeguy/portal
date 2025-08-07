@@ -162,9 +162,9 @@ class Request:
             raise exceptions.RequestError(err_msg, 400) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
-                f"Resource(name={params['name']}, url={params['url']})",
-                " for Request was not created. There is an issue with the Resource's",
-                f" attributes. {exc.message}",
+                f"Resource(name={params['name']}, url={params['url']})"
+                " for Request was not created. There is an issue with the Resource's"
+                f" attributes. {exc.message}"
             )
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=exc.status) from exc
@@ -277,9 +277,9 @@ class Request:
             raise exceptions.RequestError(err_msg, 404) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
-                f"Resource(name={params['name']}, url={params['url']})",
-                " for Request was not updated. There is an issue with the Resource's",
-                f" attributes. {exc.message}",
+                f"Resource(name={params['name']}, url={params['url']})"
+                " for Request was not updated. There is an issue with the Resource's"
+                f" attributes. {exc.message}"
             )
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=exc.status) from exc
@@ -394,9 +394,9 @@ class Request:
             raise exceptions.RequestError(err_msg, 400) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
-                f"Resource(id={params['resource_id']})",
-                " for Request was not created. There is an issue with the Resource's",
-                f" attributes. {exc.message}",
+                f"Resource(id={params['resource_id']})"
+                " for Request was not created. There is an issue with the Resource's"
+                f" attributes. {exc.message}"
             )
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=exc.status) from exc
@@ -507,12 +507,12 @@ class Request:
                     email__iexact=originator
                 )
 
-                access_records: QuerySet[
-                    UsersModels.Access
-                ] = UsersModels.Access.objects.filter(
-                    user=user_record,
-                    role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
-                    access_revoked_date__isnull=True,
+                access_records: QuerySet[UsersModels.Access] = (
+                    UsersModels.Access.objects.filter(
+                        user=user_record,
+                        role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
+                        access_revoked_date__isnull=True,
+                    )
                 )
                 if not access_records.exists():
                     return models.Request.objects.none()

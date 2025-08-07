@@ -44,7 +44,7 @@ import {
 } from "views/schemas/administration/ResourceSchema";
 
 import { hasSuperuserPermissions } from "utils/PermissionUtility";
-import { debounce } from "utils/PromiseUtility";
+import { debounce, resolveApiErrorMessage } from "utils/PromiseUtility";
 import { base64ImageToFile } from "views/utils/ImageUtility";
 import {
   getThumbnailPath,
@@ -272,7 +272,13 @@ export default function AdminResources() {
     }));
 
     return newSchema;
-  }, [employeeLevels, primaryPocSearch, secondaryPocSearch, subfunctions, resourceTypes]);
+  }, [
+    employeeLevels,
+    primaryPocSearch,
+    secondaryPocSearch,
+    subfunctions,
+    resourceTypes,
+  ]);
 
   const formRefs = React.useRef(new Map());
   const [formKeys, setFormKeys] = React.useState(new Map());
@@ -310,11 +316,11 @@ export default function AdminResources() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
           console.error(message);
-          toast.error(`Error Saving Request: ${JSON.parse(message)}`);
+          toast.error(`Error Saving Request: ${message}`);
         } else {
           toast.success("Request Updated");
         }
@@ -364,11 +370,11 @@ export default function AdminResources() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
           console.error(message);
-          toast.error(`Error Saving Request: ${JSON.parse(message)}`);
+          toast.error(`Error Saving Request: ${message}`);
         } else {
           toast.success("Request Created");
           // Reset form on success.

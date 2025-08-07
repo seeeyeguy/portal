@@ -36,6 +36,7 @@ import {
 } from "state/query/api/portal/directory/TagApi";
 
 import { hasSuperuserPermissions } from "utils/PermissionUtility";
+import { resolveApiErrorMessage } from "utils/PromiseUtility";
 import { parseTags } from "views/utils/TagUtility";
 
 import styles from "views/containers/AdminControls/AdminControls.module.css";
@@ -247,10 +248,10 @@ export default function TagControls() {
       if (response.error) {
         const message =
           "data" in response.error
-            ? JSON.stringify(response.error.data)
+            ? resolveApiErrorMessage(response.error.data as string | object)
             : DEFAULT_API_ERROR_MESSAGE;
 
-        toast.error(`Error creating tag: ${JSON.parse(message)}`);
+        toast.error(`Error creating tag: ${message}`);
       } else {
         toast.success(`Tag Created`);
         // Reset form on success.
@@ -284,10 +285,10 @@ export default function TagControls() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
-          toast.error(`Error updating tag:${JSON.parse(message)}`);
+          toast.error(`Error updating tag:${message}`);
         } else {
           toast.success(`Tag Updated`);
           // Reset form on success.
@@ -309,10 +310,10 @@ export default function TagControls() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
-          toast.error(`Error deleting tag: ${JSON.parse(message)}`);
+          toast.error(`Error deleting tag: ${message}`);
         } else {
           toast.success(`Tag Deleted`);
           // Reset form on success.

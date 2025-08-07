@@ -40,6 +40,10 @@ nav[class*="search-bar"]:not([class="search-bar-small-screen"])
   overflow-y: auto;
 }
 
+.Toastify__toast-body {
+  white-space: pre-line;
+}
+
 ::-webkit-scrollbar {
   width: 0.4em;
 }
