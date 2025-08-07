@@ -4,16 +4,25 @@
   border-right: solid 1px var(--color-gray);
   min-height: 15rem;
   padding: 1rem;
-  position: relative
+  position: relative;
 }
 
-.filterable-resource-links-container [class*="filter-container-grid-container"] {
+.filterable-resource-links-container
+  [class*="filter-container-grid-container"] {
   margin-right: 2rem;
+}
+
+.resource-accordion [class*="recursive-accordion"] > section {
+  /* 
+  Used !important here to override inline styles used in a transition in ADAS, 
+  the transition still works in BI Portal due to a child using overflow: hidden.
+  */
+  overflow: visible !important;
 }
 
 .resource-sort {
   background: inherit;
-  border:none;
+  border: none;
   border-radius: 4px;
   color: var(--color-black);
   height: 2.4rem;
@@ -25,14 +34,13 @@
   background: var(--color-grayscale-2);
 }
 
-
 .resource-sort:hover {
   background: var(--color-light-gray);
 }
 
-.resource-sort [class*="pi"]{
+.resource-sort [class*="pi"] {
   font-size: 1.7rem;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .resource-sort-tooltip {
