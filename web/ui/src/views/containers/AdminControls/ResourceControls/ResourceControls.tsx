@@ -78,8 +78,7 @@ export default function AdminResources() {
   // filtered by default so the first option is removed.
   const FILTER_OPTIONS = [
     superuserPermissions && { name: "My Resources", value: 0 },
-    { name: "Draft", value: 1 },
-    { name: "Revise", value: 4 },
+    { name: "Drafts/Revisions", value: 1 },
     { name: "Pending", value: "PENDING" },
     { name: "Approved", value: "APPROVED" },
     { name: "Rejected", value: "REJECTED" },
