@@ -6,6 +6,7 @@ and the LDAP service.
 
 import json
 import logging
+import requests
 from typing import List, Optional, Union
 
 from django.contrib.auth import get_user_model, models
@@ -31,7 +32,11 @@ def fetch_employee_record_from_ldap(email: str) -> Union[dict, None]:
     """
 
     body = {"search_term": email, "offset": 1, "limit": 1}
-    response = search_ldap(body)
+    try:
+        response = search_ldap(body)
+    except (requests.ConnectionError, requests.HTTPError) as exc:
+        LOGGER.error(f"Unable to search LDAP: ${exc}")
+        return None
     search_response = json.loads(response.content)
     entries: List[dict] = search_response["entries"]
     if len(entries) == 0:

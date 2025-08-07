@@ -9,6 +9,8 @@ view will return relevant user data.
 
 import json
 
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -31,6 +33,7 @@ ADMIN_ROLE_LEVELS = [
 ]
 
 
+@method_decorator(never_cache, name="dispatch")
 class AuthenticatedUser(APIView):
     """View to manage an authenticated user."""
 

@@ -29,6 +29,8 @@ import {
   useUpdateEmployeeLevelMutation,
 } from "state/query/api/portal/directory/EmployeeLevelApi";
 
+import { resolveApiErrorMessage } from "utils/PromiseUtility";
+
 import styles from "views/containers/AdminControls/AdminControls.module.css";
 
 export default function EmployeeLevelsControls() {
@@ -89,10 +91,10 @@ export default function EmployeeLevelsControls() {
       if (response.error) {
         const message =
           "data" in response.error
-            ? JSON.stringify(response.error.data)
+            ? resolveApiErrorMessage(response.error.data as string | object)
             : DEFAULT_API_ERROR_MESSAGE;
 
-        toast.error(`Error creating employee level: ${JSON.parse(message)}`);
+        toast.error(`Error creating employee level: ${message}`);
       } else {
         toast.success(`Employee Level Created`);
         // Reset form on success.
@@ -127,10 +129,10 @@ export default function EmployeeLevelsControls() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
-          toast.error(`Error updating employee level: ${JSON.parse(message)}`);
+          toast.error(`Error updating employee level: ${message}`);
         } else {
           toast.success(`Employee Level Updated`);
           // Reset form on success.
@@ -152,10 +154,10 @@ export default function EmployeeLevelsControls() {
         if (response.error) {
           const message =
             "data" in response.error
-              ? JSON.stringify(response.error.data)
+              ? resolveApiErrorMessage(response.error.data as string | object)
               : DEFAULT_API_ERROR_MESSAGE;
 
-          toast.error(`Error deleting employee level: ${JSON.parse(message)}`);
+          toast.error(`Error deleting employee level: ${message}`);
         } else {
           toast.success(`Employee Level Deleted`);
           // Reset form on success.

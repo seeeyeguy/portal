@@ -56,6 +56,7 @@ export const resourceSchema: RJSFSchema = {
     description: {
       title: "Description",
       type: "string",
+      minLength: 30,
     },
     url: {
       title: "URL",
