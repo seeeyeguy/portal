@@ -35,7 +35,11 @@ class TestDeleteFunction(MultiDBTestCase):
 
     fixtures: List[str] = [
         "portal/models/fixtures/functions/functions.json",
+        "portal/models/fixtures/subfunctions/subfunctions.json",
         "portal/models/fixtures/users/users.json",
+        "portal/models/fixtures/roles/roles.json",
+        "portal/models/fixtures/stages/stages.json",
+        "portal/models/fixtures/accesses/accesses.json",
     ]
 
     url: str = reverse("directory.function")
@@ -52,4 +56,4 @@ class TestDeleteFunction(MultiDBTestCase):
         rows_affected = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(rows_affected, 1)
+        self.assertEqual(rows_affected, arguments.DELETE_FUNCTION_ROWS_AFFECTED)

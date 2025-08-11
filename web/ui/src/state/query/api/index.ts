@@ -20,8 +20,10 @@ const api = createApi({
   tagTypes: [
     "Access",
     "EmployeeLevel",
+    "EmployeeLevelAdmin",
     "Favorite",
     "Function",
+    "FunctionAdmin",
     "Portfolio",
     "Request",
     "Query",

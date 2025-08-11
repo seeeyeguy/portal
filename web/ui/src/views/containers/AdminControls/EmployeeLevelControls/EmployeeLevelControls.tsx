@@ -25,7 +25,7 @@ import {
   TApiPutEmployeeLevelRequest,
   useAddEmployeeLevelMutation,
   useRemoveEmployeeLevelMutation,
-  useGetEmployeeLevelsQuery,
+  useGetEmployeeLevelsAdminQuery,
   useUpdateEmployeeLevelMutation,
 } from "state/query/api/portal/directory/EmployeeLevelApi";
 
@@ -34,7 +34,8 @@ import { resolveApiErrorMessage } from "utils/PromiseUtility";
 import styles from "views/containers/AdminControls/AdminControls.module.css";
 
 export default function EmployeeLevelsControls() {
-  const { data: employeeLevels, isLoading } = useGetEmployeeLevelsQuery(null);
+  const { data: employeeLevels, isLoading } =
+    useGetEmployeeLevelsAdminQuery(null);
 
   const [addEmployeeLevel] = useAddEmployeeLevelMutation();
   const [updateEmployeeLevel] = useUpdateEmployeeLevelMutation();
@@ -212,11 +213,14 @@ export default function EmployeeLevelsControls() {
                       validator: validator,
                       widgets: employeeLevelWidgets,
                     }}
-                    onDelete={() => {
-                      setTempFormData(null);
-                      setTempFormId(employeeLevel.id);
-                      setShowDeleteModal(true);
-                    }}
+                    /**
+                     * TODO: Uncomment in PMBIPO-436.
+                      onDelete={() => {
+                        setTempFormData(null);
+                        setTempFormId(employeeLevel.id);
+                        setShowDeleteModal(true);
+                      }}
+                    */
                     onSubmit={(submittedData) => {
                       setTempFormData(submittedData?.formData);
                       setTempFormId(employeeLevel.id);

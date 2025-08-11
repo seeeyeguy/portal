@@ -22,7 +22,7 @@ import {
 import { IFunction } from "definitions/portal/directory/Function.types";
 import { ISubFunction } from "definitions/portal/directory/SubFunction.types";
 
-import { useGetFunctionsQuery } from "state/query/api/portal/directory/FunctionApi";
+import { useGetFunctionsAdminQuery } from "state/query/api/portal/directory/FunctionApi";
 import {
   useAddSubFunctionMutation,
   useGetSubFunctionsQuery,
@@ -34,7 +34,7 @@ import styles from "views/containers/AdminControls/AdminControls.module.css";
 
 export default function SubFunctions() {
   const { data: functionsData, isLoading: isLoadingFunctions } =
-    useGetFunctionsQuery(null);
+    useGetFunctionsAdminQuery(null);
   const { data: subFunctionsData, isLoading: isLoadingSubFunctions } =
     useGetSubFunctionsQuery(null);
 
@@ -237,10 +237,13 @@ export default function SubFunctions() {
                       },
                       validator: validator,
                     }}
+                    /**
+                     * TODO: Uncomment in PMBIPO-436.
                     onDelete={() => {
                       setSelectedSubFunction({ ...subFunction });
                       setShowDeleteModal(true);
                     }}
+                    */
                     onSubmit={(e) => {
                       setSelectedSubFunction({
                         ...subFunction,

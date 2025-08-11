@@ -279,7 +279,11 @@ export default function TagControls() {
           label: convertToTagLabel(formSubmission),
         };
 
-        const response = await updateTag({ body, id });
+        const response = await updateTag({
+          body,
+          id,
+          searchTagLabel: debouncedSearch,
+        });
 
         // Handle the update API error.
         if (response.error) {
@@ -298,13 +302,16 @@ export default function TagControls() {
         }
       }
     },
-    [updateTag]
+    [debouncedSearch, updateTag]
   );
 
   const handleDelete = React.useCallback(
     async (id: number | null) => {
       if (id) {
-        const response = await removeTag(id);
+        const response = await removeTag({
+          id,
+          searchTagLabel: debouncedSearch,
+        });
 
         // Handle the delete API error.
         if (response.error) {
@@ -322,7 +329,7 @@ export default function TagControls() {
         }
       }
     },
-    [removeTag]
+    [debouncedSearch, removeTag]
   );
 
   return (

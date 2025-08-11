@@ -39,6 +39,9 @@ class TestUpdateSubFunction(MultiDBTestCase):
         "portal/models/fixtures/functions/functions.json",
         "portal/models/fixtures/subfunctions/subfunctions.json",
         "portal/models/fixtures/users/users.json",
+        "portal/models/fixtures/roles/roles.json",
+        "portal/models/fixtures/stages/stages.json",
+        "portal/models/fixtures/accesses/accesses.json",
     ]
 
     url: str = reverse("directory.subfunction")

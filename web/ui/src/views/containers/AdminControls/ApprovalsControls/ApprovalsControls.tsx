@@ -21,7 +21,7 @@ import { ISubFunction } from "definitions/portal/directory/SubFunction.types";
 import { IAccess } from "definitions/portal/users/Access.types";
 import { IAuthUser } from "definitions/Sso.types";
 
-import { useGetEmployeeLevelsQuery } from "state/query/api/portal/directory/EmployeeLevelApi";
+import { useGetEmployeeLevelsAdminQuery } from "state/query/api/portal/directory/EmployeeLevelApi";
 import { useGetSubFunctionsQuery } from "state/query/api/portal/directory/SubFunctionApi";
 import { useGetTagsQuery } from "state/query/api/portal/directory/TagApi";
 import {
@@ -172,7 +172,7 @@ export default function ApprovalsControls() {
   );
 
   const { data: tags } = useGetTagsQuery(null);
-  const { data: employeeLevels } = useGetEmployeeLevelsQuery(null);
+  const { data: employeeLevels } = useGetEmployeeLevelsAdminQuery(null);
   const { data: subfunctions } = useGetSubFunctionsQuery(null);
 
   const FILTER_SUBFUNCTION_OPTIONS = React.useMemo(

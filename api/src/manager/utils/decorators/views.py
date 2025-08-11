@@ -10,6 +10,8 @@ from django import http
 from rest_framework import status
 from rest_framework.serializers import Serializer
 
+from users.models.Role.Role import Role
+
 LOGGER = logging.getLogger(__name__)
 
 JSON_CONTENT_TYPE: str = "application/json"
@@ -118,7 +120,9 @@ def admin_required() -> Callable:
         def wrapper(
             request: http.HttpRequest, *args: object, **kwargs: dict
         ) -> Union[http.JsonResponse, Any]:
-            if not request.user.is_superuser:
+            if not request.user.accesses.filter(  # type: ignore[union-attr]
+                role__level=Role.RoleLevels.SUPERUSER, access_revoked_date__isnull=True
+            ).exists():
                 err_msg: str = "Permissions Denied."
                 LOGGER.error(err_msg)
                 return http.JsonResponse(
