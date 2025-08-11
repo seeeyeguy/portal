@@ -6,5 +6,7 @@ from users.views.serializers.access import (
     CreateAccessRequest,
     FetchAccessRequest,
     RevokeAccessRequestQueryParams,
+    UpdateAccessRequest,
+    UpdateAccessRequestQueryParams,
 )
 from users.views.serializers.profile import FetchProfileRequest

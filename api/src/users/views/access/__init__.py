@@ -11,4 +11,4 @@ subfunctions and stages in the `BI Portal` request
 workflow.
 """
 
-from .access import Access
+from .access import Access, AccessControl

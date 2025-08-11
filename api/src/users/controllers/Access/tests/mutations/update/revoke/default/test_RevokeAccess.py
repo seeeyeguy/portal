@@ -1,5 +1,5 @@
 """
-Collection of pytests for Access's update controller.
+Collection of pytests for Access's revoke update controller.
 """
 
 import pytest
@@ -9,7 +9,7 @@ from django.contrib.auth import models as AuthModels
 from django.test import tag
 
 from users import controllers, exceptions, models
-from users.controllers.Access.tests.mutations.update.default import arguments
+from users.controllers.Access.tests.mutations.update.revoke.default import arguments
 from users.models.Access.serializers import AccessSerializer
 
 from portal.models.fixtures import COMMON_FIXTURES
@@ -22,11 +22,12 @@ from manager.utils.tests import MultiDBTestCase
     "users",
     "access",
     "controllers.TestRevokeAccess",
+    "users.access.revoke.update",
     "users.access.update",
     "access.update.default",
 )
 class TestRevokeAccess(MultiDBTestCase):
-    """Test suite for `Access`'s update controller."""
+    """Test suite for `Access`'s revoke update controller."""
 
     fixtures: List[str] = [*COMMON_FIXTURES]
 

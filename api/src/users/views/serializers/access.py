@@ -1,6 +1,6 @@
 """
-Serializers for requests to `Access` views. Serializers provide
-validation for request parameters.
+Serializers for requests to `Access` and `AccessControl` views.
+Serializers provide validation for request parameters.
 """
 
 # pylint: disable=abstract-method
@@ -38,3 +38,15 @@ class FetchAccessRequest(serializers.Serializer):
         child=serializers.IntegerField(), allow_empty=True, default=[]
     )
     include_revoked = serializers.BooleanField(allow_null=True, default=False)
+
+
+class UpdateAccessRequest(serializers.Serializer):
+    """Request serializer for PUT /v1/users/access/subfunctions."""
+
+    subfunctions = serializers.ListField(child=serializers.IntegerField())
+
+
+class UpdateAccessRequestQueryParams(serializers.Serializer):
+    """Request serializer for PUT /v1/users/access/subfunctions query params."""
+
+    id = serializers.IntegerField(min_value=1)

@@ -1,5 +1,5 @@
 """
-Arguments to be shared for Access's update
+Arguments to be shared for Access's revoke update
 controller pytests.
 """
 
