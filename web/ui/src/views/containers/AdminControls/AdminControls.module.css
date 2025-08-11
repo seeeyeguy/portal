@@ -23,6 +23,11 @@
   transition: background-color 0.2s ease;
 }
 
+.admin-button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .admin-button:hover {
   border-style: outset;
 }

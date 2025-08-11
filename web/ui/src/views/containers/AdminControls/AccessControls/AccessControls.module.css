@@ -34,11 +34,6 @@
 
 .access-add-button-submit:disabled {
   background: var(--color-grayscale-2);
-  color: var(--color-white);
-}
-
-.access-add-button-submit:disabled {
-  background: var(--color-grayscale-2);
   border-color: var(--color-grayscale-2);
   color: var(--color-black);
   cursor: not-allowed;
@@ -131,6 +126,12 @@
 .access-add-controls-modal-button:hover {
   background: var(--color-primary);
   color: var(--color-white);
+}
+
+.access-controls-loading {
+  display: flex;
+  justify-content: center;
+  margin-top: 5rem;
 }
 
 .access-filter-control {

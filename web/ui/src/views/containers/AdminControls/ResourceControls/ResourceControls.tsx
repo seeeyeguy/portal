@@ -158,8 +158,10 @@ export default function AdminResources() {
   const [addResource] = useAddRequestMutation();
 
   const { data: tags } = useGetTagsQuery(null);
-  const { data: employeeLevels } = useGetEmployeeLevelsQuery(null);
-  const { data: subfunctions } = useGetSubFunctionsQuery(null);
+  const { data: employeeLevels, isLoading: isEmployeeLevelsLoading } =
+    useGetEmployeeLevelsQuery(null);
+  const { data: subfunctions, isLoading: isSubfunctionsLoading } =
+    useGetSubFunctionsQuery(null);
   const resourceTypes = Object.keys(resourceTypeThumbnailPaths);
 
   const fetchUserOptions = React.useCallback(
@@ -278,6 +280,10 @@ export default function AdminResources() {
     subfunctions,
     resourceTypes,
   ]);
+
+  React.useEffect(() => {
+    setNewFormKey(Date.now());
+  }, [isEmployeeLevelsLoading, isSubfunctionsLoading]);
 
   const formRefs = React.useRef(new Map());
   const [formKeys, setFormKeys] = React.useState(new Map());
@@ -410,6 +416,7 @@ export default function AdminResources() {
       >
         <button
           className={`${styles["admin-button"]} ${styles["admin-button-submit"]}`}
+          disabled={isEmployeeLevelsLoading || isSubfunctionsLoading}
           onClick={() => setShowNewModal(true)}
         >
           <FontAwesomeIcon icon={faPlus} />

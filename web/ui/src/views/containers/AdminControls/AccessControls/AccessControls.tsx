@@ -483,7 +483,7 @@ export default function AccessControls() {
       </section>
       <section>
         {!isFetching && !accesses?.length ? (
-          <p className={adminStyles["admin-loading"]}>No Accesses Found</p>
+          <p className={styles["access-controls-loading"]}>No Accesses Found</p>
         ) : (
           <>
             <h3>Access Records</h3>
