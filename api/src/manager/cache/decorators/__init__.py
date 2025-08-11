@@ -57,15 +57,36 @@ def cache_request(timeout: int) -> Callable:
             # Use the path and request params to form a
             # unique key for the request.
             url_params = str(body).replace(" ", "")
-            md5_hash = md5(
-                request.build_absolute_uri(request.path).encode("ascii"),
+
+            # Construct the cache key prefix from the request's path
+            # (i.e. /v1/diretory/tag) excluding the '/search' suffix.
+            # Note: The query params are not part of the path. This
+            # key prefix is used as the marker to search and delete
+            # associated cache entries (i.e. header & cache_page).
+            cache_key_prefix = md5(
+                request.build_absolute_uri(request.path.removesuffix("/search")).encode(
+                    "ascii"
+                ),
                 usedforsecurity=False,
             ).hexdigest()
-            xxh64_hash = xxhash.xxh64(
+
+            request_cache_key = xxhash.xxh64(
                 f"{full_path}?params={url_params}".encode()
             ).hexdigest()
 
-            cache_key = f"{md5_hash}_{xxh64_hash}"
+            # Construct the cache key suffix from the request's full
+            # path (i.e /v1/directory/tag/search?label=a). Note: The
+            # query params are taken into account for this hash. This
+            # key suffix is used as the marker to search and delete
+            # associated cache entries for 'search' requests as each
+            # search will have a hash that is dependent on the request's
+            # full path.
+            cache_key_suffix = md5(
+                request.build_absolute_uri(full_path).encode("ascii"),
+                usedforsecurity=False,
+            ).hexdigest()
+
+            cache_key = f"{cache_key_prefix}_{request_cache_key}_{cache_key_suffix}"
 
             # Check the cache for the response.
             response: Union[HttpResponseBase, None] = cache.get(key=cache_key)
@@ -112,14 +133,34 @@ def invalidate_request_cache() -> Callable:
                 return response
 
             if response.status_code in {status.HTTP_200_OK, status.HTTP_201_CREATED}:
-                # Construct the md5 hash from the request's path.
-                request_md5_hash = md5(
+                # Construct the md5 hash from the request's path, which is the
+                # cache key's prefix.
+                cache_key_prefix = md5(
                     request.build_absolute_uri(request.path).encode("ascii"),
                     usedforsecurity=False,
                 ).hexdigest()
+
+                # We want to query all the cache keys for the same request path
+                # using the prefix key. Each hash key for each related request path will
+                # have this prefix key and a distinct suffix key. We can use these hashes
+                # to get the associated suffix keys, which encompass the query params of
+                # their request. This is important because endpoints such as 'search' have
+                # frequently changing query params (i.e. frequently changing hashes), and
+                # so we need the prefix key to group all the suffix keys.
+                cache_key_suffixes = [
+                    key.split("_")[-1]
+                    for key in cache.keys(f"*{cache_key_prefix}*")  # type: ignore[attr-defined]
+                    if "views." not in key
+                ]
+
                 # Delete cache entries that match
-                # the md5 hash.
-                cache.delete_pattern(f"*{request_md5_hash}*")  # type: ignore[attr-defined]
+                # the cache_key_prefix.
+                cache.delete_pattern(f"*{cache_key_prefix}*")  # type: ignore[attr-defined]
+
+                # Loop through the cache key suffixes and delete any
+                # matching entries.
+                for cache_key_suffix in cache_key_suffixes:
+                    cache.delete_pattern(f"*{cache_key_suffix}*")  # type: ignore[attr-defined]
             return response
 
         return wrapper

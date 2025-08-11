@@ -1,5 +1,3 @@
-import lodash from "lodash";
-
 import { DELETE, POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
 import { IApiEmployeeLevel } from "state/query/api/portal/directory/EmployeeLevelHelper";
@@ -43,7 +41,7 @@ const employeeLevelApi = api.injectEndpoints({
         data: response as IEmployeeLevel,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["EmployeeLevel"],
+      invalidatesTags: ["EmployeeLevelAdmin"],
     }),
     getEmployeeLevels: builder.query<
       TApiEmployeeLevelResponse,
@@ -59,6 +57,23 @@ const employeeLevelApi = api.injectEndpoints({
         status: meta?.response?.status,
       }),
       providesTags: ["EmployeeLevel"],
+    }),
+    getEmployeeLevelsAdmin: builder.query<
+      TApiEmployeeLevelResponse,
+      TApiFetchEmployeeLevelRequest
+    >({
+      query: (id: TApiFetchEmployeeLevelRequest = null) => ({
+        url: endpoints.PORTAL.DIRECTORY.EMPLOYEE_LEVELS(id),
+        headers: { "Cache-Control": "max-age=0" },
+      }),
+      transformResponse: (
+        response: IApiEmployeeLevel | IApiEmployeeLevel[],
+        meta
+      ): TApiEmployeeLevelResponse => ({
+        data: response as IEmployeeLevel | IEmployeeLevel[],
+        status: meta?.response?.status,
+      }),
+      providesTags: ["EmployeeLevelAdmin"],
     }),
     updateEmployeeLevel: builder.mutation<
       TApiEmployeeLevelResponse,
@@ -79,36 +94,7 @@ const employeeLevelApi = api.injectEndpoints({
         data: response as IEmployeeLevel,
         status: meta?.response?.status,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        // Perform optimistic update to cache entry.
-        const patchResult = dispatch(
-          employeeLevelApi.util.updateQueryData(
-            "getEmployeeLevels",
-            null,
-            (draft) => {
-              const updatedEntries = lodash
-                .cloneDeep(draft.data as IEmployeeLevel[])
-                .map((employeeLevel) =>
-                  employeeLevel.id === id
-                    ? { ...employeeLevel, ...patch?.body }
-                    : employeeLevel
-                );
-              draft.data = updatedEntries;
-            }
-          )
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          /**
-           If failure occurs, undo the patch and invalidate the tag
-           to perform a re-fetch.
-          */
-          patchResult.undo();
-          dispatch(api.util.invalidateTags(["EmployeeLevel"]));
-        }
-      },
+      invalidatesTags: ["EmployeeLevelAdmin"],
     }),
     removeEmployeeLevel: builder.mutation<TApiEmployeeLevelResponse, number>({
       query: (id: number) => ({
@@ -119,32 +105,7 @@ const employeeLevelApi = api.injectEndpoints({
         data: response,
         status: meta?.response?.status,
       }),
-      async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        // Perform optimistic update to cache entry.
-        const patchResult = dispatch(
-          employeeLevelApi.util.updateQueryData(
-            "getEmployeeLevels",
-            null,
-            (draft) => {
-              const updatedEntries = lodash
-                .cloneDeep(draft.data as IEmployeeLevel[])
-                .filter((employeeLevel) => employeeLevel.id !== id);
-              draft.data = updatedEntries;
-            }
-          )
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          /**
-           If failure occurs, undo the patch and invalidate the tag
-           to perform a re-fetch.
-          */
-          patchResult.undo();
-          dispatch(api.util.invalidateTags(["EmployeeLevel"]));
-        }
-      },
+      invalidatesTags: ["EmployeeLevelAdmin"],
     }),
   }),
 });
@@ -153,6 +114,7 @@ export default employeeLevelApi;
 export const {
   useAddEmployeeLevelMutation,
   useGetEmployeeLevelsQuery,
+  useGetEmployeeLevelsAdminQuery,
   useRemoveEmployeeLevelMutation,
   useUpdateEmployeeLevelMutation,
 } = employeeLevelApi;

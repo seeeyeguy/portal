@@ -1,5 +1,3 @@
-import lodash from "lodash";
-
 import { DELETE, POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
 import { IApiTag } from "state/query/api/portal/directory/TagHelper";
@@ -37,8 +35,10 @@ const tagApi = api.injectEndpoints({
       invalidatesTags: ["Tag", "TagSearch"],
     }),
     getTags: builder.query<TApiTagResponse, TApiFetchTagRequest>({
-      query: (id: TApiFetchTagRequest = null) =>
-        endpoints.PORTAL.DIRECTORY.TAGS.BASE(id),
+      query: (id: TApiFetchTagRequest = null) => ({
+        url: endpoints.PORTAL.DIRECTORY.TAGS.BASE(id),
+        headers: { "Cache-Control": "max-age=0" },
+      }),
       transformResponse: (response: IApiTag | IApiTag[], meta) => ({
         data: response as ITag | ITag[],
         status: meta?.response?.status,
@@ -46,7 +46,10 @@ const tagApi = api.injectEndpoints({
       providesTags: ["Tag"],
     }),
     searchTags: builder.query<TApiSearchTagResponse, string>({
-      query: (label: string) => endpoints.PORTAL.DIRECTORY.TAGS.SEARCH(label),
+      query: (label: string) => ({
+        url: endpoints.PORTAL.DIRECTORY.TAGS.SEARCH(label),
+        headers: { "Cache-Control": "max-age=0" },
+      }),
       transformResponse: (response: IApiTag[], meta) => ({
         data: response as ITag[],
         status: meta?.response?.status,
@@ -55,7 +58,7 @@ const tagApi = api.injectEndpoints({
     }),
     updateTag: builder.mutation<
       TApiTagResponse,
-      { body: TApiPutTagRequest } & { id: number }
+      { body: TApiPutTagRequest } & { id: number } & { searchTagLabel: string }
     >({
       query: ({ body, id }: { body: TApiPutTagRequest } & { id: number }) => ({
         url: endpoints.PORTAL.DIRECTORY.TAGS.BASE(id),
@@ -66,32 +69,13 @@ const tagApi = api.injectEndpoints({
         data: response as ITag,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["TagSearch"],
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        // Perform optimistic update to cache entry.
-        const patchResult = dispatch(
-          tagApi.util.updateQueryData("getTags", null, (draft) => {
-            const updatedEntries = lodash
-              .cloneDeep(draft.data as ITag[])
-              .map((tag) => (tag.id === id ? { ...tag, ...patch?.body } : tag));
-            draft.data = updatedEntries;
-          })
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          /**
-           If failure occurs, undo the patch and invalidate the tag
-           to perform a re-fetch.
-          */
-          patchResult.undo();
-          dispatch(api.util.invalidateTags(["Tag"]));
-        }
-      },
+      invalidatesTags: ["Tag", "TagSearch"],
     }),
-    removeTag: builder.mutation<TApiTagResponse, number>({
-      query: (id: number) => ({
+    removeTag: builder.mutation<
+      TApiTagResponse,
+      { id: number } & { searchTagLabel: string }
+    >({
+      query: ({ id }: { id: number }) => ({
         url: endpoints.PORTAL.DIRECTORY.TAGS.BASE(id),
         method: DELETE,
       }),
@@ -99,29 +83,7 @@ const tagApi = api.injectEndpoints({
         data: response,
         status: meta?.response?.status,
       }),
-      invalidatesTags: ["TagSearch"],
-      async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        // Perform optimistic update to cache entry.
-        const patchResult = dispatch(
-          tagApi.util.updateQueryData("getTags", null, (draft) => {
-            const updatedEntries = lodash
-              .cloneDeep(draft.data as ITag[])
-              .filter((tag) => tag.id !== id);
-            draft.data = updatedEntries;
-          })
-        );
-
-        try {
-          await queryFulfilled;
-        } catch {
-          /**
-           If failure occurs, undo the patch and invalidate the tag
-           to perform a re-fetch.
-          */
-          patchResult.undo();
-          dispatch(api.util.invalidateTags(["Tag"]));
-        }
-      },
+      invalidatesTags: ["Tag", "TagSearch"],
     }),
   }),
 });

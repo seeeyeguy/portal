@@ -21,7 +21,7 @@ import { ISubFunction } from "definitions/portal/directory/SubFunction.types";
 import { IAuthUser } from "definitions/Sso.types";
 
 import { searchForEmployees } from "services/auth/ldapService";
-import { useGetEmployeeLevelsQuery } from "state/query/api/portal/directory/EmployeeLevelApi";
+import { useGetEmployeeLevelsAdminQuery } from "state/query/api/portal/directory/EmployeeLevelApi";
 import { useGetSubFunctionsQuery } from "state/query/api/portal/directory/SubFunctionApi";
 import { useGetTagsQuery } from "state/query/api/portal/directory/TagApi";
 import {
@@ -159,7 +159,7 @@ export default function AdminResources() {
 
   const { data: tags } = useGetTagsQuery(null);
   const { data: employeeLevels, isLoading: isEmployeeLevelsLoading } =
-    useGetEmployeeLevelsQuery(null);
+    useGetEmployeeLevelsAdminQuery(null);
   const { data: subfunctions, isLoading: isSubfunctionsLoading } =
     useGetSubFunctionsQuery(null);
   const resourceTypes = Object.keys(resourceTypeThumbnailPaths);

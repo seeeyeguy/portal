@@ -23,7 +23,7 @@ import { IFunction } from "definitions/portal/directory/Function.types";
 
 import {
   useAddFunctionMutation,
-  useGetFunctionsQuery,
+  useGetFunctionsAdminQuery,
   useUpdateFunctionMutation,
   useRemoveFunctionMutation,
 } from "state/query/api/portal/directory/FunctionApi";
@@ -32,7 +32,7 @@ import styles from "views/containers/AdminControls/AdminControls.module.css";
 
 export default function Functions() {
   const { data: functions, isLoading: isLoadingFunctions } =
-    useGetFunctionsQuery(null);
+    useGetFunctionsAdminQuery(null);
 
   const [functionsList, setFunctionsList] = React.useState<IFunction[]>([]);
 
@@ -223,10 +223,13 @@ export default function Functions() {
                       },
                       validator: validator,
                     }}
+                    /**
+                     * TODO: Uncomment in PMBIPO-436.
                     onDelete={() => {
                       setSelectedFunction({ ...functionEntry });
                       setShowDeleteModal(true);
                     }}
+                    */
                     onSubmit={(e) => {
                       setSelectedFunction({
                         ...functionEntry,
