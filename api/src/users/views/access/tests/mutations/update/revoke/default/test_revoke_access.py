@@ -1,5 +1,5 @@
 """
-Collection of pytests for Access's update view endpoint.
+Collection of pytests for Access's revoke update view endpoint.
 """
 
 from typing import List
@@ -9,7 +9,7 @@ from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
-from users.controllers.Access.tests.mutations.update.default import arguments
+from users.controllers.Access.tests.mutations.update.revoke.default import arguments
 
 from portal.models.fixtures import COMMON_FIXTURES
 
@@ -17,9 +17,10 @@ from manager.utils.tests import MultiDBTestCase
 
 
 @tag(
-    "user",
+    "users",
     "access",
     "views",
+    "users.access.update.revoke",
     "users.access.update",
     "access.update.default",
     "views.TestRevokeAccess",

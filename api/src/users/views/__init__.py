@@ -4,5 +4,5 @@ additions/modifications/queries to users, profiles, accesses, roles,
 and segments.
 """
 
-from .access import Access
+from .access import Access, AccessControl
 from .profile import Profile

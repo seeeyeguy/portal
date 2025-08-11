@@ -17,6 +17,7 @@ from requests.exceptions import ConnectionError
 from typing import List, Optional, Set, Tuple, Union
 
 from django.contrib.auth import models as AuthModels
+from django.db import transaction
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -215,6 +216,50 @@ class Access:
             err_msg = f"Role (level={role_level}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.UsersError(err_msg, 404) from exc
+
+    @staticmethod
+    def modify_access(
+        access: int, subfunctions: List[int], admin: AuthModels.User
+    ) -> Tuple[models.Access, int]:
+        """
+        Update an `Access` if and only if the requesting admin has the
+        appropriate permissions.
+
+        It is important to note that we are forbidden from updating access
+        records directly as this opens the application to a major security risk,
+        so instead we will perform a "soft" update to the user's access record
+        whereby we revoke the given record and issue a new access with the provided
+        subfunctions. It is also important to note that we will only ever allow
+        subfunctions to be specified/changed here; we are forbidden from changing
+        the role or stages.
+
+        Accepts:
+            * access (int): An id for a valid `Access` record.
+            * subfunctions (List[int]): A list of ids of `Subfunction`s
+                for which this access may submit a request or disposition.
+            * admin (auth.AuthModels.User): A `BI Portal` user that made the request.
+                This `User` must have an `Access` with the role `Superuser`.
+
+        Returns:
+            * access_record (models.Access): A new `Access` record for the given user.
+            * rows_affected (int): The number of records affected.
+        """
+
+        with transaction.atomic():
+            revoked_access_record, rows_affected = Access.revoke_access(
+                access=access, admin=admin
+            )
+            stage_levels = list(
+                revoked_access_record.stage.values_list("id", flat=True)
+            )
+            new_access_record = Access.create_access(
+                user=revoked_access_record.user.email,
+                role_level=revoked_access_record.role.level,
+                subfunctions=subfunctions,
+                stage_levels=stage_levels,
+                admin=admin,
+            )
+            return new_access_record, rows_affected
 
     @staticmethod
     def revoke_access(access: int, admin: AuthModels.User) -> Tuple[models.Access, int]:

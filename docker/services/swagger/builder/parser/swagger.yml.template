@@ -2013,7 +2013,7 @@ paths:
                   - $ref: "#/components/schemas/FetchAccessByIdDoesNotExistResponse"
     put:
       tags:
-        - "users.access.update"
+        - "users.access.update.revoke"
       summary: "Revoke `Access` for the given id."
       parameters:
         - in: query
@@ -2060,6 +2060,69 @@ paths:
             application/json:
               schema:
                 oneOf:
+                  - $ref: "#/components/schemas/RevokeAccessAccessDoesNotExistResponse"
+  /users/access/subfunctions:
+    put:
+      tags:
+        - "users.access.update.modify"
+      summary: "Modify `Access` for the given id."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of `Access` record to "modify".
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModifyAccessRequest"
+      responses:
+        "201":
+          description: "UPDATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ModifyAccessResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessDuplicateAccessErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessRoleNotAllowedSubFunctionsErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessTerminalStagesNotPermittedErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessDraftStageNotPermittedErrorResponse"
+                  - $ref: "#/components/schemas/CreateAccessInvalidStagesForRoleErrorResponse"
+                  - $ref: "#/components/schemas/RevokeAccessAccessBelongsToAdminErrorResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessUnauthorizedResponse"
+                  - $ref: "#/components/schemas/RevokeAccessUnauthorizedResponse"
+        "403":          
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessForbiddenErrorResponse"
+                  - $ref: "#/components/schemas/RevokeAccessForbiddenErrorResponse"
+        "404":
+          description: "Access, User, Role, Stage or SubFunction does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateAccessUserDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessRoleDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessStageDoesNotExistResponse"
+                  - $ref: "#/components/schemas/CreateAccessSubFunctionDoesNotExistResponse"
                   - $ref: "#/components/schemas/RevokeAccessAccessDoesNotExistResponse"
   /users/profile:
     get:
@@ -4700,6 +4763,69 @@ components:
       title: "Revoke `Access` error response due to using an email
         for a `User` that does not exist."
       example: "User (email={user_email}) does not exist."
+
+    ModifyAccessRequest:
+      title: "Modify `Access` request."
+      type: object
+      properties:
+        subfunctions:
+          type: array[int]          
+          description: Ids of `SubFunction`s to be applied to the `Access` being
+            created.
+          default: []
+
+    ModifyAccessResponse:
+      title: "Modify `Access` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "user": {
+                "id": 1,
+                "username": "Test.User@harris.com",
+                "email": "Test.User@harris.com",
+                "first_name": "Test",
+                "last_name": "User",
+                "is_active": True,
+              },
+              "role": {
+                "id": 2,
+                "created": "2024-08-27T12:00:00-04:00",
+                "name": "Business Process Expert",
+                "description": "Business Process Expert.",
+                "level": 2,
+              },
+              "access_granted_date": "2025-01-01T12:00:00-04:00",
+              "access_revoked_date": None,
+              "stage": [
+                {
+                  "id": 2,
+                  "name": "Submitted",
+                  "description": "A resource was submitted.",
+                  "level": 2,
+                },
+              ],
+              "subfunctions": [
+                {
+                  "id": 1,
+                  "function": {
+                    "id": 1,
+                    "name": "Human Resources",
+                    "description": "Function 1.",
+                    "created": "2024-08-27T12:00:00-04:00",
+                    "modified": "2024-08-27T12:00:00-04:00",
+                  },
+                  "name": "Training",
+                  "description": "Function 1 SubFunction 1.",
+                  "created": "2024-08-27T12:00:00-04:00",
+                  "modified": "2024-08-27T12:00:00-04:00",
+                },
+                ...
+              ],
+            }
 
     FetchProfileResponse:
       title: "Fetch `Profile` response."

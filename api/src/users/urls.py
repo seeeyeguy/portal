@@ -17,6 +17,11 @@ urlpatterns: urlconfig.PathPatternList = [
         name="users.access",
     ),
     path(
+        "access/subfunctions",
+        view=views.AccessControl.as_view(),
+        name="users.access.subfunctions",
+    ),
+    path(
         "profile",
         view=views.Profile.as_view(),
         name="users.profile",

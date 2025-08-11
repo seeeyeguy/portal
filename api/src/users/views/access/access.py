@@ -130,3 +130,47 @@ class Access(View):
         except exceptions.UsersError as exc:
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
+
+
+@method_decorator(never_cache, name="dispatch")
+class AccessControl(View):
+    """
+    Handle user requests to update `Access` records for `BI Portal`.
+    Here, we are specifically managing permissions in relation to
+    `SubFunction`s. It is important to note that we will not be
+    directly updating any record here. Instead, we will perform a
+    "soft" update, whereby we will revoke the previous record and
+    create a new record with the updated permissions.
+    """
+
+    @method_decorator(login_required())
+    @method_decorator(with_serializer(serializers.UpdateAccessRequest))
+    def put(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for PUT /v1/users/access/subfunctions."""
+
+        try:
+            req = serializers.UpdateAccessRequestQueryParams(data=request.GET)
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            access_id: int = req.validated_data.get("id")
+
+            log_msg = f"PUT /v1/users/access/subfunctions?id={access_id}."
+
+            LOGGER.info(log_msg)
+
+            # Update `Access` record subfunctions.
+            access_record, _ = controllers.Access.modify_access(
+                access=access_id, subfunctions=body["subfunctions"], admin=request.user
+            )
+
+            # Serialize `Access` record.
+            data: dict = AccessSerializer(access_record).data
+
+            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+
+        except exceptions.UsersError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
