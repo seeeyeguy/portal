@@ -7,8 +7,8 @@ import { calculateFontSize } from "views/utils/FontSizeUtility";
 
 import styles from "views/components/ProgramCard/ProgramCard.module.css";
 
-const DEFAULT_FONT_SIZE = "3.8vh";
-const FONT_SIZE_SLOPE = 0.5;
+const DEFAULT_FONT_SIZE = "3.4vh";
+const FONT_SIZE_SLOPE = 1.2;
 const INPUT_CUTOFF = 4;
 const MAX_FONT_SIZE = 1.85;
 const MIN_FONT_SIZE = 1.1;
@@ -94,7 +94,7 @@ export default function ProgramCardCondensed({
           >
             {program?.contractValue
               ? `${numeral(program.contractValue).format("$0.0a").toUpperCase()}`
-              : "Value"}
+              : !program?.paNumber && "Value"}
           </span>
           <div
             className={`${styles["tier"]} ${styles["condensed"]} ${program ? styles[`tier-${program.tier || "na"}`] : ""}`}

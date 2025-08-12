@@ -8,7 +8,7 @@ import { calculateFontSize } from "views/utils/FontSizeUtility";
 import styles from "views/components/ProgramCard/ProgramCard.module.css";
 
 const DEFAULT_FONT_SIZE = "2.8vh";
-const FONT_SIZE_SLOPE = 0.52;
+const FONT_SIZE_SLOPE = 0.7;
 const INPUT_CUTOFF = 4;
 const MAX_FONT_SIZE = 1.85;
 const MIN_FONT_SIZE = 0.8;
@@ -113,7 +113,7 @@ export default function ProgramCard({
           >
             {program?.contractValue
               ? `${numeral(program.contractValue).format("$0.0a").toUpperCase()}`
-              : "Contract Value"}
+              : (!program?.paNumber && "Contract Value")}
           </span>
         </header>
         <div
