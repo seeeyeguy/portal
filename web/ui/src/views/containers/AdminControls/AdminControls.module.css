@@ -165,6 +165,10 @@
   padding: 0.6rem 10rem 0 0;
 }
 
+.button-container button {
+  height: 3rem;
+}
+
 .button-container-evenly-spaced {
   justify-content: space-between;
 }

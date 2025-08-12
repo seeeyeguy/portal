@@ -569,18 +569,39 @@ export default function ApprovalsControls() {
                           >
                             Revise
                           </button>
-                          <button
-                            className={`${styles["admin-button"]} ${styles["admin-button-submit"]}`}
-                            onClick={(event) =>
-                              handleDisposition(
-                                request.id,
-                                DISPOSITION_VALUES.APPROVED
-                              )(event)
+                          <span
+                            data-tooltip-id={
+                              request.originator.user.email ===
+                              loaderData.user.email
+                                ? `approve-tooltip-${request.id}`
+                                : ""
                             }
-                            aria-label="approve resource request"
+                            data-tooltip-delay-show={200}
+                            aria-description="container for the approve resource request button "
                           >
-                            Approve
-                          </button>
+                            <button
+                              className={`${styles["admin-button"]} ${styles["admin-button-submit"]}`}
+                              onClick={(event) =>
+                                handleDisposition(
+                                  request.id,
+                                  DISPOSITION_VALUES.APPROVED
+                                )(event)
+                              }
+                              aria-label="approve resource request"
+                              disabled={
+                                request.originator.user.email ===
+                                loaderData.user.email
+                              }
+                            >
+                              Approve
+                            </button>
+                          </span>
+                          <Tooltip
+                            id={`approve-tooltip-${request.id}`}
+                            place={"left-start"}
+                          >
+                            Cannot approve your own requests.
+                          </Tooltip>
                         </div>
                       </div>
                     )}

@@ -173,8 +173,11 @@ class Disposition:
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
 
-            # Ensure `User` cannot vote on their own `Request`.
-            if approver.email == request_record.originator.user.email:
+            # Ensure `User` cannot approve their own `Request`.
+            if (
+                approver.email == request_record.originator.user.email
+                and disposition.upper() == models.Disposition.DispositionValues.APPROVED
+            ):
                 err_msg = "Permissions Denied."
                 LOGGER.error(err_msg)
                 raise exceptions.RequestError(err_msg, 403)
