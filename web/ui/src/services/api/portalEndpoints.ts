@@ -226,9 +226,13 @@ export default {
       user: string | null = null,
       roleLevels: number[] | null = null,
       subfunctions: number[] | null = null,
-      includeRevoked: boolean | null = null
+      includeRevoked: boolean | null = null,
+      addSubdomain: boolean = false
     ) => {
-      let base = buildQueryResourceByIdURL(RESOURCE_PATHS.USERS, "access")(id);
+      let base = buildQueryResourceByIdURL(
+        RESOURCE_PATHS.USERS,
+        !addSubdomain ? "access" : "access/subfunctions"
+      )(id);
 
       if (!id) {
         let arrayParams = "";

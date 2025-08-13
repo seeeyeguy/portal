@@ -22,7 +22,7 @@ type DIRECTORY_RESOURCE =
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
 type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program";
 type REQUEST_RESOURCE = "disposition" | "request";
-type USERS_RESOURCE = "access";
+type USERS_RESOURCE = "access" | "access/subfunctions";
 type RESOURCE =
   | ANALYTICS_RESOURCE
   | DIRECTORY_RESOURCE

@@ -30,6 +30,10 @@ export type TApiFetchAccessRequest = {
   includeRevoked?: boolean | null;
 };
 
+export type TApiModifyAccessRequest = {
+  subfunctions: number[];
+};
+
 const accessApi = api.injectEndpoints({
   endpoints: (builder) => ({
     addAccess: builder.mutation<TApiAccessResponse, TApiPostAccessRequest>({
@@ -86,6 +90,21 @@ const accessApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Access"],
     }),
+    modifyAccess: builder.mutation<
+      TApiAccessResponse,
+      { body: TApiModifyAccessRequest } & { id: number }
+    >({
+      query: ({ id, body }) => ({
+        url: endpoints.PORTAL.USERS.ACCESS(id, null, null, null, null, true),
+        method: PUT,
+        body,
+      }),
+      transformResponse: (response: IApiAccess, meta): TApiAccessResponse => ({
+        data: transformAccessRecord(response),
+        status: meta?.response?.status,
+      }),
+      invalidatesTags: ["Access"],
+    }),
   }),
 });
 
@@ -94,4 +113,5 @@ export const {
   useAddAccessMutation,
   useGetAccessesQuery,
   useRevokeAccessMutation,
+  useModifyAccessMutation,
 } = accessApi;

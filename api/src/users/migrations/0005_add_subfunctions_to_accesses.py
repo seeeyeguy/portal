@@ -4,6 +4,7 @@ import logging
 from typing import cast
 
 from django.db import migrations
+from django.db.models import Q
 
 from directory import models as DirectoryModels
 from users import models as UsersModels
@@ -24,7 +25,9 @@ def add_subfunctions_to_accesses(apps, schema_editor):
 
     LOGGER.info("Updating existing Accesses with appropriate SubFunctions...")
 
-    for record in Access.objects.all():
+    for record in Access.objects.filter(
+        ~Q(role__level=UsersModels.Role.RoleLevels.SUPERUSER)
+    ).all():
         requests = record.requests.all()
         resource_ids = requests.values_list("resource__id", flat=True)
         subfunction_ids = Resource.objects.filter(id__in=resource_ids).values_list(

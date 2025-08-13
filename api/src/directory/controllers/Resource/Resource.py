@@ -11,6 +11,7 @@ import logging
 import os
 import re
 import requests
+import urllib3
 from PIL import Image
 from typing import cast, List, Literal, Optional, Set, Tuple, TypedDict, Union
 from uuid import uuid4
@@ -219,9 +220,9 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Fetch `EmployeeLevel` records.
-            employee_level_records: QuerySet[
-                EmployeeLevel
-            ] = EmployeeLevel.objects.filter(id__in=params["employee_levels"])
+            employee_level_records: QuerySet[EmployeeLevel] = (
+                EmployeeLevel.objects.filter(id__in=params["employee_levels"])
+            )
             if employee_level_records.count() != len(set(params["employee_levels"])):
                 err_msg = f"Some EmployeeLevels (ids={params['employee_levels']}) do not exist."
                 LOGGER.error(err_msg)
@@ -267,33 +268,41 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 404)
 
             # Verify `PointOfContact` emails were given.
-            if not params["point_of_contacts"]:
+            point_of_contacts = list(
+                map(
+                    lambda email: f"{email.split('@')[0].lower()}@harris.com",
+                    params["point_of_contacts"],
+                )
+            )
+            if not point_of_contacts:
                 err_msg = "Resource must have at least one PointOfContact."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Dynamically construct filter params for an efficient query.
-            primary_point_of_contact_email = (
-                f"{params['point_of_contacts'][0].split('@')[0]}@harris.com"
-            )
+            primary_point_of_contact_email = point_of_contacts[0]
             filter_params = Q(email__iexact=primary_point_of_contact_email)
-            for email in params["point_of_contacts"][1:]:
-                filter_params |= Q(email__iexact=f"{email.split('@')[0]}@harris.com")
+            for email in point_of_contacts[1:]:
+                if email != point_of_contacts[0]:
+                    filter_params |= Q(email__iexact=email)
 
             # Fetch `User` records.
             users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(
                 filter_params
             )
             # Ensure each record exists.
-            if users_records.count() != len(params["point_of_contacts"]):
-                unverified_users = set(params["point_of_contacts"]) - set(
-                    users_records.values_list("email", flat=True)
+            if users_records.count() != len(set(point_of_contacts)):
+                unverified_users = set(point_of_contacts) - set(
+                    map(
+                        lambda email: email.lower(),
+                        users_records.values_list("email", flat=True),
+                    )
                 )
                 if BUILD != ApplicationBuild.TEST:
-                    for unverified_user in unverified_users:
+                    for unverified_user in unverified_users.copy():
                         verified_user = fetch_authorized_employee(email=unverified_user)
-                        if verified_user:
-                            unverified_users.remove(verified_user.email)
+                        if verified_user and unverified_users:
+                            unverified_users.remove(verified_user.email.lower())
                 if unverified_users:
                     err_msg = (
                         f"Some PointOfContacts (emails={unverified_users})"
@@ -308,7 +317,7 @@ class Resource:
             ).first()
             # Filter records for secondary point of contacts.
             secondary_point_of_contacts = users_records.filter(
-                ~Q(email__in=primary_point_of_contact_email)
+                ~Q(email__iexact=primary_point_of_contact_email)
             )
 
             # Verify a thumbnail was given.
@@ -340,9 +349,10 @@ class Resource:
             resource.point_of_contacts.add(
                 primary_point_of_contact, through_defaults={"primary": True}
             )
-            resource.point_of_contacts.add(
-                *secondary_point_of_contacts, through_defaults={"primary": False}
-            )
+            if secondary_point_of_contacts.exists():
+                resource.point_of_contacts.add(
+                    *secondary_point_of_contacts, through_defaults={"primary": False}
+                )
 
             return resource
         except ResourceModel.DoesNotExist as exc:
@@ -353,7 +363,12 @@ class Resource:
             err_msg = f"URL({params['url']}) is malformed."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=400) from exc
-        except requests.HTTPError as exc:
+        except (
+            requests.ConnectionError,
+            requests.HTTPError,
+            urllib3.exceptions.MaxRetryError,
+            urllib3.exceptions.NameResolutionError,
+        ) as exc:
             err_msg = f"URL({params['url']}) is not reachable."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=404) from exc
@@ -469,6 +484,12 @@ class Resource:
             subfunctions: List[int] = new_params.pop("subfunctions")
             tags: List[int] = new_params.pop("tags")
             point_of_contacts: List[str] = new_params.pop("point_of_contacts")
+            point_of_contacts = list(
+                map(
+                    lambda email: f"{email.split('@')[0].lower()}@harris.com",
+                    point_of_contacts,
+                )
+            )
 
             # Verify `EmployeeLevel` ids were given.
             if not employee_levels:
@@ -477,9 +498,9 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Fetch `EmployeeLevel` records.
-            employee_level_records: QuerySet[
-                EmployeeLevel
-            ] = EmployeeLevel.objects.filter(id__in=employee_levels)
+            employee_level_records: QuerySet[EmployeeLevel] = (
+                EmployeeLevel.objects.filter(id__in=employee_levels)
+            )
             if employee_level_records.count() != len(employee_levels):
                 err_msg = f"Some EmployeeLevels (ids={employee_levels}) do not exist."
                 LOGGER.error(err_msg)
@@ -527,27 +548,29 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Dynamically construct filter params for an efficient query.
-            primary_point_of_contact_email = (
-                f"{params['point_of_contacts'][0].split('@')[0]}@harris.com"
-            )
+            primary_point_of_contact_email = point_of_contacts[0]
             filter_params = Q(email__iexact=primary_point_of_contact_email)
             for email in point_of_contacts[1:]:
-                filter_params |= Q(email__iexact=f"{email.split('@')[0]}@harris.com")
+                if email != point_of_contacts[0]:
+                    filter_params |= Q(email__iexact=email)
 
             # Fetch `User` records.
             users_records: QuerySet[AuthModels.User] = AuthModels.User.objects.filter(
                 filter_params
             )
             # Ensure each records exists.
-            if users_records.count() != len(point_of_contacts):
+            if users_records.count() != len(set(point_of_contacts)):
                 unverified_users = set(point_of_contacts) - set(
-                    users_records.values_list("email", flat=True)
+                    map(
+                        lambda email: email.lower(),
+                        users_records.values_list("email", flat=True),
+                    )
                 )
                 if BUILD != ApplicationBuild.TEST:
-                    for unverified_user in unverified_users:
+                    for unverified_user in unverified_users.copy():
                         verified_user = fetch_authorized_employee(email=unverified_user)
-                        if verified_user:
-                            unverified_users.remove(verified_user.email)
+                        if verified_user and unverified_users:
+                            unverified_users.remove(verified_user.email.lower())
                 if unverified_users:
                     err_msg = f"Some PointOfContacts (emails={unverified_users}) do not exist."
                     LOGGER.error(err_msg)
@@ -559,7 +582,7 @@ class Resource:
             ).first()
             # Filter records for secondary point of contacts.
             secondary_point_of_contacts = users_records.filter(
-                ~Q(email__in=primary_point_of_contact_email)
+                ~Q(email__iexact=primary_point_of_contact_email)
             )
 
             # Get the thumbnail.
@@ -604,9 +627,10 @@ class Resource:
             resource.point_of_contacts.add(
                 primary_point_of_contact, through_defaults={"primary": True}
             )
-            resource.point_of_contacts.add(
-                *secondary_point_of_contacts, through_defaults={"primary": False}
-            )
+            if secondary_point_of_contacts.exists():
+                resource.point_of_contacts.add(
+                    *secondary_point_of_contacts, through_defaults={"primary": False}
+                )
 
             resource.refresh_from_db()
 
@@ -623,7 +647,12 @@ class Resource:
             err_msg = f"URL({params['url']}) is malformed."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=400) from exc
-        except requests.HTTPError as exc:
+        except (
+            requests.ConnectionError,
+            requests.HTTPError,
+            urllib3.exceptions.MaxRetryError,
+            urllib3.exceptions.NameResolutionError,
+        ) as exc:
             err_msg = f"URL({params['url']}) is not reachable."
             LOGGER.error(err_msg)
             raise exceptions.DirectoryError(err_msg, status=404) from exc
@@ -833,13 +862,11 @@ class ResourceSearch:
                 )
 
                 # Perform full text search.
-                full_text_search_resources: QuerySet[
-                    ResourceModel
-                ] = resources.annotate(
-                    search=search_vector,
-                    rank=SearchRank(search_vector, search_query),
-                ).filter(
-                    search=search_query
+                full_text_search_resources: QuerySet[ResourceModel] = (
+                    resources.annotate(
+                        search=search_vector,
+                        rank=SearchRank(search_vector, search_query),
+                    ).filter(search=search_query)
                 )
 
                 # Annotate the visit count and order by rank(descending) and then

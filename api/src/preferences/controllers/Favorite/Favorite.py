@@ -187,7 +187,7 @@ class Favorite:
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except (KeyError, IntegrityError) as exc:
             err_msg: str = "Invalid parameters given."
-            LOGGER.error(err_msg)
+            LOGGER.error(f"{err_msg} {exc}")
             raise exceptions.PreferencesError(err_msg, 400) from exc
 
     @staticmethod

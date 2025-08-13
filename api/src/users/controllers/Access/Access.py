@@ -389,7 +389,7 @@ class Access:
             if subfunctions:
                 accesses = accesses.filter(subfunctions__id__in=subfunctions).distinct()
 
-            return accesses
+            return accesses.order_by("-access_granted_date")
         except models.Access.DoesNotExist as exc:
             err_msg = f"Access (id={access}) does not exist."
             LOGGER.error(err_msg)

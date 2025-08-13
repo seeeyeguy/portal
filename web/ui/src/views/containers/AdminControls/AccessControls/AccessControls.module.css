@@ -184,19 +184,76 @@
   margin-right: 0.5rem;
 }
 
+.access-modify-button {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.access-modify-button:disabled {
+  opacity: 0.4;
+}
+
+.access-modify-button:hover:not(:disabled) {
+  background: var(--color-warning);
+  color: var(--color-white);
+}
+
+.access-modify-control {
+  max-width: 25rem;
+  min-width: 22.5rem;
+}
+
+.access-modify-control > div[class$="-control"] {
+  border-radius: 3px !important;
+}
+
+.access-modify-control
+  > div[class$="-control"]
+  div
+  > div[class$="-multiValue"] {
+  border-radius: 16px;
+}
+
+.access-modify-control
+  > div[class$="-control"]
+  div
+  > div[class$="-multiValue"]
+  > div[role="button"]
+  svg {
+  border: 1px solid var(--color-black);
+  border-radius: 8px;
+}
+
+.access-modify-control div[class$="-indicatorContainer"] {
+  background: var(--color-white);
+}
+
+.access-modify-control div[class*="menu"] > div[role="listbox"] {
+  max-height: 10rem;
+}
+
+.access-modify-control span[class$="-indicatorSeparator"] {
+  display: none;
+}
+
+.access-modify-control svg {
+  color: #6c757d;
+}
+
+.access-modify-control-container {
+  height: 17rem;
+  margin: 1.5rem auto;
+}
+
 .access-records-list {
   list-style-type: none;
 }
 
 .access-records-list article {
-  align-items: center;
   background: var(--color-white);
   border: 1px solid;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  display: flex;
-  gap: 0.8em;
-  justify-content: space-between;
   min-width: 40rem;
   padding: 0.75rem;
   margin: 1rem;
@@ -216,7 +273,7 @@
   color: var(--color-white);
 }
 
-.access-revoke-button-container {
+.access-revoke-modify-buttons-container {
   display: flex;
   flex-direction: row;
   justify-content: right;
@@ -225,7 +282,7 @@
   height: 3.5rem;
 }
 
-.access-revoke-button-container button {
+.access-revoke-modify-buttons-container button {
   align-items: center;
   background: var(--color-white);
   border-radius: 4px;
@@ -235,6 +292,22 @@
   cursor: pointer;
   justify-content: center;
   width: 50%;
+}
+
+@media screen and (min-width: 950px) {
+  .access-records-list article {
+    align-items: center;
+    background: var(--color-white);
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    gap: 0.8em;
+    justify-content: space-between;
+    min-width: 40rem;
+    padding: 0.75rem;
+    margin: 1rem;
+  }
 }
 
 @media screen and (min-width: 1250px) {
