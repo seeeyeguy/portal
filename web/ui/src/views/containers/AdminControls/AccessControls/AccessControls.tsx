@@ -19,6 +19,7 @@ import {
   useAddAccessMutation,
   useGetAccessesQuery,
   useRevokeAccessMutation,
+  useModifyAccessMutation,
 } from "state/query/api/portal/users/AccessApi";
 
 import { ROLE_LEVELS } from "utils/PermissionUtility";
@@ -242,6 +243,69 @@ export default function AccessControls() {
   );
 
   /**
+   * DEPENDENCIES FOR MODIFY ACCESS MODAL.
+   */
+  const [showModifyModal, setShowModifyModal] = React.useState(false);
+  const [pendingModifyRecord, setPendingModifyRecord] =
+    React.useState<IAccess | null>(null);
+  const [pendingSubfunctions, setPendingSubfunctions] = React.useState<
+    number[]
+  >([]);
+
+  const [modifyAccessRecord] = useModifyAccessMutation();
+
+  const onChangeModifyField = React.useCallback(
+    (event: MultiValue<Option>) => {
+      const values = (event ?? []).map((item) => item.value) as number[];
+      setPendingSubfunctions(values);
+    },
+    [setPendingSubfunctions]
+  );
+
+  const onClickCancelModifyAccess = React.useCallback(() => {
+    setPendingSubfunctions([]);
+    setPendingModifyRecord(null);
+    setShowModifyModal(false);
+  }, [setPendingModifyRecord, setPendingSubfunctions, setShowModifyModal]);
+
+  const onClickConfirmModifyAccess = React.useCallback(() => {
+    const currentSubfunctionIds = (
+      (pendingModifyRecord?.subfunctions ?? []) as ISubFunction[]
+    ).map((subfunction) => subfunction.id);
+    if (
+      pendingModifyRecord?.id &&
+      pendingModifyRecord?.role?.level !== ROLE_LEVELS.SUPERUSER &&
+      currentSubfunctionIds?.length &&
+      pendingSubfunctions?.length
+    ) {
+      modifyAccessRecord({
+        id: pendingModifyRecord.id,
+        body: { subfunctions: pendingSubfunctions },
+      });
+      setPendingModifyRecord(null);
+      setShowModifyModal(false);
+    }
+  }, [
+    pendingModifyRecord,
+    pendingSubfunctions,
+    modifyAccessRecord,
+    setPendingModifyRecord,
+    setShowModifyModal,
+  ]);
+
+  const onSubmitModifyAccess = React.useCallback(
+    (accessRecord: IAccess) => () => {
+      const currentSubfunctionIds = (
+        (accessRecord?.subfunctions ?? []) as ISubFunction[]
+      ).map((subfunction) => subfunction.id);
+      setPendingSubfunctions(currentSubfunctionIds);
+      setPendingModifyRecord(accessRecord);
+      setShowModifyModal(true);
+    },
+    [setPendingModifyRecord, setPendingSubfunctions, setShowModifyModal]
+  );
+
+  /**
    * DEPENDENCIES FOR REVOKE ACCESS MODAL.
    */
   const [showRevokeModal, setShowRevokeModal] = React.useState(false);
@@ -301,6 +365,43 @@ export default function AccessControls() {
 
   return (
     <>
+      <ConfirmModal
+        open={showModifyModal}
+        title={`Modify access for ${pendingModifyRecord?.user?.email}?`}
+        acceptLabel={<>Modify</>}
+        onReject={onClickCancelModifyAccess}
+        onAccept={onClickConfirmModifyAccess}
+        rejectClassName={`${adminStyles["admin-button"]} ${adminStyles["admin-button-cancel"]}`}
+        acceptClassName={`${adminStyles["admin-button"]} ${adminStyles["admin-button-revise"]}`}
+      >
+        <form>
+          <p>
+            <b>Role:</b>&nbsp;
+            {pendingModifyRecord?.role?.name}
+          </p>
+          <div
+            className={styles["access-modify-control-container"]}
+            aria-description="modify access control container"
+          >
+            <LabelCheckboxSelect
+              id="multiselect-subfunctions-modify-control"
+              label="SubFunctions"
+              options={subFunctionFieldOptions}
+              name="multiselect-subfunctions-modify-control"
+              inputId="multiselect-subfunctions-modify-control"
+              values={subFunctionFieldOptions.filter((subfunction) =>
+                pendingSubfunctions?.includes(subfunction.value as number)
+              )}
+              setValues={onChangeModifyField as ReactSetStateHook}
+              disabled={
+                pendingModifyRecord?.role.level === ROLE_LEVELS.SUPERUSER
+              }
+              horizontal={false}
+              className={styles["access-modify-control"]}
+            />
+          </div>
+        </form>
+      </ConfirmModal>
       <ConfirmModal
         open={showRevokeModal}
         title={`Revoking access for ${pendingRevokedRecord?.user?.email}?`}
@@ -504,9 +605,21 @@ export default function AccessControls() {
                       </p>
                     </div>
                     <div
-                      className={styles["access-revoke-button-container"]}
-                      aria-description="access revoke button container"
+                      className={
+                        styles["access-revoke-modify-buttons-container"]
+                      }
+                      aria-description="access revoke/modify button container"
                     >
+                      <button
+                        className={styles["access-modify-button"]}
+                        disabled={
+                          access?.role?.level === ROLE_LEVELS.SUPERUSER ||
+                          !access?.subfunctions?.length
+                        }
+                        onClick={onSubmitModifyAccess(access)}
+                      >
+                        Modify
+                      </button>
                       <button
                         className={styles["access-revoke-button"]}
                         onClick={onSubmitRevokeAccess(access)}

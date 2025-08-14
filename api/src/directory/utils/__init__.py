@@ -11,7 +11,7 @@ from rest_framework import status
 from manager.settings import ApplicationBuild, BUILD, SERVER_HOST
 
 # Request timeout (in seconds) for URL validation.
-REQUEST_TIMEOUT: int = 30
+REQUEST_TIMEOUT: int = 5
 
 VLE_HOSTNAME_PREFIX: str = "lnvle"
 

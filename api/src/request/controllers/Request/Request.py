@@ -158,7 +158,7 @@ class Request:
             return request
         except KeyError as exc:
             err_msg: str = "Invalid parameters given."
-            LOGGER.error(err_msg)
+            LOGGER.error(f"{err_msg} {exc}")
             raise exceptions.RequestError(err_msg, 400) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
@@ -269,7 +269,7 @@ class Request:
             return request, rows_affected
         except KeyError as exc:
             err_msg: str = "Invalid parameters given."
-            LOGGER.error(err_msg)
+            LOGGER.error(f"{err_msg} {exc}")
             raise exceptions.RequestError(err_msg, 400) from exc
         except models.Request.DoesNotExist as exc:
             err_msg: str = f"Request(id={params['request_id']}) does not exist."
