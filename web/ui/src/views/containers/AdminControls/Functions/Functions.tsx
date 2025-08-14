@@ -196,6 +196,7 @@ export default function Functions() {
           filterMatchMode="contains"
           className={styles["admin-dropdown-filter"]}
           onChange={(e) => setSelectedFunction(e?.value)}
+          filterInputAutoFocus
         />
       </div>
       <div
