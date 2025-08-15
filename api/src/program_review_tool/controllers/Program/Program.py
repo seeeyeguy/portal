@@ -16,9 +16,14 @@ from django.db.models import QuerySet
 
 from program_review_tool import controllers, exceptions, models
 from program_review_tool.utils.review.export import (
+    DEFAULT_EXPORT_ERROR_MESSAGE,
     ExportStatus,
     generate_program_review_powerpoint_wrapper,
     PROGRAM_REVIEW_CACHE_PREFIX,
+)
+from program_review_tool.utils.review.tableau import (
+    get_tableau_token_for_job,
+    TABLEAU_AUTH_CACHE_TIMEOUT,
 )
 
 from manager.settings import ApplicationBuild, BUILD
@@ -156,8 +161,9 @@ class Program:
         export_cache_key: str = f"{PROGRAM_REVIEW_CACHE_PREFIX}_{user_email}_{review_name}_{program_ids_str}"
 
         # Query the cache by the export_cache_key for the
-        # export's status and path.
-        program_review_export_status, export_path = cache.get(
+        # export's status and value (either the export's path or
+        # an error message in the event of failure).
+        program_review_export_status, export_value = cache.get(
             export_cache_key, (None, None)
         )
 
@@ -167,10 +173,11 @@ class Program:
             ExportStatus.QUEUED,
             ExportStatus.IN_PROGRESS,
         }:
-            return (program_review_export_status, export_path)
+            return (program_review_export_status, export_value)
 
         # If the status is `Done`, proceed to evaluate further.
         if program_review_export_status == ExportStatus.DONE:
+            export_path = export_value
             # If the path is not None and the path to the file
             # exists, return the status and the export path.
             if export_path is not None and os.path.exists(export_path):
@@ -178,13 +185,16 @@ class Program:
             # Else, set status to `Failed` and update the cache
             # entry.
             program_review_export_status = ExportStatus.FAILED
-            cache.set(export_cache_key, (ExportStatus.FAILED, None))
+            cache.set(
+                export_cache_key, (ExportStatus.FAILED, DEFAULT_EXPORT_ERROR_MESSAGE)
+            )
 
         # If status is `Failed`, log an error and raise an exception.
         if program_review_export_status == ExportStatus.FAILED:
-            err_msg = "Failed to generate export."
+            err_msg = export_value
             LOGGER.error(err_msg)
-            raise exceptions.ProgramReviewToolError(err_msg, 500)
+            error_code = 500 if err_msg == DEFAULT_EXPORT_ERROR_MESSAGE else 529
+            raise exceptions.ProgramReviewToolError(err_msg, error_code)
 
         # Fetch active `Program`s that match the given ids.
         programs: QuerySet[models.Program] = models.Program.objects.filter(
@@ -213,6 +223,22 @@ class Program:
         # of the `User`.
         reviewer_name: str = f"{user.first_name} {user.last_name}"
 
+        # Retrieve a Tableau token and its cache key.
+        tableau_token_cache_key, tableau_token_for_job = get_tableau_token_for_job()
+
+        # If there is no token then raise an error.
+        if not tableau_token_for_job:
+            err_msg = "Export generation service is overloaded. Please try again later."
+            raise exceptions.ProgramReviewToolError(err_msg, 529)
+
+        # Set the retrieved token as 'in use'.
+        cache.set(
+            tableau_token_cache_key,
+            (tableau_token_for_job, True),
+            TABLEAU_AUTH_CACHE_TIMEOUT,
+        )
+
+        # Create `Usage` entry for export job.
         usage = controllers.Usage.create_usage(user_email, pa_numbers)
 
         # Get the scheduler and queue the job for
@@ -226,6 +252,8 @@ class Program:
             reviewer_name,
             review_name,
             export_cache_key,
+            tableau_token_cache_key,
+            tableau_token_for_job,
             usage.id,
             meta={
                 "job_name": PROGRAM_REVIEW_EXPORT_JOB_NAME,

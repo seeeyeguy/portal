@@ -1565,6 +1565,14 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateProgramsReviewNoNetworkConnectivityResponse"
+        "529":
+          description: "Export service overloaded or unavailable."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateProgramsReviewServiceOverloadedResponse"
+                  - $ref: "#/components/schemas/CreateProgramsReviewServiceUnavailableResponse"
   /request/disposition:
     post:
       tags:
@@ -4420,6 +4428,16 @@ components:
       title: "Create `Program`s Review error response due to not having a
         connection to L3Harris network."
       example: "No connection to L3Harris network."
+
+    CreateProgramsReviewServiceOverloadedResponse:
+      title: "Create `Program`s Review error response due to the service being
+        overloaded."
+      example: "Export generation service is overloaded. Please try again later."
+    
+    CreateProgramsReviewServiceUnavailableResponse:
+      title: "Create `Program`s Review error response due to the service
+        being unavailable."
+      example: "Export generation service is unavailable. Please try again later."
 
     FetchProgramsResponse:
       title: "Fetch `Program`s response."

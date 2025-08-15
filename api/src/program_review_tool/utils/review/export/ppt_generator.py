@@ -6,6 +6,7 @@ export file.
 
 # pylint: disable=wrong-import-order
 import logging
+import multiprocessing
 import os
 import pandas as pd
 import time
@@ -14,9 +15,8 @@ from datetime import datetime
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
-from pptx.slide import Slide
 from pptx.util import Inches, Pt
-from typing import Optional, Tuple
+from typing import Tuple
 
 from django.core.validators import URLValidator
 
@@ -59,7 +59,6 @@ def populate_title_slide(
         * title_slide_name (str): Name of the title slide of the
             presentation.
         * period (str): Reporting period.
-        * reviewer_name (str): Name of the `User` that requested the export.
 
     Returns:
         * None
@@ -198,6 +197,8 @@ def download_image(
         elapsed = time.perf_counter() - start_time
         LOGGER.debug(f"Fetching {uri} took {elapsed:.2f} seconds")
         return row.slide_title, file_name
+    except ProgramReviewToolError as exc:
+        raise exc
     except Exception as exc:
         err_msg = f"Error downloading image: {exc}"
         LOGGER.error(err_msg)
@@ -240,7 +241,7 @@ def process_tableau_slides(
             tableau_slide_mapping_df["isSinglePa"]
         ].itertuples()
     )
-    with ThreadPoolExecutor(max_workers=16) as executor:
+    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         future_to_row = {
             executor.submit(
                 download_image,
@@ -268,6 +269,8 @@ def process_tableau_slides(
                         "linkUrl": row.linkUrl,
                     }
                 )
+            except ProgramReviewToolError as exc:
+                raise exc
             except Exception as exc:
                 LOGGER.error(f"Error processing row {row}: {exc}")
 

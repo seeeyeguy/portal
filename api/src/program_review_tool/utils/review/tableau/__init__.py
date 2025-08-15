@@ -9,16 +9,16 @@ server.
 import logging
 import os
 import requests
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 from xml.etree import ElementTree as ET
 
 from django.core.cache import cache
 
+from program_review_tool.exceptions import ProgramReviewToolError
 from program_review_tool.utils.review.tableau.config import (
     TABLEAU_API_VERSION,
     TABLEAU_CA_CERTIFICATE,
-    TABLEAU_PERSONAL_ACCESS_TOKEN_NAME,
-    TABLEAU_PERSONAL_ACCESS_TOKEN_SECRET,
+    TABLEAU_PERSONAL_ACCESS_TOKENS,
     TABLEAU_SERVER,
 )
 
@@ -31,8 +31,10 @@ AUTH_URL: str = f"{TABLEAU_SERVER}/api/{TABLEAU_API_VERSION}/auth/signin"
 
 VLE_HOSTNAME_PREFIX: str = "lnvle"
 
-# Tableau auth token cache key.
-TABLEAU_AUTH_TOKEN_CACHE_KEY: str = "program_review_tool_tableau_tableau_auth_token"
+# Tableau auth token cache key prefix.
+TABLEAU_AUTH_TOKEN_CACHE_KEY_PREFIX: str = (
+    "program_review_tool_tableau_tableau_auth_token"
+)
 
 # Tableau token cache expiration string.
 TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT: str = "has_expired"
@@ -92,9 +94,15 @@ def get_and_save_view_image(url: str, file_path_name: str, token: str) -> bool:
             url,
             headers={"Content-type": "application/xml", "X-Tableau-Auth": token},
             verify=verify_option,
-            timeout=60,
+            timeout=180,
         )
         response.raise_for_status()
+    except (requests.ConnectionError, requests.Timeout) as exc:
+        LOGGER.error(f"Failed to retrieve image from '{url}': {exc}")
+        raise ProgramReviewToolError(
+            "Export generation service is unavailable. Please try again later.",
+            529,
+        ) from exc
     except requests.RequestException as exc:
         LOGGER.error(f"Failed to retrieve image from '{url}': {exc}")
         return False
@@ -109,27 +117,27 @@ def get_and_save_view_image(url: str, file_path_name: str, token: str) -> bool:
         return False
 
 
-def sign_in_to_tableau() -> Optional[str]:
+def sign_in_to_tableau(token_name: str, token_secret: str) -> Optional[str]:
     """
-    Authenticates with the Tableau Server and returns an authentication token.
+    Authenticates with the Tableau Server using the provided
+    PAT token name and secret and returns an authentication token.
 
     Accepts:
-        * None
+        * token_name (str): Name of the Tableau PAT token.
+        * token_secret (str): Secret of the Tableau PAT token.
 
     Returns:
         * Optional[str]: The authentication token if successful; otherwise, None.
     """
 
-    if not (
-        TABLEAU_PERSONAL_ACCESS_TOKEN_NAME and TABLEAU_PERSONAL_ACCESS_TOKEN_SECRET
-    ):
+    if not (token_name and token_secret):
         LOGGER.error("Tableau PAT name and secret must be set.")
         return None
 
     payload = f"""
     <tsRequest>
-        <credentials personalAccessTokenName="{TABLEAU_PERSONAL_ACCESS_TOKEN_NAME}"
-                     personalAccessTokenSecret="{TABLEAU_PERSONAL_ACCESS_TOKEN_SECRET}">
+        <credentials personalAccessTokenName="{token_name}"
+                     personalAccessTokenSecret="{token_secret}">
             <site contentUrl="" />
         </credentials>
     </tsRequest>
@@ -170,7 +178,45 @@ def sign_in_to_tableau() -> Optional[str]:
         return None
 
 
-def cache_tableau_auth_token() -> None:
+def get_tableau_token_for_job() -> Tuple[str, str]:
+    """
+    Returns an available Tableau token and its cache key.
+
+    Accepts:
+        * None
+
+    Returns:
+        * Tuple[str,str]: A tuple with an available Tableau
+            token and its cache key if found and available
+            for use.
+    """
+
+    # Query the cache using the Tableau token cache key prefix to
+    # retrieve the collection of keys holding the Tableau tokens.
+    token_cache_keys = cache.keys(f"*{TABLEAU_AUTH_TOKEN_CACHE_KEY_PREFIX}*")  # type: ignore[attr-defined]
+
+    for token_cache_key in token_cache_keys:
+
+        lock_key = f"{token_cache_key.upper()}-lock"
+        lock_value = f"{token_cache_key}-locked"
+        lock_timeout = 3
+        # Attempt to set a lock (for 3 seconds) for the token key.
+        if cache.set(lock_key, lock_value, lock_timeout, nx=True):  # type: ignore[call-arg,func-returns-value]
+            token, in_use = cache.get(
+                token_cache_key, (TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT, False)
+            )
+            # If the token is not expired and is not in use and then
+            # return it.
+            if token != TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT and not in_use:
+                return token_cache_key, token
+        else:
+            # Token has been locked by another process, continue on the next
+            # token cache key.
+            continue
+    return "", ""
+
+
+def cache_tableau_auth_tokens() -> None:
     """
     Signs-in to L3Harris Tableau server
     and stores the retrieved authentication
@@ -188,15 +234,20 @@ def cache_tableau_auth_token() -> None:
         LOGGER.info(info_msg)
         return None
 
-    # Authenticate with Tableau to retrieve a valid token.
-    token = sign_in_to_tableau()
-    # If sign in failed, log and return.
-    if token is None:
-        err_msg = "Tableau sign in failed. Exiting."
-        LOGGER.error(err_msg)
-        return None
+    for token_name, token_secret in TABLEAU_PERSONAL_ACCESS_TOKENS.items():
+        # Authenticate with Tableau to retrieve a valid token.
+        token = sign_in_to_tableau(token_name, token_secret)
+        # If sign in failed, log and continue.
+        if token is None:
+            err_msg = f"Tableau sign in failed for token: {token_name}"
+            LOGGER.error(err_msg)
+            continue
 
-    # Set the token in the cache.
-    cache.set(TABLEAU_AUTH_TOKEN_CACHE_KEY, token, TABLEAU_AUTH_CACHE_TIMEOUT)
+        tableau_auth_token_cache_key: str = (
+            f"{TABLEAU_AUTH_TOKEN_CACHE_KEY_PREFIX}_{token_name}"
+        )
 
-    LOGGER.info("Successfully stored Tableau token in cache.")
+        # Set the token in the cache with an initial in use flag value of False.
+        cache.set(
+            tableau_auth_token_cache_key, (token, False), TABLEAU_AUTH_CACHE_TIMEOUT
+        )

@@ -19,7 +19,7 @@ services:
             file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
             service: api
         container_name: ${APP_NAME}-rqworker1-${USER}
-        command: python manage.py rqworker default
+        command: python manage.py rqworker-pool default --num-workers ${RQWORKER_POOL_WORKER_NUM}
         depends_on:
             - queue
             - api
