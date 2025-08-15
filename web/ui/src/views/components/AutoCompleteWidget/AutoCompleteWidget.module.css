@@ -1,0 +1,21 @@
+.autocomplete-widget {
+  border: 1px solid var(--color-prime-react-border);
+}
+
+.autocomplete-widget[class*="p-inputwrapper-focus"] {
+  box-shadow: 0 0 0 0.1rem var(--color-prime-react-focus);
+}
+
+.autocomplete-widget:hover:not([class*="p-inputwrapper-focus"]) {
+  border-color: var(--color-prime-react-hover);
+}
+
+.autocomplete-widget button {
+  background-color: var(--color-white);
+  border: none;
+  color: var(--color-prime-react-icon);
+}
+
+.autocomplete-widget input {
+  border: none;
+}

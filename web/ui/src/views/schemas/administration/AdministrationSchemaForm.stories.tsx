@@ -237,6 +237,26 @@ export const EmployeeLevelFormSchema: Story = {
   },
 };
 
+const Pocs = [
+  "Darth.Vader@l3harris.com",
+  "Emperor.Palpatine@l3harris.com",
+  "Luke.Skywalker@l3harris.com",
+  "Obi.Warn@l3harris.com",
+  "Leia.Organa@l3harris.com",
+  "Han.Solo@l3harris.com",
+];
+
+const fetchPocs = (searchTerm: string) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const filteredPocs = Pocs.filter((poc) =>
+        poc.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      resolve(filteredPocs);
+    }, 1000);
+  });
+};
+
 export const ResourceFormSchema: Story = {
   args: {
     formData: {
@@ -267,18 +287,6 @@ export const ResourceFormSchema: Story = {
   },
   render: (args) => {
     if (args.schema.properties) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (args.schema.properties.primaryPoc as any).examples = [
-        "Darth.Vader@l3harris.com",
-        "Emperor.Palpatine@l3harris.com",
-      ];
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (args.schema.properties.secondaryPoc as any).examples = [
-        "Darth.Vader@l3harris.com",
-        "Emperor.Palpatine@l3harris.com",
-      ];
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (args.schema.properties.employeeLevels as any).items.anyOf = [
         { const: 1, title: "Emperor" },
@@ -335,6 +343,18 @@ export const ResourceFormSchema: Story = {
             label: "blaster::color:red",
           },
         ],
+      };
+
+      args.uiSchema.primaryPoc["ui:options"] = {
+        completeMethod: (searchTerm: string) => {
+          return fetchPocs(searchTerm);
+        },
+      };
+
+      args.uiSchema.secondaryPoc["ui:options"] = {
+        completeMethod: (searchTerm: string) => {
+          return fetchPocs(searchTerm);
+        },
       };
     }
 
