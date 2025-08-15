@@ -68,12 +68,6 @@ export default function AdminResources() {
     [loaderData]
   );
 
-  const [primaryPocSearch, setPrimaryPocSearch] = React.useState<string[]>([]);
-
-  const [secondaryPocSearch, setSecondaryPocSearch] = React.useState<string[]>(
-    []
-  );
-
   // Multi-Select filter options, non-superusers get their resources
   // filtered by default so the first option is removed.
   const FILTER_OPTIONS = [
@@ -165,10 +159,12 @@ export default function AdminResources() {
   const resourceTypes = Object.keys(resourceTypeThumbnailPaths);
 
   const fetchUserOptions = React.useCallback(
-    async (searchTerm: string, secondaryPreviousPoc?: string) => {
+    async (
+      searchTerm: string,
+      secondaryPreviousPoc?: string
+    ): Promise<string[]> => {
       if (!searchTerm?.length) {
-        setPrimaryPocSearch([]);
-        return;
+        return [];
       }
 
       let data = null;
@@ -202,14 +198,11 @@ export default function AdminResources() {
               secondaryPreviousPoc.lastIndexOf(",") + 1
             )
           : "";
-
-        setSecondaryPocSearch(
-          (data?.data ?? []).map((employee) => `${prefix}${employee.email}`)
+        return (data?.data ?? []).map(
+          (employee) => `${prefix}${employee.email}`
         );
       } else {
-        setPrimaryPocSearch(
-          (data?.data ?? []).map((employee) => employee.email)
-        );
+        return (data?.data ?? []).map((employee) => employee.email);
       }
     },
     []
@@ -229,13 +222,34 @@ export default function AdminResources() {
           ...resourceUiSchema.tags,
           "ui:options": { tags: tags.data },
         },
+        primaryPoc: {
+          ...resourceUiSchema.primaryPoc,
+          "ui:options": {
+            completeMethod: (searchTerm: string) => {
+              return debouncedFetchPoc(searchTerm);
+            },
+          },
+        },
+        secondaryPoc: {
+          ...resourceUiSchema.secondaryPoc,
+          "ui:options": {
+            completeMethod: (searchTerm: string) => {
+              return debouncedFetchPoc(
+                searchTerm.includes(",")
+                  ? searchTerm.split(",").pop()!.trim()
+                  : searchTerm,
+                searchTerm
+              );
+            },
+          },
+        },
         "ui:submitButtonOptions": {
           norender: true,
         },
       };
     }
     return resourceUiSchema;
-  }, [tags]);
+  }, [tags, debouncedFetchPoc]);
 
   const updatedSchema = React.useMemo(() => {
     const newSchema = { ...resourceSchema };
@@ -261,25 +275,13 @@ export default function AdminResources() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (newSchema.properties?.primaryPoc as any).examples = primaryPocSearch;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (newSchema.properties?.secondaryPoc as any).examples = secondaryPocSearch;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (newSchema.properties?.type as any).oneOf = resourceTypes.map((type) => ({
       const: type,
       title: type,
     }));
 
     return newSchema;
-  }, [
-    employeeLevels,
-    primaryPocSearch,
-    secondaryPocSearch,
-    subfunctions,
-    resourceTypes,
-  ]);
+  }, [employeeLevels, subfunctions, resourceTypes]);
 
   React.useEffect(() => {
     setNewFormKey(Date.now());
@@ -528,21 +530,6 @@ export default function AdminResources() {
                           showErrorList={false}
                           noHtml5Validate={true}
                           widgets={resourceWidgets}
-                          onChange={(event) => {
-                            debouncedFetchPoc(event.formData.primaryPoc);
-                            // Only search on the last Poc in the list.
-                            if (event.formData.secondaryPoc) {
-                              debouncedFetchPoc(
-                                event.formData.secondaryPoc.includes(",")
-                                  ? event.formData.secondaryPoc
-                                      .split(",")
-                                      .pop()!
-                                      .trim()
-                                  : event.formData.secondaryPoc,
-                                event.formData.secondaryPoc
-                              );
-                            }
-                          }}
                         />
                         {EDITABLE_STAGES.includes(
                           request.transitions.nodes[request.transitions.latest]
@@ -653,18 +640,6 @@ export default function AdminResources() {
           showErrorList={false}
           noHtml5Validate={true}
           widgets={resourceWidgets}
-          onChange={(event) => {
-            debouncedFetchPoc(event.formData.primaryPoc);
-            // Only search on the last Poc in the list.
-            if (event.formData.secondaryPoc) {
-              debouncedFetchPoc(
-                event.formData.secondaryPoc.includes(",")
-                  ? event.formData.secondaryPoc.split(",").pop()!.trim()
-                  : event.formData.secondaryPoc,
-                event.formData.secondaryPoc
-              );
-            }
-          }}
         />
       </ConfirmModal>
     </>

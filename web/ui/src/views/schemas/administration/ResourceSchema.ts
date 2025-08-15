@@ -1,5 +1,6 @@
 import { RJSFSchema, UiSchema } from "@rjsf/utils";
 
+import AutoCompleteWidget from "views/components/AutoCompleteWidget/AutoCompleteWidget";
 import FileUploadWidget from "views/components/FileUploadWidget/FileUploadWidget";
 import TagSelectionWidget from "views/components/TagSelectionWidget/TagSelectionWidget";
 
@@ -253,11 +254,11 @@ export const resourceUiSchema: UiSchema = {
     "ui:widget": "TagSelectionWidget",
   },
   primaryPoc: {
-    "ui:widget": "text",
+    "ui:widget": "AutoCompleteWidget",
     "ui:placeholder": "Enter Primary POC",
   },
   secondaryPoc: {
-    "ui:widget": "text",
+    "ui:widget": "AutoCompleteWidget",
     "ui:placeholder": "Select Secondary POC",
   },
   type: {
@@ -300,6 +301,7 @@ const validateEmailList = (emailList: string) => {
 };
 
 export const resourceWidgets = {
+  AutoCompleteWidget,
   FileUploadWidget,
   TagSelectionWidget,
 };
