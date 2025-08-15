@@ -25,6 +25,11 @@ export type TApiProgramReviewRequest = {
   name: string;
 };
 
+export type TApiProgramReviewErrorResponse = {
+  data: string,
+  status: number
+}
+
 type TApiProgramReviewResponse = {
   data: number;
   status: number | undefined;

@@ -28,7 +28,7 @@ import {
   updateCurrentPortfolioState,
 } from "state/actions/ProgramReviewActions";
 import { useGetPortfoliosQuery } from "state/query/api/portal/programReviewTool/PortfolioApi";
-import programApi from "state/query/api/portal/programReviewTool/ProgramApi";
+import programApi, {TApiProgramReviewErrorResponse} from "state/query/api/portal/programReviewTool/ProgramApi";
 import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 import store, { useAppDispatch, useTypedSelector } from "state/store/store";
 
@@ -154,7 +154,7 @@ export default function ProgramReviewTool() {
         setPolling(0);
         setProgressMarkers([]);
         setCurrentMarker(null);
-        toast.error(`Error: Portfolio generation failed.`);
+        toast.error(ProgramReviewResponse?.error ? `${(ProgramReviewResponse.error as TApiProgramReviewErrorResponse)?.data}` : `Error: Portfolio generation failed.`);
         return;
       }
 

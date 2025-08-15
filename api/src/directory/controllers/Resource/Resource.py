@@ -220,9 +220,9 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Fetch `EmployeeLevel` records.
-            employee_level_records: QuerySet[EmployeeLevel] = (
-                EmployeeLevel.objects.filter(id__in=params["employee_levels"])
-            )
+            employee_level_records: QuerySet[
+                EmployeeLevel
+            ] = EmployeeLevel.objects.filter(id__in=params["employee_levels"])
             if employee_level_records.count() != len(set(params["employee_levels"])):
                 err_msg = f"Some EmployeeLevels (ids={params['employee_levels']}) do not exist."
                 LOGGER.error(err_msg)
@@ -498,9 +498,9 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 400)
 
             # Fetch `EmployeeLevel` records.
-            employee_level_records: QuerySet[EmployeeLevel] = (
-                EmployeeLevel.objects.filter(id__in=employee_levels)
-            )
+            employee_level_records: QuerySet[
+                EmployeeLevel
+            ] = EmployeeLevel.objects.filter(id__in=employee_levels)
             if employee_level_records.count() != len(employee_levels):
                 err_msg = f"Some EmployeeLevels (ids={employee_levels}) do not exist."
                 LOGGER.error(err_msg)
@@ -862,11 +862,13 @@ class ResourceSearch:
                 )
 
                 # Perform full text search.
-                full_text_search_resources: QuerySet[ResourceModel] = (
-                    resources.annotate(
-                        search=search_vector,
-                        rank=SearchRank(search_vector, search_query),
-                    ).filter(search=search_query)
+                full_text_search_resources: QuerySet[
+                    ResourceModel
+                ] = resources.annotate(
+                    search=search_vector,
+                    rank=SearchRank(search_vector, search_query),
+                ).filter(
+                    search=search_query
                 )
 
                 # Annotate the visit count and order by rank(descending) and then

@@ -1,16 +1,16 @@
 """
 `Program Review Tool` `Program` review Tableau script file
 that attempts to sign in to L3Harris Tableau server and store
-the token in the cache.
+the tokens in the cache.
 """
 
-from program_review_tool.utils.review.tableau import cache_tableau_auth_token
+from program_review_tool.utils.review.tableau import cache_tableau_auth_tokens
 
 
 def run() -> None:
     """
     Script function for authenticating with L3Harris
-    Tableau server and storing the token in the cache.
+    Tableau server and storing the tokens in the cache.
 
     Accepts:
         * None
@@ -19,4 +19,4 @@ def run() -> None:
         * None
     """
 
-    cache_tableau_auth_token()
+    cache_tableau_auth_tokens()

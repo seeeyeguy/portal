@@ -38,7 +38,7 @@ from program_review_tool.utils.review.export.ppt_generator import (
 from program_review_tool.utils.review.tableau import (
     sign_in_to_tableau,
     TABLEAU_AUTH_CACHE_TIMEOUT,
-    TABLEAU_AUTH_TOKEN_CACHE_KEY,
+    TABLEAU_AUTH_TOKEN_CACHE_KEY_PREFIX,
     TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT,
 )
 
@@ -54,7 +54,7 @@ PPT_TEMPLATE: str = os.path.join(ASSETS_DIR, "PRT.pptx")
 PROGRAM_REVIEW_CACHE_PREFIX: str = "program_review_tool_review"
 
 # Default error message used when raising 500 exceptions.
-DEFAULT_EXPORT_ERROR_MESSAGE: str = "ERROR: Failed to generate export."
+DEFAULT_EXPORT_ERROR_MESSAGE: str = "Failed to generate export."
 
 
 class ExportStatus:
@@ -74,7 +74,9 @@ def generate_program_review_powerpoint_wrapper(
     reviewer_name: str,
     portfolio_name: str,
     export_cache_key: str,
-    generation_id: str,
+    tableau_token_cache_key: str,
+    tableau_token: str,
+    generation_id: int,
 ) -> None:
     """
     Enqueues a job to generate the Program review PowerPoint
@@ -86,6 +88,10 @@ def generate_program_review_powerpoint_wrapper(
         * reviewer_name (str): Name of the `User` that requested the export.
         * portfolio_name (str): Portfolio name.
         * export_cache_key (str): Cache key for the export being generated.
+        * tableau_token_cache_key (str): The cache key of the Tableau token used for this
+            export job.
+        * tableau_token (str): Tableau token used for this export job.
+        * generation_id (int): The primary key of the `Usage` instance linked to this job.
 
     Returns:
         * None
@@ -99,6 +105,7 @@ def generate_program_review_powerpoint_wrapper(
             reviewer_name=reviewer_name,
             portfolio_name=portfolio_name,
             export_cache_key=export_cache_key,
+            token=tableau_token,
         )
 
         # Calculate the cache timeout (in seconds) for the export
@@ -128,7 +135,7 @@ def generate_program_review_powerpoint_wrapper(
     except ProgramReviewToolError as exc:
         err_msg = f"Export failed for: {export_cache_key} Reason: {exc.message}"
         LOGGER.error(err_msg)
-        cache.set(export_cache_key, (ExportStatus.FAILED, None), 600)
+        cache.set(export_cache_key, (ExportStatus.FAILED, exc.message), 600)
 
         # Get the scheduler and queue the job for
         # completing usage.
@@ -146,6 +153,11 @@ def generate_program_review_powerpoint_wrapper(
             },
         )
 
+    # Set the Tableau token used for the generation as not `in use`.
+    cache.set(
+        tableau_token_cache_key, (tableau_token, False), TABLEAU_AUTH_CACHE_TIMEOUT
+    )
+
 
 def generate_program_review_powerpoint(
     pa_numbers: List[str],
@@ -153,6 +165,7 @@ def generate_program_review_powerpoint(
     reviewer_name: str,
     portfolio_name: str,
     export_cache_key: str,
+    token: str,
 ) -> str:
     """
     Generates a PowerPoint presentation for the `Program`s and reporting period.
@@ -163,6 +176,7 @@ def generate_program_review_powerpoint(
         * reviewer_name (str): Name of the `User` that requested the export.
         * portfolio_name (str): Portfolio name.
         * export_cache_key (str): Cache key for the export being generated.
+        * token (str): Tableau token used for the retrieval of images.
 
     Returns:
         * export_path (str): The path to the saved presentation.
@@ -177,21 +191,6 @@ def generate_program_review_powerpoint(
 
     # Set the export job as `In-Progress` in the cache.
     cache.set(export_cache_key, (ExportStatus.IN_PROGRESS, None))
-
-    # Check if Tableau auth token is in cache.
-    token = cache.get(TABLEAU_AUTH_TOKEN_CACHE_KEY, TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT)
-    # If the value from the cache is None proceed to sign in and
-    # get a new token.
-    if token == TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT:
-        # Authenticate with Tableau to retrieve a valid token.
-        token = sign_in_to_tableau()
-        # If sign in failed, throw Error.
-        if token is None:
-            err_msg = "Tableau sign in failed. Exiting."
-            LOGGER.error(err_msg)
-            raise ProgramReviewToolError(DEFAULT_EXPORT_ERROR_MESSAGE, 500)
-        # Set the token in the cache.
-        cache.set(TABLEAU_AUTH_TOKEN_CACHE_KEY, token, TABLEAU_AUTH_CACHE_TIMEOUT)
 
     # Ensure the template exists.
     if not os.path.exists(PPT_TEMPLATE):
@@ -257,6 +256,8 @@ def generate_program_review_powerpoint(
             is_multi_pa,
         )
         LOGGER.info("Processed Tableau slides successfully.")
+    except ProgramReviewToolError as exc:
+        raise exc
     except Exception as exc:
         err_msg = f"Error processing Tableau slides: {exc}"
         LOGGER.error(err_msg)
