@@ -9,6 +9,8 @@ for our users.
 """
 
 from program_review_tool.models.Program import Program
+from program_review_tool.models.ProgramRole import ProgramRole
+from program_review_tool.models.ProgramMember import ProgramMember
 from program_review_tool.models.Portfolio import Portfolio
 from program_review_tool.models.Usage import Usage
 from users.models.User.signals import (
