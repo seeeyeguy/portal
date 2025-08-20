@@ -10,15 +10,49 @@ export enum EReviewStatus {
   COMPLETE = 2,
 }
 
+export interface IProgramRole {
+  id: number;
+  name: string;
+  description: string;
+  created: Date;
+  modified: Date;
+}
+
+export interface IProgramMember {
+  id: number;
+  program: number;
+  role: IProgramRole;
+  user: IUser;
+  isActive: boolean;
+  created: Date;
+  expiryDate: Date | null;
+  modified: Date;
+}
+
 export interface IProgram {
   id: number;
   paNumber: string;
   name?: string;
   sector?: string;
   division?: string;
-  tier?: number;
-  contractValue?: number;
+  tier?: number | null;
+  contractType: string | null;
+  contractNumber: string | null;
+  contractValue?: number | null;
+  contractStartDate: string | null;
+  contractEndDate: string | null;
+  actualCostWorkPerformedCumulative: number | null;
+  budgetedCostWorkPerformedCumulative: number | null;
+  budgetedCostWorkScheduledCumulative: number | null;
+  costPerformanceIndexCumulative: number | null;
+  schedulePerformanceIndexCumulative: number | null;
+  budgetAtComplete: number | null;
+  estimateAtComplete: number | null;
+  estimateToComplete: number | null;
+  managementReserve: number | null;
+  weightedRisksAndOpportunities: number | null;
   activeStatus: boolean;
+  teamMembers: IProgramMember[];
   created: string;
   modified: string;
   disabled: boolean;
