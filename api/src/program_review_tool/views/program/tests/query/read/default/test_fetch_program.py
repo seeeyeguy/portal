@@ -10,6 +10,7 @@ from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
+from program_review_tool import models
 from program_review_tool.controllers.Program.tests.query.read.default import arguments
 
 from manager.utils.tests import MultiDBTestCase
@@ -53,6 +54,11 @@ class TestFetchProgram(MultiDBTestCase):
                 **program["fields"],
                 "id": program["pk"],
                 "segment": "SPACE & AIRBORNE SYSTEMS",
+                "team_members": list(
+                    models.ProgramMember.objects.filter(
+                        program__id=program["pk"], is_active=True
+                    )
+                ),
             }
             for program in self.program_fixtures
         }

@@ -37,8 +37,39 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
         * tier (models.PositiveSmallIntegerField): Describes the mission importance
             and risk of a `Program`. Limited to the range of 1-4, where 1 is
             considered the highest tier.
-        * contract_value (models.PositiveBigIntegerField): The dollar value assigned
-            to the `Program`.
+        * contract_type (models.CharField): The classification of the
+            contract (e.g., FFP, CPFF, T&M) that defines terms of pricing,
+            risk, and reimbursement.
+        * contract_number (models.CharField): The unique identifier assigned
+            to a contractual agreement between the customer and L3Harris
+            technologies.
+        * contract_value (models.PositiveBigIntegerField): The dollar value
+            assigned to the `Program`.
+        * contract_start_date (models.DateField): The date on which the contractual
+            period of performance officially begins.
+        * contract_end_date (models.DateField): The date on which the contractual period of
+            performance is scheduled to conclude.
+        * actual_cost_work_performed_cumulative (models.DecimalField): The total actual cost
+            incurred for all completed work up to the reporting period.
+        * budgeted_cost_work_performed_cumulative (models.DecimalField): The cumulative value
+            of the budgeted cost for completed work as of the reporting period.
+        * budgeted_cost_work_scheduled_cumulative (models.DecimalField): The cumulative value
+            of the budgeted cost for work that was scheduled to be completed by the
+            reporting period.
+        * cost_performance_index_cumulative (models.DecimalField): A ratio (BCWP ÷ ACWP) that
+            measures cost efficiency in executing the program.
+        * schedule_performance_index_cumulative (models.DecimalField): A ratio (BCWP ÷ BCWS)
+            that measures schedule efficiency in completing the planned work.
+        * budget_at_complete (models.DecimalField): The total budgeted cost for the
+            entire scope of work as defined in the baseline plan.
+        * estimate_at_complete (models.DecimalField): The current forecast of the total
+            expected cost required to complete the program.
+        * estimate_to_complete (models.DecimalField): The projected additional cost needed
+            to complete the remaining program work (EAC - ACWP).
+        * management_reserve (models.DecimalField): A budget set aside by management to cover
+            unforeseen risks or changes outside the scope of baseline work.
+        * weighted_risks_and_opportunities (models.DecimalField): The net financial impact of
+            risks and opportunities, weighted by their probability of occurrence.
         * active_status (models.BooleanField): Whether the `Program` is active.
         * created (models.DateTimeField): The date & time this `Program` was created.
         * modified (models.DateTimeField): The date & time this `Program` was last modified.
@@ -46,12 +77,46 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
 
     pa_number = models.CharField(max_length=64, unique=True)
     segment = models.ForeignKey("users.Segment", on_delete=models.SET_NULL, null=True)
-    sector = models.CharField(max_length=1028)
-    division = models.CharField(max_length=1028)
+    sector = models.CharField(max_length=1028, default="")
+    division = models.CharField(max_length=1028, default="")
     tier = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(4)]
+        validators=[MinValueValidator(1), MaxValueValidator(4)], null=True
     )
-    contract_value = models.PositiveBigIntegerField()
+    contract_type = models.CharField(max_length=64, default="")
+    contract_number = models.CharField(max_length=32, default="")
+    contract_value = models.PositiveBigIntegerField(null=True)
+    contract_start_date = models.DateField(null=True, default=None)
+    contract_end_date = models.DateField(null=True, default=None)
+    actual_cost_work_performed_cumulative = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    budgeted_cost_work_performed_cumulative = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    budgeted_cost_work_scheduled_cumulative = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    cost_performance_index_cumulative = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, default=None
+    )
+    schedule_performance_index_cumulative = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, default=None
+    )
+    budget_at_complete = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    estimate_at_complete = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    estimate_to_complete = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    management_reserve = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
+    weighted_risks_and_opportunities = models.DecimalField(
+        max_digits=14, decimal_places=2, null=True, default=None
+    )
     active_status = models.BooleanField(null=True, default=None)
 
     # Removed fields from superclass.

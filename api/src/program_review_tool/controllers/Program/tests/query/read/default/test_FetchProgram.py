@@ -52,6 +52,11 @@ class TestFetchProgram(MultiDBTestCase):
                     if k not in ("segment", "created", "modified")
                 },
                 "id": program["pk"],
+                "team_members": list(
+                    models.ProgramMember.objects.filter(
+                        program__id=program["pk"], is_active=True
+                    )
+                ),
             }
             for program in self.program_fixtures
         }
@@ -60,7 +65,7 @@ class TestFetchProgram(MultiDBTestCase):
     def test_fetch_programs(self) -> None:
         """Success Case: Fetch active `Program` records."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[], page=None, limit=None
         )
 
@@ -95,7 +100,7 @@ class TestFetchProgram(MultiDBTestCase):
         """Success Case: Fetch active `Program` records for
         the given ids."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             arguments.FETCH_PROGRAM_IDS, page=None, limit=None
         )
 
@@ -111,7 +116,7 @@ class TestFetchProgram(MultiDBTestCase):
     def test_fetch_programs_with_page(self) -> None:
         """Success Case: Fetch page of active `Program` records."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[], page=arguments.FETCH_PROGRAM_WITH_PAGE, limit=None
         )
 
@@ -145,7 +150,7 @@ class TestFetchProgram(MultiDBTestCase):
     def test_fetch_programs_with_limit(self) -> None:
         """Success Case: Fetch active `Program` records up to a limit."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[], page=None, limit=arguments.FETCH_PROGRAM_WITH_LIMIT
         )
 
@@ -157,7 +162,7 @@ class TestFetchProgram(MultiDBTestCase):
     def test_fetch_programs_with_page_and_limit(self) -> None:
         """Success Case: Fetch page of active `Program` records up to a limit."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[],
             page=arguments.FETCH_PROGRAM_WITH_PAGE,
             limit=arguments.FETCH_PROGRAM_WITH_LIMIT,
@@ -193,7 +198,7 @@ class TestFetchProgram(MultiDBTestCase):
         """Success Case: Fetch active `Program` records using a
         page number that exceeds the number of pages."""
 
-        programs = controllers.Program.fetch_programs(
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[],
             page=arguments.FETCH_PROGRAM_WITH_PAGE_EXCEEDING_MAX_PAGE_COUNT,
             limit=None,
@@ -211,7 +216,7 @@ class TestFetchProgram(MultiDBTestCase):
         ids that do not exist."""
 
         with pytest.raises(exceptions.ProgramReviewToolError):
-            controllers.Program.fetch_programs(
+            controllers.Program.fetch_programs(  # type: ignore[attr-defined]
                 program_ids=arguments.FETCH_PROGRAM_BY_PROGRAM_ID_DNE,
                 page=None,
                 limit=None,

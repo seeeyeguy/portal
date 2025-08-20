@@ -5,6 +5,7 @@ database operations that may affect the `Program` model.
 
 # pylint: disable=logging-fstring-interpolation
 import logging
+import numpy as np
 import pandas as pd
 import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
@@ -63,7 +64,6 @@ class ExternalDatabaseConnector:
                 + ";PWD="
                 + password
             )
-
         elif db.lower() == AcceptedExternalDatabases.FDW:
             host = FDW.HOST
             port = FDW.PORT
@@ -110,16 +110,17 @@ def transform_active_status(status: str) -> bool:
     return str(status).lower() in {"active", "o", "l", "y", "yes"}
 
 
-def query_programs_from_axis(pa_numbers: List[str]) -> List[dict]:
+def query_programs_from_axis(pa_numbers: List[str] | None = None) -> List[dict]:
     """Query program data from `AXIS` given a set of pa numbers."""
 
     try:
         conn = ExternalDatabaseConnector("axis")
-        sql = f"SELECT * FROM program WHERE pa_number IN {tuple(pa_numbers)}"
+        sql = "SELECT * FROM program"
+        if pa_numbers:
+            sql = f"{sql} WHERE pa_number IN {tuple(pa_numbers)}"
         df = conn.query_db(sql=sql)
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
-        df["active_status"] = df["active_status"].apply(transform_active_status)
         records: List[dict] = df.to_dict("records")
         return records
     except Exception as exc:
@@ -132,16 +133,32 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
 
     try:
         conn = ExternalDatabaseConnector("fdw")
-        base_sql = f"""
-        SELECT bcom.PROJECT_ID AS pa_number,
-            bcom.PROGRAM_NAME AS program_name,
-            bcom.SEGMENT AS segment,
-            bcom.SECTOR AS sector,
-            bcom.DIVISION AS division,
-            bcom.PROGRAM_TIER AS tier,
-            bcom.CV AS contract_value,
-            bcom.ACTIVEINACTIVE AS active_status
-        FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom   
+        base_sql = """
+                SELECT bcom.PROJECT_ID AS pa_number,
+                    bcom.PROGRAM_NAME AS program_name,
+                    bcom.SEGMENT AS segment,
+                    bcom.SECTOR AS sector,
+                    bcom.DIVISION AS division,
+                    bcom.PROGRAM_TIER AS tier,
+                    ppv.CONTRACT_TYPE AS contract_type,
+                    ppv.CONTRACT_NUMBER AS contract_number,
+                    bcom.CV AS contract_value,
+                    ppv.CONTRACT_START_DATE AS contract_start_date,
+                    ppv.CONTRACT_END_DATE AS contract_end_date,
+                    ppv.CUM_ACWP AS actual_cost_work_performed_cum,
+                    ppv.CUM_BCWP AS budget_cost_work_performed_cum,
+                    ppv.CUM_BCWS AS budget_cost_work_scheduled_cum,
+                    ppv.CUM_CPI_CURRENT AS cost_performance_index_cum,
+                    ppv.CUM_SPI_CURRENT AS schedule_performance_index_cum,
+                    ppv.BAC AS budget_at_complete,
+                    ppv.EAC AS estimate_at_complete,
+                    ppv.ETC AS estimate_to_complete,
+                    ppv.MANAGEMENT_RESERVE AS management_reserve,
+                    ppv.WEIGHTED_RO AS weighted_risks_opportunities,
+                    bcom.ACTIVEINACTIVE AS active_status
+                FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom
+                LEFT JOIN BUSANA.PROGRAM_PERFORMANCE_VIEW ppv
+                ON bcom.PROJECT_ID = ppv.PA
         """
 
         df = pd.DataFrame()
@@ -166,18 +183,73 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
         else:
             df = conn.query_db(sql=base_sql)
 
-        df = df.loc[
-            ~(
-                (df["segment"].isnull())
-                | (df["sector"].isnull())
-                | (df["division"].isnull())
-                | (df["tier"].isnull())
-                | (df["contract_value"].isnull())
+        # Rename columns appropriately.
+        df.rename(
+            columns={
+                "actual_cost_work_performed_cum": "actual_cost_work_performed_cumulative",
+                "budget_cost_work_performed_cum": "budgeted_cost_work_performed_cumulative",
+                "budget_cost_work_scheduled_cum": "budgeted_cost_work_scheduled_cumulative",
+                "cost_performance_index_cum": "cost_performance_index_cumulative",
+                "schedule_performance_index_cum": "schedule_performance_index_cumulative",
+                "weighted_risks_opportunities": "weighted_risks_and_opportunities",
+            }
+        )
+
+        EMPTY_STRING_COLUMNS = (
+            "pa_number",
+            "sector",
+            "division",
+            "contract_type",
+            "contract_number",
+        )
+        EMPTY_NONE_COLUMNS = (
+            "segment",
+            "tier",
+            "contract_value",
+            "contract_start_date",
+            "contract_end_date",
+            "actual_cost_work_performed_cumulative",
+            "budgeted_cost_work_performed_cumulative",
+            "budgeted_cost_work_scheduled_cumulative",
+            "cost_performance_index_cumulative",
+            "schedule_performance_index_cumulative",
+            "budget_at_complete",
+            "estimate_at_complete",
+            "estimate_to_complete",
+            "management_reserve",
+            "weighted_risks_and_opportunities",
+        )
+
+        # Format empty values to empty strings.
+        for column in EMPTY_STRING_COLUMNS:
+            df[column] = df[column].replace(np.nan, "")
+
+        # Format empty values to None.
+        for column in EMPTY_NONE_COLUMNS:
+            df[column] = df[column].replace(np.nan, None)
+
+        ROUNDED_NUMBER_COLUMNS = (
+            "actual_cost_work_performed_cumulative",
+            "budgeted_cost_work_performed_cumulative",
+            "budgeted_cost_work_scheduled_cumulative",
+            "cost_performance_index_cumulative",
+            "schedule_performance_index_cumulative",
+            "budget_at_complete",
+            "estimate_at_complete",
+            "estimate_to_complete",
+            "management_reserve",
+            "weighted_risks_and_opportunities",
+        )
+
+        for column in ROUNDED_NUMBER_COLUMNS:
+            df[column] = df[column].apply(
+                lambda value: round(value, 2) if value is not None else None
             )
-        ]
+
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
         df["active_status"] = df["active_status"].apply(transform_active_status)
+
         records: List[dict] = df.to_dict("records")
         return records
     except Exception as exc:
@@ -204,12 +276,39 @@ def update_programs_from_external_database() -> None:
     for record in records:
         Program.objects.filter(pa_number=record["pa_number"]).update(
             name=record["program_name"],
-            segment=record["segment"],
+            segment=(
+                Segment.objects.get(id=record["segment"]) if record["segment"] else None
+            ),
             sector=record["sector"],
             division=record["division"],
             tier=record["tier"],
+            contract_type=record["contract_type"],
+            contract_number=record["contract_number"],
             contract_value=record["contract_value"],
+            contract_start_date=record["contract_start_date"],
+            contract_end_date=record["contract_end_date"],
+            actual_cost_work_performed_cumulative=record[
+                "actual_cost_work_performed_cumulative"
+            ],
+            budgeted_cost_work_performed_cumulative=record[
+                "budgeted_cost_work_performed_cumulative"
+            ],
+            budgeted_cost_work_scheduled_cumulative=record[
+                "budgeted_cost_work_scheduled_cumulative"
+            ],
+            cost_performance_index_cumulative=record[
+                "cost_performance_index_cumulative"
+            ],
+            schedule_performance_index_cumulative=record[
+                "schedule_performance_index_cumulative"
+            ],
+            budget_at_complete=record["budget_at_complete"],
+            estimate_at_complete=record["estimate_at_complete"],
+            estimate_to_complete=record["estimate_to_complete"],
+            management_reserve=record["management_reserve"],
+            weighted_risks_and_opportunities=record["weighted_risks_and_opportunities"],
             active_status=record["active_status"],
+            modified=timezone.now(),
         )
 
     return None
@@ -236,6 +335,8 @@ def ingest_new_programs_from_external_database() -> None:
         records = query_programs_from_fdw([])
 
     programs_to_ingest: List[Program] = []
+
+    LOGGER.info(f"Retrieved {len(records)} from the external database.")
     for record in records:
         if (
             record["active_status"]
@@ -246,11 +347,41 @@ def ingest_new_programs_from_external_database() -> None:
                 Program(
                     pa_number=record["pa_number"],
                     name=record["program_name"],
-                    segment=Segment.objects.get(id=record["segment"]),
+                    segment=(
+                        Segment.objects.get(id=record["segment"])
+                        if record["segment"]
+                        else None
+                    ),
                     sector=record["sector"],
                     division=record["division"],
                     tier=record["tier"],
+                    contract_type=record["contract_type"],
+                    contract_number=record["contract_number"],
                     contract_value=record["contract_value"],
+                    contract_start_date=record["contract_start_date"],
+                    contract_end_date=record["contract_end_date"],
+                    actual_cost_work_performed_cumulative=record[
+                        "actual_cost_work_performed_cumulative"
+                    ],
+                    budgeted_cost_work_performed_cumulative=record[
+                        "budgeted_cost_work_performed_cumulative"
+                    ],
+                    budgeted_cost_work_scheduled_cumulative=record[
+                        "budgeted_cost_work_scheduled_cumulative"
+                    ],
+                    cost_performance_index_cumulative=record[
+                        "cost_performance_index_cumulative"
+                    ],
+                    schedule_performance_index_cumulative=record[
+                        "schedule_performance_index_cumulative"
+                    ],
+                    budget_at_complete=record["budget_at_complete"],
+                    estimate_at_complete=record["estimate_at_complete"],
+                    estimate_to_complete=record["estimate_to_complete"],
+                    management_reserve=record["management_reserve"],
+                    weighted_risks_and_opportunities=record[
+                        "weighted_risks_and_opportunities"
+                    ],
                     active_status=record["active_status"],
                     created=timezone.now(),
                     modified=timezone.now(),
