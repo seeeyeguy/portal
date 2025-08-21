@@ -14,6 +14,9 @@ FETCH_PROGRAMS_ALL_VALID_IDS: List[int] = list(range(1, 1001))
 # `Program` ids used for testing success case.
 FETCH_PROGRAM_IDS: List[int] = [1, 2]
 
+# `Program` PA numbers used for testing success case.
+FETCH_PROGRAM_PA_NUMBERS: List[str] = ["4X25J", "4R010S"]
+
 # Limit used in testing fetch `Program` with limit
 # tests.
 FETCH_PROGRAM_WITH_LIMIT: int = 2
@@ -47,6 +50,8 @@ FETCH_PROGRAM_WITH_PAGE_EXCEEDING_MAX_PAGE_COUNT_RECORD_COUNT: int = 0
 
 # Id used for testing fetch by `Program` id DNE tests.
 FETCH_PROGRAM_BY_PROGRAM_ID_DNE: List[int] = [7880]
+
+FETCH_PROGRAM_BY_PROGRAM_PA_NUMBER_DNE: List[str] = ["DNE_TEST"]
 
 # Valid `Program` ids.
 FETCH_PROGRAM_IDS_1: int = 1

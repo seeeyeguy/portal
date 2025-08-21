@@ -4,7 +4,7 @@ import {
   RESOURCE_PATHS,
   appendQueryParamToURL,
   buildQueryResourceByIdURL,
-  buildQueryResourceByIdsURL,
+  buildQueryResourceByPANumbersURL,
   buildQueryResourceByRoleLevelsURL,
   buildQueryResourceByStagesURL,
   buildQueryResourceBySubFunctionsURL,
@@ -154,8 +154,8 @@ export default {
       }
       return `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/portfolio`;
     },
-    PROGRAM: (param: number[]) =>
-      buildQueryResourceByIdsURL(
+    PROGRAM: (param: string[]) =>
+      buildQueryResourceByPANumbersURL(
         RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
         "program"
       )(param),
