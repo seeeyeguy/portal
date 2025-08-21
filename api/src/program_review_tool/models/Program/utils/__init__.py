@@ -5,7 +5,6 @@ database operations that may affect the `Program` model.
 
 # pylint: disable=logging-fstring-interpolation
 import logging
-import numpy as np
 import pandas as pd
 import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
@@ -100,7 +99,11 @@ def transform_segments(segment: str) -> Union[int, None]:
 def transform_contract_value(contract_value: float) -> Union[int, None]:
     """Given contract_value as a float, return a rounded int."""
 
-    return round(contract_value) if contract_value is not None else None
+    return (
+        round(contract_value)
+        if contract_value is not None and not pd.isnull(contract_value)
+        else None
+    )
 
 
 def transform_active_status(status: str) -> bool:
@@ -128,7 +131,7 @@ def query_programs_from_axis(pa_numbers: List[str] | None = None) -> List[dict]:
         return []
 
 
-def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
+def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
     """Query program data from `FDW` given a set of pa numbers."""
 
     try:
@@ -184,7 +187,7 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
             df = conn.query_db(sql=base_sql)
 
         # Rename columns appropriately.
-        df.rename(
+        df = df.rename(
             columns={
                 "actual_cost_work_performed_cum": "actual_cost_work_performed_cumulative",
                 "budget_cost_work_performed_cum": "budgeted_cost_work_performed_cumulative",
@@ -222,11 +225,11 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
 
         # Format empty values to empty strings.
         for column in EMPTY_STRING_COLUMNS:
-            df[column] = df[column].replace(np.nan, "")
+            df[column] = df[column].apply(lambda val: "" if pd.isnull(val) else val)
 
         # Format empty values to None.
         for column in EMPTY_NONE_COLUMNS:
-            df[column] = df[column].replace(np.nan, None)
+            df[column] = df[column].apply(lambda val: None if pd.isnull(val) else val)
 
         ROUNDED_NUMBER_COLUMNS = (
             "actual_cost_work_performed_cumulative",
@@ -243,7 +246,11 @@ def query_programs_from_fdw(pa_numbers: List[str]) -> List[dict]:
 
         for column in ROUNDED_NUMBER_COLUMNS:
             df[column] = df[column].apply(
-                lambda value: round(value, 2) if value is not None else None
+                lambda value: (
+                    round(value, 2)
+                    if value is not None and not pd.isnull(value)
+                    else None
+                )
             )
 
         df["segment"] = df["segment"].apply(transform_segments)
@@ -336,6 +343,8 @@ def ingest_new_programs_from_external_database() -> None:
 
     programs_to_ingest: List[Program] = []
 
+    segments = Segment.objects.using("prt").all()
+
     LOGGER.info(f"Retrieved {len(records)} from the external database.")
     for record in records:
         if (
@@ -348,8 +357,9 @@ def ingest_new_programs_from_external_database() -> None:
                     pa_number=record["pa_number"],
                     name=record["program_name"],
                     segment=(
-                        Segment.objects.get(id=record["segment"])
-                        if record["segment"]
+                        segments.filter(id=record["segment"]).first()
+                        if record["segment"] is not None
+                        and not pd.isnull(record["segment"])
                         else None
                     ),
                     sector=record["sector"],
