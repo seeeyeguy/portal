@@ -53,7 +53,10 @@ class Program:
 
     @staticmethod
     def fetch_programs(
-        program_ids: List[int], page: Optional[int] = None, limit: Optional[int] = None
+        program_ids: List[int],
+        pa_numbers: List[str],
+        page: Optional[int] = None,
+        limit: Optional[int] = None,
     ) -> QuerySet[models.Program]:
         """
         Fetch all `Program` records for the given
@@ -61,6 +64,8 @@ class Program:
 
         Accepts:
             * program_ids (List[int]): Primary keys of a set of
+                Program records.
+            * pa_numbers (List[str]): PA Numbers of a set of
                 Program records.
             * page (int): The page of `Program` records to return.
             * limit (int): The limit of `Program` records to return.
@@ -70,14 +75,13 @@ class Program:
                 records for the given ids.
         """
 
-        LOGGER.info(f"Fetching Programs with ids: {program_ids}")
-
         programs = models.Program.objects.filter(active_status=True)
 
         programs = programs.order_by("id") if page or limit else programs
 
         # If program ids are given, filter QuerySet to corresponding `Program` records.
         if program_ids:
+            LOGGER.info(f"Fetching Programs with ids: {program_ids}")
             programs = programs.filter(id__in=program_ids)
             # If some programs ids not in `Program` QuerySet, throw an error.
             if programs.count() != len(program_ids):
@@ -88,26 +92,42 @@ class Program:
                     f"Programs(ids={missing_program_ids}) do not exist.", 404
                 )
 
-        # If `limit` is given, then limit the `Program` records.
-        programs = programs[:limit] if limit else programs
+        # If PA numbers are given, filter QuerySet to corresponding `Program` records.
+        if pa_numbers:
+            LOGGER.info(f"Fetching Programs with PA Numbers: {pa_numbers}")
+            programs = programs.filter(pa_number__in=pa_numbers).order_by("id")
+            # If some PA numbers not in `Program` QuerySet, throw an error.
+            if programs.count() != len(pa_numbers):
+                missing_pa_numbers = set(pa_numbers) - set(
+                    programs.values_list("pa_number", flat=True)
+                )
+                raise exceptions.ProgramReviewToolError(
+                    f"Programs(pa_numbers={missing_pa_numbers}) do not exist.", 404
+                )
 
         if page:
-            # Create a Paginator to paginate the collection
-            # of `Program`s.
-            paginator: Paginator = Paginator(programs, DEFAULT_PAGE_LENGTH)
+            # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
+            page_length = limit if limit else DEFAULT_PAGE_LENGTH
 
-            # If `page` number supplied in the params is greater
-            # than the number of available pages, then return an
-            # empty `Program` Queryset.
+            # Create a Paginator to paginate the collection of `Programs`s.
+            paginator: Paginator = Paginator(programs, page_length)
+
+            # If `page` number supplied in the params is greater than the number of available pages,
+            # then return an empty `Program` Queryset.
             if page > paginator.num_pages:
                 return models.Program.objects.none()
 
             # Get the corresponding Page.
             program_page: Page = paginator.page(page)
 
-            # Assign the page's `Program` QuerySet to
-            # `programs`.
+            # Assign the page's `Program`s QuerySet to `Programs`.
             programs = cast(QuerySet[models.Program], program_page.object_list)
+        elif limit:
+            # If no page is provided but limit is provided, limit the `Program` records.
+            programs = programs[:limit]
+
+        # If `limit` is given, then limit the `Program` records.
+        programs = programs[:limit] if limit else programs
 
         return programs
 

@@ -66,7 +66,7 @@ class TestFetchProgram(MultiDBTestCase):
         """Success Case: Fetch active `Program` records."""
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
-            program_ids=[], page=None, limit=None
+            program_ids=[], pa_numbers=[], page=None, limit=None
         )
 
         self.assertIsInstance(programs, QuerySet[models.Program])
@@ -101,7 +101,30 @@ class TestFetchProgram(MultiDBTestCase):
         the given ids."""
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
-            arguments.FETCH_PROGRAM_IDS, page=None, limit=None
+            program_ids=arguments.FETCH_PROGRAM_IDS,
+            pa_numbers=[],
+            page=None,
+            limit=None,
+        )
+
+        self.assertIsInstance(programs, QuerySet[models.Program])
+
+        data: dict = ProgramSerializer(programs, many=True).data
+
+        self.assertEqual(
+            data, list(arguments.EXPECTED_PROGRAMS_PROGRAM_ID_VALIDATE_PARAMS.values())
+        )
+
+    @tag("controllers.program.fetch_programs_with_pa_numbers")
+    def test_fetch_programs_with_pa_numbers(self) -> None:
+        """Success Case: Fetch active `Program` records for
+        the given PA numbers."""
+
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
+            program_ids=[],
+            pa_numbers=arguments.FETCH_PROGRAM_PA_NUMBERS,
+            page=None,
+            limit=None,
         )
 
         self.assertIsInstance(programs, QuerySet[models.Program])
@@ -117,7 +140,10 @@ class TestFetchProgram(MultiDBTestCase):
         """Success Case: Fetch page of active `Program` records."""
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
-            program_ids=[], page=arguments.FETCH_PROGRAM_WITH_PAGE, limit=None
+            program_ids=[],
+            pa_numbers=[],
+            page=arguments.FETCH_PROGRAM_WITH_PAGE,
+            limit=None,
         )
 
         self.assertIsInstance(programs, QuerySet[models.Program])
@@ -151,7 +177,10 @@ class TestFetchProgram(MultiDBTestCase):
         """Success Case: Fetch active `Program` records up to a limit."""
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
-            program_ids=[], page=None, limit=arguments.FETCH_PROGRAM_WITH_LIMIT
+            program_ids=[],
+            pa_numbers=[],
+            page=None,
+            limit=arguments.FETCH_PROGRAM_WITH_LIMIT,
         )
 
         self.assertIsInstance(programs, QuerySet[models.Program])
@@ -164,6 +193,7 @@ class TestFetchProgram(MultiDBTestCase):
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[],
+            pa_numbers=[],
             page=arguments.FETCH_PROGRAM_WITH_PAGE,
             limit=arguments.FETCH_PROGRAM_WITH_LIMIT,
         )
@@ -200,6 +230,7 @@ class TestFetchProgram(MultiDBTestCase):
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
             program_ids=[],
+            pa_numbers=[],
             page=arguments.FETCH_PROGRAM_WITH_PAGE_EXCEEDING_MAX_PAGE_COUNT,
             limit=None,
         )
@@ -218,6 +249,20 @@ class TestFetchProgram(MultiDBTestCase):
         with pytest.raises(exceptions.ProgramReviewToolError):
             controllers.Program.fetch_programs(  # type: ignore[attr-defined]
                 program_ids=arguments.FETCH_PROGRAM_BY_PROGRAM_ID_DNE,
+                pa_numbers=[],
+                page=None,
+                limit=None,
+            )
+
+    @tag("controllers.program.fetch_programs_pa_numbers_dne")
+    def test_fetch_programs_pa_numbers_dne(self) -> None:
+        """Fail Case: Fetch `Program` records for
+        PA numbers that do not exist."""
+
+        with pytest.raises(exceptions.ProgramReviewToolError):
+            controllers.Program.fetch_programs(  # type: ignore[attr-defined]
+                program_ids=[],
+                pa_numbers=arguments.FETCH_PROGRAM_BY_PROGRAM_PA_NUMBER_DNE,
                 page=None,
                 limit=None,
             )

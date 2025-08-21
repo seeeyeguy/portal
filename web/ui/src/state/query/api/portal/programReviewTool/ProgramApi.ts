@@ -37,9 +37,9 @@ type TApiProgramReviewResponse = {
 
 const programApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPrograms: builder.query<TApiProgramResponse, number[]>({
-      query: (ids: number[]) => ({
-        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PROGRAM(ids),
+    getPrograms: builder.query<TApiProgramResponse, string[]>({
+      query: (paNumbers: string[]) => ({
+        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PROGRAM(paNumbers),
         method: GET,
       }),
       transformResponse: (

@@ -85,10 +85,16 @@ class Program(View):
                 )
 
             ids: List[int] = req.validated_data.get("ids")
+            pa_numbers: List[str] = req.validated_data.get("pa_numbers")
             page: int = req.validated_data.get("page")
             limit: int = req.validated_data.get("limit")
 
             request_params = f"?ids={ids}" if ids else ""
+            request_params = (
+                f"{request_params}&pa_numbers={pa_numbers}"
+                if pa_numbers
+                else "{request_params}"
+            )
             request_params = f"{request_params}&page={page}" if page else request_params
             request_params = (
                 f"{request_params}&limit={limit}" if limit else request_params
@@ -97,7 +103,7 @@ class Program(View):
             LOGGER.info(f"GET /program-review-tool/program{request_params}")
 
             # Fetch the `Program`(s).
-            programs = controllers.Program.fetch_programs(ids, page, limit)
+            programs = controllers.Program.fetch_programs(ids, pa_numbers, page, limit)
 
             # Serialize `Program`(s).
             data: List[dict] = ProgramSerializer(programs, many=True).data

@@ -1467,6 +1467,13 @@ paths:
               type: integer
           description: "Ids related to the desired `Program`s."
         - in: query
+          name: pa_numbers
+          schema:
+            type: array
+            items:
+              type: string
+          description: "PA Numbers related to the desired `Program`s."
+        - in: query
           name: page
           schema:
             type: integer
@@ -1501,7 +1508,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/FetchProgramsDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchProgramsByIdDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchProgramsByPaNumberDoesNotExistResponse"
   /program-review-tool/program/review:
     post:
       tags:
@@ -4558,7 +4566,12 @@ components:
       title: "Fetch `Program`s error response due to unauthorized access."
       example: "Not authorized to access program."
     
-    FetchProgramsDoesNotExistResponse:
+    FetchProgramsByIdDoesNotExistResponse:
+      title: "Fetch `Program` error response due to fetching a `Program` record
+      for ids that do not exist."
+      example: "Programs (ids={ids}) do not exist."
+  
+    FetchProgramsByPaNumberDoesNotExistResponse:
       title: "Fetch `Program` error response due to fetching a `Program` record
       for ids that do not exist."
       example: "Programs (ids={ids}) do not exist."

@@ -2,7 +2,6 @@ import lodash from "lodash";
 import { toast } from "react-toastify";
 
 import portfolioApi from "state/query/api/portal/programReviewTool/PortfolioApi";
-import programApi from "state/query/api/portal/programReviewTool/ProgramApi";
 
 import {
   IProgramReviewToolSlice,
@@ -26,25 +25,12 @@ import { DEFAULT_API_ERROR_MESSAGE } from "definitions/ApiConstants";
  */
 export const loadProgramReviewState =
   (user: string) => async (dispatch: AppDispatch) => {
-    // Load inital programs
-    const promisePrograms = dispatch(
-      programApi.endpoints.getPrograms.initiate([])
-    );
     // Load inital user portfolios
     const promisePortfolios = dispatch(
       portfolioApi.endpoints.getPortfolios.initiate(user)
     );
 
-    const [programsResponse, portfoliosResponse] = await Promise.all([
-      promisePrograms,
-      promisePortfolios,
-    ]);
-
-    const {
-      error: programsError,
-      isSuccess: isProgramsSuccess,
-      isError: isProgramsError,
-    } = programsResponse;
+    const portfoliosResponse = await promisePortfolios;
 
     const {
       data: portfoliosData,
@@ -52,16 +38,6 @@ export const loadProgramReviewState =
       isSuccess: isPortfoliosSuccess,
       isError: isPortfoliosError,
     } = portfoliosResponse;
-
-    if (isProgramsError && programsError) {
-      const message =
-        "data" in programsError
-          ? (programsError.data as string)
-          : DEFAULT_API_ERROR_MESSAGE;
-
-      console.error(programsError);
-      toast.error(`Error: ${message}`);
-    }
 
     if (isPortfoliosError && portfoliosError) {
       const message =
@@ -73,7 +49,7 @@ export const loadProgramReviewState =
       toast.error(`Error: ${message}`);
     }
 
-    if (isProgramsSuccess && isPortfoliosSuccess) {
+    if (isPortfoliosSuccess) {
       const retrievedPortfolios =
         portfoliosData?.data as unknown as IPortfolios;
 

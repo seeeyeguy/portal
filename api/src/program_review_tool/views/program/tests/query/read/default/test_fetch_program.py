@@ -141,6 +141,45 @@ class TestFetchProgram(MultiDBTestCase):
                 expected_program,
             )
 
+    @tag("views.program.fetch_programs_with_pa_numbers")
+    def test_fetch_programs_with_pa_numbers(self) -> None:
+        """Success Case: Fetch active `Program` records for
+        the given PA numbers."""
+
+        program_params: dict = {"pa_numbers": arguments.FETCH_PROGRAM_PA_NUMBERS}
+
+        response = self.client.get(
+            self.url, program_params, content_type="application/json"
+        )
+
+        programs = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(programs, list)
+
+        self.assertEqual(len(programs), len(arguments.FETCH_PROGRAM_PA_NUMBERS))
+
+        for program in programs:
+            program_id: int = program["id"]
+
+            self.assertIsInstance(program, dict)
+
+            self.assertIn(program_id, arguments.FETCH_PROGRAM_IDS)
+
+            expected_program = self.program_fixtures[program_id]
+
+            del program["created"]
+            del program["modified"]
+
+            del expected_program["created"]
+            del expected_program["modified"]
+
+            self.assertEqual(
+                program,
+                expected_program,
+            )
+
     @tag("views.program.fetch_programs_with_page")
     def test_fetch_programs_with_page(self) -> None:
         """Success Case: Fetch page of active `Program` records."""
@@ -276,6 +315,21 @@ class TestFetchProgram(MultiDBTestCase):
         ids that do not exist."""
 
         program_params: dict = {"ids": arguments.FETCH_PROGRAM_BY_PROGRAM_ID_DNE}
+
+        response = self.client.get(
+            self.url, program_params, content_type="application/json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @tag("views.program.fetch_programs_pa_numbers_dne")
+    def test_fetch_programs_pa_numbers_dne(self) -> None:
+        """Fail Case: Fetch `Program` records for
+        PA numbers that do not exist."""
+
+        program_params: dict = {
+            "pa_numbers": arguments.FETCH_PROGRAM_BY_PROGRAM_PA_NUMBER_DNE
+        }
 
         response = self.client.get(
             self.url, program_params, content_type="application/json"

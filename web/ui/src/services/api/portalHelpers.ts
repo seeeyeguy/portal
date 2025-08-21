@@ -38,6 +38,7 @@ type PARAM =
   | "ids"
   | "label"
   | "page"
+  | "pa_numbers"
   | "role_levels"
   | "subfunctions"
   | "stages"
@@ -45,6 +46,7 @@ type PARAM =
 
 const acceptedParamArrays = new Set([
   "ids",
+  "pa_numbers",
   "role_levels",
   "subfunctions",
   "stages",
@@ -66,11 +68,11 @@ const buildQueryResourceURL =
     suffix: SUFFIX,
     paramType: PARAM
   ) =>
-  (param: number | number[] | string | null = null) => {
+  (param: number | number[] | string[] | string | null = null) => {
     const base = `${path}/${resource}${suffix ? `/${suffix}` : ""}`;
     if (param) {
       if (acceptedParamArrays.has(paramType)) {
-        const queryParamArray = (param as number[]).reduce((acc, arg, i) => {
+        const queryParamArray = (param as (number[] | string[])).reduce((acc, arg, i) => {
           const queryParamArrayArg = `${paramType}=${arg}`;
           if (i < 1) {
             return `${acc}${queryParamArrayArg}`;
@@ -108,6 +110,19 @@ export const buildQueryResourceByIdsURL = (
   resource: RESOURCE,
   suffix: SUFFIX = null
 ) => buildQueryResourceURL(path, resource, suffix, "ids");
+
+/**
+ * Build a URL with an optional array of PA numbers for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of ids and returns the appropriate URL.
+ */
+export const buildQueryResourceByPANumbersURL = (
+ path: RESOURCE_PATHS,
+ resource: RESOURCE,
+ suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "pa_numbers");
 
 /**
  * Build a URL with an optional array of role levels for an endpoint given its

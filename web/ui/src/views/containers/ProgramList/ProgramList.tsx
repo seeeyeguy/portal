@@ -1,4 +1,5 @@
 import React from "react";
+import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import {
   faAdd,
@@ -12,9 +13,11 @@ import lodash from "lodash";
 import ProgramCard from "views/components/ProgramCard/ProgramCard";
 import ProgramCardCondensed from "views/components/ProgramCard/ProgramCardCondensed";
 
-import { useGetProgramsQuery } from "state/query/api/portal/programReviewTool/ProgramApi";
+import store from "state/store/store";
+import programApi from "state/query/api/portal/programReviewTool/ProgramApi";
 
 import {
+  IProgram,
   IPrograms,
   IPortfolio,
 } from "views/definitions/ProgramReviewTool.types";
@@ -39,8 +42,7 @@ export default function ProgramsForm({
   setPortfolioPrograms,
 }: IProgramListProps) {
   const [inputValue, setInputValue] = React.useState<string>("");
-
-  const { data: programData } = useGetProgramsQuery([]);
+  const [fetchingProgram, setFetchingProgram] = React.useState(false);
 
   const handleRemoveProgram = React.useCallback(
     (programId: string) => {
@@ -83,7 +85,17 @@ export default function ProgramsForm({
         return;
       }
 
-      const retrievedProgram = programData?.data[paNumber];
+      setFetchingProgram(true);
+      const promise = store.dispatch(
+        programApi.endpoints.getPrograms.initiate([paNumber])
+      );
+      const response = await promise;
+      setFetchingProgram(false);
+
+      const { data: fetchedProgram } = response?.data ?? { data: [] };
+      const retrievedProgram = (fetchedProgram as Record<string, IProgram>)[
+        paNumber
+      ];
 
       if (!retrievedProgram) {
         toast.error(`Program not found: ${paNumber}`);
@@ -98,7 +110,7 @@ export default function ProgramsForm({
       setPortfolioPrograms(newPortfolioPrograms);
       setInputValue("");
     },
-    [programData, portfolio, setPortfolioPrograms]
+    [portfolio, setPortfolioPrograms]
   );
 
   return (
@@ -143,12 +155,16 @@ export default function ProgramsForm({
               className={styles["program-controls"]}
               aria-description="container for controls of a program"
             >
-              <button onClick={() => handleAddProgram(inputValue)}>
-                <FontAwesomeIcon
-                  icon={faAdd}
-                  aria-description="program control button to add a program"
-                />
-              </button>
+              {fetchingProgram ? (
+                <MoonLoader size={40} />
+              ) : (
+                <button onClick={() => handleAddProgram(inputValue)}>
+                  <FontAwesomeIcon
+                    icon={faAdd}
+                    aria-description="program control button to add a program"
+                  />
+                </button>
+              )}
             </div>
           </li>
         )}
@@ -194,12 +210,16 @@ export default function ProgramsForm({
               className={styles["program-controls"]}
               aria-description="container for controls of a program"
             >
-              <button
-                onClick={() => handleAddProgram(inputValue)}
-                aria-description="program control button to add a program"
-              >
-                <FontAwesomeIcon icon={faAdd} />
-              </button>
+              {fetchingProgram ? (
+                <MoonLoader size={40} />
+              ) : (
+                <button
+                  onClick={() => handleAddProgram(inputValue)}
+                  aria-description="program control button to add a program"
+                >
+                  <FontAwesomeIcon icon={faAdd} />
+                </button>
+              )}
             </div>
           </li>
         )}
