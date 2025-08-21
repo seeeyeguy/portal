@@ -5,10 +5,11 @@ database operations that may affect the `Program` model.
 
 # pylint: disable=logging-fstring-interpolation
 import logging
+import numpy as np
 import pandas as pd
 import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
-from typing import List, Union
+from typing import cast, List, Union
 
 from django.db import DatabaseError
 from django.utils import timezone
@@ -80,6 +81,20 @@ class ExternalDatabaseConnector:
         return pd.read_sql(sql=sql, con=self.engine)
 
 
+def convert_nullish_to_none(
+    value: Union[int, float, None, pd.NaT],
+) -> Union[int, float, None]:
+    """Force a potentially nullish value to None."""
+
+    return None if pd.isnull(value) else value
+
+
+def convert_nullish_to_empty_string(value: Union[str, None]) -> str:
+    """Force a potentially nullish value to an empty string."""
+
+    return "" if pd.isnull(value) else cast(str, value)
+
+
 def transform_segments(segment: str) -> Union[int, None]:
     """Given a segment, return the corresponding primary key
     for that segment in our database."""
@@ -99,11 +114,7 @@ def transform_segments(segment: str) -> Union[int, None]:
 def transform_contract_value(contract_value: float) -> Union[int, None]:
     """Given contract_value as a float, return a rounded int."""
 
-    return (
-        round(contract_value)
-        if contract_value is not None and not pd.isnull(contract_value)
-        else None
-    )
+    return round(contract_value) if not pd.isnull(contract_value) else None
 
 
 def transform_active_status(status: str) -> bool:
@@ -246,11 +257,7 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
 
         for column in ROUNDED_NUMBER_COLUMNS:
             df[column] = df[column].apply(
-                lambda value: (
-                    round(value, 2)
-                    if value is not None and not pd.isnull(value)
-                    else None
-                )
+                lambda value: (round(value, 2) if not pd.isnull(value) else None)
             )
 
         df["segment"] = df["segment"].apply(transform_segments)
@@ -280,40 +287,50 @@ def update_programs_from_external_database() -> None:
     elif EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.FDW:
         records = query_programs_from_fdw(existing_pa_numbers)
 
+    segments = Segment.objects.using("prt").all()
+
     for record in records:
         Program.objects.filter(pa_number=record["pa_number"]).update(
             name=record["program_name"],
             segment=(
-                Segment.objects.get(id=record["segment"]) if record["segment"] else None
+                segments.filter(id=record["segment"]).first()
+                if not pd.isnull(record["segment"])
+                else None
             ),
-            sector=record["sector"],
-            division=record["division"],
-            tier=record["tier"],
-            contract_type=record["contract_type"],
-            contract_number=record["contract_number"],
-            contract_value=record["contract_value"],
-            contract_start_date=record["contract_start_date"],
-            contract_end_date=record["contract_end_date"],
-            actual_cost_work_performed_cumulative=record[
-                "actual_cost_work_performed_cumulative"
-            ],
-            budgeted_cost_work_performed_cumulative=record[
-                "budgeted_cost_work_performed_cumulative"
-            ],
-            budgeted_cost_work_scheduled_cumulative=record[
-                "budgeted_cost_work_scheduled_cumulative"
-            ],
-            cost_performance_index_cumulative=record[
-                "cost_performance_index_cumulative"
-            ],
-            schedule_performance_index_cumulative=record[
-                "schedule_performance_index_cumulative"
-            ],
-            budget_at_complete=record["budget_at_complete"],
-            estimate_at_complete=record["estimate_at_complete"],
-            estimate_to_complete=record["estimate_to_complete"],
-            management_reserve=record["management_reserve"],
-            weighted_risks_and_opportunities=record["weighted_risks_and_opportunities"],
+            sector=convert_nullish_to_empty_string(record["sector"]),
+            division=convert_nullish_to_empty_string(record["division"]),
+            tier=convert_nullish_to_none(record["tier"]),
+            contract_type=convert_nullish_to_empty_string(record["contract_type"]),
+            contract_number=convert_nullish_to_empty_string(record["contract_number"]),
+            contract_value=convert_nullish_to_none(record["contract_value"]),
+            contract_start_date=convert_nullish_to_none(record["contract_start_date"]),
+            contract_end_date=convert_nullish_to_none(record["contract_end_date"]),
+            actual_cost_work_performed_cumulative=convert_nullish_to_none(
+                record["actual_cost_work_performed_cumulative"]
+            ),
+            budgeted_cost_work_performed_cumulative=convert_nullish_to_none(
+                record["budgeted_cost_work_performed_cumulative"]
+            ),
+            budgeted_cost_work_scheduled_cumulative=convert_nullish_to_none(
+                record["budgeted_cost_work_scheduled_cumulative"]
+            ),
+            cost_performance_index_cumulative=convert_nullish_to_none(
+                record["cost_performance_index_cumulative"]
+            ),
+            schedule_performance_index_cumulative=convert_nullish_to_none(
+                record["schedule_performance_index_cumulative"]
+            ),
+            budget_at_complete=convert_nullish_to_none(record["budget_at_complete"]),
+            estimate_at_complete=convert_nullish_to_none(
+                record["estimate_at_complete"]
+            ),
+            estimate_to_complete=convert_nullish_to_none(
+                record["estimate_to_complete"]
+            ),
+            management_reserve=convert_nullish_to_none(record["management_reserve"]),
+            weighted_risks_and_opportunities=convert_nullish_to_none(
+                record["weighted_risks_and_opportunities"]
+            ),
             active_status=record["active_status"],
             modified=timezone.now(),
         )
@@ -358,40 +375,55 @@ def ingest_new_programs_from_external_database() -> None:
                     name=record["program_name"],
                     segment=(
                         segments.filter(id=record["segment"]).first()
-                        if record["segment"] is not None
-                        and not pd.isnull(record["segment"])
+                        if not pd.isnull(record["segment"])
                         else None
                     ),
-                    sector=record["sector"],
-                    division=record["division"],
-                    tier=record["tier"],
-                    contract_type=record["contract_type"],
-                    contract_number=record["contract_number"],
-                    contract_value=record["contract_value"],
-                    contract_start_date=record["contract_start_date"],
-                    contract_end_date=record["contract_end_date"],
-                    actual_cost_work_performed_cumulative=record[
-                        "actual_cost_work_performed_cumulative"
-                    ],
-                    budgeted_cost_work_performed_cumulative=record[
-                        "budgeted_cost_work_performed_cumulative"
-                    ],
-                    budgeted_cost_work_scheduled_cumulative=record[
-                        "budgeted_cost_work_scheduled_cumulative"
-                    ],
-                    cost_performance_index_cumulative=record[
-                        "cost_performance_index_cumulative"
-                    ],
-                    schedule_performance_index_cumulative=record[
-                        "schedule_performance_index_cumulative"
-                    ],
-                    budget_at_complete=record["budget_at_complete"],
-                    estimate_at_complete=record["estimate_at_complete"],
-                    estimate_to_complete=record["estimate_to_complete"],
-                    management_reserve=record["management_reserve"],
-                    weighted_risks_and_opportunities=record[
-                        "weighted_risks_and_opportunities"
-                    ],
+                    sector=convert_nullish_to_empty_string(record["sector"]),
+                    division=convert_nullish_to_empty_string(record["division"]),
+                    tier=convert_nullish_to_none(record["tier"]),
+                    contract_type=convert_nullish_to_empty_string(
+                        record["contract_type"]
+                    ),
+                    contract_number=convert_nullish_to_empty_string(
+                        record["contract_number"]
+                    ),
+                    contract_value=convert_nullish_to_none(record["contract_value"]),
+                    contract_start_date=convert_nullish_to_none(
+                        record["contract_start_date"]
+                    ),  # type: ignore[misc]
+                    contract_end_date=convert_nullish_to_none(
+                        record["contract_end_date"]
+                    ),
+                    actual_cost_work_performed_cumulative=convert_nullish_to_none(
+                        record["actual_cost_work_performed_cumulative"]
+                    ),
+                    budgeted_cost_work_performed_cumulative=convert_nullish_to_none(
+                        record["budgeted_cost_work_performed_cumulative"]
+                    ),
+                    budgeted_cost_work_scheduled_cumulative=convert_nullish_to_none(
+                        record["budgeted_cost_work_scheduled_cumulative"]
+                    ),
+                    cost_performance_index_cumulative=convert_nullish_to_none(
+                        record["cost_performance_index_cumulative"]
+                    ),
+                    schedule_performance_index_cumulative=convert_nullish_to_none(
+                        record["schedule_performance_index_cumulative"]
+                    ),
+                    budget_at_complete=convert_nullish_to_none(
+                        record["budget_at_complete"]
+                    ),
+                    estimate_at_complete=convert_nullish_to_none(
+                        record["estimate_at_complete"]
+                    ),
+                    estimate_to_complete=convert_nullish_to_none(
+                        record["estimate_to_complete"]
+                    ),
+                    management_reserve=convert_nullish_to_none(
+                        record["management_reserve"]
+                    ),
+                    weighted_risks_and_opportunities=convert_nullish_to_none(
+                        record["weighted_risks_and_opportunities"]
+                    ),
                     active_status=record["active_status"],
                     created=timezone.now(),
                     modified=timezone.now(),
@@ -404,7 +436,7 @@ def ingest_new_programs_from_external_database() -> None:
         try:
             program.save()
             ingestion_count += 1
-        except DatabaseError:
+        except (DatabaseError, ValueError):
             failed_ingested_programs.append(f"{program.pa_number} - {program.name}")
 
     LOGGER.info(f"Ingested {ingestion_count} new programs.")
