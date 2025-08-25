@@ -57,15 +57,15 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
             of the budgeted cost for work that was scheduled to be completed by the
             reporting period.
         * cost_performance_index_cumulative (models.DecimalField): A ratio (BCWP ÷ ACWP) that
-            measures cost efficiency in executing the program.
+            measures cost efficiency in executing the `Program`.
         * schedule_performance_index_cumulative (models.DecimalField): A ratio (BCWP ÷ BCWS)
             that measures schedule efficiency in completing the planned work.
         * budget_at_complete (models.DecimalField): The total budgeted cost for the
             entire scope of work as defined in the baseline plan.
         * estimate_at_complete (models.DecimalField): The current forecast of the total
-            expected cost required to complete the program.
+            expected cost required to complete the `Program`.
         * estimate_to_complete (models.DecimalField): The projected additional cost needed
-            to complete the remaining program work (EAC - ACWP).
+            to complete the remaining `Program` work (EAC - ACWP).
         * management_reserve (models.DecimalField): A budget set aside by management to cover
             unforeseen risks or changes outside the scope of baseline work.
         * weighted_risks_and_opportunities (models.DecimalField): The net financial impact of
