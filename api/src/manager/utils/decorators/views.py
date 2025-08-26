@@ -110,10 +110,11 @@ def login_required() -> Callable:
 def admin_required() -> Callable:
     """Decorator to check if a user has superuser privileges
     before executing the view. This decorator ensures the user
-    making the request has superuser privileges by checking the
-    is_superuser field for the user. If the user does not have
-    superuser privileges this decorator returns a JsonResponse
-    with a 403 Forbidden status code."""
+    making the request has superuser privileges by checking for
+    `Access` records with the `Superuser` role related to that
+    user. If the user does not have superuser privileges this
+    decorator returns a JsonResponse with a 403 Forbidden
+    status code."""
 
     def decorator(view_handler: Callable) -> Callable:
         @wraps(view_handler)

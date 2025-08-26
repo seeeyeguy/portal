@@ -56,7 +56,7 @@ export default function AdminPanel({
     }
   }, []);
 
-  if (!loaderData.user.isAdmin && !loaderData.user.accesses?.length) {
+  if (!loaderData.user.accesses?.length) {
     return <Navigate to="/" />;
   }
 
