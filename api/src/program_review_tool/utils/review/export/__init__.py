@@ -189,6 +189,15 @@ def generate_program_review_powerpoint(
     if not portfolio_name:
         raise ProgramReviewToolError("No Portfolio name given.", 400)
 
+    # If the EXPORT_DIR does not exist, attempt to re-create it.
+    try:
+        if not os.path.exists(EXPORT_DIR):
+            os.mkdir(EXPORT_DIR)
+    except Exception as exc:
+        err_msg = f"Failed to create missing EXPORT_DIR: {EXPORT_DIR} due to: {exc}"
+        LOGGER.error(err_msg)
+        raise ProgramReviewToolError(DEFAULT_EXPORT_ERROR_MESSAGE, 500) from exc
+
     # Set the export job as `In-Progress` in the cache.
     cache.set(export_cache_key, (ExportStatus.IN_PROGRESS, None))
 
@@ -314,11 +323,17 @@ def cleanup_expired_exports() -> None:
 
     try:
         LOGGER.info("Deleting contents of the export directory...")
-        # Delete everything inside EXPORT_DIR directory path including
-        # the directory.
-        shutil.rmtree(EXPORT_DIR)
-        # Re-create the directory in EXPORT_DIR path.
-        os.mkdir(EXPORT_DIR)
+
+        # Get list of items in EXPORT_DIR.
+        export_dir_items = os.listdir(EXPORT_DIR)
+
+        # Loop through each item, construct its path
+        # and, if the item is a directory, delete it.
+        for item in export_dir_items:
+            item_path = os.path.join(EXPORT_DIR, item)
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+
         LOGGER.info("Successfully deleted the contents of the export directory.")
     except Exception as exc:
         err_msg = f"Failed to cleanup expired exports:{exc}"
