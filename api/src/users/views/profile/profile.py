@@ -5,13 +5,15 @@ table. `Profile` offers additional information about a user.
 """
 
 import logging
+from typing import cast
 
 from django import http
+from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 
-from users import controllers, exceptions
+from users import controllers, exceptions, models
 from users.models.Profile.serializers import ProfileSerializer
 from users.views import serializers
 
@@ -36,7 +38,12 @@ class Profile(View):
             LOGGER.info(f"GET /v1/users/profile?user={body['user']}.")
 
             # Deny request if user does not have permissions.
-            if request.user.email != body["user"] and not request.user.is_superuser:
+            if (
+                request.user.email != body["user"]
+                and not cast(QuerySet[models.Access], request.user.accesses)
+                .filter(role__level=models.Role.RoleLevels.SUPERUSER)
+                .exists()
+            ):
                 return http.JsonResponse(
                     "Permissions Denied.",
                     status=status.HTTP_403_FORBIDDEN,

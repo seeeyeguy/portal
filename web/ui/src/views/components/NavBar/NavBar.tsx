@@ -80,7 +80,6 @@ export default function NavBar({
       menuItems.reduce((acc, menuItem) => {
         if (
           RESTRICTED_PATHS.has(menuItem.path) &&
-          !loaderData.user.isAdmin &&
           !loaderData.user.accesses.length
         ) {
           return acc;

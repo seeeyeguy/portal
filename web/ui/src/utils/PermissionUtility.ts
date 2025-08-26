@@ -36,10 +36,8 @@ export function hasSuperuserPermissions(
     return false;
   }
 
-  return (
-    user.accesses.some(
-      (access) => access.role.level === ROLE_LEVELS.SUPERUSER
-    ) || user.isAdmin
+  return user.accesses.some(
+    (access) => access.role.level === ROLE_LEVELS.SUPERUSER
   );
 }
 
@@ -62,12 +60,10 @@ export function hasBusinessProcessExpertPermissions(
     return false;
   }
 
-  return (
-    user.accesses.some(
-      (access) =>
-        access.role.level === ROLE_LEVELS.SUPERUSER ||
-        access.role.level === ROLE_LEVELS.BUSINESS_PROCESS_EXPERT
-    ) || user.isAdmin
+  return user.accesses.some(
+    (access) =>
+      access.role.level === ROLE_LEVELS.SUPERUSER ||
+      access.role.level === ROLE_LEVELS.BUSINESS_PROCESS_EXPERT
   );
 }
 
@@ -90,13 +86,11 @@ export function hasDataStewardPermissions(
     return false;
   }
 
-  return (
-    user.accesses.some(
-      (access) =>
-        access.role.level === ROLE_LEVELS.SUPERUSER ||
-        access.role.level === ROLE_LEVELS.BUSINESS_PROCESS_EXPERT ||
-        access.role.level === ROLE_LEVELS.DATA_STEWARD
-    ) || user.isAdmin
+  return user.accesses.some(
+    (access) =>
+      access.role.level === ROLE_LEVELS.SUPERUSER ||
+      access.role.level === ROLE_LEVELS.BUSINESS_PROCESS_EXPERT ||
+      access.role.level === ROLE_LEVELS.DATA_STEWARD
   );
 }
 
