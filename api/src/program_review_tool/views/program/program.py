@@ -50,7 +50,7 @@ class Program(View):
                     safe=False,
                 )
 
-            review_status, export_path = controllers.Program.review_programs(
+            review_status, export_path = controllers.Program.review_programs(  # type: ignore[attr-defined]
                 program_ids=body["programs"],
                 user=request.user,
                 review_name=body["name"],
@@ -86,24 +86,49 @@ class Program(View):
 
             ids: List[int] = req.validated_data.get("ids")
             pa_numbers: List[str] = req.validated_data.get("pa_numbers")
+            program_member: str = req.validated_data.get("program_member")
+            tiers: List[int] = req.validated_data.get("tiers")
             page: int = req.validated_data.get("page")
             limit: int = req.validated_data.get("limit")
 
             request_params = f"?ids={ids}" if ids else ""
             request_params = (
-                f"{request_params}&pa_numbers={pa_numbers}"
+                f"{request_params}{'&' if request_params else '?'}pa_numbers={pa_numbers}"
                 if pa_numbers
-                else "{request_params}"
+                else request_params
             )
-            request_params = f"{request_params}&page={page}" if page else request_params
             request_params = (
-                f"{request_params}&limit={limit}" if limit else request_params
+                f"{request_params}{'&' if request_params else '?'}program_member={program_member}"
+                if program_member
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if request_params else '?'}tiers={tiers}"
+                if tiers
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if request_params else '?'}page={page}"
+                if page
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if request_params else '?'}limit={limit}"
+                if limit
+                else request_params
             )
 
             LOGGER.info(f"GET /program-review-tool/program{request_params}")
 
             # Fetch the `Program`(s).
-            programs = controllers.Program.fetch_programs(ids, pa_numbers, page, limit)
+            programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
+                program_ids=ids,
+                pa_numbers=pa_numbers,
+                tiers=tiers,
+                program_member=program_member,
+                page=page,
+                limit=limit,
+            )
 
             # Serialize `Program`(s).
             data: List[dict] = ProgramSerializer(programs, many=True).data

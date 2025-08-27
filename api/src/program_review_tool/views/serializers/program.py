@@ -15,6 +15,10 @@ class FetchProgramRequestQueryParams(serializers.Serializer):
     pa_numbers = serializers.ListField(
         child=serializers.CharField(max_length=64), allow_empty=True, default=[]
     )
+    program_member = serializers.EmailField(allow_blank=True, default="")
+    tiers = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=True, default=[]
+    )
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)
 
