@@ -44,7 +44,7 @@ class ProgramMember(DateTimeAbstractModel):
 
     program = models.ForeignKey("program_review_tool.Program", on_delete=models.CASCADE)
     role = models.ForeignKey(
-        "program_review_tool.ProgramRole", to_field="name", on_delete=models.CASCADE
+        "program_review_tool.ProgramRole", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
         "auth.User", to_field="username", on_delete=models.DO_NOTHING

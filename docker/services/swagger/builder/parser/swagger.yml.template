@@ -1474,6 +1474,19 @@ paths:
               type: string
           description: "PA Numbers related to the desired `Program`s."
         - in: query
+          name: tiers
+          schema:
+            type: array
+            items:
+              type: integer
+          description: "Tiers of the desired `Program`s."
+        - in: query
+          name: program_member
+          schema:
+            type: string
+          description: "`User` e-mail that is a `ProgramMember` of the desired
+           `Program`s."
+        - in: query
           name: page
           schema:
             type: integer
@@ -1495,6 +1508,14 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProgramsResponse"
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchProgramsInvalidParametersResponse"
+
         "401":
           description: "UNAUTHORIZED"
           content:
@@ -1503,13 +1524,14 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProgramsUnauthorizedResponse"
         "404":
-          description: "`Program` does not exist."
+          description: "`Program` or `User` does not exist."
           content:
             application/json:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchProgramsByIdDoesNotExistResponse"
                   - $ref: "#/components/schemas/FetchProgramsByPaNumberDoesNotExistResponse"
+                  - $ref: "#/components/schemas/FetchProgramsUserDoesNotExistResponse"
   /program-review-tool/program/review:
     post:
       tags:
@@ -4561,6 +4583,12 @@ components:
                 "team_members": [],
               }
             ]
+    
+    FetchProgramsInvalidParametersResponse:
+      title: "Fetch `Program` error response due to fetching `Program` records
+      and supplying both ids and PA numbers."
+      example: "Can't fetch Programs by ids (ids:{program_ids}) and PA numbers
+        (pa_numbers:{pa_numbers})."
 
     FetchProgramsUnauthorizedResponse:
       title: "Fetch `Program`s error response due to unauthorized access."
@@ -4575,6 +4603,11 @@ components:
       title: "Fetch `Program` error response due to fetching a `Program` record
       for ids that do not exist."
       example: "Programs (ids={ids}) do not exist."
+
+    FetchProgramsUserDoesNotExistResponse:
+      title: "Fetch `Program` error response due to fetching `Program` records
+      for a `User` that does not exist."
+      example: "User (email={user_email}) do not exist."
 
     CreateAccessRequest:
       title: "Create `Access` request."

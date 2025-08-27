@@ -6,7 +6,7 @@ modification, deletion, fetching, and processing of data.
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import cast, List, Optional, Tuple
+from typing import cast, List, Optional, Set, Tuple
 
 import django_rq
 from django.contrib.auth.models import User
@@ -55,81 +55,146 @@ class Program:
     def fetch_programs(
         program_ids: List[int],
         pa_numbers: List[str],
+        tiers: List[int] = [],
+        program_member: str = "",
         page: Optional[int] = None,
         limit: Optional[int] = None,
     ) -> QuerySet[models.Program]:
         """
         Fetch all `Program` records for the given
-        ids.
+        ids, PA numbers, tiers and/or program member.
 
         Accepts:
             * program_ids (List[int]): Primary keys of a set of
                 Program records.
             * pa_numbers (List[str]): PA Numbers of a set of
                 Program records.
+            * tiers (List[int]): Tiers of the `Program`
+                records to return.
+            * program_member (str): E-mail of the `User` with
+                active `ProgramMember` records associated with
+                the `Program` records to return.
             * page (int): The page of `Program` records to return.
             * limit (int): The limit of `Program` records to return.
 
         Returns:
             * programs (QuerySet[models.Program]): `Program`
-                records for the given ids.
+                records for the given ids, PA numbers, tiers and/or
+                program member.
         """
-
-        programs = models.Program.objects.filter(active_status=True)
-
-        programs = programs.order_by("id") if page or limit else programs
-
-        # If program ids are given, filter QuerySet to corresponding `Program` records.
-        if program_ids:
-            LOGGER.info(f"Fetching Programs with ids: {program_ids}")
-            programs = programs.filter(id__in=program_ids)
-            # If some programs ids not in `Program` QuerySet, throw an error.
-            if programs.count() != len(program_ids):
-                missing_program_ids = set(program_ids) - set(
-                    programs.values_list("id", flat=True)
+        try:
+            # If both program ids and PA numbers are given, throw an error.
+            if program_ids and pa_numbers:
+                err_msg = (
+                    f"Can't fetch Programs by ids (ids:{program_ids}) "
+                    f"and PA numbers (pa_numbers:{pa_numbers})."
                 )
-                raise exceptions.ProgramReviewToolError(
-                    f"Programs(ids={missing_program_ids}) do not exist.", 404
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+            info_log_msg: str = "Fetching Programs"
+            info_log_msg = (
+                f"{info_log_msg} with ids:{program_ids}"
+                if program_ids
+                else info_log_msg
+            )
+            info_log_msg = (
+                f"{info_log_msg} with PA Numbers: {pa_numbers}"
+                if pa_numbers
+                else info_log_msg
+            )
+            info_log_msg = (
+                f"{info_log_msg}, by tiers: {tiers}" if tiers else info_log_msg
+            )
+            info_log_msg = (
+                f"{info_log_msg}, by Program Member: {program_member}"
+                if program_member
+                else info_log_msg
+            )
+            info_log_msg = (
+                f"{info_log_msg}, with limit: {limit}" if limit else info_log_msg
+            )
+            info_log_msg = f"{info_log_msg}, for page: {page}" if page else info_log_msg
+
+            LOGGER.info(info_log_msg)
+
+            programs = models.Program.objects.filter(active_status=True)
+
+            programs = programs.order_by("id") if page or limit else programs
+
+            # If program ids are given, filter the QuerySet to corresponding `Program` records.
+            if program_ids:
+                programs = programs.filter(id__in=program_ids)
+                # If some `Program`s with ids not in `Program` QuerySet, throw an error.
+                if programs.count() != len(program_ids):
+                    missing_programs_program_ids = set(program_ids) - set(
+                        programs.values_list("id", flat=True)
+                    )
+                    raise exceptions.ProgramReviewToolError(
+                        f"Programs(ids={missing_programs_program_ids}) do not exist.",
+                        404,
+                    )
+
+            # If PA numbers are given, filter the QuerySet to corresponding `Program` records.
+            if pa_numbers:
+                programs = programs.filter(pa_number__in=pa_numbers).order_by("id")
+                # If some `Program`s with PA numbers not in `Program` QuerySet, throw an error.
+                if programs.count() != len(pa_numbers):
+                    missing_programs_pa_numbers = set(pa_numbers) - set(
+                        programs.values_list("pa_number", flat=True)
+                    )
+                    raise exceptions.ProgramReviewToolError(
+                        f"Programs(pa_numbers={missing_programs_pa_numbers}) do not exist.",
+                        404,
+                    )
+
+            # If program tiers are given, filter QuerySet to corresponding `Program` records.
+            if tiers:
+                programs = programs.filter(tier__in=tiers)
+
+            # If a `ProgramMember` `User` e-mail is given, filter the QuerySet to corresponding
+            # `Program` records in which the `User` has associated active `ProgramMember` entries.
+            if program_member:
+                # Fetch related `User` record.
+                program_member_user_record = User.objects.using("prt").get(
+                    email__iexact=program_member
+                )
+                # Create set of `Program` ids for which the `User` has associated active
+                # `ProgramMember` entries.
+                program_member_program_ids: Set[int] = set(
+                    models.ProgramMember.objects.filter(
+                        user=program_member_user_record,
+                        is_active=True,
+                    ).values_list("program__id", flat=True)
                 )
 
-        # If PA numbers are given, filter QuerySet to corresponding `Program` records.
-        if pa_numbers:
-            LOGGER.info(f"Fetching Programs with PA Numbers: {pa_numbers}")
-            programs = programs.filter(pa_number__in=pa_numbers).order_by("id")
-            # If some PA numbers not in `Program` QuerySet, throw an error.
-            if programs.count() != len(pa_numbers):
-                missing_pa_numbers = set(pa_numbers) - set(
-                    programs.values_list("pa_number", flat=True)
-                )
-                raise exceptions.ProgramReviewToolError(
-                    f"Programs(pa_numbers={missing_pa_numbers}) do not exist.", 404
-                )
+                programs = programs.filter(id__in=program_member_program_ids)
 
-        if page:
-            # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
-            page_length = limit if limit else DEFAULT_PAGE_LENGTH
+            if page:
+                # Use limit if provided, otherwise use DEFAULT_PAGE_LENGTH
+                page_length = limit if limit else DEFAULT_PAGE_LENGTH
 
-            # Create a Paginator to paginate the collection of `Programs`s.
-            paginator: Paginator = Paginator(programs, page_length)
+                # Create a Paginator to paginate the collection of `Program`s.
+                paginator: Paginator = Paginator(programs, page_length)
 
-            # If `page` number supplied in the params is greater than the number of available pages,
-            # then return an empty `Program` Queryset.
-            if page > paginator.num_pages:
-                return models.Program.objects.none()
+                # If `page` number supplied in the params is greater than the number of available pages,
+                # then return an empty `Program` Queryset.
+                if page > paginator.num_pages:
+                    return models.Program.objects.none()
 
-            # Get the corresponding Page.
-            program_page: Page = paginator.page(page)
+                # Get the corresponding Page.
+                program_page: Page = paginator.page(page)
+                # Assign the page's QuerySet to our return value.
+                programs = cast(QuerySet[models.Program], program_page.object_list)
+            elif limit:
+                # If no page is provided but limit is provided, limit the `Program` records.
+                programs = programs[:limit]
 
-            # Assign the page's `Program`s QuerySet to `Programs`.
-            programs = cast(QuerySet[models.Program], program_page.object_list)
-        elif limit:
-            # If no page is provided but limit is provided, limit the `Program` records.
-            programs = programs[:limit]
-
-        # If `limit` is given, then limit the `Program` records.
-        programs = programs[:limit] if limit else programs
-
-        return programs
+            return programs
+        except User.DoesNotExist as exc:
+            err_msg = f"User (email={program_member}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
 
     @staticmethod
     def review_programs(
