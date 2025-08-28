@@ -1,5 +1,5 @@
 """
-`Record` represents a monthly snapshot of a `Program` within L3Harris Technologies, captured
+`Record` represents a Program's health and financials in a monthly snapshot, captured
 through the `Program Performance Review (PPR)` Tool. These snapshots encompass both the subjective
 analysis provided by a `Program Manager` or `Program Financial Analyst` and numerous metrics that 
 detail the health of the `Program`. Each `Record` includes a variety of attributes, such as 
