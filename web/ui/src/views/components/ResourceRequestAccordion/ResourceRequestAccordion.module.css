@@ -7,7 +7,7 @@
 .resource-tooltip-content {
   background: var(--color-stealth);
   border-radius: 0.25rem;
-  max-width: 20rem;
+  max-width: 30rem;
   z-index: var(--z-index-tooltip);
 }
 

@@ -200,12 +200,14 @@ export default function ApprovalsControls() {
 
   // Pagination State.
   const [page, setPage] = React.useState(0);
+  const [first, setFirst] = React.useState(0);
   const [rows, setRows] = React.useState(5);
   const [totalRows, setTotalRows] = React.useState(rows);
 
   // Pagination State Updates.
   const onPageChange = (event: PaginatorPageChangeEvent) => {
-    setPage(event.first);
+    setPage(event.page);
+    setFirst(event.first + 1);
     setRows(event.rows);
   };
 
@@ -311,9 +313,20 @@ export default function ApprovalsControls() {
       ? selectedSubFunctionFilters
       : usersPermittedSubFunctions,
     status: REQUEST_STATUSES.PENDING,
-    page: page,
+    page: page + 1,
     limit: rows,
   });
+
+  // Adjust pagination pages after data load.
+  React.useEffect(() => {
+    const currentRows = (requests?.data.length ?? 0) * (first / rows + 1) + 1;
+    if (currentRows) {
+      setTotalRows((prevRows) => Math.max(prevRows, currentRows));
+    } else {
+      // prevents excessive paging past the last page of resources.
+      setTotalRows(first);
+    }
+  }, [requests?.data, first, page, rows]);
 
   React.useEffect(() => {
     refetch();
@@ -436,7 +449,7 @@ export default function ApprovalsControls() {
       >
         <Paginator
           className={styles["admin-paginator"]}
-          first={page}
+          first={first}
           rows={rows}
           totalRecords={totalRows}
           rowsPerPageOptions={[5, 10, 20]}
@@ -491,6 +504,14 @@ export default function ApprovalsControls() {
         <Tooltip id="filter-tooltip" place={"left-start"}>
           Filter Resources
         </Tooltip>
+        {isFetchingRequests && (
+          <div
+            className={styles["admin-filter-loading"]}
+            aria-description="container to display when loading data with filters"
+          >
+            <MoonLoader size={30} />
+          </div>
+        )}
       </div>
       {isLoadingRequests ? (
         <div
@@ -521,7 +542,7 @@ export default function ApprovalsControls() {
                     key={request.id}
                     request={request}
                     thumbnailPath={getThumbnailPath(request.resource)}
-                    tooltipContent={tooltipTemplate(request.transitions)}
+                    tooltipContent={tooltipTemplate(request)}
                     locked={true}
                   >
                     {() => (
