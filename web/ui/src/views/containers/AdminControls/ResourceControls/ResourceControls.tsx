@@ -80,12 +80,14 @@ export default function AdminResources() {
 
   // Pagination State.
   const [page, setPage] = React.useState(0);
+  const [first, setFirst] = React.useState(0);
   const [rows, setRows] = React.useState(5);
   const [totalRows, setTotalRows] = React.useState(rows);
 
   // Pagination State Updates.
   const onPageChange = (event: PaginatorPageChangeEvent) => {
-    setPage(event.first);
+    setPage(event.page);
+    setFirst(event.first + 1);
     setRows(event.rows);
   };
 
@@ -137,15 +139,20 @@ export default function AdminResources() {
       }
       return acc;
     }, [] as number[]),
-    page: page,
+    page: page + 1,
     limit: rows,
   });
 
   // Adjust pagination pages after data load.
   React.useEffect(() => {
-    const currentRows = (requests?.data.length ?? 0) * (page / rows + 1) + 1;
-    setTotalRows((prevRows) => Math.max(prevRows, currentRows));
-  }, [requests?.data, page, rows]);
+    const currentRows = (requests?.data.length ?? 0) * (first / rows + 1) + 1;
+    if (currentRows) {
+      setTotalRows((prevRows) => Math.max(prevRows, currentRows));
+    } else {
+      // prevents excessive paging past the last page of resources.
+      setTotalRows(first);
+    }
+  }, [requests?.data, first, page, rows]);
 
   const [updateResource] = useUpdateRequestMutation();
 
@@ -426,7 +433,7 @@ export default function AdminResources() {
         </button>
         <Paginator
           className={styles["admin-paginator"]}
-          first={page}
+          first={first}
           rows={rows}
           totalRecords={totalRows}
           rowsPerPageOptions={[5, 10, 20]}
@@ -489,7 +496,7 @@ export default function AdminResources() {
                     key={request.id}
                     request={request}
                     thumbnailPath={getThumbnailPath(request.resource)}
-                    tooltipContent={tooltipTemplate(request.transitions)}
+                    tooltipContent={tooltipTemplate(request)}
                     locked={
                       REVISABLE_STAGES.includes(
                         request.transitions.nodes[request.transitions.latest]

@@ -1,10 +1,10 @@
 import { IDisposition } from "definitions/portal/request/Disposition.types";
-import { ITransitionGraph } from "definitions/portal/request/Transition.types";
+import { IRequest } from "definitions/portal/request/Request.types";
 
 const DRAFT = 1;
 
-export const tooltipTemplate = (transition: ITransitionGraph): JSX.Element => {
-  const revisionPreviousTransition = transition.nodes[transition.latest];
+export const tooltipTemplate = (request: IRequest): JSX.Element => {
+  const revisionPreviousTransition = request.transitions.nodes[request.transitions.latest];
 
   // Helper function to get the disposition details.
   const getDispositionDetails = (dispositions: IDisposition[]) => {
@@ -22,7 +22,7 @@ export const tooltipTemplate = (transition: ITransitionGraph): JSX.Element => {
             day: "numeric",
           })} - ${firstName} ${lastName}`}
         </p>
-        <p>Justification - {justification ?? "N/A"}</p>
+        { justification && <p>Justification - {justification ?? "N/A"}</p>}
       </>
     );
   };
@@ -30,7 +30,7 @@ export const tooltipTemplate = (transition: ITransitionGraph): JSX.Element => {
   // Disposition for Previous transition of latest transition.
   const previousTransition = revisionPreviousTransition.previousTransition;
   const previousTransitionDispositions = previousTransition
-    ? (transition.nodes[previousTransition].dispositions as IDisposition[])
+    ? (request.transitions.nodes[previousTransition].dispositions as IDisposition[])
     : [];
 
   // Get revision disposition if a revision was requested.
@@ -39,10 +39,10 @@ export const tooltipTemplate = (transition: ITransitionGraph): JSX.Element => {
     ? revisionPreviousTransition.previousTransition
     : null;
   const revisionDispositionRevisionTransition = revisionDispositionPrevious
-    ? transition.nodes[revisionDispositionPrevious].previousTransition
+    ? request.transitions.nodes[revisionDispositionPrevious].previousTransition
     : null;
   const revisionDisposition = revisionDispositionRevisionTransition
-    ? (transition.nodes[revisionDispositionRevisionTransition]
+    ? (request.transitions.nodes[revisionDispositionRevisionTransition]
         .dispositions as IDisposition[])
     : [];
 
@@ -53,6 +53,7 @@ export const tooltipTemplate = (transition: ITransitionGraph): JSX.Element => {
 
   return (
     <>
+      <b>{`Submitted by - ${request.originator.user.firstName} ${request.originator.user.lastName}`}</b>
       <p>Current Transition - {revisionPreviousTransition.stage.name}</p>
       {dispositionDetails}
     </>

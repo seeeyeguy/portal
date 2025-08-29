@@ -96,14 +96,18 @@ export default function ProgramReviewTool() {
     citizenship: "UNKNOWN",
   }) as IProfile;
 
-  // Load initial user portfolios and program review state data.
-  React.useEffect(() => {
-    dispatch(loadProgramReviewState(loaderData.user.email));
-  }, [loaderData, dispatch]);
 
   const { data: portfoliosResponse, isLoading } = useGetPortfoliosQuery(
     loaderData.user.email
   );
+
+  // Load initial user portfolios and program review state data.
+  React.useEffect(() => {
+    if(isLoading){
+      dispatch(loadProgramReviewState(loaderData.user.email));
+    }
+  }, [isLoading, loaderData, dispatch]);
+
 
   const portfolios = portfoliosResponse?.data as IPortfolios;
 

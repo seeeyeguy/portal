@@ -6,6 +6,7 @@ import {
   faAngleRight,
   faLock,
   faLockOpen,
+  faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lodash from "lodash";
@@ -250,6 +251,15 @@ export default function ResourceRequestAccordion({
                   aria-description="request toolip icon"
                 />
               )}
+              {request.resource.previousRevision && request.status !== "APPROVED" && (
+                <FontAwesomeIcon
+                  size={"lg"}
+                  icon={faWrench}
+                  data-tooltip-id={`resource-${request.resource.name}-revision-tooltip-content`}
+                  data-tooltip-delay-show={500}
+                  aria-description="request revision tooltip icon"
+                />
+              )}
             </div>
             <a
               href={request.resource.url}
@@ -328,6 +338,15 @@ export default function ResourceRequestAccordion({
           place={"right-start"}
         >
           {tooltipContent}
+        </Tooltip>
+      )}
+      {request.resource.previousRevision && (
+        <Tooltip
+          id={`resource-${request.resource.name}-revision-tooltip-content`}
+          className={styles["resource-tooltip-content"]}
+          place={"right-start"}
+        >
+          This is a revision of an existing resource
         </Tooltip>
       )}
       {!lodash.isNull(locked) && (
