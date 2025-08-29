@@ -1603,6 +1603,53 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/CreateProgramsReviewServiceOverloadedResponse"
                   - $ref: "#/components/schemas/CreateProgramsReviewServiceUnavailableResponse"
+  /program-review-tool/record:
+    post:
+      tags:
+        - "program_review_tool.record.create"
+      summary: "Create a Record for a specific program and reporting period."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRecordRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRecordResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRecordInvalidParamsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRecordUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRecordPermissionsDeniedResponse"
+        "404":
+          description: "Program, PreviousRevision does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateRecordProgramDoesNotExistResponse"
+
   /request/disposition:
     post:
       tags:
@@ -4608,6 +4655,292 @@ components:
       title: "Fetch `Program` error response due to fetching `Program` records
       for a `User` that does not exist."
       example: "User (email={user_email}) do not exist."
+
+    CreateRecordRequest:
+      title: "Create a Record for a specific program and reporting period."
+      type: object
+      required:
+        - pa_number
+        - reporting_period
+      properties:
+        pa_number:
+          type: string
+          maxLength: 1028
+          description: Program‑PA identifier.
+        reporting_period:
+          type: integer
+          description: Reporting period (e.g., fiscal quarter or year).
+        name:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Optional name for the Record.
+        segment:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Business segment.
+        sector:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Sector classification.
+        division:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Division within the organization.
+        tier:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 4
+          description: Tier level (1‑4).
+        program_phase:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Phase of the program.
+        site:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Site location.
+        defense_financial_acquisition_regulation_clause:
+          type: boolean
+          nullable: true
+          description: Indicator for DFAR clause applicability.
+        cost_and_software_data_reporting_system_clause:
+          type: boolean
+          nullable: true
+          description: Indicator for CSRS clause applicability.
+        earned_value_management_system_reporting_requirement:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Earned‑value‑management reporting requirement.
+        contract_type:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Type of contract.
+        contract_number:
+          type: string
+          maxLength: 1028
+          nullable: true
+          description: Contract identification number.
+        contract_value:
+          type: integer
+          nullable: true
+          description: Monetary value of the contract.
+        contract_start_date:
+          type: string
+          format: date
+          nullable: true
+          description: Contract start date.
+        contract_end_date:
+          type: string
+          format: date
+          nullable: true
+          description: Contract end date.
+        actual_cost_work_performed_cumulative:
+          type: number
+          format: double
+          nullable: true
+          description: Cumulative actual cost of work performed.
+        budgeted_cost_work_performed_cumulative:
+          type: number
+          format: double
+          nullable: true
+          description: Cumulative budgeted cost of work performed.
+        budgeted_cost_work_scheduled_cumulative:
+          type: number
+          format: double
+          nullable: true
+          description: Cumulative budgeted cost of work scheduled.
+        cost_performance_index_cumulative:
+          type: number
+          format: double
+          nullable: true
+          description: Cost Performance Index (CPI) cumulative.
+        schedule_performance_index_cumulative:
+          type: number
+          format: double
+          nullable: true
+          description: Schedule Performance Index (SPI) cumulative.
+        budget_at_complete:
+          type: number
+          format: double
+          nullable: true
+          description: Budget at Completion (BAC).
+        estimate_at_complete:
+          type: number
+          format: double
+          nullable: true
+          description: Estimate at Completion (EAC).
+        estimate_to_complete:
+          type: number
+          format: double
+          nullable: true
+          description: Estimate to Complete (ETC).
+        management_reserve:
+          type: number
+          format: double
+          nullable: true
+          description: Management reserve amount.
+        weighted_risks_and_opportunities:
+          type: number
+          format: double
+          nullable: true
+          description: Weighted risks & opportunities score.
+        customer_assessment:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 4
+          description: Subjective customer assessment rating (1‑4).
+        technical_assessment:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 4
+          description: Subjective technical assessment rating (1‑4).
+        risk_assessment:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 4
+          description: Subjective risk assessment rating (1‑4).
+        overall_program:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 4
+          description: Subjective overall program rating (1‑4).
+        comments:
+          type: string
+          nullable: true
+          description: Free‑form comments; maps to a Django `TextField`.
+      example:
+        pa_number: "4X25J"
+        reporting_period: 202508
+        name: "Aegis AIN 987 Demo Ops_10LR #1"
+        segment: "SPACE & AIRBORNE SYSTEMS"
+        sector: "Air Defense"
+        division: "North Command"
+        tier: 2
+        program_phase: "Execution"
+        site: "Dallas, TX"
+        defense_financial_acquisition_regulation_clause: true
+        cost_and_software_data_reporting_system_clause: false
+        earned_value_management_system_reporting_requirement: "EVMS‑Level‑2"
+        contract_type: "FFP"
+        contract_number: "CN841700"
+        contract_value: 7500000
+        contract_start_date: "2023-04-01"
+        contract_end_date: "2029-03-31"
+        actual_cost_work_performed_cumulative: 2150000.75
+        budgeted_cost_work_performed_cumulative: 2200000.00
+        budgeted_cost_work_scheduled_cumulative: 2800000.00
+        cost_performance_index_cumulative: 0.98
+        schedule_performance_index_cumulative: 1.04
+        budget_at_complete: 7500000.00
+        estimate_at_complete: 7600000.00
+        estimate_to_complete: 5450000.00
+        management_reserve: 250000.00
+        weighted_risks_and_opportunities: 30.27
+        customer_assessment: 3
+        technical_assessment: 4
+        risk_assessment: 2
+        overall_program: 3
+        comments: "All milestones on track."
+
+    CreateRecordResponse:
+      title: "Create `Record` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 2,
+              "previous_revision": 1,
+              "reporting_period": 202508,
+              "pa_number": "4X25J",
+              "segment": "SPACE & AIRBORNE SYSTEMS",
+              "name": "Aegis AIN 987 Demo Ops_10LR #1",
+              "sector": "Air Defense",
+              "division": "North Command",
+              "tier": 2,
+              "program_phase": "Production",
+              "site": "Palm Bay, FL",
+              "defense_financial_acquisition_regulation_clause": true,
+              "cost_and_software_data_reporting_system_clause": false,
+              "earned_value_management_system_reporting_requirement": "Required",
+              "contract_type": "FFP",
+              "contract_number": "CN-2023-045",
+              "contract_value": 25000000,
+              "contract_start_date": "2023-01-01",
+              "contract_end_date": "2025-12-31",
+              "actual_cost_work_performed_cumulative": 1234567.89,
+              "budgeted_cost_work_performed_cumulative": 1300000.00,
+              "budgeted_cost_work_scheduled_cumulative": 1400000.00,
+              "cost_performance_index_cumulative": 0.96,
+              "schedule_performance_index_cumulative": 1.02,
+              "budget_at_complete": 2500000.00,
+              "estimate_at_complete": 2600000.00,
+              "estimate_to_complete": 140000.00,
+              "management_reserve": 50000.00,
+              "weighted_risks_and_opportunities": 12000.00,
+              "customer_assessment": 1,
+              "technical_assessment": 3,
+              "risk_assessment": 4,
+              "overall_program": 2,
+              "comments": "Program on track, no major issues.",
+              "team_members": [],
+              "program": {
+                "id": 1,
+                "segment": "SPACE & AIRBORNE SYSTEMS",
+                "name": "Aegis AIN 987 Demo Ops_10LR #1",
+                "created": "2025-03-08T06:37:32-05:00",
+                "modified": "2024-05-01T12:19:00-04:00",
+                "pa_number": "4X25J",
+                "sector": "Air Defense",
+                "division": "North Command",
+                "tier": 2,
+                "contract_type": "FFP",
+                "contract_number": "CN481295",
+                "contract_value": 606545312,
+                "contract_start_date": "2025-01-01",
+                "contract_end_date": "2025-12-01",
+                "actual_cost_work_performed_cumulative": 21.34,
+                "budgeted_cost_work_performed_cumulative": 68.97,
+                "budgeted_cost_work_scheduled_cumulative": 14.57,
+                "cost_performance_index_cumulative": 1.91,
+                "schedule_performance_index_cumulative": 0.19,
+                "budget_at_complete": 52.73,
+                "estimate_at_complete": 91.66,
+                "estimate_to_complete": 81.98,
+                "management_reserve": 31.08,
+                "weighted_risks_and_opportunities": 59.75,
+                "active_status": True,
+                "team_members": [],
+              },
+              "created": "2025-08-08T06:37:32-05:00",
+            }
+
+    CreateRecordUnauthorizedResponse:
+      title: "Create `Record` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    CreateRecordPermissionsDeniedResponse:
+      title: "Create `Record` error response due to invalid permissions."
+      example: "Permissions Denied."
+
+    CreateRecordProgramDoesNotExistResponse:
+      title: "Create `Record` error response due to supplying a pa_number
+        for a `Program` that does not exist."
+      example: "Program PA Number (pa_number={pa_number}) does not exist."
 
     CreateAccessRequest:
       title: "Create `Access` request."

@@ -21,4 +21,9 @@ urlpatterns: urlconfig.PathPatternList = [
         view=views.Portfolio.as_view(),
         name="program_review_tool.portfolio",
     ),
+    path(
+        "record",
+        view=views.Record.as_view(),
+        name="program_review_tool.record",
+    ),
 ]
