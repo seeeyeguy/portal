@@ -1,7 +1,7 @@
 """
 `BI Portal` `Record` controller module. Controllers utilize the
 Django ORM to create and fetch records within the `Record` table.
-`Record` represents a Program's health and financials in a monthly snapshot, 
+`Record` represents a Program's health and financials in a monthly snapshot,
 captured through the `Program Performance Review (PPR)` Tool.
 """
 
@@ -10,10 +10,64 @@ import datetime
 from typing import Union
 
 from django.contrib.auth import models as AuthModels
+from django.db.models import QuerySet
 
 from program_review_tool import exceptions, models
+from program_review_tool.models.Program.serializers import ProgramSerializer
+from program_review_tool.models.Record.serializers import RecordSerializer
 
 LOGGER = logging.getLogger(__name__)
+
+# Default key-value pairs for program
+# metrics data.
+DEFAULT_PROGRAM_METRICS_DATA: dict = {
+    "pa_number": "",
+    "segment": "",
+    "sector": "",
+    "division": "",
+    "tier": None,
+    "contract_number": None,
+    "contract_value": None,
+    "contract_start_date": None,
+    "contract_end_date": None,
+    "actual_cost_work_performed_cumulative": None,
+    "budgeted_cost_work_performed_cumulative": None,
+    "budgeted_cost_work_scheduled_cumulative": None,
+    "cost_performance_index_cumulative": None,
+    "schedule_performance_index_cumulative": None,
+    "budget_at_complete": None,
+    "estimate_at_complete": None,
+    "estimate_to_complete": None,
+    "management_reserve": None,
+    "weighted_risks_and_opportunities": None,
+    "team_members": [],
+}
+
+
+# Default key-value pairs for shared `Record`
+# metrics data.
+DEFAULT_SHARED_RECORD_METRICS_DATA: dict = {
+    "previous_revision": None,
+    "reporting_period": None,
+    "contract_type": "",
+    "site": "",
+    "cost_and_software_data_reporting_system_clause": None,
+    "defense_financial_acquisition_regulation_clause": None,
+    "earned_value_management_system_reporting_requirement": "",
+    "program_phase": "",
+    "user": None,
+    "created": None,
+}
+
+# Default key-value pairs for current period's
+# `Record` metrics data.
+DEFAULT_CURRENT_PERIOD_RECORD_METRICS_DATA: dict = {
+    "customer_assessment": None,
+    "technical_assessment": None,
+    "risk_assessment": None,
+    "overall_program": None,
+    "comments": "",
+}
 
 
 class Record:
@@ -199,6 +253,156 @@ class Record:
 
             return record
 
+        except models.Program.DoesNotExist as exc:
+            err_msg = f"Program (pa_number={pa_number}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
+
+    @staticmethod
+    def fetch_record(
+        pa_number: str, reporting_period: int, refresh: bool = False
+    ) -> dict:
+        """
+        Fetch the `Program` record data for the given reporting period
+        and PA number.
+
+        Accepts:
+            * pa_number (str): PA number of related `Program` record whose
+                reporting period `Record` is being retrieved.
+            * reporting_period (int): The reporting period (e.g., `202306`
+                for June 2023).
+            * refresh (bool): Optional flag to indicate if the program
+                metrics data should be sourced from the `Program` record
+                (which will be kept up to date from external source syncing),
+                or not.
+
+        Returns:
+            * record_data (dict): A `Program`'s record data for the given
+                reporting period.
+        """
+
+        try:
+            # If no `Program` PA number is given, throw an error.
+            if not pa_number:
+                err_msg = "Missing PA number."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+            # If no reporting period is given, throw an error.
+            if not reporting_period:
+                err_msg = "No reporting period given."
+                LOGGER.error(err_msg)
+                raise exceptions.ProgramReviewToolError(err_msg, 400)
+
+            # Fetch `Program` record.
+            program: models.Program = models.Program.objects.get(pa_number=pa_number)
+
+            # Retrieve all `Record`s for the `Program`.
+            records_for_program: QuerySet[models.Record] = models.Record.objects.filter(
+                program=program
+            )
+
+            # Get the most recent `Record`, for the given reporting period.
+            latest_record_for_reporting_period: Union[models.Record, None] = (
+                records_for_program.filter(reporting_period=reporting_period)
+                .order_by("id")
+                .last()
+            )
+
+            # Serialize the `Program`s data.
+            program_data: dict = ProgramSerializer(program).data
+
+            # If `latest_record_for_reporting_period` is not None, then
+            # serialize it and assign its data.
+            latest_record_for_reporting_period_data: dict = (
+                RecordSerializer(latest_record_for_reporting_period).data
+                if latest_record_for_reporting_period is not None
+                else {}
+            )
+
+            # Set the source to be used for program metrics
+            # data points. If the `latest_record_for_reporting_period`
+            # is None or the `refresh` flag is True, then set
+            # the source to the `program_data` else set
+            # it to the `latest_record_for_reporting_period_data`.
+            source_for_program_metrics_data: dict = (
+                program_data
+                if latest_record_for_reporting_period is None or refresh
+                else latest_record_for_reporting_period_data
+            )
+
+            # Dictionary containing the program metrics data.
+            program_metrics_data: dict = {**DEFAULT_PROGRAM_METRICS_DATA}
+
+            # Loop through the `program_metrics_data` keys, and
+            # assign the values found in `source_for_program_metrics_data`.
+            for program_metric in program_metrics_data:
+                program_metrics_data[program_metric] = source_for_program_metrics_data[
+                    program_metric
+                ]
+
+            # In the event that the `latest_record_for_reporting_period` is not None,
+            # proceed to query for the most recent `Record` for a previous reporting
+            # period.
+            previous_period_most_recent_record: Union[models.Record, None] = (
+                None
+                if latest_record_for_reporting_period is not None
+                else records_for_program.filter(reporting_period__lt=reporting_period)
+                .order_by("id")
+                .last()
+            )
+
+            # If the `previous_period_most_recent_record` is not None, then
+            # serialize it and assign its data.
+            previous_period_most_recent_record_data: dict = (
+                RecordSerializer(previous_period_most_recent_record).data
+                if previous_period_most_recent_record is not None
+                else {}
+            )
+
+            # Source for shared `Record` data. These data points
+            # can either be sourced from: `latest_record_for_reporting_period_data`
+            # (if it exists/is not empty) or from:
+            # previous_period_most_recent_record_data`.
+            source_for_shared_record_metrics_data: dict = (
+                latest_record_for_reporting_period_data
+                if latest_record_for_reporting_period_data
+                else previous_period_most_recent_record_data
+            )
+
+            # Dictionary containing the shared `Record` metrics data.
+            shared_record_metrics_data: dict = {**DEFAULT_SHARED_RECORD_METRICS_DATA}
+
+            # Loop through the `shared_record_metrics_data` keys, and
+            # assign the values found in `source_for_shared_record_metrics_data`,
+            # if the key exists.
+            for shared_record_metric in shared_record_metrics_data:
+                if shared_record_metric in source_for_shared_record_metrics_data:
+                    shared_record_metrics_data[
+                        shared_record_metric
+                    ] = source_for_shared_record_metrics_data[shared_record_metric]
+
+            # Dictionary containing the current period's `Record` metrics data.
+            current_period_metrics_data: dict = {
+                **DEFAULT_CURRENT_PERIOD_RECORD_METRICS_DATA
+            }
+            # Loop through the `current_period_metrics_data` keys, and
+            # assign the values found in `latest_record_for_reporting_period_data`,
+            # if the key exists.
+            for current_period_metric in current_period_metrics_data:
+                if current_period_metric in latest_record_for_reporting_period_data:
+                    current_period_metrics_data[
+                        current_period_metric
+                    ] = latest_record_for_reporting_period_data[current_period_metric]
+
+            # Merge all data the in the three dictionaries containing
+            # the `Program`s record data into one.
+            record_data = {
+                **program_metrics_data,
+                **shared_record_metrics_data,
+                **current_period_metrics_data,
+            }
+            return record_data
         except models.Program.DoesNotExist as exc:
             err_msg = f"Program (pa_number={pa_number}) does not exist."
             LOGGER.error(err_msg)

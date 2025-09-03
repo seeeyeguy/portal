@@ -1,0 +1,62 @@
+[
+  {
+    "model": "program_review_tool.Program",
+    "pk": 1,
+    "fields": {
+      "pa_number": "489AB",
+      "name": "AA_489AB",
+      "segment": 1,
+      "sector": "Space Systems",
+      "division": "Surveillance Systems",
+      "tier": 1,
+      "contract_type": "FFP",
+      "contract_number": "CN234739",
+      "contract_value": 8000000000,
+      "contract_start_date": "2026-01-01",
+      "contract_end_date": "2026-12-01",
+      "actual_cost_work_performed_cumulative": 60.4,
+      "budgeted_cost_work_performed_cumulative": 32.42,
+      "budgeted_cost_work_scheduled_cumulative": 40.18,
+      "cost_performance_index_cumulative": 0.08,
+      "schedule_performance_index_cumulative": 0.38,
+      "budget_at_complete": 62.82,
+      "estimate_at_complete": 30.41,
+      "estimate_to_complete": 43.23,
+      "management_reserve": 50.8,
+      "weighted_risks_and_opportunities": 29.02,
+      "active_status": true,
+      "created": "2026-01-01T16:00:00Z",
+      "modified": "2026-01-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "program_review_tool.Program",
+    "pk": 2,
+    "fields": {
+      "pa_number": "2422_CC",
+      "name": "AAA_2422CC",
+      "segment": 1,
+      "sector": "Space Systems",
+      "division": "Surveillance Systems",
+      "tier": 4,
+      "contract_type": "FFP",
+      "contract_number": "CN429642",
+      "contract_value": 30000000,
+      "contract_start_date": "2026-01-01",
+      "contract_end_date": "2026-12-01",
+      "actual_cost_work_performed_cumulative": 20.43,
+      "budgeted_cost_work_performed_cumulative": 22.60,
+      "budgeted_cost_work_scheduled_cumulative": 18.08,
+      "cost_performance_index_cumulative": 0.04,
+      "schedule_performance_index_cumulative": 0.20,
+      "budget_at_complete": 24.00,
+      "estimate_at_complete": 25.00,
+      "estimate_to_complete": 26.00,
+      "management_reserve": 20.30,
+      "weighted_risks_and_opportunities": 12.40,
+      "active_status": true,
+      "created": "2026-01-01T16:00:00Z",
+      "modified": "2026-01-01T16:00:00Z"
+    }
+  }
+]
