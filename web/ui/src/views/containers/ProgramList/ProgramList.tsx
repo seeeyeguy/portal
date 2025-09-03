@@ -87,7 +87,7 @@ export default function ProgramsForm({
 
       setFetchingProgram(true);
       const promise = store.dispatch(
-        programApi.endpoints.getPrograms.initiate([paNumber])
+        programApi.endpoints.getPrograms.initiate({ paNumbers: [paNumber] })
       );
       const response = await promise;
       setFetchingProgram(false);

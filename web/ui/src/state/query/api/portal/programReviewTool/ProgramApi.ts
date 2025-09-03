@@ -20,15 +20,24 @@ type TApiProgramResponse = {
   status: number | undefined;
 };
 
+export type TApiFetchProgramRequest = {
+  ids?: number[];
+  paNumbers?: string[];
+  programMember?: string;
+  tiers?: number[];
+  page?: number;
+  limit?: number;
+};
+
 export type TApiProgramReviewRequest = {
   programs: number[];
   name: string;
 };
 
 export type TApiProgramReviewErrorResponse = {
-  data: string,
-  status: number
-}
+  data: string;
+  status: number;
+};
 
 type TApiProgramReviewResponse = {
   data: number;
@@ -37,9 +46,23 @@ type TApiProgramReviewResponse = {
 
 const programApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPrograms: builder.query<TApiProgramResponse, string[]>({
-      query: (paNumbers: string[]) => ({
-        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PROGRAM(paNumbers),
+    getPrograms: builder.query<TApiProgramResponse, TApiFetchProgramRequest>({
+      query: ({
+        ids = null,
+        paNumbers = null,
+        programMember = null,
+        tiers = null,
+        page = null,
+        limit = null,
+      }) => ({
+        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.PROGRAM(
+          ids,
+          paNumbers,
+          programMember,
+          tiers,
+          page,
+          limit
+        ),
         method: GET,
       }),
       transformResponse: (
