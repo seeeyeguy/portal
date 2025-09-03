@@ -20,7 +20,7 @@ type DIRECTORY_RESOURCE =
   | "subfunctions"
   | "tags";
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
-type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program";
+type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program" | "record";
 type REQUEST_RESOURCE = "disposition" | "request";
 type USERS_RESOURCE = "access" | "access/subfunctions";
 type RESOURCE =
@@ -38,10 +38,12 @@ type PARAM =
   | "ids"
   | "label"
   | "page"
+  | "pa_number"
   | "pa_numbers"
   | "role_levels"
   | "subfunctions"
   | "stages"
+  | "tiers"
   | "user";
 
 const acceptedParamArrays = new Set([
@@ -50,6 +52,7 @@ const acceptedParamArrays = new Set([
   "role_levels",
   "subfunctions",
   "stages",
+  "tiers",
 ]);
 
 /**
@@ -72,13 +75,16 @@ const buildQueryResourceURL =
     const base = `${path}/${resource}${suffix ? `/${suffix}` : ""}`;
     if (param) {
       if (acceptedParamArrays.has(paramType)) {
-        const queryParamArray = (param as (number[] | string[])).reduce((acc, arg, i) => {
-          const queryParamArrayArg = `${paramType}=${arg}`;
-          if (i < 1) {
-            return `${acc}${queryParamArrayArg}`;
-          }
-          return `${acc}&${queryParamArrayArg}`;
-        }, "");
+        const queryParamArray = (param as number[] | string[]).reduce(
+          (acc, arg, i) => {
+            const queryParamArrayArg = `${paramType}=${arg}`;
+            if (i < 1) {
+              return `${acc}${queryParamArrayArg}`;
+            }
+            return `${acc}&${queryParamArrayArg}`;
+          },
+          ""
+        );
         return `${base}?${queryParamArray}`;
       }
       return `${base}?${paramType}=${param}`;
@@ -112,16 +118,29 @@ export const buildQueryResourceByIdsURL = (
 ) => buildQueryResourceURL(path, resource, suffix, "ids");
 
 /**
+ * Build a URL with an optional PA number for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional PA number and returns the appropriate URL.
+ */
+export const buildQueryResourceByPANumberURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "pa_number");
+
+/**
  * Build a URL with an optional array of PA numbers for an endpoint given its
  * application path, resource name, and optional suffix.
  * @param path The path/prefix denoting the resource's application domain.
  * @param resource The name of the resource.
- * @returns A function that accepts an optional array of ids and returns the appropriate URL.
+ * @returns A function that accepts an optional array of PA numbers and returns the appropriate URL.
  */
 export const buildQueryResourceByPANumbersURL = (
- path: RESOURCE_PATHS,
- resource: RESOURCE,
- suffix: SUFFIX = null
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
 ) => buildQueryResourceURL(path, resource, suffix, "pa_numbers");
 
 /**
@@ -162,6 +181,19 @@ export const buildQueryResourceByStagesURL = (
   resource: RESOURCE,
   suffix: SUFFIX = null
 ) => buildQueryResourceURL(path, resource, suffix, "stages");
+
+/**
+ * Build a URL with an optional array of tiers for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of tiers and returns the appropriate URL.
+ */
+export const buildQueryResourceByTiersURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "tiers");
 
 /**
  * Build a URL with an optional user for an endpoint, given its application path, and

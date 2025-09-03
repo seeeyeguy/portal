@@ -8,14 +8,21 @@ import programApi, {
   useGetProgramsQuery,
   useGetProgramsReviewMutation,
 } from "state/query/api/portal/programReviewTool/ProgramApi";
+import recordApi, {
+  useAddRecordMutation,
+  useGetRecordQuery,
+} from "state/query/api/portal/programReviewTool/RecordApi";
 
 export default {
   portfolioApi,
   programApi,
+  recordApi,
   useAddPortfolioMutation,
   useGetPortfoliosQuery,
   useUpdatePortfolioMutation,
   useRemovePortfolioMutation,
   useGetProgramsQuery,
   useGetProgramsReviewMutation,
+  useAddRecordMutation,
+  useGetRecordQuery,
 };

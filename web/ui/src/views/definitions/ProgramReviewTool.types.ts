@@ -33,6 +33,7 @@ export interface IProgram {
   id: number;
   paNumber: string;
   name?: string;
+  segment?: string;
   sector?: string;
   division?: string;
   tier?: number | null;
@@ -80,4 +81,23 @@ export interface IPortfolioMetadata {
   name: string;
   modified: string;
   numberOfPrograms: number;
+}
+
+type TOmitIProgramProps = "activeStatus" | "modified" | "disabled";
+
+export interface IRecord extends Omit<IProgram, TOmitIProgramProps> {
+  previousRevision: number | null;
+  program: IProgram;
+  reportingPeriod: number;
+  programPhase: string;
+  site: string;
+  defenseFinancialAcquisitionRegulationClause: boolean;
+  costAndSoftwareDataReportingSystemClause: boolean;
+  earnedValueManagementSystemReportingRequirement: string;
+  customerAssessment: number;
+  technicalAssessment: number;
+  riskAssessment: number;
+  overallProgram: number;
+  comments: string;
+  user: IUser;
 }

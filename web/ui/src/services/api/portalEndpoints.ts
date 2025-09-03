@@ -4,10 +4,13 @@ import {
   RESOURCE_PATHS,
   appendQueryParamToURL,
   buildQueryResourceByIdURL,
+  buildQueryResourceByIdsURL,
+  buildQueryResourceByPANumberURL,
   buildQueryResourceByPANumbersURL,
   buildQueryResourceByRoleLevelsURL,
   buildQueryResourceByStagesURL,
   buildQueryResourceBySubFunctionsURL,
+  buildQueryResourceByTiersURL,
   buildQueryResourceByUserURL,
   buildSearchForResourceByLabelURL,
   buildSearchForResourceByPageURL,
@@ -154,12 +157,59 @@ export default {
       }
       return `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/portfolio`;
     },
-    PROGRAM: (param: string[]) =>
-      buildQueryResourceByPANumbersURL(
+    PROGRAM: (
+      ids: number[] | null = null,
+      paNumbers: string[] | null = null,
+      programMember: string | null = null,
+      tiers: number[] | null = null,
+      page: number | null = null,
+      limit: number | null = null
+    ) => {
+      let base = buildQueryResourceByIdsURL(
         RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
         "program"
-      )(param),
+      )(ids);
+
+      if (paNumbers?.length) {
+        base = buildQueryResourceByPANumbersURL(
+          RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+          "program"
+        )(paNumbers);
+      }
+
+      let arrayParams = "";
+      if (tiers?.length) {
+        const baseWithTiers = buildQueryResourceByTiersURL(
+          RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+          "program"
+        )(tiers);
+        arrayParams = `${/\?(.*)/.exec(baseWithTiers)?.[1] ?? ""}`;
+      }
+
+      base = appendQueryParamToURL(base, "program_member", programMember);
+      base = appendQueryParamToURL(base, "page", page);
+      base = appendQueryParamToURL(base, "limit", limit);
+
+      base = arrayParams.length
+        ? `${base}${/\?(.*?)=/.test(base) ? "&" : "?"}${arrayParams}`
+        : base;
+
+      return base;
+    },
     PROGRAM_REVIEW: `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/program/review`,
+    RECORD: (
+      paNumber: string | null = null,
+      reportingPeriod: number | null = null,
+      refresh: boolean | null = null
+    ) => {
+      let base = buildQueryResourceByPANumberURL(
+        RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+        "record"
+      )(paNumber);
+      base = appendQueryParamToURL(base, "reporting_period", reportingPeriod);
+      base = appendQueryParamToURL(base, "refresh", refresh);
+      return base;
+    },
   },
   REQUEST: {
     REQUEST: (
