@@ -47,26 +47,25 @@ DEFAULT_PROGRAM_METRICS_DATA: dict = {
 # Default key-value pairs for shared `Record`
 # metrics data.
 DEFAULT_SHARED_RECORD_METRICS_DATA: dict = {
-    "previous_revision": None,
-    "reporting_period": None,
     "contract_type": "",
     "site": "",
     "cost_and_software_data_reporting_system_clause": None,
     "defense_financial_acquisition_regulation_clause": None,
     "earned_value_management_system_reporting_requirement": "",
     "program_phase": "",
-    "user": None,
-    "created": None,
 }
 
 # Default key-value pairs for current period's
 # `Record` metrics data.
 DEFAULT_CURRENT_PERIOD_RECORD_METRICS_DATA: dict = {
+    "previous_revision": None,
     "customer_assessment": None,
     "technical_assessment": None,
     "risk_assessment": None,
     "overall_program": None,
     "comments": "",
+    "user": None,
+    "created": None,
 }
 
 
@@ -395,13 +394,26 @@ class Record:
                         current_period_metric
                     ] = latest_record_for_reporting_period_data[current_period_metric]
 
+            # Set the `Record` id value to placed in the
+            # `record_data`. This id will be the id of the
+            # `latest_record_for_reporting_period` if it is
+            # not None and if `refresh` is False.
+            record_id: Union[int, None] = (
+                latest_record_for_reporting_period.id
+                if latest_record_for_reporting_period is not None and not refresh
+                else None
+            )
+
             # Merge all data the in the three dictionaries containing
             # the `Program`s record data into one.
             record_data = {
+                "id": record_id,
+                "reporting_period": reporting_period,
                 **program_metrics_data,
                 **shared_record_metrics_data,
                 **current_period_metrics_data,
             }
+
             return record_data
         except models.Program.DoesNotExist as exc:
             err_msg = f"Program (pa_number={pa_number}) does not exist."

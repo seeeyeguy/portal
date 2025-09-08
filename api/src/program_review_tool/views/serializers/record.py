@@ -91,3 +91,18 @@ class CreateRecordRequest(serializers.Serializer):
         min_value=1, max_value=4, allow_null=True, default=None
     )
     comments = serializers.CharField(allow_blank=True, default="")
+
+
+class FetchRecordRequestQueryParams(serializers.Serializer):
+    """Request serializer for GET /v1/program-review-tool/record query params."""
+
+    pa_number = serializers.CharField(max_length=1028)
+    reporting_period = serializers.IntegerField(
+        min_value=100000,
+        max_value=999999,
+        error_messages={
+            "min_value": "Reporting period must be exactly 6 digits.",
+            "max_value": "Reporting period must be exactly 6 digits.",
+        },
+    )
+    refresh = serializers.BooleanField(allow_null=True, default=False)

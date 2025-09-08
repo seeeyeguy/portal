@@ -15,4 +15,7 @@ from program_review_tool.views.serializers.program import (
     FetchProgramRequestQueryParams,
 )
 
-from program_review_tool.views.serializers.record import CreateRecordRequest
+from program_review_tool.views.serializers.record import (
+    CreateRecordRequest,
+    FetchRecordRequestQueryParams,
+)

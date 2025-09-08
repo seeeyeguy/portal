@@ -3,6 +3,8 @@ Arguments to be shared for Record's fetch
 controller pytests.
 """
 
+FETCH_RECORD_USER_EMAIL: str = "Peter.Parker@harris.com"
+
 FETCH_RECORD_PROGRAM_PA_NUMBER: str = "489AB"
 FETCH_RECORD_REPORTING_PERIOD: int = 202608
 
@@ -13,6 +15,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_PROGRAM_PA_NUMBER: str = "2422_CC"
 FETCH_RECORD_PROGRAM_PA_NUMBER_DNE: str = "DNE_PA_NUMBER"
 
 FETCH_RECORD_EXPECTED_RECORD_DATA: dict = {
+    "id": 2,
     "pa_number": "489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
@@ -59,12 +62,13 @@ FETCH_RECORD_EXPECTED_RECORD_DATA: dict = {
 
 
 FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict = {
+    "id": None,
+    "reporting_period": 202606,
     "pa_number": "489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
     "division": "Surveillance Systems",
     "tier": 1,
-    "contract_type": "FFP",
     "contract_number": "CN234739",
     "contract_value": 8000000000,
     "contract_start_date": "2026-01-01",
@@ -102,30 +106,25 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
             "program": 1,
         }
     ],
-    "previous_revision": None,
-    "reporting_period": 202604,
+    "contract_type": "FFP",
     "site": "Montgomery, AL",
     "cost_and_software_data_reporting_system_clause": False,
     "defense_financial_acquisition_regulation_clause": True,
     "earned_value_management_system_reporting_requirement": "EVMS‑Level‑3",
     "program_phase": "Execution",
-    "user": {
-        "id": 2,
-        "username": "Peter.Parker@harris.com",
-        "email": "Peter.Parker@harris.com",
-        "first_name": "Peter",
-        "last_name": "Parker",
-        "is_active": True,
-    },
-    "created": "2026-05-01T12:00:00-04:00",
+    "previous_revision": None,
     "customer_assessment": None,
     "technical_assessment": None,
     "risk_assessment": None,
     "overall_program": None,
     "comments": "",
+    "user": None,
+    "created": None,
 }
 
+
 FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
+    "id": None,
     "pa_number": "2422_CC",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
@@ -170,7 +169,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
         }
     ],
     "previous_revision": None,
-    "reporting_period": None,
+    "reporting_period": 202608,
     "site": "",
     "cost_and_software_data_reporting_system_clause": None,
     "defense_financial_acquisition_regulation_clause": None,
@@ -186,6 +185,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
 }
 
 FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
+    "id": None,
     "pa_number": "489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
