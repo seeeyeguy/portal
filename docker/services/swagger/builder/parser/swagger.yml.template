@@ -1649,6 +1649,60 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateRecordProgramDoesNotExistResponse"
+    get:
+      tags:
+        - "program_review_tool.record.fetch"
+      summary: "Fetch a Record for a specific program and reporting period."
+      parameters:
+        - in: query
+          name: pa_number
+          schema:
+            type: string
+          description: Program‑PA identifier
+        - in: query
+          name: reporting_period
+          schema:
+            type: integer
+          description: Reporting period (e.g., fiscal quarter or year).
+        - in: query
+          name: refresh
+          schema:
+            type: boolean
+          description: Flag indicating whether program metrics `Record` data should
+            be sourced from the refreshed data from the external source or not.
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRecordResponse"
+        "400":
+          description: "Missing PA number or Reporting Period"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRecordMissingPANumberResponse"
+                  - $ref: "#/components/schemas/FetchRecordMissingReportingPeriodResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRecordUnauthorizedResponse"
+        "404":
+          description: "`Program` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRecordProgramDoesNotExistResponse"
 
   /request/disposition:
     post:
@@ -4941,6 +4995,100 @@ components:
       title: "Create `Record` error response due to supplying a pa_number
         for a `Program` that does not exist."
       example: "Program PA Number (pa_number={pa_number}) does not exist."
+
+    FetchRecordResponse:
+      title: "Fetch `Record` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            {
+              "id": 1,
+              "pa_number": "489AB",
+              "segment": "SPACE & AIRBORNE SYSTEMS",
+              "sector": "Space Systems",
+              "division": "Surveillance Systems",
+              "tier": 1,
+              "contract_type": "FFP",
+              "contract_number": "CN234739",
+              "contract_value": 8000000000,
+              "contract_start_date": "2026-01-01",
+              "contract_end_date": "2026-12-01",
+              "actual_cost_work_performed_cumulative": 60.4,
+              "budgeted_cost_work_performed_cumulative": 32.42,
+              "budgeted_cost_work_scheduled_cumulative": 40.18,
+              "cost_performance_index_cumulative": 0.08,
+              "schedule_performance_index_cumulative": 0.38,
+              "budget_at_complete": 62.82,
+              "estimate_at_complete": 30.41,
+              "estimate_to_complete": 43.23,
+              "management_reserve": 50.8,
+              "weighted_risks_and_opportunities": 29.02,
+              "team_members": [
+                {
+                  "id": 1,
+                  "role": {
+                    "id": 1,
+                    "name": "PROGRAM MANAGER",
+                    "description": "Leads program execution and delivery, managing scope, schedule, cost, and performance.",
+                  },
+                  "user": {
+                    "id": 2,
+                    "username": "Peter.Parker@harris.com",
+                    "email": "Peter.Parker@harris.com",
+                    "first_name": "Peter",
+                    "last_name": "Parker",
+                    "is_active": True,
+                  },
+                  "created": "2026-01-01T11:00:00-05:00",
+                  "modified": "2026-01-01T11:00:00-05:00",
+                  "is_active": True,
+                  "expiry_date": None,
+                  "program": 1,
+                }
+            ],
+            "previous_revision": None,
+            "reporting_period": 202604,
+            "site": "Montgomery, AL",
+            "cost_and_software_data_reporting_system_clause": False,
+            "defense_financial_acquisition_regulation_clause": True,
+            "earned_value_management_system_reporting_requirement": "EVMS‑Level‑3",
+            "program_phase": "Execution",
+            "user": {
+              "id": 1,
+              "username": "Test.User@harris.com",
+              "email": "Test.User@harris.com",
+              "first_name": "Test",
+              "last_name": "User",
+              "is_active": True,
+            },
+            "created": "2026-05-01T12:00:00-04:00",
+            "customer_assessment": None,
+            "technical_assessment": None,
+            "risk_assessment": None,
+            "overall_program": None,
+            "comments": "",
+          }
+    
+    FetchRecordMissingPANumberResponse:
+      title: "Fetch `Record` error response due to supplying
+        an empty PA number."
+      example: "Missing PA number."
+
+    FetchRecordMissingReportingPeriodResponse:
+      title: "Fetch `Record` error response due to supplying
+        a null reporting period."
+      example: "No reporting period given."
+
+    FetchRecordUnauthorizedResponse:
+      title: "Fetch `Record` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    FetchRecordProgramDoesNotExistResponse:
+      title: "Fetch `Record` error response due to supplying
+        a PA number for a `Program` that does not exist."
+      example: "Program (pa_number={pa_number}) does not exist."    
 
     CreateAccessRequest:
       title: "Create `Access` request."

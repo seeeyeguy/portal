@@ -94,3 +94,32 @@ class Record(View):
             return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
         except exceptions.ProgramReviewToolError as exc:
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
+
+    @method_decorator(login_required())
+    def get(self, request: DjangoHttpRequest) -> http.JsonResponse:
+        """Endpoint for GET /program-review-tool/record."""
+
+        try:
+            req = serializers.FetchRecordRequestQueryParams(data=request.GET)
+
+            if not req.is_valid():
+                return http.JsonResponse(
+                    req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
+                )
+
+            pa_number: str = req.validated_data.get("pa_number")
+            reporting_period: int = req.validated_data.get("reporting_period")
+            refresh: bool = req.validated_data.get("refresh")
+
+            request_params = f"?pa_number={pa_number}&reporting_period={reporting_period}&refresh={refresh}"
+
+            LOGGER.info(f"GET /program-review-tool/record{request_params}")
+
+            # Fetch `Program`'s `Record` data for reporting period.
+            record_data: dict = controllers.Record.fetch_record(
+                pa_number=pa_number, reporting_period=reporting_period, refresh=refresh
+            )
+
+            return http.JsonResponse(record_data, status=200, safe=False)
+        except exceptions.ProgramReviewToolError as exc:
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
