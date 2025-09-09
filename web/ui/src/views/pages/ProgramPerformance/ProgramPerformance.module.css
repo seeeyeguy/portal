@@ -1,0 +1,81 @@
+.dropdowns {
+  border-radius: 5px;
+  font-size: 1.25rem;
+  margin-left: 1%;
+  margin-right: 15%;
+  width: 15%;
+}
+
+.filter-buttons-row {
+  align-items: center;
+  display: flex;
+  position: absolute;
+}
+
+.program-performance-inputs {
+  position: relative;
+}
+
+.program-performance-inputs div[class*="filter-buttons-row"] {
+  left: 2.5rem;
+  position: absolute;
+  right: 2.5rem;
+  top: 1rem;
+}
+
+.program-performance-inputs h1 {
+  color: var(--color-grayscale-2);
+  display: none;
+  font-size: 2.2rem;
+  font-weight: 500;
+  left: 2.5rem;
+  position: absolute;
+  top: -5%;
+}
+
+.program-performance-inputs header {
+  color: var(--color-white);
+}
+
+.program-performance-inputs header + div {
+  margin-left: 3rem;
+}
+
+.program-performance-inputs-background {
+  background-color: var(--color-stealth);
+  background-repeat: no-repeat;
+  border-top: solid 1px var(--color-grayscale-2);
+  height: 14rem;
+}
+
+@media screen and (min-width: 568px) {
+  .program-performance-inputs-background {
+    height: 10rem;
+  }
+}
+
+@media screen and (min-width: 745px) {
+  .program-performance-inputs div[class*="filter-buttons-row"] {
+    top: 50%;
+  }
+
+  .program-performance-inputs h1 {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 1110px) {
+  .program-performance-inputs-background {
+    background-image: url("/banner/nexus.svg");
+    background-position: 100% 0px;
+    background-size: 400px;
+    margin-bottom: -15px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .program-performance-inputs-background {
+    background-position: calc(100% + 100px) -90px;
+    background-size: 600px;
+  }
+}
