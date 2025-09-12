@@ -95,7 +95,7 @@ CREATE_RECORD_EXPECTED_RECORD: dict = {
             "user": {
                 "id": 1,
                 "username": "May.Parker@harris.com",
-                "email": "May.Parker@harris.com",
+                "email": "May.Parker@l3harris.com",
                 "first_name": "May",
                 "last_name": "Parker",
                 "is_active": True,
@@ -116,7 +116,7 @@ CREATE_RECORD_EXPECTED_RECORD: dict = {
             "user": {
                 "id": 3,
                 "username": "Tony.Stark@harris.com",
-                "email": "Tony.Stark@harris.com",
+                "email": "Tony.Stark@l3harris.com",
                 "first_name": "Tony",
                 "last_name": "Stark",
                 "is_active": True,
@@ -175,7 +175,7 @@ CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION: dict = {
             "user": {
                 "id": 1,
                 "username": "May.Parker@harris.com",
-                "email": "May.Parker@harris.com",
+                "email": "May.Parker@l3harris.com",
                 "first_name": "May",
                 "last_name": "Parker",
                 "is_active": True,
@@ -196,7 +196,7 @@ CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION: dict = {
             "user": {
                 "id": 3,
                 "username": "Tony.Stark@harris.com",
-                "email": "Tony.Stark@harris.com",
+                "email": "Tony.Stark@l3harris.com",
                 "first_name": "Tony",
                 "last_name": "Stark",
                 "is_active": True,

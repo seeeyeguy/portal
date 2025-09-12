@@ -59,7 +59,7 @@ VALID_QUERYFILTERSTATE_RECORD: dict = {
         "user": {
             "id": 1,
             "username": "May.Parker@harris.com",
-            "email": "May.Parker@harris.com",
+            "email": "May.Parker@l3harris.com",
             "first_name": "May",
             "last_name": "Parker",
             "is_active": True,
@@ -116,7 +116,7 @@ VALID_QUERYFILTERSTATE_RECORD: dict = {
                 "name": "Resource 1 Revision 1",
                 "url": "example-revision-site.org",
                 "thumbnail": "/v1/media/resources/thumbnails/d2ab62e8-4a0e-4b12-b94b-c128cae48222/2024_10_01__16_00_00/resource_1.png",
-                "primary_point_of_contact": "May.Parker@harris.com",
+                "primary_point_of_contact": "May.Parker@l3harris.com",
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,
@@ -130,7 +130,7 @@ VALID_QUERYFILTERSTATE_RECORD: dict = {
     "user": {
         "id": 1,
         "username": "May.Parker@harris.com",
-        "email": "May.Parker@harris.com",
+        "email": "May.Parker@l3harris.com",
         "first_name": "May",
         "last_name": "Parker",
         "is_active": True,

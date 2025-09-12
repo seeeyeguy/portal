@@ -39,7 +39,7 @@ UPDATE_PORTFOLIO_EXPECTED_PORTFOLIO: dict = {
     "user": {
         "id": 1,
         "username": "May.Parker@harris.com",
-        "email": "May.Parker@harris.com",
+        "email": "May.Parker@l3harris.com",
         "first_name": "May",
         "last_name": "Parker",
         "is_active": True,

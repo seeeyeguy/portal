@@ -56,7 +56,7 @@ CREATE_DISPOSITION_APPROVED_EXPECTED_VALUES: dict = {
         "user": {
             "id": 3,
             "username": "Tony.Stark@harris.com",
-            "email": "Tony.Stark@harris.com",
+            "email": "Tony.Stark@l3harris.com",
             "first_name": "Tony",
             "last_name": "Stark",
             "is_active": True,
@@ -90,7 +90,7 @@ CREATE_DISPOSITION_REJECTED_EXPECTED_VALUES: dict = {
         "user": {
             "id": 3,
             "username": "Tony.Stark@harris.com",
-            "email": "Tony.Stark@harris.com",
+            "email": "Tony.Stark@l3harris.com",
             "first_name": "Tony",
             "last_name": "Stark",
             "is_active": True,
@@ -124,7 +124,7 @@ CREATE_DISPOSITION_REVISE_EXPECTED_VALUES: dict = {
         "user": {
             "id": 3,
             "username": "Tony.Stark@harris.com",
-            "email": "Tony.Stark@harris.com",
+            "email": "Tony.Stark@l3harris.com",
             "first_name": "Tony",
             "last_name": "Stark",
             "is_active": True,
