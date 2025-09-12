@@ -11,6 +11,13 @@ from django.contrib.auth import models as DjangoAuthModels
 class UserSerializer(serializers.ModelSerializer):
     """Model Base Serializer for `User`."""
 
+    def to_representation(self, instance: DjangoAuthModels.User) -> dict:
+        record: dict = super().to_representation(instance)
+        email_username, _ = record["email"].split("@")
+        user_l3harris_email: str = f"{email_username}@l3harris.com"
+        record["email"] = user_l3harris_email
+        return record
+
     class Meta:
         """Meta for `User` serializer."""
 

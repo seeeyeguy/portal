@@ -142,7 +142,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "popstick.",
         "url": "example.org",
         "thumbnail": "/v1/media/resources/thumbnails/e8b25711-d9a8-46f7-bddb-cef7436e2348/2024_08_28__16_00_00/resource_1.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "employee_levels": [
             {
                 "id": 1,
@@ -200,7 +200,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "bar.",
         "url": "example-2.org",
         "thumbnail": "/v1/media/resources/thumbnails/4c2c333e-68e9-4dca-8507-ce58cefde072/2024_08_28__16_00_00/resource_2.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "employee_levels": [
             {
                 "id": 1,
@@ -286,7 +286,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "cake.",
         "url": "example-3.org",
         "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/2024_08_28__16_00_00/resource_3.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "employee_levels": [
             {
                 "id": 3,
@@ -356,7 +356,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "cookie.",
         "url": "example-4.org",
         "thumbnail": "/v1/media/resources/thumbnails/0e8ec5b9-11b5-44b6-9b16-6a4d69067d46/2024_08_28__16_00_00/resource_4.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "employee_levels": [
             {
                 "id": 2,
@@ -432,7 +432,7 @@ VALID_RESOURCE_MAP: dict = {
         "description": "ice cream.",
         "url": "example-4.org",
         "thumbnail": "/v1/media/resources/thumbnails/b7801c65-640e-403e-8f67-0a6b219f01ac/2024_08_28__16_00_00/resource_5.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "employee_levels": [
             {
                 "id": 1,

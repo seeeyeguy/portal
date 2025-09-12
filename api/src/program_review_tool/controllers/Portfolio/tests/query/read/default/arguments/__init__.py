@@ -16,7 +16,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
         "user": {
             "id": 1,
             "username": "May.Parker@harris.com",
-            "email": "May.Parker@harris.com",
+            "email": "May.Parker@l3harris.com",
             "first_name": "May",
             "last_name": "Parker",
             "is_active": True,
@@ -88,7 +88,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
         "user": {
             "id": 1,
             "username": "May.Parker@harris.com",
-            "email": "May.Parker@harris.com",
+            "email": "May.Parker@l3harris.com",
             "first_name": "May",
             "last_name": "Parker",
             "is_active": True,

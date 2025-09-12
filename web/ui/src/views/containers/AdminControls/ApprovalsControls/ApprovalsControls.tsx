@@ -305,7 +305,9 @@ export default function ApprovalsControls() {
     refetch,
   } = useGetRequestsQuery({
     ...QUERY_REQUEST_PARAMS,
-    originator: selectedAccessFilters?.length ? selectedAccessFilters[0] : null,
+    originator: selectedAccessFilters?.length
+      ? selectedAccessFilters[0].replace(/@l3harris.com/i, "@harris.com")
+      : null,
     stages: selectedStageFilters?.length
       ? selectedStageFilters
       : usersPermittedStages,
@@ -343,7 +345,9 @@ export default function ApprovalsControls() {
   const [sendDisposition] = useSendDispositionMutation();
   useSubscribeToDispositionQuery({
     ...QUERY_REQUEST_PARAMS,
-    originator: selectedAccessFilters?.length ? selectedAccessFilters[0] : null,
+    originator: selectedAccessFilters?.length
+      ? selectedAccessFilters[0].replace(/@l3harris.com/i, "@harris.com")
+      : null,
     stages: selectedStageFilters?.length
       ? selectedStageFilters
       : usersPermittedStages,

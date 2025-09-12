@@ -2324,7 +2324,7 @@ components:
                 {
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",
                   "is_active": True,
@@ -2389,7 +2389,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example.org",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -2454,7 +2454,7 @@ components:
                     "name": "Resource 2 Revision 1",
                     "url": "example.gov",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "type": "Resource Type 2",
                     "download": False,
                     "active": True,
@@ -2485,7 +2485,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",
                   "is_active": true
@@ -2500,7 +2500,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -2561,7 +2561,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "May.Parker@harris.com",
-                "email": "May.Parker@harris.com",
+                "email": "May.Parker@l3harris.com",
                 "first_name": "May",
                 "last_name": "Parker",
                 "is_active": true
@@ -2576,7 +2576,7 @@ components:
                   "description": "Resource 1 Description.",
                   "url": "www.example.com",
                   "thumbnail": "/path/to/resource/thumbnail",
-                  "primary_point_of_contact": "May.Parker@harris.com",
+                  "primary_point_of_contact": "May.Parker@l3harris.com",
                   "employee_levels": [
                     {
                       "id": 1,
@@ -2676,7 +2676,7 @@ components:
                   "description": "Resource 1 Description.",
                   "url": "www.example.com",
                   "thumbnail": "/path/to/resource/thumbnail",
-                  "primary_point_of_contact": "May.Parker@harris.com",
+                  "primary_point_of_contact": "May.Parker@l3harris.com",
                   "employee_levels": [
                     {
                       "id": 1,
@@ -2794,7 +2794,7 @@ components:
                 "description": "Resource 1 Description.",
                 "url": "www.example.com",
                 "thumbnail": "/path/to/resource/thumbnail",
-                "primary_point_of_contact": "May.Parker@harris.com",
+                "primary_point_of_contact": "May.Parker@l3harris.com",
                 "employee_levels": [
                   {
                     "id": 1,
@@ -2861,7 +2861,7 @@ components:
                     "description": "Resource 1 Description.",
                     "url": "www.example.com",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "employee_levels": [
                       {
                         "id": 1,
@@ -2943,7 +2943,7 @@ components:
               "user": {
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",
                   "is_active": True
@@ -3030,7 +3030,7 @@ components:
                   "name": "Resource 3",
                   "url": "example-3.org",
                   "thumbnail": "/path/to/resource/thumbnail",
-                  "primary_point_of_contact": "May.Parker@harris.com",
+                  "primary_point_of_contact": "May.Parker@l3harris.com",
                   "type": "Resource Type 3",
                   "download": false,
                   "active": true,
@@ -3073,7 +3073,7 @@ components:
                 "user": {             
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",           
                   "is_active": True,
@@ -3124,7 +3124,7 @@ components:
                   "name": "Resource 1 Revision 1",
                   "url": "example-site.org",
                   "thumbnail": "/path/to/resource/thumbnail",
-                  "primary_point_of_contact": "May.Parker@harris.com",
+                  "primary_point_of_contact": "May.Parker@l3harris.com",
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
@@ -3184,7 +3184,7 @@ components:
                 "user": {             
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",           
                   "is_active": True,
@@ -3235,7 +3235,7 @@ components:
                   "name": "Resource 1 Revision 1",
                   "url": "example-site.org",
                   "thumbnail": "/path/to/resource/thumbnail",
-                  "primary_point_of_contact": "May.Parker@harris.com",
+                  "primary_point_of_contact": "May.Parker@l3harris.com",
                   "type": "Resource Type 1",
                   "download": False,
                   "active": True,
@@ -3319,7 +3319,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",
                   "is_active": True,
@@ -3371,7 +3371,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -3386,7 +3386,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "May.Parker@harris.com",
-                "email": "May.Parker@harris.com",
+                "email": "May.Parker@l3harris.com",
                 "first_name": "May",
                 "last_name": "Parker",
                 "is_active": True,
@@ -3885,7 +3885,7 @@ components:
                 "name": "Resource 1 Revision 1",
                 "url": "example.org",
                 "thumbnail": "/path/to/resource/thumbnail",
-                "primary_point_of_contact": "May.Parker@harris.com",
+                "primary_point_of_contact": "May.Parker@l3harris.com",
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
@@ -3953,7 +3953,7 @@ components:
                 "name": "Resource 1 Revision 1",
                 "url": "example.org",
                 "thumbnail": "/path/to/resource/thumbnail",
-                "primary_point_of_contact": "May.Parker@harris.com",
+                "primary_point_of_contact": "May.Parker@l3harris.com",
                 "type": "Resource Type 1",
                 "download": false,
                 "active": true,
@@ -4073,7 +4073,7 @@ components:
                 "name": "Resource 1 Revision 1",
                 "url": "example-site.org",
                 "thumbnail": "/path/to/resource/thumbnail",
-                "primary_point_of_contact": "May.Parker@harris.com",
+                "primary_point_of_contact": "May.Parker@l3harris.com",
                 "type": "Resource Type 1",
                 "download": False,
                 "active": True,
@@ -4174,7 +4174,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "Test.User@harris.com",
-                  "email": "Test.User@harris.com",
+                  "email": "Test.User@l3harris.com",
                   "first_name": "Test",
                   "last_name": "User",
                   "is_active": True,
@@ -4226,7 +4226,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -4241,7 +4241,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -4293,7 +4293,7 @@ components:
               "name": "Portfolio Example 1",
               "user": {
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -4375,7 +4375,7 @@ components:
                 "name": "Portfolio Example 1",
                 "user": {
                     "username": "May.Parker@harris.com",
-                    "email": "May.Parker@harris.com",
+                    "email": "May.Parker@l3harris.com",
                     "first_name": "May",
                     "last_name": "Parker",
                     "is_active": True,
@@ -4479,7 +4479,7 @@ components:
               "user": {
                   "id": 1,
                   "username": "May.Parker@harris.com",
-                  "email": "May.Parker@harris.com",
+                  "email": "May.Parker@l3harris.com",
                   "first_name": "May",
                   "last_name": "Parker",
                   "is_active": True,
@@ -5036,7 +5036,7 @@ components:
                   "user": {
                     "id": 2,
                     "username": "Peter.Parker@harris.com",
-                    "email": "Peter.Parker@harris.com",
+                    "email": "Peter.Parker@l3harris.com",
                     "first_name": "Peter",
                     "last_name": "Parker",
                     "is_active": True,
@@ -5058,7 +5058,7 @@ components:
             "user": {
               "id": 1,
               "username": "Test.User@harris.com",
-              "email": "Test.User@harris.com",
+              "email": "Test.User@l3harris.com",
               "first_name": "Test",
               "last_name": "User",
               "is_active": True,
@@ -5127,7 +5127,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -5238,7 +5238,7 @@ components:
                 "user": {
                   "id": 3,
                   "username": "Test.User@harris.com",
-                  "email": "Test.User@harris.com",
+                  "email": "Test.User@l3harris.com",
                   "first_name": "Test",
                   "last_name": "User",
                   "is_active": true
@@ -5283,7 +5283,7 @@ components:
               "user": {
                 "id": 3,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": true
@@ -5339,7 +5339,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -5421,7 +5421,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -5474,7 +5474,7 @@ components:
                 "user": {
                     "id": 1,
                     "username": "May.Parker@harris.com",
-                    "email": "May.Parker@harris.com",
+                    "email": "May.Parker@l3harris.com",
                     "first_name": "May",
                     "last_name": "Parker",
                     "is_active": True,
@@ -6003,7 +6003,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "Test.User@harris.com",
-                  "email": "Test.User@harris.com",
+                  "email": "Test.User@l3harris.com",
                   "first_name": "Test",
                   "last_name": "User",
                   "is_active": True,
@@ -6055,7 +6055,7 @@ components:
                     "name": "Resource 1 Revision 1",
                     "url": "example-site.org",
                     "thumbnail": "/path/to/resource/thumbnail",
-                    "primary_point_of_contact": "May.Parker@harris.com",
+                    "primary_point_of_contact": "May.Parker@l3harris.com",
                     "type": "Resource Type 1",
                     "download": False,
                     "active": True,
@@ -6070,7 +6070,7 @@ components:
               "user": {
                 "id": 1,
                 "username": "Test.User@harris.com",
-                "email": "Test.User@harris.com",
+                "email": "Test.User@l3harris.com",
                 "first_name": "Test",
                 "last_name": "User",
                 "is_active": True,
@@ -6145,7 +6145,7 @@ components:
                 "user": {
                     "id": 3,
                     "username": "Tony.Stark@harris.com",
-                    "email": "Tony.Stark@harris.com",
+                    "email": "Tony.Stark@l3harris.com",
                     "first_name": "Tony",
                     "last_name": "Stark",
                     "is_active": True,
@@ -6345,7 +6345,7 @@ components:
                     "label": "restricted::department:GeoSpatial",
                   },
                 ],
-                "primary_point_of_contact": "Test.User@harris.com",
+                "primary_point_of_contact": "Test.User@l3harris.com",
                 "description": "Test resource description for create tests.",
                 "created": "2025-04-24T11:59:30.789539-04:00",
                 "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
@@ -6364,7 +6364,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "Test.User@harris.com",
-                  "email": "Test.User@harris.com",
+                  "email": "Test.User@l3harris.com",
                   "first_name": "Test",
                   "last_name": "User",
                   "is_active": True,
@@ -6501,7 +6501,7 @@ components:
                     },
                     ...
                   ],
-                  "primary_point_of_contact": "Test.User@harris.com",
+                  "primary_point_of_contact": "Test.User@l3harris.com",
                   "description": "Test Resource Description.",
                   "created": "2026-06-06T11:59:30.789539-04:00",
                   "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
@@ -6520,7 +6520,7 @@ components:
                   "user": {
                     "id": 1,
                     "username": "Test.User@harris.com",
-                    "email": "Test.User@harris.com",
+                    "email": "Test.User@l3harris.com",
                     "first_name": "Test",
                     "last_name": "User",
                     "is_active": true,
@@ -6626,7 +6626,7 @@ components:
                   },
                   ...
                 ],
-                "primary_point_of_contact": "Test.User@harris.com",
+                "primary_point_of_contact": "Test.User@l3harris.com",
                 "description": "Test Resource Description.",
                 "created": "2026-06-06T11:59:30.789539-04:00",
                 "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
@@ -6645,7 +6645,7 @@ components:
                 "user": {
                   "id": 1,
                   "username": "Test.User@harris.com",
-                  "email": "Test.User@harris.com",
+                  "email": "Test.User@l3harris.com",
                   "first_name": "Test",
                   "last_name": "User",
                   "is_active": true,
@@ -6842,7 +6842,7 @@ components:
                     "label": "restricted::department:GeoSpatial",
                   },
                 ],
-                "primary_point_of_contact": "Test.User@harris.com",
+                "primary_point_of_contact": "Test.User@l3harris.com",
                 "description": "Test resource description for update tests.",
                 "created": "2025-04-24T11:59:30.789539-04:00",
                 "uid": "80e00922-8b90-4754-8ea3-a8176a8e3f56",
@@ -6861,7 +6861,7 @@ components:
                   "user": {
                     "id": 1,
                     "username": "Test.User@harris.com",
-                    "email": "Test.User@harris.com",
+                    "email": "Test.User@l3harris.com",
                     "first_name": "Test",
                     "last_name": "User",
                     "is_active": True,

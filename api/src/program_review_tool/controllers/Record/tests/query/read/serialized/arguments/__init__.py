@@ -47,7 +47,7 @@ FETCH_RECORD_EXPECTED_RECORD_DATA: dict = {
     "user": {
         "id": 2,
         "username": "Peter.Parker@harris.com",
-        "email": "Peter.Parker@harris.com",
+        "email": "Peter.Parker@l3harris.com",
         "first_name": "Peter",
         "last_name": "Parker",
         "is_active": True,
@@ -94,7 +94,7 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
             "user": {
                 "id": 2,
                 "username": "Peter.Parker@harris.com",
-                "email": "Peter.Parker@harris.com",
+                "email": "Peter.Parker@l3harris.com",
                 "first_name": "Peter",
                 "last_name": "Parker",
                 "is_active": True,
@@ -156,7 +156,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
             "user": {
                 "id": 2,
                 "username": "Peter.Parker@harris.com",
-                "email": "Peter.Parker@harris.com",
+                "email": "Peter.Parker@l3harris.com",
                 "first_name": "Peter",
                 "last_name": "Parker",
                 "is_active": True,
@@ -217,7 +217,7 @@ FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
             "user": {
                 "id": 2,
                 "username": "Peter.Parker@harris.com",
-                "email": "Peter.Parker@harris.com",
+                "email": "Peter.Parker@l3harris.com",
                 "first_name": "Peter",
                 "last_name": "Parker",
                 "is_active": True,
@@ -239,7 +239,7 @@ FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
     "user": {
         "id": 2,
         "username": "Peter.Parker@harris.com",
-        "email": "Peter.Parker@harris.com",
+        "email": "Peter.Parker@l3harris.com",
         "first_name": "Peter",
         "last_name": "Parker",
         "is_active": True,

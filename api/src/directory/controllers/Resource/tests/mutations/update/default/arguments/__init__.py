@@ -120,7 +120,7 @@ VALID_UPDATED_RESOURCE: dict = {
             "label": "filter::site:Melbourne",
         },
     ],
-    "primary_point_of_contact": "May.Parker@harris.com",
+    "primary_point_of_contact": "May.Parker@l3harris.com",
     "description": "Test resource description for update tests.",
     "uid": "2182c2ab-b3ab-444b-90fa-58a79031ae9c",
     "revision_number": None,

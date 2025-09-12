@@ -40,7 +40,7 @@ CREATE_ACCESS_EXPECTED_ACCESS: dict = {
     "user": {
         "id": 4,
         "username": "Ben.Parker@harris.com",
-        "email": "Ben.Parker@harris.com",
+        "email": "Ben.Parker@l3harris.com",
         "first_name": "Ben",
         "last_name": "Parker",
         "is_active": True,

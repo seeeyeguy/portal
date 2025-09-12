@@ -23,9 +23,12 @@ class ResourceSerializer(serializers.ModelSerializer):
         primary_point_of_contact: Union[
             PointOfContact, None
         ] = PointOfContact.objects.filter(resource=instance, primary=True).first()
-        record["primary_point_of_contact"] = (
-            primary_point_of_contact.contact.email if primary_point_of_contact else None
-        )
+        primary_point_of_contact_l3harris_email = None
+        if primary_point_of_contact:
+            email_username, _ = primary_point_of_contact.contact.email.split("@")
+            primary_point_of_contact_l3harris_email = f"{email_username}@l3harris.com"
+        record["primary_point_of_contact"] = primary_point_of_contact_l3harris_email
+
         return record
 
     employee_levels = EmployeeLevelSerializer(many=True, read_only=True)

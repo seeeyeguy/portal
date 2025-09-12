@@ -24,7 +24,7 @@ CREATE_FAVORITE_EXPECTED_VALUES: dict = {
     "user": {
         "id": 1,
         "username": "May.Parker@harris.com",
-        "email": "May.Parker@harris.com",
+        "email": "May.Parker@l3harris.com",
         "first_name": "May",
         "last_name": "Parker",
         "is_active": True,
@@ -108,7 +108,7 @@ CREATE_FAVORITE_EXPECTED_VALUES: dict = {
         "name": "Resource 3",
         "url": "example-3.org",
         "thumbnail": "/v1/media/resources/thumbnails/a157e2a8-1db7-4ef2-adc1-90e109af0557/2024_08_27__16_00_00/resource_3.png",
-        "primary_point_of_contact": "May.Parker@harris.com",
+        "primary_point_of_contact": "May.Parker@l3harris.com",
         "type": "Resource Type 3",
         "download": False,
         "active": True,
