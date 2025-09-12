@@ -6,6 +6,7 @@ import pytest
 from typing import cast, List
 
 from django.contrib.auth import models as AuthModels
+from django.db.models import QuerySet
 from django.test import tag
 
 from users import controllers, exceptions, models
@@ -39,19 +40,21 @@ class TestRevokeAccess(MultiDBTestCase):
             email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
 
-        access_record, rows_affected = controllers.Access.revoke_access(
-            access=arguments.REVOKE_ACCESS_ACCESS_ID,
+        access_records, rows_affected = controllers.Access.revoke_accesses(
+            accesses=[arguments.REVOKE_ACCESS_ACCESS_ID],
             admin=admin,
         )
 
-        self.assertIsInstance(access_record, models.Access)
-        self.assertIsNotNone(access_record.access_revoked_date)
+        self.assertIsInstance(access_records, QuerySet[models.Access])
+        self.assertIsNotNone(
+            cast(models.Access, access_records.first()).access_revoked_date
+        )
         self.assertEqual(rows_affected, arguments.REVOKE_ACCESS_EXPECTED_ROWS_AFFECTED)
 
-        data = AccessSerializer(access_record).data
-        del data["access_revoked_date"]
+        data = AccessSerializer(access_records, many=True).data
+        del data[0]["access_revoked_date"]
 
-        self.assertDictEqual(data, arguments.REVOKED_ACCESS_EXPECTED_ACCESS)
+        self.assertDictEqual(data[0], arguments.REVOKED_ACCESS_EXPECTED_ACCESS)
 
     @tag("controllers.access.revoke_access_access_dne")
     def test_revoke_access_access_dne(self) -> None:
@@ -62,8 +65,8 @@ class TestRevokeAccess(MultiDBTestCase):
             email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
-            _ = controllers.Access.revoke_access(
-                access=arguments.REVOKE_ACCESS_ACCESS_ID_DNE, admin=admin
+            _ = controllers.Access.revoke_accesses(
+                accesses=[arguments.REVOKE_ACCESS_ACCESS_ID_DNE], admin=admin
             )
 
     @tag("controllers.access.revoke_access_not_authenticated")
@@ -72,8 +75,8 @@ class TestRevokeAccess(MultiDBTestCase):
         admin is not authenticated."""
 
         with pytest.raises(exceptions.UsersError):
-            _ = controllers.Access.revoke_access(
-                access=arguments.REVOKE_ACCESS_ACCESS_ID,
+            _ = controllers.Access.revoke_accesses(
+                accesses=[arguments.REVOKE_ACCESS_ACCESS_ID],
                 admin=cast(AuthModels.User, AuthModels.AnonymousUser()),
             )
 
@@ -86,8 +89,8 @@ class TestRevokeAccess(MultiDBTestCase):
             email=arguments.REVOKE_ACCESS_NON_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
-            _ = controllers.Access.revoke_access(
-                access=arguments.REVOKE_ACCESS_ACCESS_ID, admin=admin
+            _ = controllers.Access.revoke_accesses(
+                accesses=[arguments.REVOKE_ACCESS_ACCESS_ID], admin=admin
             )
 
     @tag("controllers.access.revoke_access_access_belongs_to_admin")
@@ -99,6 +102,6 @@ class TestRevokeAccess(MultiDBTestCase):
             email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
-            _ = controllers.Access.revoke_access(
-                access=arguments.REVOKE_ACCESS_ADMIN_ACCESS_ID, admin=admin
+            _ = controllers.Access.revoke_accesses(
+                accesses=[arguments.REVOKE_ACCESS_ADMIN_ACCESS_ID], admin=admin
             )

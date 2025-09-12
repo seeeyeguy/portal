@@ -14,7 +14,7 @@ and ultimately approved by a `User` with an appropriate
 
 import logging
 from requests.exceptions import ConnectionError
-from typing import List, Optional, Set, Tuple, Union
+from typing import cast, List, Optional, Set, Tuple, Union
 
 from django.contrib.auth import models as AuthModels
 from django.db import transaction
@@ -246,15 +246,19 @@ class Access:
         """
 
         with transaction.atomic():
-            revoked_access_record, rows_affected = Access.revoke_access(
-                access=access, admin=admin
+            revoked_access_record, rows_affected = Access.revoke_accesses(
+                accesses=[access], admin=admin
             )
             stage_levels = list(
-                revoked_access_record.stage.values_list("id", flat=True)
+                cast(models.Access, revoked_access_record.first()).stage.values_list(
+                    "id", flat=True
+                )
             )
             new_access_record = Access.create_access(
-                user=revoked_access_record.user.email,
-                role_level=revoked_access_record.role.level,
+                user=cast(models.Access, revoked_access_record.first()).user.email,
+                role_level=cast(
+                    models.Access, revoked_access_record.first()
+                ).role.level,
                 subfunctions=subfunctions,
                 stage_levels=stage_levels,
                 admin=admin,
@@ -262,59 +266,64 @@ class Access:
             return new_access_record, rows_affected
 
     @staticmethod
-    def revoke_access(access: int, admin: AuthModels.User) -> Tuple[models.Access, int]:
+    def revoke_accesses(
+        accesses: List[int], admin: AuthModels.User
+    ) -> Tuple[QuerySet[models.Access], int]:
         """
-        Revoke an `Access` if and only if the requesting admin has appropriate permissions.
+        Revoke `Access`es if and only if the requesting admin has appropriate permissions.
 
         Accepts:
-            * access (int): An id for a valid `Access` record.
+            * accesses (List[int]): Ids for valid `Access` records.
             * admin (auth.AuthModels.User): A `BI Portal` user that made the request.
                 This `User` must have an `Access` with the role `Superuser`.
 
         Returns:
-            * access_record (models.Access): An updated `Access` record for the given user.
+            * access_records (models.Access): Updated `Access` records for the given users.
             * rows_affected (int): The number of records affected.
         """
 
-        try:
-
-            if not (admin and admin.is_authenticated):
-                err_msg = "Authentication required."
-                LOGGER.error(err_msg)
-                raise exceptions.UsersError(err_msg, 401)
-
-            # Verify the permissions of the `admin`.
-            if not models.Access.objects.filter(
-                user=admin,
-                role__level=models.Role.RoleLevels.SUPERUSER,
-                access_revoked_date__isnull=True,
-            ).exists():
-                err_msg = "Permissions Denied."
-                LOGGER.error(err_msg)
-                raise exceptions.UsersError(err_msg, 403)
-
-            # Fetch `Access` record.
-            access_record: models.Access = models.Access.objects.get(id=access)
-
-            # Verify the `Access` being revoked does not belong
-            # to the `admin`.
-            if access_record.user.email == admin.email:
-                err_msg = "Admins can't revoke one of their accesses."
-                LOGGER.error(err_msg)
-                raise exceptions.UsersError(err_msg, 400)
-
-            # Revoke the target `Access`.
-            rows_affected = models.Access.objects.filter(id=access_record.id).update(
-                access_revoked_date=timezone.now()
-            )
-
-            access_record.refresh_from_db()
-
-            return access_record, rows_affected
-        except models.Access.DoesNotExist as exc:
-            err_msg = f"Access (id={access}) does not exist."
+        if not (admin and admin.is_authenticated):
+            err_msg = "Authentication required."
             LOGGER.error(err_msg)
-            raise exceptions.UsersError(err_msg, 404) from exc
+            raise exceptions.UsersError(err_msg, 401)
+
+        # Verify the permissions of the `admin`.
+        if not models.Access.objects.filter(
+            user=admin,
+            role__level=models.Role.RoleLevels.SUPERUSER,
+            access_revoked_date__isnull=True,
+        ).exists():
+            err_msg = "Permissions Denied."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 403)
+
+        # Fetch `Access` records.
+        access_records: QuerySet[models.Access] = models.Access.objects.filter(
+            id__in=accesses
+        )
+
+        # Verify all `Access` records exist in the db.
+        if access_records.count() != len(accesses):
+            missing_access_ids = set(accesses) - set(
+                access_records.values_list("id", flat=True)
+            )
+            err_msg = f"Access (ids={missing_access_ids}) do not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 404)
+
+        # Verify that the `Access`es being revoked do not belong
+        # to the `admin`.
+        if access_records.filter(user__email=admin.email).exists():
+            err_msg = "Admins can't revoke one of their accesses."
+            LOGGER.error(err_msg)
+            raise exceptions.UsersError(err_msg, 400)
+
+        # Revoke the target `Access` records.
+        rows_affected = models.Access.objects.filter(id__in=accesses).update(
+            access_revoked_date=timezone.now()
+        )
+
+        return access_records.all(), rows_affected
 
     @staticmethod
     def fetch_accesses(

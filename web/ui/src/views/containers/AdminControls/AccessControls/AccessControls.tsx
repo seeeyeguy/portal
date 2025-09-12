@@ -5,6 +5,8 @@ import { LabelCheckboxSelect, SearchSelect } from "adas-react-components";
 import { Option, OptionValues } from "adas-react-components/types";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import lodash from "lodash";
+import { Checkbox } from "primereact/checkbox";
 
 import ConfirmModal from "views/components/ConfirmModal/ConfirmModal";
 
@@ -311,34 +313,81 @@ export default function AccessControls() {
   const [showRevokeModal, setShowRevokeModal] = React.useState(false);
   const [pendingRevokedRecord, setPendingRevokedRecord] =
     React.useState<IAccess | null>(null);
+  const [pendingRevokedRecords, setPendingRevokedRecords] = React.useState<{
+    [id: number]: boolean;
+  }>({});
+  const [revokeMany, setRevokeMany] = React.useState<boolean>(false);
+  const [allSelected, setAllSelected] = React.useState<boolean>(false);
 
-  const [revokeAccessRecord] = useRevokeAccessMutation();
+  const [revokeAccessRecords] = useRevokeAccessMutation();
+
+  const selectedRevokedAccesses = React.useMemo(
+    () =>
+      lodash.entries(pendingRevokedRecords).reduce((acc, entry) => {
+        const [key, value] = entry;
+        if (!value) {
+          return acc;
+        }
+        return [...acc, lodash.toNumber(key)];
+      }, [] as number[]),
+    [pendingRevokedRecords]
+  );
+
+  const onClickToggleRevokedAccesses = React.useCallback(
+    (accessRecord: IAccess) => () => {
+      setPendingRevokedRecords((s) => ({
+        ...s,
+        [accessRecord?.id]: !s[accessRecord?.id],
+      }));
+    },
+    [setPendingRevokedRecords]
+  );
 
   const onClickCancelRevokeAccess = React.useCallback(() => {
     setPendingRevokedRecord(null);
+    setPendingRevokedRecords({});
     setShowRevokeModal(false);
-  }, [setPendingRevokedRecord, setShowRevokeModal]);
+  }, [setPendingRevokedRecord, setPendingRevokedRecords, setShowRevokeModal]);
 
   const onClickConfirmRevokeAccess = React.useCallback(() => {
     if (pendingRevokedRecord?.id) {
-      revokeAccessRecord(pendingRevokedRecord.id);
+      revokeAccessRecords([pendingRevokedRecord.id]);
       setPendingRevokedRecord(null);
       setShowRevokeModal(false);
     }
   }, [
     pendingRevokedRecord,
-    revokeAccessRecord,
+    revokeAccessRecords,
     setPendingRevokedRecord,
+    setShowRevokeModal,
+  ]);
+
+  const onClickConfirmRevokeAccesses = React.useCallback(() => {
+    if (selectedRevokedAccesses?.length) {
+      revokeAccessRecords(selectedRevokedAccesses);
+      setPendingRevokedRecords({});
+      setShowRevokeModal(false);
+    }
+  }, [
+    selectedRevokedAccesses,
+    revokeAccessRecords,
+    setPendingRevokedRecords,
     setShowRevokeModal,
   ]);
 
   const onSubmitRevokeAccess = React.useCallback(
     (accessRecord: IAccess) => () => {
       setPendingRevokedRecord(accessRecord);
+      setRevokeMany(false);
       setShowRevokeModal(true);
     },
-    [setPendingRevokedRecord, setShowRevokeModal]
+    [setPendingRevokedRecord, setRevokeMany, setShowRevokeModal]
   );
+
+  const onSubmitRevokeAccesses = React.useCallback(() => {
+    setRevokeMany(true);
+    setShowRevokeModal(true);
+  }, [setRevokeMany, setShowRevokeModal]);
 
   /*************************
    *  RENDER COMPONENTS.   *
@@ -350,6 +399,15 @@ export default function AccessControls() {
     isFetching,
   } = useGetAccessesQuery(accessQueryParams);
 
+  const accesses = React.useMemo(
+    () => (accessQuery?.data ?? []) as IAccess[],
+    [accessQuery]
+  );
+
+  React.useEffect(() => {
+    setAllSelected(accesses?.length === selectedRevokedAccesses.length);
+  }, [accesses, selectedRevokedAccesses]);
+
   if (isLoading) {
     return (
       <div
@@ -360,8 +418,6 @@ export default function AccessControls() {
       </div>
     );
   }
-
-  const accesses = (accessQuery?.data ?? []) as IAccess[];
 
   return (
     <>
@@ -404,10 +460,23 @@ export default function AccessControls() {
       </ConfirmModal>
       <ConfirmModal
         open={showRevokeModal}
-        title={`Revoking access for ${pendingRevokedRecord?.user?.email}?`}
+        title={`Revoking access for ${
+          revokeMany
+            ? accesses
+                .reduce((acc, access) => {
+                  if (!selectedRevokedAccesses.includes(access.id)) {
+                    return acc;
+                  }
+                  return [...acc, access.user.email];
+                }, [] as string[])
+                .join(", ")
+            : pendingRevokedRecord?.user?.email
+        }?`}
         acceptLabel={<>Revoke</>}
         onReject={onClickCancelRevokeAccess}
-        onAccept={onClickConfirmRevokeAccess}
+        onAccept={
+          revokeMany ? onClickConfirmRevokeAccesses : onClickConfirmRevokeAccess
+        }
         rejectClassName={`${adminStyles["admin-button"]} ${adminStyles["admin-button-cancel"]}`}
         acceptClassName={`${adminStyles["admin-button"]} ${adminStyles["admin-button-delete"]}`}
       />
@@ -588,46 +657,93 @@ export default function AccessControls() {
         ) : (
           <>
             <h3>Access Records</h3>
+            <div
+              className={styles["access-revoke-selected-button-container"]}
+              aria-description="access revoke selected button container"
+            >
+              <button
+                className={styles["access-revoke-button"]}
+                onClick={onSubmitRevokeAccesses}
+                disabled={!selectedRevokedAccesses?.length}
+              >
+                Revoke Selected
+              </button>
+            </div>
+            <div
+              className={styles["access-revoke-all-checkbox-container"]}
+              aria-description="access revoke all checkbox container"
+            >
+              <Checkbox
+                id="access-revoke-all-checkbox"
+                checked={allSelected}
+                onChange={() => {
+                  setPendingRevokedRecords(
+                    accesses.reduce(
+                      (acc, access) => ({
+                        ...acc,
+                        [access.id]: !allSelected,
+                      }),
+                      {}
+                    )
+                  );
+                  setAllSelected((s) => !s);
+                }}
+              />
+              <label htmlFor="access-revoke-all-checkbox">
+                Select All Accesses
+              </label>
+            </div>
             <ul className={styles["access-records-list"]}>
               {accesses.map((access) => (
                 <li key={access.id}>
-                  <article>
-                    <div aria-description="access record container">
-                      <p>{access.user.email}</p>
-                      <p>{access.role.name}</p>
-                      <p>
-                        {(access.subfunctions as ISubFunction[])
-                          .map(
-                            (subfunction) =>
-                              `[${subfunction.function.name}] ${subfunction.name.includes("General::") ? "General" : subfunction.name}`
-                          )
-                          .join(", ")}
-                      </p>
+                  <div
+                    className={styles["access-record"]}
+                    aria-description="access record container"
+                  >
+                    <div aria-description="access record revoke checkbox container">
+                      <Checkbox
+                        onChange={onClickToggleRevokedAccesses(access)}
+                        checked={pendingRevokedRecords?.[access.id]}
+                      />
                     </div>
-                    <div
-                      className={
-                        styles["access-revoke-modify-buttons-container"]
-                      }
-                      aria-description="access revoke/modify button container"
-                    >
-                      <button
-                        className={styles["access-modify-button"]}
-                        disabled={
-                          access?.role?.level === ROLE_LEVELS.SUPERUSER ||
-                          !access?.subfunctions?.length
+                    <article style={{ flexGrow: 2 }}>
+                      <div aria-description="access record details container">
+                        <p>{access.user.email}</p>
+                        <p>{access.role.name}</p>
+                        <p>
+                          {(access.subfunctions as ISubFunction[])
+                            .map(
+                              (subfunction) =>
+                                `[${subfunction.function.name}] ${subfunction.name.includes("General::") ? "General" : subfunction.name}`
+                            )
+                            .join(", ")}
+                        </p>{" "}
+                      </div>
+                      <div
+                        className={
+                          styles["access-revoke-modify-buttons-container"]
                         }
-                        onClick={onSubmitModifyAccess(access)}
+                        aria-description="access revoke/modify button container"
                       >
-                        Modify
-                      </button>
-                      <button
-                        className={styles["access-revoke-button"]}
-                        onClick={onSubmitRevokeAccess(access)}
-                      >
-                        Revoke
-                      </button>
-                    </div>
-                  </article>
+                        <button
+                          className={styles["access-modify-button"]}
+                          disabled={
+                            access?.role?.level === ROLE_LEVELS.SUPERUSER ||
+                            !access?.subfunctions?.length
+                          }
+                          onClick={onSubmitModifyAccess(access)}
+                        >
+                          Modify
+                        </button>
+                        <button
+                          className={styles["access-revoke-button"]}
+                          onClick={onSubmitRevokeAccess(access)}
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </article>
+                  </div>
                 </li>
               ))}
             </ul>

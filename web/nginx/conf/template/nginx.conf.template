@@ -5,6 +5,9 @@ upstream api {
 server {
         listen 443 ssl;
 
+        # set the upper limit for the URI length.
+        large_client_header_buffers 4 24k;
+
         # set file size limit for POST requests to 5MB
         client_max_body_size 5M;
 

@@ -1,4 +1,5 @@
 import lodash from "lodash";
+import { toast } from "react-toastify";
 
 import { POST, PUT } from "definitions/RequestConstants";
 import endpoints from "services/api";
@@ -63,6 +64,7 @@ const accessApi = api.injectEndpoints({
       }: TApiFetchAccessRequest) =>
         endpoints.PORTAL.USERS.ACCESS(
           id,
+          null,
           user,
           roleLevels,
           subfunctions,
@@ -79,15 +81,22 @@ const accessApi = api.injectEndpoints({
       }),
       providesTags: ["Access"],
     }),
-    revokeAccess: builder.mutation<TApiAccessResponse, number>({
-      query: (id: number) => ({
-        url: endpoints.PORTAL.USERS.ACCESS(id),
+    revokeAccess: builder.mutation<TApiAccessResponse, number[]>({
+      query: (ids: number[]) => ({
+        url: endpoints.PORTAL.USERS.ACCESS(null, ids),
         method: PUT,
       }),
-      transformResponse: (response: IApiAccess, meta): TApiAccessResponse => ({
-        data: transformAccessRecord(response),
-        status: meta?.response?.status,
-      }),
+      transformResponse: (response: IApiAccess, meta): TApiAccessResponse => {
+        toast.success("Accesses Revoked.");
+        return {
+          data: transformAccessRecord(response),
+          status: meta?.response?.status,
+        };
+      },
+      transformErrorResponse: (response) => {
+        toast.error("Accesses Not Revoked.");
+        return response;
+      },
       invalidatesTags: ["Access"],
     }),
     modifyAccess: builder.mutation<
@@ -95,7 +104,15 @@ const accessApi = api.injectEndpoints({
       { body: TApiModifyAccessRequest } & { id: number }
     >({
       query: ({ id, body }) => ({
-        url: endpoints.PORTAL.USERS.ACCESS(id, null, null, null, null, true),
+        url: endpoints.PORTAL.USERS.ACCESS(
+          id,
+          null,
+          null,
+          null,
+          null,
+          null,
+          true
+        ),
         method: PUT,
         body,
       }),

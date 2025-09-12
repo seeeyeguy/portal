@@ -273,6 +273,7 @@ export default {
   USERS: {
     ACCESS: (
       id: number | null = null,
+      ids: number[] | null = null,
       user: string | null = null,
       roleLevels: number[] | null = null,
       subfunctions: number[] | null = null,
@@ -283,6 +284,13 @@ export default {
         RESOURCE_PATHS.USERS,
         !addSubdomain ? "access" : "access/subfunctions"
       )(id);
+
+      if (ids?.length) {
+        base = buildQueryResourceByIdsURL(
+          RESOURCE_PATHS.USERS,
+          !addSubdomain ? "access" : "access/subfunctions"
+        )(ids);
+      }
 
       if (!id) {
         let arrayParams = "";

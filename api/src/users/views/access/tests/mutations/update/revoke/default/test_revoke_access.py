@@ -46,11 +46,12 @@ class TestRevokeAccess(MultiDBTestCase):
     def test_revoke_access(self) -> None:
         """Success Case: Revoke an `Access` record, given its id."""
 
-        request_url = f"{self.url}?id={arguments.REVOKE_ACCESS_ACCESS_ID}"
+        request_url = f"{self.url}?ids={arguments.REVOKE_ACCESS_ACCESS_ID}"
 
         response = self.client.put(request_url, content_type="application/json")
 
-        access = response.json()
+        access = response.json()[0]
+
         access_revoked_date = access.pop("access_revoked_date")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -64,7 +65,7 @@ class TestRevokeAccess(MultiDBTestCase):
         """Fail Case: Revoke an `Access` record, given its id where
         that `Access` does not exist."""
 
-        request_url = f"{self.url}?id={arguments.REVOKE_ACCESS_ACCESS_ID_DNE}"
+        request_url = f"{self.url}?ids={arguments.REVOKE_ACCESS_ACCESS_ID_DNE}"
 
         response = self.client.put(request_url, content_type="application/json")
 
@@ -75,7 +76,7 @@ class TestRevokeAccess(MultiDBTestCase):
         """Fail Case: Revoke an `Access` record, given its id where
         the given access id belongs to the given admin."""
 
-        request_url = f"{self.url}?id={arguments.REVOKE_ACCESS_ADMIN_ACCESS_ID}"
+        request_url = f"{self.url}?ids={arguments.REVOKE_ACCESS_ADMIN_ACCESS_ID}"
 
         response = self.client.put(request_url, content_type="application/json")
 
@@ -92,7 +93,7 @@ class TestRevokeAccess(MultiDBTestCase):
 
         self.client.force_login(user=user)
 
-        request_url = f"{self.url}?id={arguments.REVOKE_ACCESS_ACCESS_ID}"
+        request_url = f"{self.url}?ids={arguments.REVOKE_ACCESS_ACCESS_ID}"
 
         response = self.client.put(request_url, content_type="application/json")
 
@@ -105,7 +106,7 @@ class TestRevokeAccess(MultiDBTestCase):
 
         self.client.logout()
 
-        request_url = f"{self.url}?id={arguments.REVOKE_ACCESS_ACCESS_ID}"
+        request_url = f"{self.url}?ids={arguments.REVOKE_ACCESS_ACCESS_ID}"
 
         response = self.client.put(request_url, content_type="application/json")
 
