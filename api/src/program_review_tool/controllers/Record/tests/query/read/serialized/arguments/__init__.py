@@ -101,7 +101,6 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
             },
             "created": "2026-01-01T11:00:00-05:00",
             "modified": "2026-01-01T11:00:00-05:00",
-            "is_active": True,
             "expiry_date": None,
             "program": 1,
         }
@@ -163,7 +162,6 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
             },
             "created": "2026-01-01T11:00:00-05:00",
             "modified": "2026-01-01T11:00:00-05:00",
-            "is_active": True,
             "expiry_date": None,
             "program": 2,
         }
@@ -224,7 +222,6 @@ FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
             },
             "created": "2026-01-01T11:00:00-05:00",
             "modified": "2026-01-01T11:00:00-05:00",
-            "is_active": True,
             "expiry_date": None,
             "program": 1,
         }

@@ -55,13 +55,14 @@ def fetch_employee_record_from_ldap(email: str) -> Union[dict, None]:
     return entries[0]
 
 
-def fetch_authorized_employee(email: str) -> Optional[models.User]:
+def fetch_authorized_employee(email: str, db: str = "default") -> Optional[models.User]:
     """
     Fetch `User` instance if user of the application or
     an employee of L3Harris Technologies. inc
 
     Accepts:
         email: An L3Harris employee email.
+        db: Alias for database for which we will query for users.
 
     Returns:
         An instance of `User` if found, `None` otherwise.
@@ -73,7 +74,7 @@ def fetch_authorized_employee(email: str) -> Optional[models.User]:
     domain_index = email.index("@")
     employee_email = f"{email[:domain_index]}@harris.com"
 
-    user = User.objects.filter(email__iexact=employee_email)
+    user = User.objects.using(db).filter(email__iexact=employee_email)
     if user.exists():
         return user.first()
 

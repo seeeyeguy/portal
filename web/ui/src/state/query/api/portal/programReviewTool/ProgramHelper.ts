@@ -11,10 +11,9 @@ import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 export interface IApiProgramRole extends IProgramRole {}
 
 export interface IApiProgramMember
-  extends Omit<IProgramMember, "role" | "user" | "isActive" | "expiryDate"> {
+  extends Omit<IProgramMember, "role" | "user" | "expiryDate"> {
   role: IApiProgramRole;
   user: IApiUser;
-  is_active: boolean;
   expiry_date: Date | null;
 }
 

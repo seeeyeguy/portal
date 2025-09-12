@@ -5043,7 +5043,6 @@ components:
                   },
                   "created": "2026-01-01T11:00:00-05:00",
                   "modified": "2026-01-01T11:00:00-05:00",
-                  "is_active": True,
                   "expiry_date": None,
                   "program": 1,
                 }
