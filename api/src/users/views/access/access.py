@@ -77,19 +77,19 @@ class Access(View):
                     req.errors, status=status.HTTP_400_BAD_REQUEST, safe=False
                 )
 
-            access_id: int = req.validated_data.get("id")
+            access_ids: List[int] = req.validated_data.get("ids")
 
-            log_msg = f"PUT /v1/users/access?id={access_id}."
+            log_msg = f"PUT /v1/users/access?ids={access_ids}."
 
             LOGGER.info(log_msg)
 
-            # Revoke `Access` record.
-            access_record, __ = controllers.Access.revoke_access(
-                access=access_id, admin=request.user
+            # Revoke `Access` records.
+            access_records, _ = controllers.Access.revoke_accesses(
+                accesses=access_ids, admin=request.user
             )
 
-            # Serialize `Access` record.
-            data: dict = AccessSerializer(access_record).data
+            # Serialize `Access` records.
+            data: dict = AccessSerializer(access_records, many=True).data
 
             return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
         except exceptions.UsersError as exc:

@@ -23,7 +23,7 @@ class CreateAccessRequest(serializers.Serializer):
 class RevokeAccessRequestQueryParams(serializers.Serializer):
     """Request serializer for PUT /v1/users/access query params."""
 
-    id = serializers.IntegerField(min_value=1)
+    ids = serializers.ListField(child=serializers.IntegerField(min_value=1))
 
 
 class FetchAccessRequest(serializers.Serializer):
