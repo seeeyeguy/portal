@@ -34,7 +34,6 @@ class ProgramMember(DateTimeAbstractModel):
             on a `Program`.
         * user (models.ForeignKey[django.contrib.auth.User]): A `Program Review Tool` user who is
             a team member of the `Program`.
-        * is_active (models.BooleanField): Whether the `User`s role is active on a `Program`.
         * created (models.DateField): The date a `ProgramMember` was added to a `Program`.
         * expiry_date (models.DateField): The date a `ProgramMember` is no longer active
             on the `Program`.
@@ -49,7 +48,6 @@ class ProgramMember(DateTimeAbstractModel):
     user = models.ForeignKey(
         "auth.User", to_field="username", on_delete=models.DO_NOTHING
     )
-    is_active = models.BooleanField(null=True, default=None)
     expiry_date = models.DateField(null=True, default=None)
 
     def __str__(self) -> str:

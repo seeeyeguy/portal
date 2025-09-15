@@ -578,6 +578,13 @@ CRONJOBS = [
         "0 1 * * *",
         "program_review_tool.models.Program.utils.ingest_new_programs_from_external_database",
     ),
+    # Description: Communicate with external database to add new `ProgramMember`
+    #   entries data.
+    # Execution time: Everyday at 12:00 AM.
+    (
+        "0 0 * * *",
+        "program_review_tool.models.ProgramMember.utils.ingest_program_member_data",
+    ),
 ]
 
 #########################

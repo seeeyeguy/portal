@@ -59,7 +59,7 @@ class TestFetchProgram(MultiDBTestCase):
                 "segment": "SPACE & AIRBORNE SYSTEMS",
                 "team_members": ProgramMemberSerializer(
                     models.ProgramMember.objects.filter(
-                        program__id=program["pk"], is_active=True
+                        program__id=program["pk"], expiry_date__isnull=True
                     ),
                     many=True,
                 ).data,

@@ -7,7 +7,6 @@
       "user_id": "Peter.Parker@harris.com",
       "role_id": 1,
       "expiry_date": null,
-      "is_active": true,
       "created": "2026-01-01T16:00:00Z",
       "modified": "2026-01-01T16:00:00Z"
     }
@@ -20,7 +19,6 @@
       "user_id": "Peter.Parker@harris.com",
       "role_id": 1,
       "expiry_date": null,
-      "is_active": true,
       "created": "2026-01-01T16:00:00Z",
       "modified": "2026-01-01T16:00:00Z"
     }

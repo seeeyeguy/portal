@@ -37,7 +37,7 @@ class ProgramSerializer(serializers.ModelSerializer):
         instance = cast(Program, instance)
         program_members = cast(
             QuerySet[ProgramMember], instance.program_members
-        ).filter(is_active=True)
+        ).filter(expiry_date__isnull=True)
         team_members = ProgramMemberSerializer(program_members, many=True).data
 
         for field in DECIMAL_FIELDS:

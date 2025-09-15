@@ -164,7 +164,7 @@ class Program:
                 program_member_program_ids: Set[int] = set(
                     models.ProgramMember.objects.filter(
                         user=program_member_user_record,
-                        is_active=True,
+                        expiry_date__isnull=True,
                     ).values_list("program__id", flat=True)
                 )
 

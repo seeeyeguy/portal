@@ -23,7 +23,6 @@ export interface IProgramMember {
   program: number;
   role: IProgramRole;
   user: IUser;
-  isActive: boolean;
   created: Date;
   expiryDate: Date | null;
   modified: Date;
