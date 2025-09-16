@@ -301,12 +301,23 @@ class Program:
         # Construct a list of pa numbers from the fetched `Program`s.
         pa_numbers: List[str] = list(programs.values_list("pa_number", flat=True))
 
+        # Fetch the program managers from `ProgramMember` based on pa_numbers.
+        program_managers = list(
+            models.ProgramMember.objects.filter(
+                program__pa_number__in=pa_numbers,
+                role__id=models.ProgramRole.ProgramRoles.PROGRAM_MANAGER,
+            ).values("user__first_name", "user__last_name")
+        )
+
+        program_manager_names_list = [
+            f"{name['user__first_name']} {name['user__last_name']}"
+            for name in program_managers
+        ]
+
+        program_manager_names = ", ".join(program_manager_names_list)
+
         # Set period for export from the current time.
         period: str = datetime.now().strftime("%Y%m")
-
-        # Construct the reviewer name from the first and last name
-        # of the `User`.
-        reviewer_name: str = f"{user.first_name} {user.last_name}"
 
         # Retrieve a Tableau token and its cache key.
         tableau_token_cache_key, tableau_token_for_job = get_tableau_token_for_job()
@@ -334,7 +345,7 @@ class Program:
             generate_program_review_powerpoint_wrapper,
             pa_numbers,
             period,
-            reviewer_name,
+            program_manager_names,
             review_name,
             export_cache_key,
             tableau_token_cache_key,

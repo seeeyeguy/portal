@@ -36,10 +36,7 @@ from program_review_tool.utils.review.export.ppt_generator import (
     remove_single_pa_slides,
 )
 from program_review_tool.utils.review.tableau import (
-    sign_in_to_tableau,
     TABLEAU_AUTH_CACHE_TIMEOUT,
-    TABLEAU_AUTH_TOKEN_CACHE_KEY_PREFIX,
-    TABLEAU_AUTH_TOKEN_EXPIRATION_TEXT,
 )
 
 
@@ -71,7 +68,7 @@ class ExportStatus:
 def generate_program_review_powerpoint_wrapper(
     pa_numbers: List[str],
     period: str,
-    reviewer_name: str,
+    program_manager_names: str,
     portfolio_name: str,
     export_cache_key: str,
     tableau_token_cache_key: str,
@@ -85,7 +82,7 @@ def generate_program_review_powerpoint_wrapper(
     Accepts:
         * pa_numbers (List[str]): List of pa numbers of `Program`s being reviewed.
         * period (str): Reporting period (i.e. '202501').
-        * reviewer_name (str): Name of the `User` that requested the export.
+        * program_manager_names (str): Names of the `Program` manager(s).
         * portfolio_name (str): Portfolio name.
         * export_cache_key (str): Cache key for the export being generated.
         * tableau_token_cache_key (str): The cache key of the Tableau token used for this
@@ -102,7 +99,7 @@ def generate_program_review_powerpoint_wrapper(
         export_path: str = generate_program_review_powerpoint(
             pa_numbers=pa_numbers,
             period=period,
-            reviewer_name=reviewer_name,
+            program_manager_names=program_manager_names,
             portfolio_name=portfolio_name,
             export_cache_key=export_cache_key,
             token=tableau_token,
@@ -162,7 +159,7 @@ def generate_program_review_powerpoint_wrapper(
 def generate_program_review_powerpoint(
     pa_numbers: List[str],
     period: str,
-    reviewer_name: str,
+    program_manager_names: str,
     portfolio_name: str,
     export_cache_key: str,
     token: str,
@@ -173,7 +170,7 @@ def generate_program_review_powerpoint(
     Accepts:
         * pa_numbers (List[str]): List of pa numbers of `Program`s being reviewed.
         * period (str): Reporting period (i.e. '202501').
-        * reviewer_name (str): Name of the `User` that requested the export.
+        * program_manager_names (str): Names of the `Program` manager(s).
         * portfolio_name (str): Portfolio name.
         * export_cache_key (str): Cache key for the export being generated.
         * token (str): Tableau token used for the retrieval of images.
@@ -237,12 +234,14 @@ def generate_program_review_powerpoint(
         raise ProgramReviewToolError(DEFAULT_EXPORT_ERROR_MESSAGE, 500)
     LOGGER.info("Successfully loaded Tableau slide mapping DataFrame.")
 
-    presentation: pptx.Presentation = pptx.Presentation(review_ppt_file_path)
+    presentation: pptx.Presentation = pptx.Presentation(review_ppt_file_path)  # type: ignore[valid-type]
     LOGGER.info(f"Loaded presentation from '{review_ppt_file_path}'.")
 
     # Populate the title slide.
     try:
-        populate_title_slide(presentation, portfolio_name, period, reviewer_name)
+        populate_title_slide(
+            presentation, portfolio_name, period, program_manager_names
+        )
         LOGGER.info("Title slide populated successfully.")
     except Exception as exc:
         err_msg = f"Error populating title slide: {exc}"
@@ -289,7 +288,7 @@ def generate_program_review_powerpoint(
 
     # Save the presentation.
     try:
-        presentation.save(export_path)
+        presentation.save(export_path)  # type: ignore[attr-defined]
         LOGGER.info(f"Presentation saved to '{export_path}'.")
     except Exception as exc:
         err_msg = f"Error saving presentation: {exc}"
