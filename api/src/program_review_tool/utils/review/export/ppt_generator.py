@@ -46,10 +46,10 @@ DEFAULT_POWERPOINT_GENERATION_ERROR: str = "ERROR: Failed to create PowerPoint."
 
 
 def populate_title_slide(
-    presentation: Presentation,
+    presentation: Presentation,  # type: ignore[valid-type]
     title_slide_name: str,
     period: str,
-    reviewer_name: str,
+    program_manager_names: str,
 ) -> None:
     """
     Populates the title slide with `Program` data and provided parameters.
@@ -59,18 +59,19 @@ def populate_title_slide(
         * title_slide_name (str): Name of the title slide of the
             presentation.
         * period (str): Reporting period.
+        * program_manager_names (str): Names of the `Program` manager(s).
 
     Returns:
         * None
     """
 
     # Populate the first slide (assumed title slide).
-    slide = presentation.slides[0]
+    slide = presentation.slides[0]  # type: ignore[attr-defined]
     try:
         slide.placeholders[0].text = title_slide_name
         slide.placeholders[1].text = format_period(period)
-        slide.placeholders[10].text = datetime.now().strftime("%B, %-d %Y")
-        slide.placeholders[11].text = "Program Manager: "
+        slide.placeholders[10].text = datetime.now().strftime("%B %-d, %Y")
+        slide.placeholders[11].text = f"Program Manager(s): {program_manager_names}"
     except Exception as exc:
         err_msg = f"Error populating title slide placeholders: {exc}"
         LOGGER.error(err_msg)
@@ -78,7 +79,7 @@ def populate_title_slide(
 
 
 def write_tableau_image_to_slide(
-    presentation: Presentation,
+    presentation: Presentation,  # type: ignore[valid-type]
     image_path: str,
     title_name: str,
     height: float,
@@ -206,7 +207,7 @@ def download_image(
 
 
 def process_tableau_slides(
-    presentation: Presentation,
+    presentation: Presentation,  # type: ignore[valid-type]
     tableau_slide_mapping_df: pd.DataFrame,
     period: str,
     pa_numbers: str,
@@ -299,7 +300,7 @@ def process_tableau_slides(
 
 
 def remove_multi_pa_slides(
-    presentation: Presentation,
+    presentation: Presentation,  # type: ignore[valid-type]
     tableau_slide_mapping_df: pd.DataFrame,
 ) -> None:
     """
@@ -329,7 +330,7 @@ def remove_multi_pa_slides(
 
 
 def remove_single_pa_slides(
-    presentation: Presentation,
+    presentation: Presentation,  # type: ignore[valid-type]
     tableau_slide_mapping_df: pd.DataFrame,
 ) -> None:
     """
