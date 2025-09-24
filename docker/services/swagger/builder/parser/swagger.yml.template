@@ -1703,7 +1703,36 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchRecordProgramDoesNotExistResponse"
-
+  /program-review-tool/reporting-period:
+    get:
+      tags:
+        - "program_review_tool.reporting_period.fetch"
+      summary: "Fetch the list of reporting periods retrieved from an
+          external source."
+      parameters:
+        - in: query
+          name: previous_period_count
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchReportingPeriodResponse"
+                  - $ref: "#/components/schemas/FetchReportingPeriodWithPreviousPeriodCountResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchReportingPeriodUnauthorizedResponse"
   /request/disposition:
     post:
       tags:
@@ -5087,7 +5116,36 @@ components:
     FetchRecordProgramDoesNotExistResponse:
       title: "Fetch `Record` error response due to supplying
         a PA number for a `Program` that does not exist."
-      example: "Program (pa_number={pa_number}) does not exist."    
+      example: "Program (pa_number={pa_number}) does not exist."
+
+    FetchReportingPeriodResponse:
+      title: "Fetch reporting period response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            [
+              202508,
+            ]
+
+    FetchReportingPeriodWithPreviousPeriodCountResponse:
+      title: "Fetch reporting period with previous period count response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+            [
+              202508,
+              202507,
+              202506,
+              ...
+            ]
+
+    FetchReportingPeriodUnauthorizedResponse:
+      title: "Fetch reporting period error response due to unauthorized access."
+      example: "Not authorized to access resource."
 
     CreateAccessRequest:
       title: "Create `Access` request."

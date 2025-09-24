@@ -1,0 +1,17 @@
+"""
+Arguments to be shared for ReportingPeriod's fetch
+controller pytests.
+"""
+
+from typing import List
+
+
+FETCH_REPORTING_USER_EMAIL: str = "Peter.Parker@harris.com"
+
+FETCH_REPORTING_PERIOD_EXPECTED_REPORTING_PERIODS: List[int] = [202505]
+
+FETCH_REPORTING_PERIOD_WITH_PREVIOUS_PERIOD_COUNT_COUNT: int = 2
+
+FETCH_REPORTING_PERIOD_WITH_PREVIOUS_PERIOD_COUNT_EXPECTED_REPORTING_PERIODS: List[
+    int
+] = [202505, 202504, 202503]

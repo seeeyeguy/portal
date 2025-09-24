@@ -19,3 +19,7 @@ from program_review_tool.views.serializers.record import (
     CreateRecordRequest,
     FetchRecordRequestQueryParams,
 )
+
+from program_review_tool.views.serializers.reporting_period import (
+    FetchReportingPeriodRequest,
+)
