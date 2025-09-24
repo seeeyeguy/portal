@@ -2,6 +2,13 @@ import { IUser } from "definitions/portal/users/User.types";
 
 export const DEFAULT_PORTFOLIO_ID = -1;
 
+export enum assessmentOptions {
+  RED = 1,
+  YELLOW = 2,
+  GREEN = 3,
+  BLUE = 4,
+}
+
 export enum EReviewStatus {
   SUBMITTED = -2,
   ERROR = -1,

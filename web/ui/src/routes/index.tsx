@@ -13,6 +13,7 @@ import {
 } from "views/pages/AdminPanel";
 import Home from "views/pages/Home/Home";
 import ProgramReviewTool from "views/pages/ProgramReviewTool/ProgramReviewTool";
+import ProgramPerformance from "views/pages/ProgramPerformance/ProgramPerformance";
 
 import { REDIRECT } from "definitions/StatusCodeConstants";
 import { login } from "services/auth/ssoService";
@@ -160,6 +161,21 @@ const router = createBrowserRouter([
     element: (
       <RouteMenu>
         <ProgramReviewTool />
+      </RouteMenu>
+    ),
+    loader: async () => {
+      const user = (await login()) as Response | IAuthUser;
+      if ("status" in user && user.status === REDIRECT) {
+        return user;
+      }
+      return { user };
+    },
+  },
+  {
+    path: "/ppr",
+    element: (
+      <RouteMenu>
+        <ProgramPerformance />
       </RouteMenu>
     ),
     loader: async () => {
