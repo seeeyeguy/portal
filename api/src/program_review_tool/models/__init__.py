@@ -14,6 +14,7 @@ from program_review_tool.models.ProgramMember import ProgramMember
 from program_review_tool.models.Portfolio import Portfolio
 from program_review_tool.models.Usage import Usage
 from program_review_tool.models.Record import Record
+from program_review_tool.models.Task import Task
 from users.models.User.signals import (
     create_user_in_prt_database,
     update_user_in_prt_database,
