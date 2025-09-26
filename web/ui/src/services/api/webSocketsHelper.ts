@@ -8,6 +8,7 @@ interface IWebSocketService<T, U> {
   disconnect(): void;
 }
 
+const CACHE_TIMEOUT: number = 15;
 const NORMAL_CLOSURE: number = 1000;
 
 class WebSocketService<T, U> implements IWebSocketService<T, U> {
@@ -48,7 +49,9 @@ class WebSocketService<T, U> implements IWebSocketService<T, U> {
       try {
         const data = JSON.parse(event?.data ?? "{}");
         if (data?.status && data?.status < 300) {
-          toast.success("Disposition was successful.");
+          toast.success(
+            `Disposition was successful. It may take up to ${CACHE_TIMEOUT} minutes for your resource to appear on the main portal page.`
+          );
         } else {
           toast.error(`${data?.content ?? "Disposition failed."}`);
         }
