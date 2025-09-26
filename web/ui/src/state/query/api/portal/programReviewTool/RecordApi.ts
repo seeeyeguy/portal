@@ -107,21 +107,37 @@ const recordApi = api.injectEndpoints({
         data: transformRecordRecord(response),
         status: meta?.response?.status,
       }),
+      invalidatesTags: ["Record"],
     }),
     getRecord: builder.query<TApiRecordResponse, TApiFetchRecordRequest>({
-      query: ({ paNumber, reportingPeriod, refresh }: TApiFetchRecordRequest) =>
-        endpoints.PORTAL.PROGRAM_REVIEW_TOOL.RECORD(
+      query: ({
+        paNumber,
+        reportingPeriod,
+        refresh,
+      }: TApiFetchRecordRequest) => ({
+        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.RECORD(
           paNumber,
           reportingPeriod,
           refresh
         ),
+        headers: { "Cache-Control": "max-age=0" },
+      }),
       transformResponse: (response: IApiRecord, meta): TApiRecordResponse => ({
         data: transformRecordRecord(response),
         status: meta?.response?.status,
       }),
+      providesTags: ["Record"],
+    }),
+    getReportingPeriod: builder.query<number[], number>({
+      query: (previousPeriodCount: number) => ({
+        url: endpoints.PORTAL.PROGRAM_REVIEW_TOOL.REPORTING_PERIOD(
+          previousPeriodCount
+        ),
+      }),
+      providesTags: ["ReportingPeriod"],
     }),
   }),
 });
 
 export default recordApi;
-export const { useAddRecordMutation, useGetRecordQuery } = recordApi;
+export const { useAddRecordMutation, useGetRecordQuery, useGetReportingPeriodQuery } = recordApi;

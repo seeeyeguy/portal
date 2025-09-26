@@ -17,6 +17,7 @@ FETCH_RECORD_PROGRAM_PA_NUMBER_DNE: str = "DNE_PA_NUMBER"
 FETCH_RECORD_EXPECTED_RECORD_DATA: dict = {
     "id": 2,
     "pa_number": "489AB",
+    "name": "AA_489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
     "division": "Surveillance Systems",
@@ -65,6 +66,7 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
     "id": None,
     "reporting_period": 202606,
     "pa_number": "489AB",
+    "name": "AA_489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
     "division": "Surveillance Systems",
@@ -125,6 +127,7 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
 FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
     "id": None,
     "pa_number": "2422_CC",
+    "name": "AAA_2422CC",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
     "division": "Surveillance Systems",
@@ -185,6 +188,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
 FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
     "id": None,
     "pa_number": "489AB",
+    "name": "AA_489AB",
     "segment": "SPACE & AIRBORNE SYSTEMS",
     "sector": "Space Systems",
     "division": "Surveillance Systems",

@@ -210,6 +210,15 @@ export default {
       base = appendQueryParamToURL(base, "refresh", refresh);
       return base;
     },
+    REPORTING_PERIOD: (previousPeriodCount: number | null = null) => {
+      let base = `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/reporting-period`
+      base = appendQueryParamToURL(
+        base,
+        "previous_period_count",
+        previousPeriodCount
+      );
+      return base;
+    },
   },
   REQUEST: {
     REQUEST: (

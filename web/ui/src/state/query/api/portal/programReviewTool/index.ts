@@ -11,6 +11,7 @@ import programApi, {
 import recordApi, {
   useAddRecordMutation,
   useGetRecordQuery,
+  useGetReportingPeriodQuery,
 } from "state/query/api/portal/programReviewTool/RecordApi";
 
 export default {
@@ -25,4 +26,5 @@ export default {
   useGetProgramsReviewMutation,
   useAddRecordMutation,
   useGetRecordQuery,
+  useGetReportingPeriodQuery,
 };
