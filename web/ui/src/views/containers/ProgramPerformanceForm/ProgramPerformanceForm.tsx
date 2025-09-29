@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
 import lodash from "lodash";
 import numeral from "numeral";
@@ -6,12 +7,22 @@ import { Dropdown } from "primereact/dropdown";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import recordApi, {
+  TApiPostRecordRequest,
+} from "state/query/api/portal/programReviewTool/RecordApi";
+import store from "state/store/store";
+
 import {
   IRecord,
   assessmentOptions,
 } from "views/definitions/ProgramReviewTool.types";
 
 import styles from "views/containers/ProgramPerformanceForm/ProgramPerformanceForm.module.css";
+
+const TOOLTIP_DELAY_SHOW = 200;
+
+const PROGRAM_MANAGER_ROLE_ID = 1;
+const FINANCIAL_ANALYST_ROLE_ID = 2;
 
 const assessmentOptionsDropdown = [
   { label: "1 - Red", value: assessmentOptions.RED },
@@ -21,22 +32,25 @@ const assessmentOptionsDropdown = [
 ];
 
 interface ProgramPerformanceFormProps {
-  selectedPA: string | null;
   record: IRecord | null;
-  isEditable: boolean | null;
+  isEditing: boolean | null;
+  handleEdit: (value: boolean) => void;
 }
 
 export default function ProgramPerformanceForm({
-  selectedPA,
   record,
-  isEditable = false,
+  isEditing = false,
+  handleEdit,
 }: ProgramPerformanceFormProps) {
-  const [formData, setFormData] = React.useState<IRecord | null>(null);
-  const [isEditing, setIsEditing] = React.useState<boolean>(
-    isEditable ?? false
-  );
+  const [formData, setFormData] = React.useState<IRecord | null>(record);
+  const [submittingRecord, setSubmittingRecord] = React.useState(false);
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-  const FloatingBoxTooltipContent = ({
+  React.useEffect(() => {
+    setFormData(record);
+  }, [record]);
+
+  const IndexTooltipTemplate = ({
     type,
     denominator,
   }: {
@@ -76,7 +90,7 @@ export default function ProgramPerformanceForm({
     );
   };
 
-  const AssessmentTooltipContent = (
+  const AssessmentTooltipTemplate = (
     value1: string,
     value2: string,
     value3: string,
@@ -129,144 +143,167 @@ export default function ProgramPerformanceForm({
     }
   };
 
+  const validate = (data: IRecord | null): Record<string, string> => {
+    const err: Record<string, string> = {};
+
+    if (!data) return err;
+
+    // ---- required text fields -------------------------------------------------
+    if (!data.programPhase?.trim()) {
+      err.programPhase = "Program Phase is required.";
+    }
+    if (!data.site?.trim()) {
+      err.site = "Site is required.";
+    }
+    if (!data.earnedValueManagementSystemReportingRequirement?.trim()) {
+      err.earnedValueManagementSystemReportingRequirement =
+        "EVMS Reporting Requirement is required.";
+    }
+
+    // ---- required radio buttons -------------------------------------------------
+    if (lodash.isNil(data.defenseFinancialAcquisitionRegulationClause)) {
+      err.defenseFinancialAcquisitionRegulationClause =
+        "DFARS Clause has not been selected.";
+    }
+    if (lodash.isNil(data.costAndSoftwareDataReportingSystemClause)) {
+      err.costAndSoftwareDataReportingSystemClause =
+        "CSDR Clause has not been selected.";
+    }
+
+    // ---- required assessments -------------------------------------------------
+    if (data.customerAssessment === null) {
+      err.customerAssessment = "Select a Customer assessment.";
+    }
+    if (data.technicalAssessment === null) {
+      err.technicalAssessment = "Select a Technical assessment.";
+    }
+    if (data.riskAssessment === null) {
+      err.riskAssessment = "Select a Risk assessment.";
+    }
+    if (data.overallProgram === null) {
+      err.overallProgram = "Select an Overall Program assessment.";
+    }
+
+    return err;
+  };
+
   const handleSubmit = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      if (!selectedPA) {
-        console.error("Validation failed: PA must be selected.");
+      if (!formData?.paNumber) {
         return;
       }
 
       if (!formData) {
-        console.error("Validation failed: Form data is missing.");
+        toast.error("Validation failed: Form data is missing.");
         return;
       }
 
-      // Required text fields.
+      const newErrors = validate(formData);
+      setErrors(newErrors);
+      if (Object.values(newErrors).some((msg) => msg)) {
+        const errorList = (
+          <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+            {Object.entries(newErrors).map(
+              ([field, message]) => message && <li key={field}>{message}</li>
+            )}
+          </ul>
+        );
 
-      if (!formData.programPhase?.trim()?.length) {
-        console.error("Validation failed: Program Phase is required.");
-        return;
-      }
-
-      if (!formData.site?.trim()?.length) {
-        console.error("Validation failed: Site is required.");
-        return;
-      }
-
-      if (
-        !formData.earnedValueManagementSystemReportingRequirement?.trim()
-          ?.length
-      ) {
-        console.error(
-          "Validation failed: EVMS Reporting Requirement is required."
+        toast.error(
+          <>
+            <div>Validation failed, Please correct the highlighted fields:</div>
+            {errorList}
+          </>
         );
         return;
       }
 
-      // Required assessments.
+      const requestBody: TApiPostRecordRequest = {
+        ...(formData as TApiPostRecordRequest),
+      };
 
-      if (
-        formData.customerAssessment === null ||
-        formData.technicalAssessment === null ||
-        formData.riskAssessment === null ||
-        formData.overallProgram === null
-      ) {
-        console.error(
-          "Validation failed: All subjective assessments must be selected."
-        );
+      setSubmittingRecord(true);
+      const promise = store.dispatch(
+        recordApi.endpoints.addRecord.initiate(requestBody)
+      );
+      const response = await promise;
+      setSubmittingRecord(false);
+
+      const { error } = response;
+
+      if (error) {
+        toast.error(`Error creating record: ${error}`);
         return;
       }
 
-      setIsEditing(false);
+      handleEdit(false);
+      toast.success("Record Created");
     },
-    [formData, selectedPA]
+    [formData, handleEdit]
   );
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setFormData(record); // reset to original data if canceled.
-  };
-
-  const tooltipDelayShow = 200;
-
-  React.useEffect(() => {
-    setFormData(record);
-  }, [record]);
 
   return (
     <form className="program-record-content" onSubmit={handleSubmit}>
       <div
-        className={styles["program-metadata-section"]}
+        className={styles["section-wrapper"]}
         aria-description="container for program meta data"
       >
         <div
-          className={styles["flex-row-group"]}
+          className={`${styles["tier"]} ${formData ? styles[`tier-${formData?.tier || "na"}`] : ""}`}
+          aria-description="container for program tier"
+        >
+          Tier {formData && (formData?.tier || "NA")}
+        </div>
+        <div
+          className={`${styles["flex-row-group"]} ${styles["metadata-wrapper"]} `}
           aria-description="group container for tier, edit controls, PA, and program details"
         >
-          <div
-            className={`${styles["tier"]} ${formData ? styles[`tier-${formData?.tier || "NA"}`] : ""}`}
-            aria-description="container for program tier"
-          >
-            Tier {formData && (formData?.tier || "NA")}
-          </div>
-          {!isEditing ? (
-            <button
-              type="button"
-              className={styles["form-edit-button"]}
-              onClick={handleEdit}
-            >
-              Edit
-            </button>
-          ) : (
-            <button
-              type="button"
-              className={styles["form-edit-button"]}
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          )}
-
           <div
             className={styles["pa-label-large"]}
             aria-description="program PA display"
           >
-            {selectedPA}
+            {record?.paNumber}
           </div>
-          <div
-            className={styles["vertical-divider-red"]}
-            aria-description="visual separator"
-          ></div>
-          <div
-            className={styles["field-pair"]}
-            aria-description="container for sector and division information"
-          >
-            <h3 className={styles["field-label"]}>Sector:</h3>
-            <p className={styles["field-value"]}>{formData?.sector || "-"}</p>
-            <h3 className={styles["field-label"]}>Division:</h3>
-            <p className={styles["field-value"]}>{formData?.division || "-"}</p>
-          </div>
-          <div
-            className={styles["field-pair"]}
-            aria-description="container for program manager and financial analyst information"
-          >
-            <h3 className={styles["field-label"]}>Program Manager:</h3>
-            <p className={styles["field-value"]}>
-              -{/* {formData?.programManager.join(", ") || "-"} */}
-            </p>
-            <h3 className={styles["field-label"]}>
-              Program Financial Analyst:
-            </h3>
-            <p className={styles["field-value"]}>
-              -{/* {formData?.programFinancialAnalyst.join(", ") || "-"} */}
-            </p>
-          </div>
+          <span className={styles["pa-metadata"]}>
+            <div
+              className={styles["field-pair"]}
+              aria-description="container for sector and division information"
+            >
+              <h3 className={styles["field-label"]}>Sector:</h3>
+              <p className={styles["field-value"]}>{formData?.sector || "-"}</p>
+              <h3 className={styles["field-label"]}>Division:</h3>
+              <p className={styles["field-value"]}>
+                {formData?.division || "-"}
+              </p>
+            </div>
+            <div
+              className={styles["field-pair"]}
+              aria-description="container for program manager and financial analyst information"
+            >
+              <h3 className={styles["field-label"]}>Program Manager:</h3>
+              {formData?.teamMembers
+                .filter((member) => member.role.id === PROGRAM_MANAGER_ROLE_ID)
+                .map((member, index, array) => (
+                  <p key={member.user.id} className={styles["field-value"]}>
+                    {`${member.user.firstName} ${member.user.lastName}${index < array.length - 1 ? "," : ""}`}
+                  </p>
+                )) ?? "-"}
+              <h3 className={styles["field-label"]}>
+                Program Financial Analyst:
+              </h3>
+              {formData?.teamMembers
+                .filter(
+                  (member) => member.role.id === FINANCIAL_ANALYST_ROLE_ID
+                )
+                .map((member, index, array) => (
+                  <p key={member.user.id} className={styles["field-value"]}>
+                    {`${member.user.firstName} ${member.user.lastName}${index < array.length - 1 ? "," : ""}`}
+                  </p>
+                )) ?? "-"}
+            </div>
+          </span>
         </div>
       </div>
 
@@ -305,7 +342,7 @@ export default function ProgramPerformanceForm({
             <h3 className={styles["field-label"]}>Program Phase:</h3>
             {isEditing ? (
               <input
-                className={styles["field-text-input"]}
+                className={`${styles["field-text-input"]} ${errors["programPhase"] ? styles["input-invalid"] : ""}`}
                 type="text"
                 value={formData?.programPhase || ""}
                 onChange={(event) =>
@@ -341,7 +378,7 @@ export default function ProgramPerformanceForm({
             <h3 className={styles["field-label"]}>Site (City/State):</h3>
             {isEditing ? (
               <input
-                className={styles["field-text-input"]}
+                className={`${styles["field-text-input"]} ${errors["site"] ? styles["input-invalid"] : ""}`}
                 type="text"
                 value={formData?.site || ""}
                 onChange={(event) =>
@@ -378,7 +415,7 @@ export default function ProgramPerformanceForm({
             </h3>
             {isEditing ? (
               <input
-                className={styles["field-text-input"]}
+                className={`${styles["field-text-input"]} ${errors["earnedValueManagementSystemReportingRequirement"] ? styles["input-invalid"] : ""}`}
                 type="text"
                 value={
                   formData?.earnedValueManagementSystemReportingRequirement ||
@@ -418,7 +455,7 @@ export default function ProgramPerformanceForm({
           >
             <h3 className={styles["field-label"]}>DFARS Clause:</h3>
             <div
-              className={styles["field-value"]}
+              className={`${styles["field-value"]} ${styles["radio-input"]} ${errors["defenseFinancialAcquisitionRegulationClause"] ? styles["input-invalid"] : ""}`}
               aria-description="displays selected DFARS clause value"
             >
               <label>
@@ -443,7 +480,7 @@ export default function ProgramPerformanceForm({
                 />
                 Yes
               </label>
-              <label className={styles["radio-margin-left"]}>
+              <label>
                 <input
                   type="radio"
                   name="dfarsClause"
@@ -484,11 +521,12 @@ export default function ProgramPerformanceForm({
           >
             <h3 className={styles["field-label"]}>CSDR Clause:</h3>
             <div
-              className={styles["field-value"]}
+              className={`${styles["field-value"]} ${styles["radio-input"]} ${errors["costAndSoftwareDataReportingSystemClause"] ? styles["input-invalid"] : ""}`}
               aria-description="displays selected CSDR clause value"
             >
               <label>
                 <input
+                  className={`${errors["programPhase"] ? styles["input-invalid"] : ""}`}
                   type="radio"
                   name="csdrClause"
                   value="Yes"
@@ -508,7 +546,7 @@ export default function ProgramPerformanceForm({
                 />
                 Yes
               </label>
-              <label className={styles["radio-margin-left"]}>
+              <label>
                 <input
                   type="radio"
                   name="csdrClause"
@@ -546,7 +584,7 @@ export default function ProgramPerformanceForm({
           {/* SPI. */}
           <span
             data-tooltip-id="spi-tooltip"
-            data-tooltip-delay-show={tooltipDelayShow}
+            data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
           >
             <div
               className={`${styles["floating-box"]} ${getIndexClass(
@@ -567,7 +605,7 @@ export default function ProgramPerformanceForm({
               >
                 <strong>Schedule Performance Index (SPI)</strong>
                 <div className={styles["tooltip-description-list"]}>
-                  {FloatingBoxTooltipContent({
+                  {IndexTooltipTemplate({
                     type: "SPI",
                     denominator: "BCWS",
                   })}
@@ -579,7 +617,7 @@ export default function ProgramPerformanceForm({
           {/* CPI. */}
           <span
             data-tooltip-id="cpi-tooltip"
-            data-tooltip-delay-show={tooltipDelayShow}
+            data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
           >
             <div
               className={`${styles["floating-box"]} ${getIndexClass(
@@ -600,7 +638,7 @@ export default function ProgramPerformanceForm({
               >
                 <strong>Cost Performance Index (CPI)</strong>
                 <div className={styles["tooltip-description-list"]}>
-                  {FloatingBoxTooltipContent({
+                  {IndexTooltipTemplate({
                     type: "CPI",
                     denominator: "ACWP",
                   })}
@@ -754,13 +792,13 @@ export default function ProgramPerformanceForm({
                   })
                 }
                 placeholder="-"
-                className={getDropdownClass(formData?.customerAssessment)}
+                className={`${styles["dropdown-assessment"]} ${getDropdownClass(formData?.customerAssessment)} ${errors["customerAssessment"] ? styles["input-invalid"] : ""}`}
                 disabled={!isEditing}
               />
               <span
                 className={styles["tooltip-icon"]}
                 data-tooltip-id="customer-assessment-tooltip"
-                data-tooltip-delay-show={tooltipDelayShow}
+                data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
               >
                 <FontAwesomeIcon icon={faCircleInfo} />
               </span>
@@ -770,7 +808,7 @@ export default function ProgramPerformanceForm({
                 className={styles["program-performance-form-tooltip"]}
               >
                 <strong>Customer Assessment:</strong>
-                {AssessmentTooltipContent(
+                {AssessmentTooltipTemplate(
                   "Existing - Difficult; Customer's culture and organization not well understood (e.g. International)",
                   "New Customer - No History",
                   "Existing - Reasonable; No long standing relationship",
@@ -803,13 +841,13 @@ export default function ProgramPerformanceForm({
                   })
                 }
                 placeholder="-"
-                className={getDropdownClass(formData?.technicalAssessment)}
+                className={`${styles["dropdown-assessment"]} ${getDropdownClass(formData?.technicalAssessment)} ${errors["technicalAssessment"] ? styles["input-invalid"] : ""}`}
                 disabled={!isEditing}
               />
               <span
                 className={styles["tooltip-icon"]}
                 data-tooltip-id="technical-assessment-tooltip"
-                data-tooltip-delay-show={tooltipDelayShow}
+                data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
               >
                 <FontAwesomeIcon icon={faCircleInfo} />
               </span>
@@ -819,7 +857,7 @@ export default function ProgramPerformanceForm({
                 className={styles["program-performance-form-tooltip"]}
               >
                 <strong>Technical Assessment:</strong>
-                {AssessmentTooltipContent(
+                {AssessmentTooltipTemplate(
                   "Critical accomplishments not met; Impacting schedule",
                   "Behind schedule on technical accomplishments",
                   "Meets technical accomplishments",
@@ -852,13 +890,13 @@ export default function ProgramPerformanceForm({
                   })
                 }
                 placeholder="-"
-                className={getDropdownClass(formData?.riskAssessment)}
+                className={`${styles["dropdown-assessment"]} ${getDropdownClass(formData?.riskAssessment)} ${errors["riskAssessment"] ? styles["input-invalid"] : ""}`}
                 disabled={!isEditing}
               />
               <span
                 className={styles["tooltip-icon"]}
                 data-tooltip-id="risk-assessment-tooltip"
-                data-tooltip-delay-show={tooltipDelayShow}
+                data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
               >
                 <FontAwesomeIcon icon={faCircleInfo} />
               </span>
@@ -868,7 +906,7 @@ export default function ProgramPerformanceForm({
                 className={styles["program-performance-form-tooltip"]}
               >
                 <strong>Risk Assessment:</strong>
-                {AssessmentTooltipContent(
+                {AssessmentTooltipTemplate(
                   "Program Risks have High probability of impacting critical schedule milestones and insufficient MR",
                   "Program Risks have Medium probability and lack sufficient MR",
                   "Program Risks have Low probability and sufficient MR",
@@ -900,13 +938,13 @@ export default function ProgramPerformanceForm({
                   })
                 }
                 placeholder="-"
-                className={getDropdownClass(formData?.overallProgram)}
+                className={`${styles["dropdown-assessment"]} ${getDropdownClass(formData?.overallProgram)} ${errors["overallProgram"] ? styles["input-invalid"] : ""}`}
                 disabled={!isEditing}
               />
               <span
                 className={styles["tooltip-icon"]}
                 data-tooltip-id="overall-program-assessment-tooltip"
-                data-tooltip-delay-show={tooltipDelayShow}
+                data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
               >
                 <FontAwesomeIcon icon={faCircleInfo} />
               </span>
@@ -916,7 +954,7 @@ export default function ProgramPerformanceForm({
                 className={styles["program-performance-form-tooltip"]}
               >
                 <strong>Overall Program Assessment:</strong>
-                {AssessmentTooltipContent(
+                {AssessmentTooltipTemplate(
                   "Significant cost, schedule, technical, and/or customer issues exist",
                   "Moderate cost, schedule, technical, and/or customer issues exist",
                   "Meets cost, schedule, technical, and/or customer expectations",
@@ -927,37 +965,37 @@ export default function ProgramPerformanceForm({
           </div>
         </div>
 
-        {/* Comments Section. */}
-        <div
-          className={styles["single-column-grid"]}
-          aria-description="container for comments section"
-        >
-          <div
-            className={styles["item-one"]}
-            aria-description="program comments container"
-          >
-            <h3 className={styles["field-label"]}>Comments:</h3>
-            {isEditing ? (
-              <textarea
-                className={styles["comments-textarea"]}
-                value={formData?.comments || ""}
-                onChange={(event) =>
-                  setFormData((prev): IRecord | null => {
-                    if (!prev) return null;
-                    return { ...prev, comments: event?.target?.value };
-                  })
-                }
-              />
-            ) : (
-              <p className={styles["field-value"]}>
-                {formData?.comments || "-"}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+        {/* Comments Section */}
 
-      <button className={styles["form-submit-button"]}>Submit</button>
+        <h3 className={styles["field-label"]}>Comments:</h3>
+        {isEditing ? (
+          <textarea
+            className={styles["comments-textarea"]}
+            value={formData?.comments || ""}
+            onChange={(event) =>
+              setFormData((prev): IRecord | null => {
+                if (!prev) return null;
+                return { ...prev, comments: event?.target?.value };
+              })
+            }
+          />
+        ) : (
+          <p className={styles["field-value"]}>{formData?.comments || "-"}</p>
+        )}
+      </div>
+      <div
+        className={styles["button-container"]}
+        aria-description="container for submit button"
+      >
+        {isEditing && (
+          <button
+            disabled={submittingRecord}
+            className={styles["form-submit-button"]}
+          >
+            Submit Record
+          </button>
+        )}
+      </div>
     </form>
   );
 }

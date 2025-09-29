@@ -1,17 +1,21 @@
 import React from "react";
 import { useLoaderData } from "react-router";
+import { MoonLoader } from "react-spinners";
 import { Dropdown } from "primereact/dropdown";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
 import NavBar from "views/components/NavBar/NavBar";
 import ProgramPerformanceForm from "views/containers/ProgramPerformanceForm/ProgramPerformanceForm";
 
+import { useGetProgramsQuery } from "state/query/api/portal/programReviewTool/ProgramApi";
+import {
+  useGetRecordQuery,
+  useGetReportingPeriodQuery,
+} from "state/query/api/portal/programReviewTool/RecordApi";
 import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 
 import { IProfile } from "definitions/portal/users/Profile.types";
 import { IUser } from "definitions/portal/users/User.types";
-import { IRecord } from "views/definitions/ProgramReviewTool.types";
-import { reportingPeriods, PATestData } from "./ProgramPerformanceProps";
 
 import styles from "views/pages/ProgramPerformance/ProgramPerformance.module.css";
 
@@ -31,16 +35,48 @@ export default function ProgramPerformance() {
     citizenship: "UNKNOWN",
   }) as IProfile;
 
+  const { data: programs, isLoading: isLoadingPrograms } = useGetProgramsQuery({
+    programMember: loaderData.user.email,
+    tiers: [1, 2],
+  });
+
+  const { data: reportingPeriods, isLoading: isLoadingReportingPeriods } =
+    useGetReportingPeriodQuery(1);
+
+  const [edit, setEdit] = React.useState(false);
+  const toggleEdit = () => setEdit((prev) => !prev);
+
   const [selectedPA, setSelectedPA] = React.useState<string | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = React.useState(
-    reportingPeriods[0]
+  const [selectedPeriod, setSelectedPeriod] = React.useState<number>();
+
+  // Once reporting periods load in, set the initial dropdown value to the first period.
+  React.useEffect(() => {
+    if (reportingPeriods) {
+      setSelectedPeriod(reportingPeriods[0]);
+    }
+  }, [reportingPeriods]);
+
+  const inCurrentPeriod = React.useMemo(
+    () =>
+      reportingPeriods?.findIndex((period) => period === selectedPeriod) === 0,
+    [reportingPeriods, selectedPeriod]
   );
 
-  const record: IRecord | null = React.useMemo(() => {
-    if (!selectedPA || !selectedPeriod) return null;
-    const data = PATestData[selectedPA] || null;
-    return data.find((d) => d.reportingPeriod === selectedPeriod) || null;
-  }, [selectedPA, selectedPeriod]);
+  const { data: record, isFetching: isFetchingRecord } = useGetRecordQuery({
+    paNumber: selectedPA ?? "",
+    reportingPeriod: selectedPeriod as number,
+    refresh: edit,
+  });
+
+  // If reporting period or PA is changed, reset editing state.
+  React.useEffect(() => {
+    setEdit(false);
+  }, [selectedPeriod, selectedPA]);
+
+  const handleEdit = React.useCallback(
+    (value: boolean) => setEdit(value),
+    [setEdit]
+  );
 
   if (!loaderData.user.email) {
     return <div>:x: 404</div>;
@@ -52,58 +88,97 @@ export default function ProgramPerformance() {
 
       <NavBar hideSearchBar profile={profile} />
       <div id="page-content">
-        <div
-          className={styles["program-performance-inputs"]}
-          aria-description="container for program performance inputs"
-        >
+        <header className={styles["program-performance"]}>
           <div
-            className={styles["program-performance-inputs-background"]}
+            className={styles["program-performance-background"]}
             aria-description="container for the background of the program performance inputs"
           />
 
-          <h1 aria-description="program performance title">
-            Program Performance
-          </h1>
+          <h1 aria-description="page title">Program Performance</h1>
 
-          <div className={styles["filter-buttons-row"]}>
-            <header>
-              <h2>Reporting Period:</h2>
-            </header>
-            <Dropdown
-              value={selectedPeriod}
-              onChange={(event) => setSelectedPeriod(event.value)}
-              options={reportingPeriods.map((period) => ({
-                label: period,
-                value: period,
-              }))}
-              placeholder="Select a Period"
-              className={styles["dropdowns"]}
-            />
-            <header>
-              <h2>Select Project ID (PA):</h2>
-            </header>
-            <Dropdown
-              value={selectedPA}
-              onChange={(event) => setSelectedPA(event.value)}
-              options={Object.keys(PATestData).map((PA) => ({
-                label: PA,
-                value: PA,
-              }))}
-              placeholder="Select a PA"
-              className={styles["dropdowns"]}
-            />
+          {!isLoadingPrograms && !isLoadingReportingPeriods && (
+            <div
+              className={styles["record-controls"]}
+              aria-description="container for selecting program performance record"
+            >
+              <span
+                className={styles["record-select"]}
+                aria-description="container for selecting reporting period"
+              >
+                <header>
+                  <h2>Reporting Period:</h2>
+                </header>
+                <Dropdown
+                  value={selectedPeriod}
+                  onChange={(event) => setSelectedPeriod(event.value)}
+                  options={reportingPeriods?.map((period) => ({
+                    label: period,
+                    value: period,
+                  }))}
+                  placeholder="Reporting Period"
+                  className={styles["header-dropdown"]}
+                  panelClassName={styles["header-dropdown-panel"]}
+                />
+              </span>
+              <span
+                className={styles["record-select"]}
+                aria-description="container for selecting pa number"
+              >
+                <header>
+                  <h2>Project ID (PA):</h2>
+                </header>
+                <Dropdown
+                  value={selectedPA}
+                  onChange={(event) => setSelectedPA(event.value)}
+                  options={Object.keys(programs?.data ?? []).map((PA) => ({
+                    label: PA,
+                    value: PA,
+                  }))}
+                  placeholder="PA Number"
+                  className={styles["header-dropdown"]}
+                  panelClassName={styles["header-dropdown-panel"]}
+
+                />
+              </span>
+              {inCurrentPeriod && (
+                <span
+                  className={styles["button-container"]}
+                  aria-description="container for editing record button"
+                >
+                  <button
+                    type="button"
+                    onClick={toggleEdit}
+                    className={`${edit ? styles["cancel-button"] : styles["edit-button"]}`}
+                    disabled={!record?.data}
+                  >
+                    {edit ? "Cancel" : "Edit"}
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
+        </header>
+        {isLoadingPrograms || isLoadingReportingPeriods || isFetchingRecord ? (
+          <div
+            className={styles["record-loading"]}
+            aria-description="container to display when loading record data"
+          >
+            <MoonLoader />
           </div>
-        </div>
-
-        <ProgramPerformanceForm
-          isEditable={
-            reportingPeriods.findIndex(
-              (period) => period === selectedPeriod
-            ) === 0
-          }
-          selectedPA={selectedPA ?? ""}
-          record={record}
-        />
+        ) : !selectedPA && !edit ? (
+          <div
+            className={styles["awaiting-selection"]}
+            aria-description="container to display when awaiting program selection"
+          >
+            Select a reporting period and program to begin
+          </div>
+        ) : (
+          <ProgramPerformanceForm
+            isEditing={inCurrentPeriod && !record?.data.id && edit}
+            record={record?.data ?? null}
+            handleEdit={handleEdit}
+          />
+        )}
       </div>
     </>
   );

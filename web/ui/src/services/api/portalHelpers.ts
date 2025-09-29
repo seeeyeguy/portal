@@ -20,7 +20,7 @@ type DIRECTORY_RESOURCE =
   | "subfunctions"
   | "tags";
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
-type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program" | "record";
+type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program" | "record" | "reporting-period";
 type REQUEST_RESOURCE = "disposition" | "request";
 type USERS_RESOURCE = "access" | "access/subfunctions";
 type RESOURCE =

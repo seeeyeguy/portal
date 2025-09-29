@@ -7,6 +7,7 @@ import logging
 
 from django import http
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views import View
 from rest_framework import status
 
@@ -20,6 +21,7 @@ from manager.utils.types.request import DjangoHttpRequest
 LOGGER = logging.getLogger(__name__)
 
 
+@method_decorator(never_cache, name="dispatch")
 class Record(View):
     """
     Handle user requests to create and fetch

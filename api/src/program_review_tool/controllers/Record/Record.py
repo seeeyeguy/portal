@@ -22,6 +22,7 @@ LOGGER = logging.getLogger(__name__)
 # metrics data.
 DEFAULT_PROGRAM_METRICS_DATA: dict = {
     "pa_number": "",
+    "name": "",
     "segment": "",
     "sector": "",
     "division": "",

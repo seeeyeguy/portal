@@ -25,6 +25,8 @@ const api = createApi({
     "Function",
     "FunctionAdmin",
     "Portfolio",
+    "Record",
+    "ReportingPeriod",
     "Request",
     "Query",
     "QueryFilterState",
