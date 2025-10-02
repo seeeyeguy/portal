@@ -594,7 +594,7 @@ export default function ProgramPerformanceForm({
               <span className={styles["floating-label"]}>SPI</span>
               <span className={styles["floating-value"]}>
                 {!lodash.isNil(formData?.schedulePerformanceIndexCumulative)
-                  ? formData.schedulePerformanceIndexCumulative.toFixed(2)
+                  ? formData?.schedulePerformanceIndexCumulative.toFixed(2)
                   : "-"}
               </span>
 
@@ -627,7 +627,7 @@ export default function ProgramPerformanceForm({
               <span className={styles["floating-label"]}>CPI</span>
               <span className={styles["floating-value"]}>
                 {!lodash.isNil(formData?.costPerformanceIndexCumulative)
-                  ? formData.costPerformanceIndexCumulative.toFixed(2)
+                  ? formData?.costPerformanceIndexCumulative.toFixed(2)
                   : "-"}
               </span>
 
