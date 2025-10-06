@@ -7,10 +7,12 @@ captured through the `Program Performance Review (PPR)` Tool.
 
 import logging
 import datetime
-from typing import Union
+from typing import cast, List, Optional, Union, TypedDict
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
+
+from program_review_tool.controllers.Task.Task import Task
 
 from program_review_tool import exceptions, models
 from program_review_tool.models.Program.serializers import ProgramSerializer
@@ -70,6 +72,21 @@ DEFAULT_CURRENT_PERIOD_RECORD_METRICS_DATA: dict = {
 }
 
 
+class TaskPayload(TypedDict):
+    """Payload used when creating or updating a task via the Record controller."""
+
+    id: Union[int, None]
+    order: Union[int, None]
+    name: str
+    description: str
+    owner: str
+    status: str
+    create_date: datetime.date
+    target_date: datetime.date
+    complete_date: Union[datetime.date, None]
+    archive_date: Union[datetime.date, None]
+
+
 class Record:
     """
     Container class for functions related to creating and
@@ -113,6 +130,7 @@ class Record:
         risk_assessment: Union[int, None] = None,
         overall_program: Union[int, None] = None,
         comments: str = "",
+        tasks: Optional[List[TaskPayload]] = None,
     ) -> models.Record:
         """
         Create a `Record` record in the database.
@@ -169,7 +187,7 @@ class Record:
             * risk_assessment (int | none): The program manager's subjective risk assessment (1-4).
             * overall_program (int | none): The program manager's subjective overall program assessment (1-4).
             * comments (str): Additional comments.
-
+            * tasks: (List[Task]): Array of tasks to be associated with the record.
         Returns:
             * record (models.Record): The newly created `Record` record.
         """
@@ -250,6 +268,203 @@ class Record:
             )
 
             record.team_members.set(team_members)
+
+            # ------------------- Handling of Task Logic --------------------------
+
+            def _task_differs(db_obj: dict, payload_obj: dict) -> bool:
+                """
+                Compare the selected task fields between a DB task dict (`db_obj`)
+                and the incoming payload dict (`payload_obj`).
+
+                Date and datetime values are normalized to ISO‑8601 strings before
+                comparison so that equivalent dates compare equal regardless of type.
+                Returns `True` if any field differs, otherwise `False`.
+                """
+                fields = [
+                    "order",
+                    "name",
+                    "description",
+                    "owner",
+                    "status",
+                    "target_date",
+                    "complete_date",
+                    "archive_date",
+                ]
+
+                for f in fields:
+                    payload_val = payload_obj.get(f)
+                    db_val = db_obj.get(f)
+
+                    # Inline normalization of date / datetime objects.
+                    if isinstance(payload_val, (datetime.date, datetime.datetime)):
+                        payload_val = payload_val.isoformat()
+                    if isinstance(db_val, (datetime.date, datetime.datetime)):
+                        db_val = db_val.isoformat()
+
+                    if payload_val != db_val:
+                        return True
+
+                return False
+
+            incoming_tasks = tasks or []
+            # Separate tasks that carry an id from those that don’t.
+            tasks_without_id: List[TaskPayload] = [
+                t for t in incoming_tasks if not t.get("id")
+            ]
+            tasks_with_id: List[TaskPayload] = [
+                t for t in incoming_tasks if t.get("id")
+            ]
+
+            existing_tasks_qs = Task.fetch_tasks(pa_number, reporting_period)
+            existing_tasks = {t.id: t for t in existing_tasks_qs}
+
+            # -----------------------------------------------------------------
+            #  Handle any existing DB tasks that are NOT present in the payload.
+            #  IE: The user deleted them from their view in the front-end.
+            # -----------------------------------------------------------------
+            for db_id, db_task in existing_tasks.items():
+                if not any(pt.get("id") == db_id for pt in incoming_tasks):
+                    # We want to delete tasks that only existed for the current reporting period and
+                    # just remove the current reporting period for tasks that exist across multiple periods.
+                    if (
+                        db_task.reporting_period
+                        and len(db_task.reporting_period) == 1
+                        and db_task.reporting_period[0] == reporting_period
+                    ):
+                        Task.delete_task(
+                            task_id=db_id,
+                            user=user,
+                            reporting_period=reporting_period,
+                        )
+                    else:
+                        Task.remove_reporting_period(
+                            task_id=db_id,
+                            user=user,
+                            pa_number=pa_number,
+                            reporting_period=reporting_period,
+                        )
+
+            # -------------------------------------------------------------
+            # Create the tasks that have no id (new tasks)
+            # -------------------------------------------------------------
+            for task_payload in tasks_without_id:
+                Task.create_task(
+                    user=user,
+                    previous_id=None,
+                    pa_number=pa_number,
+                    reporting_period=reporting_period,
+                    order=task_payload.get("order"),
+                    name=task_payload["name"],
+                    description=task_payload.get("description", ""),
+                    owner=task_payload["owner"],
+                    status=task_payload["status"],
+                    create_date=task_payload["create_date"],
+                    target_date=task_payload["target_date"],
+                    complete_date=task_payload.get("complete_date"),
+                    archive_date=task_payload.get("archive_date"),
+                )
+
+            # -------------------------------------------------------------
+            # Handle the existing submitted tasks that have an id.
+            # -------------------------------------------------------------
+            for task_payload in tasks_with_id:
+                payload_id = cast(int, task_payload["id"])
+                try:
+                    db_task = models.Task.objects.get(id=payload_id)
+                    db_task_dict = {
+                        "order": db_task.order,
+                        "name": db_task.name,
+                        "description": db_task.description,
+                        "owner": db_task.owner.email,  # type: ignore[union-attr]
+                        "status": db_task.status,
+                        "target_date": db_task.target_date,
+                        "complete_date": db_task.complete_date,
+                        "archive_date": db_task.archive_date,
+                    }
+                except models.Task.DoesNotExist as exc:
+                    err_msg = f"Task (id={payload_id}) does not exist."
+                    LOGGER.error(err_msg)
+                    raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
+
+                # If the existing task was not changed then we just update the reporting period,
+                # otherwise we need to handle the differences in the task, either by updating the task or
+                # creating a revision.
+                if not _task_differs(db_task_dict, cast(dict, task_payload)):
+                    # No data change, just add this reporting period.
+                    Task.add_reporting_period(
+                        task_id=payload_id,
+                        user=user,
+                        pa_number=pa_number,
+                        reporting_period=reporting_period,
+                    )
+                else:
+                    # Data changed, decide update or revision.
+                    if (
+                        db_task.reporting_period
+                        and len(db_task.reporting_period) == 1
+                        and db_task.reporting_period[0] == reporting_period
+                    ):
+                        Task.update_task(
+                            task_id=payload_id,
+                            user=user,
+                            pa_number=pa_number,
+                            reporting_period=reporting_period,
+                            order=task_payload.get("order"),
+                            name=task_payload["name"],
+                            description=task_payload.get("description", ""),
+                            owner=task_payload["owner"],
+                            status=task_payload["status"],
+                            target_date=task_payload["target_date"],
+                            complete_date=task_payload.get("complete_date"),
+                            archive_date=task_payload.get("archive_date"),
+                        )
+                    else:
+                        Task.create_task(
+                            user=user,
+                            previous_id=payload_id,
+                            pa_number=pa_number,
+                            reporting_period=reporting_period,
+                            order=task_payload.get("order"),
+                            name=task_payload["name"],
+                            description=task_payload.get("description", ""),
+                            owner=task_payload["owner"],
+                            status=task_payload["status"],
+                            create_date=task_payload["create_date"],
+                            target_date=task_payload["target_date"],
+                            complete_date=task_payload.get("complete_date"),
+                            archive_date=task_payload.get("archive_date"),
+                        )
+                        Task.remove_reporting_period(
+                            task_id=payload_id,
+                            user=user,
+                            pa_number=pa_number,
+                            reporting_period=reporting_period,
+                        )
+
+            updated_tasks_qs = Task.fetch_tasks(
+                pa_number=pa_number, reporting_period=reporting_period
+            )
+
+            updated_tasks = list(
+                updated_tasks_qs.values(
+                    "id",
+                    "pa_number",
+                    "reporting_period",
+                    "order",
+                    "name",
+                    "description",
+                    "owner",
+                    "status",
+                    "create_date",
+                    "target_date",
+                    "complete_date",
+                    "archive_date",
+                )
+            )
+
+            setattr(record, "tasks", updated_tasks)
+
+            # ------------------- End Handling of Task Logic --------------------------
 
             return record
 
@@ -405,6 +620,45 @@ class Record:
                 else None
             )
 
+            # If a Record exists for the requested period we use that period.
+            # Otherwise we look for the most recent earlier period that does have a
+            # `Record` and use its reporting period for the task fetch.
+            if latest_record_for_reporting_period is not None:
+                tasks_period = reporting_period
+            else:
+                previous_record: Union[models.Record, None] = (
+                    records_for_program.filter(reporting_period__lt=reporting_period)
+                    .order_by("-reporting_period")
+                    .first()
+                )
+                # If no previous record exists we fall back to the requested period.
+                tasks_period = (
+                    previous_record.reporting_period
+                    if previous_record
+                    else reporting_period
+                )
+
+            tasks_qs = Task.fetch_tasks(
+                pa_number=pa_number, reporting_period=tasks_period
+            )
+
+            tasks = list(
+                tasks_qs.values(
+                    "id",
+                    "pa_number",
+                    "reporting_period",
+                    "order",
+                    "name",
+                    "description",
+                    "owner",
+                    "status",
+                    "create_date",
+                    "target_date",
+                    "complete_date",
+                    "archive_date",
+                )
+            )
+
             # Merge all data the in the three dictionaries containing
             # the `Program`s record data into one.
             record_data = {
@@ -413,6 +667,7 @@ class Record:
                 **program_metrics_data,
                 **shared_record_metrics_data,
                 **current_period_metrics_data,
+                "tasks": tasks,
             }
 
             return record_data

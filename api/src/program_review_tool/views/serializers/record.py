@@ -6,6 +6,30 @@ validation for request parameters.
 from rest_framework import serializers
 
 
+class TaskSerializer(serializers.Serializer):
+    """Serializer for a Task that is attached to a Record."""
+
+    id = serializers.IntegerField(required=False, allow_null=True, default=None)
+    pa_number = serializers.CharField(max_length=64)
+    reporting_period = serializers.IntegerField(
+        min_value=100000,
+        max_value=999999,
+        error_messages={
+            "min_value": "Reporting period must be exactly 6 digits.",
+            "max_value": "Reporting period must be exactly 6 digits.",
+        },
+    )
+    order = serializers.IntegerField(required=False, allow_null=True, default=None)
+    name = serializers.CharField(max_length=1028)
+    description = serializers.CharField(max_length=4096, allow_blank=True, default="")
+    owner = serializers.CharField(max_length=128)
+    status = serializers.CharField(max_length=512)
+    create_date = serializers.DateField()
+    target_date = serializers.DateField()
+    complete_date = serializers.DateField(allow_null=True, required=False, default=None)
+    archive_date = serializers.DateField(allow_null=True, required=False, default=None)
+
+
 class CreateRecordRequest(serializers.Serializer):
     """Request serializer for POST /v1/program-review-tool/record."""
 
@@ -91,6 +115,7 @@ class CreateRecordRequest(serializers.Serializer):
         min_value=1, max_value=4, allow_null=True, default=None
     )
     comments = serializers.CharField(allow_blank=True, default="")
+    tasks = TaskSerializer(many=True, required=False, default=list)
 
 
 class FetchRecordRequestQueryParams(serializers.Serializer):

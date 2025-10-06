@@ -10,9 +10,11 @@ from django.contrib.auth import models as AuthModels
 from django.test import tag
 
 from program_review_tool import controllers, exceptions, models
+from program_review_tool.controllers.Record.Record import TaskPayload
 from program_review_tool.controllers.Record.tests.mutations.create.default import (
     arguments,
 )
+
 from program_review_tool.models.Record.serializers import RecordSerializer
 
 from manager.utils.tests import MultiDBTestCase
@@ -35,6 +37,7 @@ class TestCreateRecord(MultiDBTestCase):
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/programs.json",
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/program_members.json",
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/records.json",
+        "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/tasks.json",
     ]
 
     @tag("controllers.record.create_record")
@@ -49,13 +52,17 @@ class TestCreateRecord(MultiDBTestCase):
             **arguments.CREATE_RECORD_PARAMS,
             user=user,
             pa_number=arguments.CREATE_RECORD_PROGRAM_PA_NUMBER,
+            tasks=cast(List[TaskPayload], arguments.CREATE_RECORD_TASK_PARAMS),
         )
 
         # Ensure data is a `Record` instance.
         self.assertIsInstance(record, models.Record)
 
+        tasks = record.tasks  # type: ignore[attr-defined]
+
         data: dict = RecordSerializer(record).data
 
+        data["tasks"] = tasks
         del data["created"]
         del data["id"]
         del data["user"]
@@ -85,13 +92,19 @@ class TestCreateRecord(MultiDBTestCase):
         record = controllers.Record.create_record(
             **params,
             user=user,
+            tasks=cast(
+                List[TaskPayload], arguments.CREATE_RECORD_TASK_PREVIOUS_REVISION_PARAMS
+            ),
         )
 
         # Ensure data is a `Record` instance.
         self.assertIsInstance(record, models.Record)
 
+        tasks = record.tasks  # type: ignore[attr-defined]
+
         data: dict = RecordSerializer(record).data
 
+        data["tasks"] = tasks
         del data["created"]
         del data["id"]
         del data["user"]

@@ -5,9 +5,11 @@ Collection of pytests for Record's fetch view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
+from django.core.serializers.json import DjangoJSONEncoder
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.utils import json
 
 from program_review_tool.controllers.Record.tests.query.read.serialized import (
     arguments,
@@ -35,6 +37,7 @@ class TestFetchRecord(MultiDBTestCase):
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/programs.json",
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/program_members.json",
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/records.json",
+        "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/tasks.json",
     ]
 
     def setUp(self) -> None:
@@ -61,9 +64,14 @@ class TestFetchRecord(MultiDBTestCase):
         )
 
         record_data = response.json()
+        expected_record = json.loads(
+            json.dumps(
+                arguments.FETCH_RECORD_EXPECTED_RECORD_DATA, cls=DjangoJSONEncoder
+            )
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(record_data, arguments.FETCH_RECORD_EXPECTED_RECORD_DATA)
+        self.assertDictEqual(record_data, expected_record)
 
     @tag("views.record.fetch_record_no_current_record_for_reporting_period")
     def test_fetch_record_no_current_record_for_reporting_period(self) -> None:
@@ -84,6 +92,12 @@ class TestFetchRecord(MultiDBTestCase):
         )
 
         record_data = response.json()
+        expected_record = json.loads(
+            json.dumps(
+                arguments.FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA,
+                cls=DjangoJSONEncoder,
+            )
+        )
 
         for obj in record_data["team_members"]:
             obj.get("role", {}).pop("created", None)
@@ -92,7 +106,7 @@ class TestFetchRecord(MultiDBTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(
             record_data,
-            arguments.FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA,
+            expected_record,
         )
 
     @tag("views.record.fetch_record_no_record_exists_for_program")
@@ -113,6 +127,12 @@ class TestFetchRecord(MultiDBTestCase):
         )
 
         record_data = response.json()
+        expected_record = json.loads(
+            json.dumps(
+                arguments.FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA,
+                cls=DjangoJSONEncoder,
+            )
+        )
 
         for obj in record_data["team_members"]:
             obj.get("role", {}).pop("created", None)
@@ -121,7 +141,7 @@ class TestFetchRecord(MultiDBTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(
             record_data,
-            arguments.FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA,
+            expected_record,
         )
 
     @tag("views.record.fetch_record_with_refresh")
@@ -141,6 +161,12 @@ class TestFetchRecord(MultiDBTestCase):
         )
 
         record_data = response.json()
+        expected_record = json.loads(
+            json.dumps(
+                arguments.FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA,
+                cls=DjangoJSONEncoder,
+            )
+        )
 
         for obj in record_data["team_members"]:
             obj.get("role", {}).pop("created", None)
@@ -149,7 +175,7 @@ class TestFetchRecord(MultiDBTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(
             record_data,
-            arguments.FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA,
+            expected_record,
         )
 
     @tag("views.record.fetch_record_empty_pa_number")

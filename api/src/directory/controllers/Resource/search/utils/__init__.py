@@ -20,7 +20,10 @@ DEFAULT_STRUCTURE: str = "default"
 GENERAL_SUBFUNCTION_NAME: str = "General"
 
 # Initialize cryptography module.
-fernet = Fernet(DATA_ENCRYPTION_KEY)
+# Restore padding (Fernet keys are 44 chars; add '=' if needed)
+FERNET_KEY = DATA_ENCRYPTION_KEY + ("=" * ((4 - len(DATA_ENCRYPTION_KEY) % 4) % 4))
+
+fernet = Fernet(FERNET_KEY)
 
 
 def structure_resources(

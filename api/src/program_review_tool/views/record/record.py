@@ -34,6 +34,7 @@ class Record(View):
         """Endpoint for POST /program-review-tool/record."""
 
         LOGGER.info("POST /program-review-tool/record.")
+        LOGGER.info(f"Tasks payload: {body['tasks']}")
 
         try:
             # Create `Record`.
@@ -89,11 +90,21 @@ class Record(View):
                 risk_assessment=body["risk_assessment"],
                 overall_program=body["overall_program"],
                 comments=body["comments"],
+                tasks=body["tasks"],
             )
-            # Serialize `Record`.
-            data: dict = RecordSerializer(record).data
 
-            return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
+            # Serialize `Record`.
+            record_data: dict = RecordSerializer(record).data
+
+            # Build combined response
+            response_payload = {
+                **record_data,
+                "tasks": getattr(record, "tasks", []),
+            }
+
+            return http.JsonResponse(
+                response_payload, status=status.HTTP_201_CREATED, safe=False
+            )
         except exceptions.ProgramReviewToolError as exc:
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
