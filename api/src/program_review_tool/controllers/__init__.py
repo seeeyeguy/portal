@@ -10,4 +10,5 @@ from .Program import Program  # ordered to prevent potential circular dependency
 from .Portfolio import Portfolio
 from .Record import Record
 from .ReportingPeriod import ReportingPeriod
+from .Task import Task
 from .Usage import Usage

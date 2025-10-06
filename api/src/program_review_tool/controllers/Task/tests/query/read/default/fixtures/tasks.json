@@ -1,0 +1,97 @@
+[
+  {
+    "model": "program_review_tool.Task",
+    "pk": 1,
+    "fields": {
+      "previous_revision": null,
+      "program": 1,
+      "pa_number": "489AB",
+      "reporting_period": [202501, 202502],
+      "order": null,
+      "owner": "Peter.Parker@harris.com",
+      "status": "Completed",
+      "create_date": "2024-01-01",
+      "target_date": "2025-01-01",
+      "complete_date": "2025-01-01",
+      "archive_date": "2025-02-01",
+      "name": "Task Alpha",
+      "description": "Beginning Planning."
+    }
+  },
+  {
+    "model": "program_review_tool.Task",
+    "pk": 2,
+    "fields": {
+      "previous_revision": null,
+      "program": 1,
+      "pa_number": "489AB",
+      "reporting_period": [202501],
+      "order": 1,
+      "owner": "Peter.Parker@harris.com",
+      "status": "Not Started",
+      "create_date": "2025-01-01",
+      "target_date": "2025-10-01",
+      "complete_date": null,
+      "archive_date": null,
+      "name": "Task Beta",
+      "description": "Initial analysis of system requirements."
+    }
+  },
+  {
+    "model": "program_review_tool.Task",
+    "pk": 3,
+    "fields": {
+      "previous_revision": 2,
+      "program": 1,
+      "pa_number": "489AB",
+      "reporting_period": [202502],
+      "order": 1,
+      "owner": "Peter.Parker@harris.com",
+      "status": "In Progress",
+      "create_date": "2025-01-01",
+      "target_date": "2025-10-01",
+      "complete_date": "2025-08-01",
+      "archive_date": null,
+      "name": "Task Beta",
+      "description": "Initial analysis of system requirements."
+    }
+  },
+  {
+    "model": "program_review_tool.Task",
+    "pk": 4,
+    "fields": {
+      "previous_revision": null,
+      "program": 1,
+      "pa_number": "489AB",
+      "reporting_period": [202502],
+      "order": 2,
+      "owner": "Peter.Parker@harris.com",
+      "status": "Pending Review",
+      "create_date": "2025-01-01",
+      "target_date": "2025-05-01",
+      "complete_date": null,
+      "archive_date": null,
+      "name": "Task Gamma",
+      "description": "Develop prototype and conduct preliminary testing."
+    }
+  },
+  {
+    "model": "program_review_tool.Task",
+    "pk": 5,
+    "fields": {
+      "previous_revision": null,
+      "program": 1,
+      "pa_number": "489AB",
+      "reporting_period": [202501, 202502],
+      "order": 3,
+      "owner": "Peter.Parker@harris.com",
+      "status": "Not Started",
+      "create_date": "2025-01-01",
+      "target_date": "2025-10-01",
+      "complete_date": null,
+      "archive_date": null,
+      "name": "Task Delta",
+      "description": "Finalize design, documentation, and handover."
+    }
+  }
+]

@@ -1,0 +1,16 @@
+"""
+Arguments to be shared for Task's delete
+controller pytests.
+"""
+
+DELETE_TASK_TASK_ID: int = 3
+
+DELETE_TASK_REPORTING_PERIOD: int = 202502
+
+DELETE_TASK_USER_EMAIL: str = "May.Parker@harris.com"
+
+DELETE_TASK_TASK_ID_MULTIPLE_REPORTING_PERIODS: int = 5
+
+DELETE_TASK_REPORTING_PERIOD_WRONG_REPORTING_PERIOD: int = 202501
+
+EXPECTED_ROWS_AFFECTED: int = 1

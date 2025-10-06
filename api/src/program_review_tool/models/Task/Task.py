@@ -49,7 +49,7 @@ class Task(BasicInformationAbstractModel):
         "self", null=True, on_delete=models.SET_NULL
     )
     program = models.ForeignKey("program_review_tool.Program", on_delete=models.CASCADE)
-    pa_number = models.CharField(max_length=64, unique=True)
+    pa_number = models.CharField(max_length=64)
     reporting_period = ArrayField(
         base_field=models.IntegerField(), size=None, null=True, default=list
     )
@@ -113,7 +113,7 @@ class Task(BasicInformationAbstractModel):
             models.Index(fields=("id",), name="task_id"),
             models.Index(fields=("reporting_period",), name="task_reporting_periods"),
         ]
-        ordering = ["-order", "-archive_date"]
+        ordering = ["order", "-archive_date"]
         verbose_name = "task"
         verbose_name_plural = "tasks"
 
