@@ -23,6 +23,7 @@ from request.controllers.Request.Request import (
     CreateRequestParams,
     DeleteRequestParams,
     Request as RequestController,
+    RequestNotification as RequestNotificationController,
     UpdateRequestParams,
 )
 from request.exceptions import RequestError
@@ -193,6 +194,25 @@ class Request(APIView):
             ).data
 
             return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        except RequestError as exc:
+            LOGGER.error(exc.message)
+            return http.JsonResponse(exc.message, status=exc.status, safe=False)
+
+
+class RequestNotification(APIView):
+    """
+    Handle user requests to fetch `Request` notifications
+    for `BI Portal`.
+    """
+
+    def get(self, _: DjangoHttpRequest) -> http.JsonResponse:
+        """Endpoint for GET /v1/request/request-notification."""
+
+        try:
+            request_notifications = (
+                RequestNotificationController.fetch_request_notifications()
+            )
+            return http.JsonResponse(request_notifications, status=200, safe=False)
         except RequestError as exc:
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)

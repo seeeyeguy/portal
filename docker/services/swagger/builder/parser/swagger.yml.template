@@ -2054,6 +2054,29 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/DeleteRequestResourceDoesNotExistResponse"   
+  /request/request-notification:
+    get:
+      tags:
+        - "request.request_notification.fetch"
+      summary: "Fetch `Request` notifications."      
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRequestNotificationResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchRequestNotificationForbiddenErrorResponse"    
   /users/access:
     post:
       tags:
@@ -7037,3 +7060,38 @@ components:
       title: "Delete `Resource` error response due to a given resource
         id where that `Resource` does not exist."
       example: "Delete Request (resource_id={resource_id}) does not exist."
+
+    FetchRequestNotificationResponse:
+      title: "Fetch `Request` notifications response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "request_id": 1,
+                "subfunctions": [1],
+                "originator": "Test.User@harris.com",
+                "stage": 4,
+              },
+              {
+                "request_id": 2,
+                "subfunctions": [2],
+                "originator": "Test.User@harris.com",
+                "stage": 3,
+              },
+              {
+                "request_id": 3,
+                "subfunctions": [3],
+                "originator": "Test.User@harris.com",
+                "stage": 2,
+              },
+              ...
+            ]
+
+    FetchRequestNotificationForbiddenErrorResponse:
+      title: "Fetch `Request` notifications error response due to forbidden access."
+      example: "Permissions Denied."

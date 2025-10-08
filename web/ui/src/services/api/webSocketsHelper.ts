@@ -43,17 +43,22 @@ class WebSocketService<T, U> implements IWebSocketService<T, U> {
     this.socket.onopen = () => {
       console.log(`WebSocket connected to ${this.url}.`);
       this.RECONNECT_ATTEMPTS = 0;
+      if (this.url?.endsWith("request-notification")) {
+        this.socket?.send("{}");
+      }
     };
 
     this.socket.onmessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event?.data ?? "{}");
-        if (data?.status && data?.status < 300) {
-          toast.success(
-            `Disposition was successful. It may take up to ${CACHE_TIMEOUT} minutes for your resource to appear on the main portal page.`
-          );
-        } else {
-          toast.error(`${data?.content ?? "Disposition failed."}`);
+        if (this.url?.endsWith("disposition")) {
+          if (data?.status && data?.status < 300) {
+            toast.success(
+              `Disposition was successful. It may take up to ${CACHE_TIMEOUT} minutes for your resource to appear on the main portal page.`
+            );
+          } else {
+            toast.error(`${data?.content ?? "Disposition failed."}`);
+          }
         }
         this.callbacks.forEach((cb) => cb(data));
       } catch (error) {

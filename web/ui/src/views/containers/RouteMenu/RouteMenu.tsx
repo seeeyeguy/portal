@@ -28,11 +28,12 @@ import { IAuthUser } from "definitions/Sso.types";
 import visitApi, {
   TApiPostVisitRequest,
 } from "state/query/api/portal/analytics/AnalyticsApi";
-import { useGetRequestsQuery } from "state/query/api/portal/request/RequestApi";
+import { useSubscribeToRequestNotificationQuery } from "state/query/api/portal/request/RequestNotificationApi";
 import { useAppDispatch } from "state/store/store";
 
 import {
   hasBusinessProcessExpertPermissions,
+  hasDataStewardPermissions,
   hasSuperuserPermissions,
   requiredPermissions,
 } from "utils/PermissionUtility";
@@ -59,17 +60,10 @@ const RESOURCE_LINKS = {
   // TODO: Add PRT ID when resource is created in production.
 };
 
-const DRAFT_STAGE = 1;
 const REVISE_STAGE = 4;
 
 const SUBMITTED = 2;
 const APPROVED_BY_BPE = 3;
-
-const REQUEST_STATUSES = {
-  PENDING: "PENDING",
-  APPROVED: "APPROVED",
-  REJECTED: "REJECTED",
-};
 
 export default function RouteMenu({ children }: RouteMenuProps) {
   const loaderData = useLoaderData() as { user: IAuthUser };
@@ -86,18 +80,19 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     [loaderData]
   );
 
-  const usersPermittedStages = React.useMemo(
-    () =>
-      Array.from(
-        loaderData.user.accesses?.reduce((acc, access) => {
-          access.stages.forEach((level) => {
-            acc.add(level);
-          });
-          return acc;
-        }, new Set<number>())
-      ),
+  const dataStewardPermissions = React.useMemo(
+    () => hasDataStewardPermissions(loaderData.user),
     [loaderData]
   );
+
+  const requestWS = useSubscribeToRequestNotificationQuery();
+
+  const pendingRequests = React.useMemo(() => {
+    if (dataStewardPermissions && requestWS?.data?.content) {
+      return [...requestWS.data.content];
+    }
+    return [];
+  }, [dataStewardPermissions, requestWS?.data]);
 
   const usersPermittedSubFunctions = React.useMemo(
     () =>
@@ -114,53 +109,35 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     [loaderData, superuserPermissions]
   );
 
-  // Get User `Request`s in the draft stage.
-  const { data: revisionRequests } = useGetRequestsQuery({
-    originator: loaderData.user.email,
-    stages: [DRAFT_STAGE],
-  });
-
-  const { data: requestsAwaitingApproval } = useGetRequestsQuery({
-    stages: usersPermittedStages,
-    status: REQUEST_STATUSES.PENDING,
-    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions,
-  });
-
   // Count number of `Request`s awaiting revision owned by user.
   const requestNotifications = React.useMemo(
     () =>
-      revisionRequests?.data.reduce((count, request) => {
-        const previousTransition =
-          request.transitions.nodes[request.transitions.latest]
-            .previousTransition;
+      pendingRequests.reduce((count, request) => {
         if (
-          previousTransition &&
-          request.transitions.nodes[previousTransition].stage.level ===
-            REVISE_STAGE
+          loaderData.user.email === request.originator &&
+          request.stage === REVISE_STAGE
         ) {
           return count + 1;
         }
         return count;
       }, 0) ?? 0,
-    [revisionRequests]
+    [loaderData, pendingRequests]
   );
 
   // Memoized values for Superuser and Business Process Expert notifications.
   const [superuserNotifications, businessProcessExpertNotifications] =
     React.useMemo<[number, number]>(() => {
-      const counts = requestsAwaitingApproval?.data.reduce(
+      const counts = pendingRequests.reduce(
         (acc, request) => {
-          const latestTransitionIndex = request.transitions.latest;
-          const latestTransition =
-            request.transitions.nodes[latestTransitionIndex];
-
-          if (latestTransition) {
-            const stageLevel = latestTransition.stage.level;
-            if (stageLevel === APPROVED_BY_BPE) {
-              acc.superuser += 1;
-            } else if (stageLevel === SUBMITTED) {
+          if (superuserPermissions && request.stage === APPROVED_BY_BPE) {
+            acc.superuser += 1;
+          }
+          if (businessProcessExpertPermissions) {
+            const hasMatchingSubFunctions = usersPermittedSubFunctions.some(
+              (subfunction) => request.subfunctions.includes(subfunction)
+            );
+            if (hasMatchingSubFunctions && request.stage === SUBMITTED)
               acc.businessProcessExpert += 1;
-            }
           }
 
           return acc;
@@ -173,7 +150,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
         superuserPermissions ? counts.superuser : 0,
         businessProcessExpertPermissions ? counts.businessProcessExpert : 0,
       ];
-    }, [businessProcessExpertPermissions, requestsAwaitingApproval, superuserPermissions]);
+    }, [
+      businessProcessExpertPermissions,
+      pendingRequests,
+      superuserPermissions,
+      usersPermittedSubFunctions,
+    ]);
 
   function processMenuItems(
     items: MenuItem[] | IMenuLink[]

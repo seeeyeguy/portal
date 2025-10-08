@@ -17,4 +17,9 @@ urlpatterns: urlconfig.PathPatternList = [
         name="request.disposition",
     ),
     path("request", views.Request.as_view(), name="request.request"),
+    path(
+        "request-notification",
+        views.RequestNotification.as_view(),
+        name="request.request_notification",
+    ),
 ]

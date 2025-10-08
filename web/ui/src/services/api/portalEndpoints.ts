@@ -211,7 +211,7 @@ export default {
       return base;
     },
     REPORTING_PERIOD: (previousPeriodCount: number | null = null) => {
-      let base = `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/reporting-period`
+      let base = `${RESOURCE_PATHS.PROGRAM_REVIEW_TOOL}/reporting-period`;
       base = appendQueryParamToURL(
         base,
         "previous_period_count",
@@ -272,6 +272,11 @@ export default {
       }
 
       return base;
+    },
+    REQUEST_NOTIFICATION: {
+      WS: SCHEME?.endsWith("s")
+        ? "ws/request-notification"
+        : `ws://${window.location.hostname}:${SERVER_PORT}/ws/request-notification`,
     },
     DISPOSITION: {
       WS: SCHEME?.endsWith("s")

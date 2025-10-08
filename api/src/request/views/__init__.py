@@ -5,4 +5,4 @@ the request workflow.
 """
 
 from .disposition.disposition import Disposition
-from .request import Request
+from .request import Request, RequestNotification

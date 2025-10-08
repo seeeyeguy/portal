@@ -9,4 +9,4 @@ modified, or deleted without proceeding through the request
 workflow and receiving the needed approvals via a `Request`.
 """
 
-from .request import Request
+from .request import Request, RequestNotification
