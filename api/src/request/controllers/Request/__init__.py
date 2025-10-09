@@ -8,4 +8,4 @@ through the request workflow and receiving the needed approvals via
 a `Request`.
 """
 
-from .Request import Request
+from .Request import Request, RequestNotification

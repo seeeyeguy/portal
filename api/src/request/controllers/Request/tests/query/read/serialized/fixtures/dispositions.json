@@ -1,0 +1,46 @@
+[
+  {
+    "model": "request.disposition",
+    "pk": 1,
+    "fields": {
+      "approver": 2,
+      "disposition": "APPROVED",
+      "justification": "",
+      "transition": 2,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  },
+  {
+    "model": "request.disposition",
+    "pk": 2,
+    "fields": {
+      "approver": 1,
+      "disposition": "APPROVED",
+      "justification": "",
+      "transition": 3,
+      "created": "2025-09-01T18:00:00Z"
+    }
+  },
+  {
+    "model": "request.disposition",
+    "pk": 3,
+    "fields": {
+      "approver": 1,
+      "disposition": "REVISE",
+      "justification": "Update description.",
+      "transition": 9,
+      "created": "2025-09-01T18:00:00Z"
+    }
+  },
+  {
+    "model": "request.disposition",
+    "pk": 4,
+    "fields": {
+      "approver": 2,
+      "disposition": "APPROVED",
+      "justification": "",
+      "transition": 13,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  }
+]

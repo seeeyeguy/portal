@@ -47,6 +47,7 @@ import {
 import { tooltipTemplate } from "views/utils/RequestUtility";
 
 import styles from "views/containers/AdminControls/AdminControls.module.css";
+import { useRefreshRequestNotificationsMutation } from "state/query/api/portal/request/RequestNotificationApi";
 
 type TDispositionValues = "APPROVED" | "REJECTED" | "REVISE";
 
@@ -342,6 +343,8 @@ export default function ApprovalsControls() {
   );
   const [justification, setJustification] = React.useState<string>("");
 
+  const [refreshRequestNotifications] =
+    useRefreshRequestNotificationsMutation();
   const [sendDisposition] = useSendDispositionMutation();
   useSubscribeToDispositionQuery({
     ...QUERY_REQUEST_PARAMS,
@@ -415,11 +418,15 @@ export default function ApprovalsControls() {
     setDisposition("");
     setJustification("");
     setShowConfirmModal(false);
+    setTimeout(() => {
+      refreshRequestNotifications();
+    }, 800);
   }, [
     disposition,
     justification,
     justificationDisabled,
     requestId,
+    refreshRequestNotifications,
     sendDisposition,
     setDisposition,
     setJustification,

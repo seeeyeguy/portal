@@ -53,6 +53,7 @@ import {
 import { tooltipTemplate } from "views/utils/RequestUtility";
 
 import styles from "views/containers/AdminControls/AdminControls.module.css";
+import { useRefreshRequestNotificationsMutation } from "state/query/api/portal/request/RequestNotificationApi";
 
 const EDITABLE_STAGES = [1, 4];
 const REVISABLE_STAGES = [99];
@@ -157,6 +158,9 @@ export default function AdminResources() {
   const [updateResource] = useUpdateRequestMutation();
 
   const [addResource] = useAddRequestMutation();
+
+  const [refreshRequestNotifications] =
+    useRefreshRequestNotificationsMutation();
 
   const { data: tags } = useGetTagsQuery(null);
   const { data: employeeLevels, isLoading: isEmployeeLevelsLoading } =
@@ -337,10 +341,11 @@ export default function AdminResources() {
           toast.error(`Error Saving Request: ${message}`);
         } else {
           toast.success("Request Updated");
+          refreshRequestNotifications();
         }
       }
     },
-    [updateResource]
+    [refreshRequestNotifications, updateResource]
   );
 
   const handleCreate = React.useCallback(
@@ -391,13 +396,14 @@ export default function AdminResources() {
           toast.error(`Error Saving Request: ${message}`);
         } else {
           toast.success("Request Created");
+          refreshRequestNotifications();
           // Reset form on success.
           setShowNewModal(false);
           setNewFormKey(Date.now());
         }
       }
     },
-    [addResource]
+    [addResource, refreshRequestNotifications]
   );
 
   // Reset existing resource form back its original data.

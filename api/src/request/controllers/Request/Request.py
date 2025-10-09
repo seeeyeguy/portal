@@ -42,6 +42,12 @@ VALID_ROLE_LEVELS_FOR_REQUESTS: Set[int] = {
     UsersModels.Role.RoleLevels.SUPERUSER,
 }
 
+PENDING_APPROVAL_STAGE_LEVELS: Set[int] = {
+    models.Stage.StageLevels.SUBMITTED,
+    models.Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT,
+}
+
+
 # Default page length used when using
 # pagination on the fetch.
 DEFAULT_PAGE_LENGTH: int = 10
@@ -586,3 +592,99 @@ class Request:
             err_msg: str = f"Originator(email={originator}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.RequestError(err_msg, status=404) from exc
+
+
+class RequestNotification:
+    """
+    Container class for functions related retrieving `Request` notifications. These
+    `Request` notifications represent a collection of `PENDING` `Request`s that
+    are in a `Revise` or pending approval state within `BI Portal`.
+    """
+
+    @staticmethod
+    def fetch_request_notifications() -> List[dict]:
+        """
+        Fetch list of pending `Request` notifications.
+
+        Accepts:
+            * None
+
+        Returns:
+            * request_notifications (List[dict]): Collection of pending `Request` notifications.
+        """
+
+        request_notifications: List[dict] = []
+
+        # Fetch `Request`s with `PENDING` status.
+        pending_requests: QuerySet[
+            models.Request
+        ] = models.Request.objects.prefetch_related("transitions").filter(
+            status=models.Request.RequestStatus.PENDING
+        )
+
+        # List containing pending `Request`s in `Revise` state.
+        pending_revise_requests: List[dict] = []
+        # List containing pending `Request`s in a state waiting
+        # for `Approval`.
+        pending_approval_requests: List[dict] = []
+
+        for pending_request in pending_requests:
+            latest_transition_for_pending_request: Union[
+                models.Transition, None
+            ] = pending_request.transitions.order_by("-created").first()
+
+            # Get the previous `Transition` from the latest "Transition" of the
+            # pending `Request`, if the current `Stage` of the latest one is
+            # `DRAFT`. This is done because a `Request` in a `DRAFT` `Stage`
+            # can be used to determine if a `Resource` is meant to be
+            # revised by verifying that the previous `Transition` to the
+            # latest is in a `REVISE` stage.
+            previous_transition: Union[models.Transition, None] = (
+                latest_transition_for_pending_request.previous_transition
+                if latest_transition_for_pending_request
+                and latest_transition_for_pending_request.stage.level
+                == models.Stage.StageLevels.DRAFT
+                else None
+            )
+
+            if (
+                previous_transition
+                and previous_transition.stage.level == models.Stage.StageLevels.REVISE
+            ):
+                pending_revise_requests.append(
+                    {
+                        "request_id": pending_request.id,
+                        "subfunctions": list(
+                            pending_request.resource.subfunctions.values_list(
+                                "id", flat=True
+                            )
+                        ),
+                        "originator": pending_request.originator.user.email,
+                        "stage": models.Stage.StageLevels.REVISE,
+                    }
+                )
+
+            if (
+                latest_transition_for_pending_request
+                and latest_transition_for_pending_request.stage.level
+                in PENDING_APPROVAL_STAGE_LEVELS
+            ):
+                pending_approval_requests.append(
+                    {
+                        "request_id": pending_request.id,
+                        "subfunctions": list(
+                            pending_request.resource.subfunctions.values_list(
+                                "id", flat=True
+                            )
+                        ),
+                        "originator": pending_request.originator.user.email,
+                        "stage": latest_transition_for_pending_request.stage.level,
+                    }
+                )
+
+        request_notifications = [
+            *pending_revise_requests,
+            *pending_approval_requests,
+        ]
+
+        return request_notifications

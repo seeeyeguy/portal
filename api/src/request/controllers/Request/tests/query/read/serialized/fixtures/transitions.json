@@ -1,0 +1,142 @@
+[
+  {
+    "model": "request.transition",
+    "pk": 1,
+    "fields": {
+      "request": 1,
+      "stage": 1,
+      "previous_transition": null,
+      "created": "2025-09-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 2,
+    "fields": {
+      "request": 1,
+      "stage": 2,
+      "previous_transition": 1,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 3,
+    "fields": {
+      "request": 1,
+      "stage": 3,
+      "previous_transition": 2,
+      "created": "2025-09-01T18:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 4,
+    "fields": {
+      "request": 1,
+      "stage": 6,
+      "previous_transition": 3,
+      "created": "2025-09-01T19:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 5,
+    "fields": {
+      "request": 2,
+      "stage": 1,
+      "previous_transition": null,
+      "created": "2025-09-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 6,
+    "fields": {
+      "request": 3,
+      "stage": 1,
+      "previous_transition": null,
+      "created": "2025-09-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 7,
+    "fields": {
+      "request": 3,
+      "stage": 2,
+      "previous_transition": 6,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 8,
+    "fields": {
+      "request": 4,
+      "stage": 1,
+      "previous_transition": null,
+      "created": "2025-09-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 9,
+    "fields": {
+      "request": 4,
+      "stage": 2,
+      "previous_transition": 8,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 10,
+    "fields": {
+      "request": 4,
+      "stage": 4,
+      "previous_transition": 9,
+      "created": "2025-09-02T18:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 11,
+    "fields": {
+      "request": 4,
+      "stage": 1,
+      "previous_transition": 10,
+      "created": "2025-09-02T19:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 12,
+    "fields": {
+      "request": 5,
+      "stage": 1,
+      "previous_transition": null,
+      "created": "2025-09-01T16:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 13,
+    "fields": {
+      "request": 5,
+      "stage": 2,
+      "previous_transition": 12,
+      "created": "2025-09-01T17:00:00Z"
+    }
+  },
+  {
+    "model": "request.transition",
+    "pk": 14,
+    "fields": {
+      "request": 5,
+      "stage": 3,
+      "previous_transition": 13,
+      "created": "2025-09-01T18:00:00Z"
+    }
+  }
+]
