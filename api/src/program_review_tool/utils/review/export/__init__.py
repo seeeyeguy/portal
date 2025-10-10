@@ -9,6 +9,7 @@ import glob
 import logging
 import os
 import pptx
+import re
 import shutil
 import uuid
 from datetime import datetime, timedelta
@@ -179,6 +180,31 @@ def generate_program_review_powerpoint(
         * export_path (str): The path to the saved presentation.
     """
 
+    def generate_ppt_filename(portfolio_name: str, period: str) -> str:
+        """
+        Generates the filename of the PowerPoint export, using
+        the given Portfolio name and period.
+        Accepts:
+            * portfolio_name (str): Portfolio name.
+            * period (str): Reporting period (i.e. '202501').
+        Returns:
+            * ppt_filename (str): Filename of the PowerPoint export.
+        """
+
+        # Cleanup any unwanted special characters from Portfolio name.
+        cleaned_portfolio_name: str = re.sub(
+            r'[\\/:*?@`!#(){},;^~"<>|]', "_", portfolio_name
+        )
+        # Replace any continous underscores, in the `cleaned_portfolia_name`,
+        # with a single one.
+        cleaned_portfolio_name = re.sub(r"__+", "_", cleaned_portfolio_name)
+
+        cleaned_portfolio_name = cleaned_portfolio_name.strip()
+
+        ppt_filename: str = f"PRT-{cleaned_portfolio_name}-{period}.pptx"
+
+        return ppt_filename
+
     LOGGER.info("Starting presentation generation process.")
 
     if not pa_numbers:
@@ -211,7 +237,7 @@ def generate_program_review_powerpoint(
     review_ppt_file_directory_path: str = os.path.join("/tmp/", export_uuid)
     os.mkdir(review_ppt_file_directory_path)
 
-    review_ppt_file_name: str = f"PRT-{portfolio_name}-{period}.pptx"
+    review_ppt_file_name: str = generate_ppt_filename(portfolio_name, period)
     review_ppt_file_path: str = os.path.join(
         review_ppt_file_directory_path, review_ppt_file_name
     )
@@ -234,7 +260,7 @@ def generate_program_review_powerpoint(
         raise ProgramReviewToolError(DEFAULT_EXPORT_ERROR_MESSAGE, 500)
     LOGGER.info("Successfully loaded Tableau slide mapping DataFrame.")
 
-    presentation: pptx.Presentation = pptx.Presentation(review_ppt_file_path)  # type: ignore[valid-type]
+    presentation: pptx.Presentation = pptx.Presentation(review_ppt_file_path)  # type: ignore[unused-ignore,valid-type]
     LOGGER.info(f"Loaded presentation from '{review_ppt_file_path}'.")
 
     # Populate the title slide.
@@ -288,7 +314,7 @@ def generate_program_review_powerpoint(
 
     # Save the presentation.
     try:
-        presentation.save(export_path)  # type: ignore[attr-defined]
+        presentation.save(export_path)  # type: ignore[unused-ignore,attr-defined]
         LOGGER.info(f"Presentation saved to '{export_path}'.")
     except Exception as exc:
         err_msg = f"Error saving presentation: {exc}"
