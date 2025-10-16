@@ -17,7 +17,10 @@ from manager.settings import DATA_ENCRYPTION_KEY
 from manager.utils.tests import MultiDBTestCase
 
 # Initialize cryptography module.
-fernet = Fernet(DATA_ENCRYPTION_KEY)
+# Restore padding (Fernet keys are 44 chars; add '=' if needed)
+FERNET_KEY = DATA_ENCRYPTION_KEY + ("=" * ((4 - len(DATA_ENCRYPTION_KEY) % 4) % 4))
+
+fernet = Fernet(FERNET_KEY)
 # Encrypted props on a `Resource` record when serialized.
 ENCRYPTED_PROPS_TO_TEST = {"name", "description", "url"}
 

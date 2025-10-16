@@ -5,9 +5,11 @@ Collection of pytests for Record's create view endpoint.
 from typing import List
 
 from django.contrib.auth import models as AuthModels
+from django.core.serializers.json import DjangoJSONEncoder
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.utils import json
 
 from program_review_tool.controllers.Record.tests.mutations.create.default import (
     arguments,
@@ -35,6 +37,7 @@ class TestCreateRecord(MultiDBTestCase):
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/programs.json",
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/program_members.json",
         "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/records.json",
+        "program_review_tool/controllers/Record/tests/mutations/create/default/fixtures/tasks.json",
     ]
 
     def setUp(self) -> None:
@@ -52,10 +55,14 @@ class TestCreateRecord(MultiDBTestCase):
         body: dict = {
             **arguments.CREATE_RECORD_PARAMS,
             "pa_number": arguments.CREATE_RECORD_PROGRAM_PA_NUMBER,
+            "tasks": arguments.CREATE_RECORD_TASK_PARAMS,
         }
 
         response = self.client.post(self.url, body, content_type="application/json")
 
+        expected_record = json.loads(
+            json.dumps(arguments.CREATE_RECORD_EXPECTED_RECORD, cls=DjangoJSONEncoder)
+        )
         record = response.json()
         del record["created"]
         del record["id"]
@@ -67,7 +74,7 @@ class TestCreateRecord(MultiDBTestCase):
             obj.get("role", {}).pop("modified", None)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertDictEqual(record, arguments.CREATE_RECORD_EXPECTED_RECORD)
+        self.assertDictEqual(record, expected_record)
 
     @tag("views.record.create_record_previous_revision")
     def test_create_record_previous_revision(self) -> None:
@@ -77,10 +84,17 @@ class TestCreateRecord(MultiDBTestCase):
             **arguments.CREATE_RECORD_PARAMS,
             "pa_number": arguments.CREATE_RECORD_PROGRAM_PA_NUMBER_PREVIOUS_REVISION,
             "name": arguments.CREATE_RECORD_PROGRAM_NAME_PREVIOUS_REVISION,
+            "tasks": arguments.CREATE_RECORD_TASK_PREVIOUS_REVISION_PARAMS,
         }
 
         response = self.client.post(self.url, body, content_type="application/json")
 
+        expected_record = json.loads(
+            json.dumps(
+                arguments.CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION,
+                cls=DjangoJSONEncoder,
+            )
+        )
         record = response.json()
         del record["created"]
         del record["id"]
@@ -92,9 +106,7 @@ class TestCreateRecord(MultiDBTestCase):
             obj.get("role", {}).pop("modified", None)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertDictEqual(
-            record, arguments.CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION
-        )
+        self.assertDictEqual(record, expected_record)
 
     @tag("views.record.create_record_program_dne")
     def test_create_record_program_dne(self) -> None:

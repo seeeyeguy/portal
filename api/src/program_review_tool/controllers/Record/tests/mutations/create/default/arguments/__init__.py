@@ -5,6 +5,8 @@ controller pytests.
 
 from typing import List
 
+from datetime import date
+
 CREATE_RECORD_USER_EMAIL: str = "May.Parker@harris.com"
 CREATE_RECORD_USER_EMAIL_DNE: str = "DNE.USER@harris.com"
 CREATE_RECORD_USER_EMAIL_UNAUTHORIZED: str = "Peter.Parker@harris.com"
@@ -49,6 +51,35 @@ CREATE_RECORD_PARAMS: dict = {
     "overall_program": 3,
     "comments": "All milestones on track.",
 }
+
+CREATE_RECORD_TASK_PARAMS: list[dict[str, object]] = [
+    {
+        "pa_number": "10LR",
+        "reporting_period": 202508,
+        "order": None,
+        "name": "Update Risk Register",
+        "description": "Identify and document new risks for the reporting period.",
+        "owner": "Peter.Parker@harris.com",
+        "status": "In Progress",
+        "create_date": "2024-06-01",
+        "target_date": "2024-10-15",
+        "complete_date": "2024-06-01",
+        "archive_date": "2024-10-15",
+    },
+    {
+        "pa_number": "10LR",
+        "reporting_period": 202508,
+        "order": 1,
+        "name": "Finalize Cost Estimate",
+        "description": "Complete the cost estimate for Phase 2.",
+        "owner": "Peter.Parker@harris.com",
+        "status": "Completed",
+        "create_date": "2024-06-01",
+        "target_date": "2024-09-30",
+        "complete_date": "2024-09-28",
+        "archive_date": None,
+    },
+]
 
 CREATE_RECORD_EXPECTED_RECORD: dict = {
     "pa_number": "10LR",
@@ -126,7 +157,81 @@ CREATE_RECORD_EXPECTED_RECORD: dict = {
             "program": 2,
         },
     ],
+    "tasks": [
+        {
+            "id": 7,
+            "pa_number": "10LR",
+            "reporting_period": [202508],
+            "order": 1,
+            "name": "Finalize Cost Estimate",
+            "description": "Complete the cost estimate for Phase 2.",
+            "owner": "Peter.Parker@harris.com",
+            "status": "Completed",
+            "create_date": date(2024, 6, 1),
+            "target_date": date(2024, 9, 30),
+            "complete_date": date(2024, 9, 28),
+            "archive_date": None,
+        },
+        {
+            "id": 6,
+            "pa_number": "10LR",
+            "reporting_period": [202508],
+            "order": None,
+            "name": "Update Risk Register",
+            "description": "Identify and document new risks for the reporting period.",
+            "owner": "Peter.Parker@harris.com",
+            "status": "In Progress",
+            "create_date": date(2024, 6, 1),
+            "target_date": date(2024, 10, 15),
+            "complete_date": date(2024, 6, 1),
+            "archive_date": date(2024, 10, 15),
+        },
+    ],
 }
+
+CREATE_RECORD_TASK_PREVIOUS_REVISION_PARAMS: list[dict[str, object]] = [
+    {
+        "id": 1,
+        "pa_number": "6C27",
+        "reporting_period": 202508,
+        "order": None,
+        "name": "Task Alpha",
+        "description": "Beginning Planning.",
+        "owner": "Peter.Parker@harris.com",
+        "status": "Completed",
+        "create_date": "2024-01-01",
+        "target_date": "2025-01-01",
+        "complete_date": "2025-01-01",
+        "archive_date": "2025-02-01",
+    },
+    {
+        "id": 5,
+        "pa_number": "6C27",
+        "reporting_period": 202508,
+        "order": 1,
+        "name": "Task Delta",
+        "description": "Finalize design, documentation, and handover.",
+        "owner": "Peter.Parker@harris.com",
+        "status": "In Progress",
+        "create_date": "2025-01-01",
+        "target_date": "2025-01-01",
+        "complete_date": None,
+        "archive_date": None,
+    },
+    {
+        "pa_number": "6C27",
+        "reporting_period": 202508,
+        "order": 2,
+        "name": "Finalize Cost Estimate",
+        "description": "Complete the cost estimate for Phase 2.",
+        "owner": "Peter.Parker@harris.com",
+        "status": "Completed",
+        "create_date": "2024-06-01",
+        "target_date": "2024-09-30",
+        "complete_date": "2024-09-28",
+        "archive_date": None,
+    },
+]
 
 CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION: dict = {
     "pa_number": "6C27",
@@ -202,6 +307,50 @@ CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION: dict = {
             "modified": "2025-01-01T11:00:00-05:00",
             "expiry_date": None,
             "program": 1,
+        },
+    ],
+    "tasks": [
+        {
+            "id": 5,
+            "pa_number": "6C27",
+            "reporting_period": [202508],
+            "order": 1,
+            "name": "Task Delta",
+            "description": "Finalize design, documentation, and handover.",
+            "owner": "Peter.Parker@harris.com",
+            "status": "In Progress",
+            "create_date": date(2025, 1, 1),
+            "target_date": date(2025, 1, 1),
+            "complete_date": None,
+            "archive_date": None,
+        },
+        {
+            "id": 8,
+            "pa_number": "6C27",
+            "reporting_period": [202508],
+            "order": 2,
+            "name": "Finalize Cost Estimate",
+            "description": "Complete the cost estimate for Phase 2.",
+            "owner": "Peter.Parker@harris.com",
+            "status": "Completed",
+            "create_date": date(2024, 6, 1),
+            "target_date": date(2024, 9, 30),
+            "complete_date": date(2024, 9, 28),
+            "archive_date": None,
+        },
+        {
+            "id": 1,
+            "pa_number": "6C27",
+            "reporting_period": [202506, 202507, 202508],
+            "order": None,
+            "name": "Task Alpha",
+            "description": "Beginning Planning.",
+            "owner": "Peter.Parker@harris.com",
+            "status": "Completed",
+            "create_date": date(2024, 1, 1),
+            "target_date": date(2025, 1, 1),
+            "complete_date": date(2025, 1, 1),
+            "archive_date": date(2025, 2, 1),
         },
     ],
 }

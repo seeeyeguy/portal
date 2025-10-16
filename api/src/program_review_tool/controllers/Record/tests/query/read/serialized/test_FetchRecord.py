@@ -31,6 +31,7 @@ class TestFetchRecord(MultiDBTestCase):
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/programs.json",
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/program_members.json",
         "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/records.json",
+        "program_review_tool/controllers/Record/tests/query/read/serialized/fixtures/tasks.json",
     ]
 
     @tag("controllers.record.fetch_record")

@@ -4960,6 +4960,50 @@ components:
         risk_assessment: 2
         overall_program: 3
         comments: "All milestones on track."
+        "tasks": [
+          {
+            "id": null,
+            "pa_number": "4X25J",
+            "reporting_period": 202508,
+            "order": null,
+            "name": "Update Risk Register",
+            "description": "Identify and document new risks for the reporting period.",
+            "owner": "test.user@harris.com",
+            "status": "In Progress",
+            "create_date": "2024-06-01",
+            "target_date": "2024-10-15",
+            "complete_date": "2024-06-01",
+            "archive_date": "2024-10-15"
+          },
+          {
+            "id": null,
+            "pa_number": "4X25J",
+            "reporting_period": 202508,
+            "order": 1,
+            "name": "Finalize Cost Estimate",
+            "description": "Complete the cost estimate for Phase 2.",
+            "owner": "test.user@harris.com",
+            "status": "Completed",
+            "create_date": "2024-06-01",
+            "target_date": "2024-09-30",
+            "complete_date": "2024-09-28",
+            "archive_date": null
+          },
+          {
+            "id": null,
+            "pa_number": "4X25J",
+            "reporting_period": 202508,
+            "order": 2,
+            "name": "Conduct Customer Review",
+            "description": "Run the quarterly customer review meeting.",
+            "owner": "test.user@harris.com",
+            "status": "Pending",
+            "create_date": "2024-06-01",
+            "target_date": "2024-11-01",
+            "complete_date": null,
+            "archive_date": null
+          }
+        ]
 
     CreateRecordResponse:
       title: "Create `Record` response."
@@ -5033,6 +5077,56 @@ components:
                 "team_members": [],
               },
               "created": "2025-08-08T06:37:32-05:00",
+              "tasks": [
+                {
+                  "id": 135,
+                  "pa_number": "4X25J",
+                  "reporting_period": [
+                    202508
+                  ],
+                  "order": 1,
+                  "name": "Update Risk Register",
+                  "description": "Identify and document new risks for the reporting period.",
+                  "owner": "test.user@harris.com",
+                  "status": "In Progress",
+                  "create_date": "2024-06-01",
+                  "target_date": "2024-10-15",
+                  "complete_date": null,
+                  "archive_date": null
+                },
+                {
+                  "id": 136,
+                  "pa_number": "4X25J",
+                  "reporting_period": [
+                    202508
+                  ],
+                  "order": 2,
+                  "name": "Finalize Cost Estimate",
+                  "description": "Complete the cost estimate for Phase 2.",
+                  "owner": "test.user@harris.com",
+                  "status": "Completed",
+                  "create_date": "2024-06-01",
+                  "target_date": "2024-09-30",
+                  "complete_date": "2024-09-28",
+                  "archive_date": null
+                },
+                {
+                  "id": 137,
+                  "pa_number": "4X25J",
+                  "reporting_period": [
+                    202508
+                  ],
+                  "order": 3,
+                  "name": "Conduct Customer Review",
+                  "description": "Run the quarterly customer review meeting.",
+                  "owner": "test.user@harris.com",
+                  "status": "Pending",
+                  "create_date": "2024-06-01",
+                  "target_date": "2024-11-01",
+                  "complete_date": null,
+                  "archive_date": null
+                }
+              ]
             }
 
     CreateRecordUnauthorizedResponse:
@@ -5120,6 +5214,56 @@ components:
             "risk_assessment": None,
             "overall_program": None,
             "comments": "",
+            "tasks": [
+              {
+                "id": 135,
+                "pa_number": "4X25J",
+                "reporting_period": [
+                  202508
+                ],
+                "order": 1,
+                "name": "Update Risk Register",
+                "description": "Identify and document new risks for the reporting period.",
+                "owner": "test.user@harris.com",
+                "status": "In Progress",
+                "create_date": "2024-06-01",
+                "target_date": "2024-10-15",
+                "complete_date": null,
+                "archive_date": null
+              },
+              {
+                "id": 136,
+                "pa_number": "4X25J",
+                "reporting_period": [
+                  202508
+                ],
+                "order": 2,
+                "name": "Finalize Cost Estimate",
+                "description": "Complete the cost estimate for Phase 2.",
+                "owner": "test.user@harris.com",
+                "status": "Completed",
+                "create_date": "2024-06-01",
+                "target_date": "2024-09-30",
+                "complete_date": "2024-09-28",
+                "archive_date": null
+              },
+              {
+                "id": 137,
+                "pa_number": "4X25J",
+                "reporting_period": [
+                  202508
+                ],
+                "order": 3,
+                "name": "Conduct Customer Review",
+                "description": "Run the quarterly customer review meeting.",
+                "owner": "test.user@harris.com",
+                "status": "Pending",
+                "create_date": "2024-06-01",
+                "target_date": "2024-11-01",
+                "complete_date": null,
+                "archive_date": null
+              }
+            ]
           }
     
     FetchRecordMissingPANumberResponse:
