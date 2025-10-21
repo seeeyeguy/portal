@@ -1,7 +1,6 @@
 import React from "react";
 import { useLoaderData } from "react-router";
 import { MoonLoader } from "react-spinners";
-import lodash from "lodash";
 import { Dropdown } from "primereact/dropdown";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
@@ -128,66 +127,6 @@ export default function ProgramPerformance() {
     },
     [] 
   );
-  
-
-
-  const redProgram: string[] = React.useMemo(() => {
-    const programIssues: string[] = [];
-    if (
-      lodash.isNil(record?.data?.budgetedCostWorkPerformedCumulative) ||
-      lodash.isNil(record?.data?.budgetAtComplete) ||
-      lodash.isNil(record?.data?.estimateToComplete) ||
-      lodash.isNil(record?.data?.estimateAtComplete) ||
-      lodash.isNil(record?.data?.costPerformanceIndexCumulative) ||
-      lodash.isNil(record?.data?.schedulePerformanceIndexCumulative) ||
-      lodash.isNil(record?.data?.contractValue) ||
-      lodash.isNil(record?.data?.contractEndDate)
-    ) {
-      return programIssues;
-    }
-
-    if (
-      // Ignore programs over 95% complete and less then 7% cost overrun
-      record?.data?.budgetedCostWorkPerformedCumulative /
-        record?.data?.budgetAtComplete <
-        0.95 &&
-      record?.data?.estimateToComplete > 0.07 * record?.data?.estimateAtComplete
-    ) {
-      // Indicator 1.
-      if (record?.data?.costPerformanceIndexCumulative < 0.9) {
-        programIssues.push("CPI");
-      }
-
-      // Indicator 2.
-      if (record?.data?.schedulePerformanceIndexCumulative < 0.9) {
-        programIssues.push("SPI");
-      }
-
-      // Indicator 3.
-      if (
-        record?.data?.estimateAtComplete >
-        1.1 * record?.data?.budgetAtComplete
-      ) {
-        programIssues.push("EAC Growth");
-      }
-
-      // Indicator 4.
-      if (
-        record?.data?.estimateAtComplete >
-          1.1 * record?.data?.budgetAtComplete &&
-        new Date().toISOString().split("T")[0] > record?.data?.contractEndDate
-      ) {
-        programIssues.push("Past Period of Performance");
-      }
-    }
-
-    // Indicator 5.
-    if (record?.data?.estimateAtComplete > record?.data?.contractValue) {
-      programIssues.push("Over Target Cost");
-    }
-
-    return programIssues;
-  }, [record?.data]);
 
   if (!loaderData.user.email) {
     return <div>:x: 404</div>;
@@ -286,7 +225,7 @@ export default function ProgramPerformance() {
             key={`${record?.data.paNumber}-${record?.data.reportingPeriod}`}
             isEditing={inCurrentPeriod && !record?.data.id && edit}
             record={record?.data ?? null}
-            redIndicators={redProgram}
+            redIndicators={[]}
             handleEdit={handleEdit}
           />
         )}
