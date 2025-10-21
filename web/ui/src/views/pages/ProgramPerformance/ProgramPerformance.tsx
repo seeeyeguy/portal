@@ -1,6 +1,7 @@
 import React from "react";
 import { useLoaderData } from "react-router";
 import { MoonLoader } from "react-spinners";
+import lodash from "lodash";
 import { Dropdown } from "primereact/dropdown";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
@@ -18,6 +19,8 @@ import { IProfile } from "definitions/portal/users/Profile.types";
 import { IUser } from "definitions/portal/users/User.types";
 
 import styles from "views/pages/ProgramPerformance/ProgramPerformance.module.css";
+
+const SCROLL_HEIGHT = 87;
 
 export default function ProgramPerformance() {
   const loaderData = useLoaderData() as { user: IUser };
@@ -49,6 +52,22 @@ export default function ProgramPerformance() {
   const [selectedPA, setSelectedPA] = React.useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = React.useState<number>();
 
+  // Adds class to menu when scrolled past a certain point.
+  const pageContentRef = React.useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const container = pageContentRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      setScrolled(container.scrollTop > SCROLL_HEIGHT);
+    };
+
+    container.addEventListener("scroll", onScroll);
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Once reporting periods load in, set the initial dropdown value to the first period.
   React.useEffect(() => {
     if (reportingPeriods) {
@@ -78,6 +97,98 @@ export default function ProgramPerformance() {
     [setEdit]
   );
 
+  const periodOptions = React.useMemo(
+    () =>
+      reportingPeriods?.map((period) => ({
+        label: period,
+        value: period,
+      })) ?? [],
+    [reportingPeriods]
+  );
+
+  const handlePeriodChange = React.useCallback(
+    (event: { value: number }) => {
+      setSelectedPeriod(event.value);
+    },
+    [] 
+  );
+
+  const programOptions = React.useMemo(
+    () =>
+      Object.keys(programs?.data ?? []).map((PA) => ({
+        label: PA,
+        value: PA,
+      })),
+    [programs?.data]
+  );
+
+  const handlePAChange = React.useCallback(
+    (event: { value: string | null }) => {
+      setSelectedPA(event.value);
+    },
+    [] 
+  );
+  
+
+
+  const redProgram: string[] = React.useMemo(() => {
+    const programIssues: string[] = [];
+    if (
+      lodash.isNil(record?.data?.budgetedCostWorkPerformedCumulative) ||
+      lodash.isNil(record?.data?.budgetAtComplete) ||
+      lodash.isNil(record?.data?.estimateToComplete) ||
+      lodash.isNil(record?.data?.estimateAtComplete) ||
+      lodash.isNil(record?.data?.costPerformanceIndexCumulative) ||
+      lodash.isNil(record?.data?.schedulePerformanceIndexCumulative) ||
+      lodash.isNil(record?.data?.contractValue) ||
+      lodash.isNil(record?.data?.contractEndDate)
+    ) {
+      return programIssues;
+    }
+
+    if (
+      // Ignore programs over 95% complete and less then 7% cost overrun
+      record?.data?.budgetedCostWorkPerformedCumulative /
+        record?.data?.budgetAtComplete <
+        0.95 &&
+      record?.data?.estimateToComplete > 0.07 * record?.data?.estimateAtComplete
+    ) {
+      // Indicator 1.
+      if (record?.data?.costPerformanceIndexCumulative < 0.9) {
+        programIssues.push("CPI");
+      }
+
+      // Indicator 2.
+      if (record?.data?.schedulePerformanceIndexCumulative < 0.9) {
+        programIssues.push("SPI");
+      }
+
+      // Indicator 3.
+      if (
+        record?.data?.estimateAtComplete >
+        1.1 * record?.data?.budgetAtComplete
+      ) {
+        programIssues.push("EAC Growth");
+      }
+
+      // Indicator 4.
+      if (
+        record?.data?.estimateAtComplete >
+          1.1 * record?.data?.budgetAtComplete &&
+        new Date().toISOString().split("T")[0] > record?.data?.contractEndDate
+      ) {
+        programIssues.push("Past Period of Performance");
+      }
+    }
+
+    // Indicator 5.
+    if (record?.data?.estimateAtComplete > record?.data?.contractValue) {
+      programIssues.push("Over Target Cost");
+    }
+
+    return programIssues;
+  }, [record?.data]);
+
   if (!loaderData.user.email) {
     return <div>:x: 404</div>;
   }
@@ -87,7 +198,8 @@ export default function ProgramPerformance() {
       <FAQModal />
 
       <NavBar hideSearchBar profile={profile} />
-      <div id="page-content">
+      <div id="page-content" ref={pageContentRef}>
+        <span className={styles["menu-break-top"]} />
         <header className={styles["program-performance"]}>
           <div
             className={styles["program-performance-background"]}
@@ -98,7 +210,7 @@ export default function ProgramPerformance() {
 
           {!isLoadingPrograms && !isLoadingReportingPeriods && (
             <div
-              className={styles["record-controls"]}
+              className={`${styles["record-controls"]} ${scrolled ? styles["record-scrolled"] : ""}`}
               aria-description="container for selecting program performance record"
             >
               <span
@@ -106,15 +218,13 @@ export default function ProgramPerformance() {
                 aria-description="container for selecting reporting period"
               >
                 <header>
-                  <h2>Reporting Period:</h2>
+                  <h2 className={styles["header-long"]}>Reporting Period:</h2>
+                  <h2 className={styles["header-short"]}>Period:</h2>
                 </header>
                 <Dropdown
                   value={selectedPeriod}
-                  onChange={(event) => setSelectedPeriod(event.value)}
-                  options={reportingPeriods?.map((period) => ({
-                    label: period,
-                    value: period,
-                  }))}
+                  onChange={handlePeriodChange}
+                  options={periodOptions}
                   placeholder="Reporting Period"
                   className={styles["header-dropdown"]}
                   panelClassName={styles["header-dropdown-panel"]}
@@ -125,19 +235,16 @@ export default function ProgramPerformance() {
                 aria-description="container for selecting pa number"
               >
                 <header>
-                  <h2>Project ID (PA):</h2>
+                  <h2 className={styles["header-long"]}>Project ID (PA):</h2>
+                  <h2 className={styles["header-short"]}>PA:</h2>
                 </header>
                 <Dropdown
                   value={selectedPA}
-                  onChange={(event) => setSelectedPA(event.value)}
-                  options={Object.keys(programs?.data ?? []).map((PA) => ({
-                    label: PA,
-                    value: PA,
-                  }))}
-                  placeholder="PA Number"
+                  onChange={handlePAChange}
+                  options={programOptions}
+                  placeholder="Select PA"
                   className={styles["header-dropdown"]}
                   panelClassName={styles["header-dropdown-panel"]}
-
                 />
               </span>
               {inCurrentPeriod && (
@@ -158,7 +265,9 @@ export default function ProgramPerformance() {
             </div>
           )}
         </header>
-        {isLoadingPrograms || isLoadingReportingPeriods || isFetchingRecord ? (
+        {isLoadingPrograms ||
+        isLoadingReportingPeriods ||
+        (isFetchingRecord && !edit) ? (
           <div
             className={styles["record-loading"]}
             aria-description="container to display when loading record data"
@@ -174,8 +283,10 @@ export default function ProgramPerformance() {
           </div>
         ) : (
           <ProgramPerformanceForm
+            key={`${record?.data.paNumber}-${record?.data.reportingPeriod}`}
             isEditing={inCurrentPeriod && !record?.data.id && edit}
             record={record?.data ?? null}
+            redIndicators={redProgram}
             handleEdit={handleEdit}
           />
         )}

@@ -6,6 +6,10 @@
   --z-index-dropdown-menu: 1;
   --z-index-tooltip: 1;
 
+  /* Header Menus */
+  --z-index-sticky-menu: 1;
+  --z-index-sticky-break: 2;
+
   /* Modals. */
   --z-index-modals: 5;
 

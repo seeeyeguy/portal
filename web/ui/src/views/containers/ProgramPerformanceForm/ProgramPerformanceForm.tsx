@@ -1,20 +1,25 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lodash from "lodash";
 import numeral from "numeral";
 import { Dropdown } from "primereact/dropdown";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { InputTextarea } from "primereact/inputtextarea";
+
+import TaskManager from "views/components/TaskManager/TaskManager";
 
 import recordApi, {
   TApiPostRecordRequest,
+  TApiPostRecordTaskRequest,
 } from "state/query/api/portal/programReviewTool/RecordApi";
 import store from "state/store/store";
 
 import {
-  IRecord,
   assessmentOptions,
+  IRecord,
+  ITask,
 } from "views/definitions/ProgramReviewTool.types";
 
 import styles from "views/containers/ProgramPerformanceForm/ProgramPerformanceForm.module.css";
@@ -34,21 +39,34 @@ const assessmentOptionsDropdown = [
 interface ProgramPerformanceFormProps {
   record: IRecord | null;
   isEditing: boolean | null;
+  redIndicators: string[];
   handleEdit: (value: boolean) => void;
 }
 
 export default function ProgramPerformanceForm({
   record,
   isEditing = false,
+  redIndicators = [],
   handleEdit,
 }: ProgramPerformanceFormProps) {
   const [formData, setFormData] = React.useState<IRecord | null>(record);
   const [submittingRecord, setSubmittingRecord] = React.useState(false);
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [errors, setErrors] = React.useState<
+    Record<string, string | Record<number, string[]>>
+  >({});
 
   React.useEffect(() => {
     setFormData(record);
   }, [record]);
+
+  const handleTaskChange = React.useCallback((newTasks: ITask[]) => {    
+    setFormData((prev) => {
+      if (!prev) return null;
+      if (lodash.isEqual(prev.tasks, newTasks)) return prev;
+
+      return { ...prev, tasks: newTasks };
+    });
+  }, []);
 
   const IndexTooltipTemplate = ({
     type,
@@ -143,8 +161,10 @@ export default function ProgramPerformanceForm({
     }
   };
 
-  const validate = (data: IRecord | null): Record<string, string> => {
-    const err: Record<string, string> = {};
+  const validate = (
+    data: IRecord | null
+  ): Record<string, string | Record<number, string[]>> => {
+    const err: Record<string, string | Record<number, string[]>> = {};
 
     if (!data) return err;
 
@@ -184,6 +204,35 @@ export default function ProgramPerformanceForm({
       err.overallProgram = "Select an Overall Program assessment.";
     }
 
+    if (data.tasks) {
+      const taskErrors: Record<number, string[]> = {};
+
+      data.tasks.forEach((task, index) => {
+        const errors: string[] = [];
+
+        if (!task.name?.trim()) {
+          errors.push("name");
+        }
+        if (!task.description?.trim()) {
+          errors.push("description");
+        }
+        if (!task.owner?.trim()) {
+          errors.push("owner");
+        }
+        if (!task.targetDate) {
+          errors.push("targetDate");
+        }
+
+        if (errors.length) {
+          taskErrors[index] = errors;
+        }
+      });
+
+      if (Object.keys(taskErrors).length > 0) {
+        err.tasks = taskErrors;
+      }
+    }
+
     return err;
   };
 
@@ -206,7 +255,30 @@ export default function ProgramPerformanceForm({
         const errorList = (
           <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
             {Object.entries(newErrors).map(
-              ([field, message]) => message && <li key={field}>{message}</li>
+              ([field, message]) =>
+                message && (
+                  <li key={field}>
+                    {lodash.isObject(message) ? (
+                      <>
+                        Tasks missing fields:
+                        <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                          {Object.entries(message).map(
+                            ([taskField, taskError]) =>
+                              taskError && (
+                                <li key={taskField}>
+                                {taskError
+                                  .map((err) => lodash.startCase(err))
+                                  .join(", ")}
+                              </li>
+                              )
+                          )}
+                        </ul>
+                      </>
+                    ) : (
+                      message
+                    )}
+                  </li>
+                )
             )}
           </ul>
         );
@@ -220,8 +292,26 @@ export default function ProgramPerformanceForm({
         return;
       }
 
+      const taskBody: TApiPostRecordTaskRequest[] = (formData?.tasks ?? []).map(
+        (task) => ({
+          id: task.id,
+          pa_number: formData?.paNumber ?? "",
+          reporting_period: formData?.reportingPeriod as number,
+          order: task.order ?? null,
+          name: task.name ?? "",
+          description: task.description ?? "",
+          owner: task.owner ?? "",
+          status: task.status ?? "",
+          create_date: task.createDate,
+          target_date: task.targetDate ?? "",
+          complete_date: task.completeDate ?? null,
+          archive_date: task.archiveDate ?? null,
+        })
+      );
+
       const requestBody: TApiPostRecordRequest = {
-        ...(formData as TApiPostRecordRequest),
+        ...(formData as Omit<TApiPostRecordRequest, "tasks">),
+        tasks: taskBody,
       };
 
       setSubmittingRecord(true);
@@ -245,7 +335,7 @@ export default function ProgramPerformanceForm({
   );
 
   return (
-    <form className="program-record-content" onSubmit={handleSubmit}>
+    <form className={styles["program-record-content"]} onSubmit={handleSubmit}>
       <div
         className={styles["section-wrapper"]}
         aria-description="container for program meta data"
@@ -261,11 +351,37 @@ export default function ProgramPerformanceForm({
           aria-description="group container for tier, edit controls, PA, and program details"
         >
           <div
-            className={styles["pa-label-large"]}
-            aria-description="program PA display"
+            className={styles["pa-label"]}
+            data-tooltip-id="red-indicators-tooltip"
+            data-tooltip-delay-show={TOOLTIP_DELAY_SHOW}
           >
-            {record?.paNumber}
+            <div
+              className={styles["pa-label-value"]}
+              aria-description="program PA display"
+            >
+              {record?.paNumber}
+            </div>
+            {redIndicators.length > 0 && (
+              <label className={styles["pa-label-warning"]}>
+                WARNING RED PROGRAM
+              </label>
+            )}
           </div>
+          {redIndicators.length > 0 && (
+            <Tooltip
+              id="red-indicators-tooltip"
+              place="right"
+              className={styles["program-performance-form-tooltip"]}
+            >
+              <strong>Red program due to:</strong>
+              <ul className={styles["tooltip-description-list"]}>
+                {redIndicators.map((indicator, index) => (
+                  <li key={index}>{indicator}</li>
+                ))}
+              </ul>
+            </Tooltip>
+          )}
+
           <span className={styles["pa-metadata"]}>
             <div
               className={styles["field-pair"]}
@@ -969,7 +1085,7 @@ export default function ProgramPerformanceForm({
 
         <h3 className={styles["field-label"]}>Comments:</h3>
         {isEditing ? (
-          <textarea
+          <InputTextarea
             className={styles["comments-textarea"]}
             value={formData?.comments || ""}
             onChange={(event) =>
@@ -980,9 +1096,37 @@ export default function ProgramPerformanceForm({
             }
           />
         ) : (
-          <p className={styles["field-value"]}>{formData?.comments || "-"}</p>
+          <p className={`${styles["field-value"]} ${styles["comments-value"]}`}>
+            {formData?.comments || "-"}
+          </p>
         )}
       </div>
+      {(formData?.tasks.length || isEditing || redIndicators.length > 0) && (
+        <>
+          <h2
+            className={`${styles["section-header"]} ${redIndicators.length ? styles["return-to-green"] : ""}`}
+          >
+            Return to Green Tasks
+            {redIndicators.length > 0 && (
+              <label>*Remember to update your Return-To-Green plan</label>
+            )}
+          </h2>
+          <div
+            className={`${styles["section-wrapper"]} ${styles["no-padding"]} ${redIndicators.length ? styles["return-to-green"] : ""}`}
+            aria-description="series of tasks to help the program improve metrics"
+          >
+            <TaskManager
+              key={`${record?.paNumber}-${record?.reportingPeriod}`}
+              onTasksChange={handleTaskChange}
+              tasks={formData?.tasks ?? []}
+              isEditing={isEditing ?? false}
+              externalValidationErrors={
+                errors["tasks"] as Record<number, string[]>
+              }
+            />
+          </div>
+        </>
+      )}
       <div
         className={styles["button-container"]}
         aria-description="container for submit button"
@@ -991,6 +1135,7 @@ export default function ProgramPerformanceForm({
           <button
             disabled={submittingRecord}
             className={styles["form-submit-button"]}
+            type="submit"
           >
             Submit Record
           </button>
