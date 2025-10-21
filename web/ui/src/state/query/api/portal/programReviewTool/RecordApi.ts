@@ -13,6 +13,21 @@ type TApiRecordResponse = {
   status: number | undefined;
 };
 
+export type TApiPostRecordTaskRequest = {
+  id: number | null;
+  pa_number: string;
+  reporting_period: number;
+  order: number | null;
+  name: string;
+  description: string;
+  owner: string;
+  status: string;
+  create_date: string;
+  target_date: string;
+  complete_date: string | null;
+  archive_date: string | null;
+};
+
 export type TApiPostRecordRequest = {
   paNumber: string;
   reportingPeriod: number;
@@ -46,6 +61,7 @@ export type TApiPostRecordRequest = {
   riskAssessment: number | null;
   overallProgram: number | null;
   comments: string;
+  tasks: TApiPostRecordTaskRequest[];
 };
 
 export type TApiFetchRecordRequest = {
@@ -101,6 +117,7 @@ const recordApi = api.injectEndpoints({
           risk_assessment: body.riskAssessment,
           overall_program: body.overallProgram,
           comments: body.comments,
+          tasks: body.tasks,
         },
       }),
       transformResponse: (response: IApiRecord, meta): TApiRecordResponse => ({
@@ -140,4 +157,8 @@ const recordApi = api.injectEndpoints({
 });
 
 export default recordApi;
-export const { useAddRecordMutation, useGetRecordQuery, useGetReportingPeriodQuery } = recordApi;
+export const {
+  useAddRecordMutation,
+  useGetRecordQuery,
+  useGetReportingPeriodQuery,
+} = recordApi;

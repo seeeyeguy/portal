@@ -91,6 +91,21 @@ export interface IPortfolioMetadata {
 
 type TOmitIProgramProps = "activeStatus" | "modified" | "disabled";
 
+export interface ITask {
+  id: number | null;
+  paNumber: string | null;
+  reportingPeriod: number | null;
+  order: number | null;
+  name: string | null;
+  description: string | null;
+  owner: string | null;
+  status: string | null;
+  createDate: string;
+  targetDate: string | null;
+  completeDate: string | null;
+  archiveDate: string | null;
+}
+
 export interface IRecord extends Omit<IProgram, TOmitIProgramProps> {
   previousRevision: number | null;
   program: IProgram;
@@ -106,4 +121,5 @@ export interface IRecord extends Omit<IProgram, TOmitIProgramProps> {
   overallProgram: number;
   comments: string;
   user: IUser;
+  tasks: ITask[];
 }

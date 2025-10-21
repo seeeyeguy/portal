@@ -1,4 +1,4 @@
-import { IRecord } from "views/definitions/ProgramReviewTool.types";
+import { IRecord, ITask } from "views/definitions/ProgramReviewTool.types";
 
 import { IApiProgram } from "state/query/api/portal/programReviewTool/ProgramHelper";
 import { IApiUser } from "state/query/api/portal/users/UsersHelper";
@@ -6,6 +6,21 @@ import { IApiUser } from "state/query/api/portal/users/UsersHelper";
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
 
 type TOmitIApiProgramProps = "active_status" | "modified";
+
+export interface IApiTask {
+  id: number | null;
+  pa_number: string;
+  reporting_period: number[];
+  order: number | null;
+  name: string;
+  description: string;
+  owner: string;
+  status: string;
+  create_date: string;
+  target_date: string;
+  complete_date: string | null;
+  archive_date: string | null;
+}
 
 export interface IApiRecord extends Omit<IApiProgram, TOmitIApiProgramProps> {
   previous_revision: number | null;
@@ -22,6 +37,19 @@ export interface IApiRecord extends Omit<IApiProgram, TOmitIApiProgramProps> {
   overall_program: number;
   comments: string;
   user: IApiUser;
+  tasks: IApiTask[];
+}
+
+/**
+ * Transforms a `program_review_tool.Task` record from snake_casing
+ * to camelCasing.
+ * @param data A `program_review_tool.Task` record.
+ * @returns A `program_review_tool.Task` record with desired casing and types.
+ */
+export function transformTaskRecord(data: IApiTask): ITask {
+  return snakeCaseToCamelCase({
+    ...data,
+  }) as unknown as ITask;
 }
 
 /**
@@ -31,5 +59,8 @@ export interface IApiRecord extends Omit<IApiProgram, TOmitIApiProgramProps> {
  * @returns A `program_review_tool.Record` record with desired casing.
  */
 export function transformRecordRecord(data: IApiRecord): IRecord {
-  return snakeCaseToCamelCase({ ...data }) as unknown as IRecord;
+  return snakeCaseToCamelCase({
+    ...data,
+    tasks: data.tasks?.map(transformTaskRecord) ?? [],
+  }) as unknown as IRecord;
 }
