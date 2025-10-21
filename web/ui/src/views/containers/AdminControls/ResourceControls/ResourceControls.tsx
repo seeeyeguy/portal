@@ -69,15 +69,26 @@ export default function AdminResources() {
     [loaderData]
   );
 
+  // Filter State.
+  const [selectedFilters, setSelectedFilters] = React.useState<
+    (string | number)[]
+  >([]);
+
   // Multi-Select filter options, non-superusers get their resources
   // filtered by default so the first option is removed.
-  const FILTER_OPTIONS = [
-    superuserPermissions && { name: "My Resources", value: 0 },
-    { name: "Drafts/Revisions", value: 1 },
-    { name: "Pending", value: "PENDING" },
-    { name: "Approved", value: "APPROVED" },
-    { name: "Rejected", value: "REJECTED" },
-  ].filter(Boolean);
+  const FILTER_OPTIONS = React.useMemo(
+    () =>
+      selectedFilters.includes(0)
+        ? [
+            { name: "My Resources", value: 0 },
+            { name: "Drafts/Revisions", value: 1 },
+            { name: "Pending", value: "PENDING" },
+            { name: "Approved", value: "APPROVED" },
+            { name: "Rejected", value: "REJECTED" },
+          ].filter(Boolean)
+        : [{ name: "My Resources", value: 0 }],
+    [selectedFilters]
+  );
 
   // Pagination State.
   const [page, setPage] = React.useState(0);
@@ -92,17 +103,19 @@ export default function AdminResources() {
     setRows(event.rows);
   };
 
-  // Filter State.
-  const [selectedFilters, setSelectedFilters] = React.useState<
-    (string | number)[]
-  >(superuserPermissions ? [0] : []);
-
   // Filter State Updates.
   const handleFilterChange = (event: MultiSelectChangeEvent) => {
     const selectedValues: (number | string)[] = event.value;
 
     // Ensure "My Resources" can coexist with any other value.
     const myResourcesSelected = selectedValues.some((filter) => filter === 0);
+
+    // Early return when "My Resources" is not selected with all other filters removed.
+    if (!myResourcesSelected) {
+      setSelectedFilters([]);
+      setTotalRows(rows);
+      return;
+    }
 
     // Remove other values if more than one is selected (excluding "My Resources").
     const otherSelectedValues = selectedValues.filter((filter) => filter !== 0);
@@ -118,6 +131,19 @@ export default function AdminResources() {
     setTotalRows(rows);
   };
 
+  const usersPermittedSubFunctions = React.useMemo(
+    () =>
+      Array.from(
+        loaderData.user.accesses?.reduce((acc, access) => {
+          access.subfunctions.forEach((id) => {
+              acc.add(id);
+          });
+          return acc;
+        }, new Set<number>())
+      ),
+    [loaderData]
+  );
+
   // Queries.
   const {
     data: requests,
@@ -126,13 +152,13 @@ export default function AdminResources() {
   } = useGetRequestsQuery({
     originator:
       // Filter to user requests if they have the filter or if they are not a superuser.
-      !superuserPermissions || selectedFilters.includes(0)
-        ? loaderData.user.email
-        : null,
-    // Filter request status by string value in selected filters.
-    status:
-      (selectedFilters.find((filter) => lodash.isString(filter)) as string) ??
-      null,
+      selectedFilters.includes(0) ? loaderData.user.email : null,
+    // If "My Resources" is selected, filter request status by string value in selected filters, else only show APPROVED resources.
+    status: selectedFilters.includes(0)
+      ? ((selectedFilters.find((filter) =>
+          lodash.isString(filter)
+        ) as string) ?? null)
+      : "APPROVED",
     // Filter request stage by number value in selected filters.
     stages: selectedFilters.reduce((acc, filter) => {
       if (lodash.isNumber(filter) && filter > 0 && !acc.length) {
@@ -140,6 +166,7 @@ export default function AdminResources() {
       }
       return acc;
     }, [] as number[]),
+    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions,
     page: page + 1,
     limit: rows,
   });
