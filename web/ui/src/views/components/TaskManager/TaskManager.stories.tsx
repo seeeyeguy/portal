@@ -1,7 +1,8 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import TaskManager, { ITask } from "views/components/TaskManager/TaskManager";
+import TaskManager from "views/components/TaskManager/TaskManager";
+import { ITask } from "views/definitions/ProgramReviewTool.types";
 
 const meta: Meta<typeof TaskManager> = {
   title: "TaskManager",
@@ -42,6 +43,8 @@ export const WithTasks: Story = {
     tasks: [
       {
         id: 1,
+        paNumber: null,
+        reportingPeriod: null,
         order: 1,
         name: "Task 1",
         description: "Description for task 1",
@@ -54,6 +57,8 @@ export const WithTasks: Story = {
       },
       {
         id: 2,
+        paNumber: null,
+        reportingPeriod: null,
         order: 2,
         name: "Task 2",
         description: "Description for task 2",
@@ -66,6 +71,8 @@ export const WithTasks: Story = {
       },
       {
         id: 3,
+        paNumber: null,
+        reportingPeriod: null,
         order: null,
         name: "Task 3 Archived",
         description: "Description for task 3",
@@ -78,6 +85,8 @@ export const WithTasks: Story = {
       },
       {
         id: 4,
+        paNumber: null,
+        reportingPeriod: null,
         order: null,
         name: "Task 4 Archived",
         description: "Description for task 4",
@@ -112,6 +121,8 @@ export const EditingTasks: Story = {
     tasks: [
       {
         id: 1,
+        paNumber: null,
+        reportingPeriod: null,
         order: 1,
         name: "Task 1",
         description: "Description for task 1",
@@ -124,6 +135,8 @@ export const EditingTasks: Story = {
       },
       {
         id: 2,
+        paNumber: null,
+        reportingPeriod: null,
         order: 2,
         name: "Task 2",
         description: "Description for task 2",
@@ -136,6 +149,8 @@ export const EditingTasks: Story = {
       },
       {
         id: 3,
+        paNumber: null,
+        reportingPeriod: null,
         order: null,
         name: "Task 3 Archived",
         description: "Description for task 3",
@@ -148,6 +163,8 @@ export const EditingTasks: Story = {
       },
       {
         id: 4,
+        paNumber: null,
+        reportingPeriod: null,
         order: null,
         name: "Task 4 Archived",
         description: "Description for task 4",
