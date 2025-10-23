@@ -71,6 +71,7 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
         * weighted_risks_and_opportunities (models.DecimalField): The net financial impact of
             risks and opportunities, weighted by their probability of occurrence.
         * active_status (models.BooleanField): Whether the `Program` is active.
+        * is_manual_metrics_entry (models.BooleanField): Whether the `Program` will require manual entry of program metrics.
         * created (models.DateTimeField): The date & time this `Program` was created.
         * modified (models.DateTimeField): The date & time this `Program` was last modified.
     """
@@ -118,6 +119,7 @@ class Program(BasicInformationAbstractModel, DateTimeAbstractModel):
         max_digits=14, decimal_places=2, null=True, default=None
     )
     active_status = models.BooleanField(null=True, default=None)
+    is_manual_metrics_entry = models.BooleanField(default=False)
 
     # Removed fields from superclass.
     description = None  # type: ignore[assignment]

@@ -89,6 +89,7 @@ class Record(DateTimeAbstractModel):
         * risk_assessment (models.IntegerField): The program manager's subjective risk assessment (1-4).
         * overall_program (models.IntegerField): The program manager's subjective overall program assessment (1-4).
         * comments (models.TextField): Additional comments.
+        * is_manual_metrics_entry (models.BooleanField): Whether the `Record` used manual entry of program metrics.
         * user (contrib.auth.models.User): A `BI Portal` user who created the record.
         * created (models.DateTimeField): The date & time this `Record` was created.
     """
@@ -208,6 +209,7 @@ class Record(DateTimeAbstractModel):
         default=None,
     )
     comments = models.TextField(null=True, default=None)
+    is_manual_metrics_entry = models.BooleanField(default=False)
 
     modified = None  # type: ignore[assignment]
 

@@ -91,6 +91,7 @@ class Record(View):
                 overall_program=body["overall_program"],
                 comments=body["comments"],
                 tasks=body["tasks"],
+                is_manual_metrics_entry=body["is_manual_metrics_entry"],
             )
 
             # Serialize `Record`.

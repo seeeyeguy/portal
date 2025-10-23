@@ -50,6 +50,7 @@ CREATE_RECORD_PARAMS: dict = {
     "risk_assessment": 2,
     "overall_program": 3,
     "comments": "All milestones on track.",
+    "is_manual_metrics_entry": False,
 }
 
 CREATE_RECORD_TASK_PARAMS: list[dict[str, object]] = [
@@ -115,6 +116,7 @@ CREATE_RECORD_EXPECTED_RECORD: dict = {
     "risk_assessment": 2,
     "overall_program": 3,
     "comments": "All milestones on track.",
+    "is_manual_metrics_entry": False,
     "team_members": [
         {
             "id": 4,
@@ -267,6 +269,7 @@ CREATE_RECORD_EXPECTED_RECORD_PREVIOUS_REVISION: dict = {
     "risk_assessment": 2,
     "overall_program": 3,
     "comments": "All milestones on track.",
+    "is_manual_metrics_entry": False,
     "team_members": [
         {
             "id": 1,

@@ -25,6 +25,7 @@
       "management_reserve": 47.9,
       "weighted_risks_and_opportunities": 30.27,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2024-08-27T16:00:00Z",
       "modified": "2024-08-27T16:00:00Z"
     }
@@ -55,6 +56,7 @@
       "management_reserve": 29.55,
       "weighted_risks_and_opportunities": 72.65,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2024-08-27T16:00:00Z",
       "modified": "2024-08-27T16:00:00Z"
     }
@@ -85,6 +87,7 @@
       "management_reserve": 88.7,
       "weighted_risks_and_opportunities": 12.17,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2024-08-27T16:00:00Z",
       "modified": "2024-08-27T16:00:00Z"
     }
@@ -115,6 +118,7 @@
       "management_reserve": 40.63,
       "weighted_risks_and_opportunities": 38.8,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2024-08-27T16:00:00Z",
       "modified": "2024-08-27T16:00:00Z"
     }

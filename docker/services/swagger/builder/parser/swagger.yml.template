@@ -4377,6 +4377,7 @@ components:
                   "management_reserve": 47.9,
                   "weighted_risks_and_opportunities": 30.27,
                   "active_status": True,
+                  "is_manual_metrics_entry": False,
                   "team_members": [],
                 },                
                 ...
@@ -4459,6 +4460,7 @@ components:
                         "management_reserve": 47.9,
                         "weighted_risks_and_opportunities": 30.27,
                         "active_status": True,
+                        "is_manual_metrics_entry": False,
                         "team_members": [],
                     },
                     {
@@ -4487,6 +4489,7 @@ components:
                         "management_reserve": 29.55,
                         "weighted_risks_and_opportunities": 72.65,
                         "active_status": True,
+                        "is_manual_metrics_entry": False,
                         "team_members": [],
                     },
                 ],
@@ -4563,6 +4566,7 @@ components:
                       "management_reserve": 31.08,
                       "weighted_risks_and_opportunities": 59.75,
                       "active_status": True,
+                      "is_manual_metrics_entry": False,
                       "team_members": [],
                   },
                   {
@@ -4591,6 +4595,7 @@ components:
                       "management_reserve": 74.61,
                       "weighted_risks_and_opportunities": 89.8,
                       "active_status": True,
+                      "is_manual_metrics_entry": False,
                       "team_members": [],
                   },
                   ...
@@ -4733,6 +4738,7 @@ components:
                 "management_reserve": 31.08,
                 "weighted_risks_and_opportunities": 59.75,
                 "active_status": True,
+                "is_manual_metrics_entry": False,
                 "team_members": [],
               }
             ]
@@ -4927,6 +4933,14 @@ components:
           type: string
           nullable: true
           description: Free‑form comments; maps to a Django `TextField`.
+        is_manual_metrics_entry:
+          type: boolean
+          nullable: false
+          description: Whether the `Record` used manual entry of program metrics.
+        tasks:
+          type: array
+          nullable: true
+          description: Tasks for `Program` to complete to return to green.
       example:
         pa_number: "4X25J"
         reporting_period: 202508
@@ -4960,6 +4974,7 @@ components:
         risk_assessment: 2
         overall_program: 3
         comments: "All milestones on track."
+        is_manual_metrics_entry: false
         "tasks": [
           {
             "id": null,
@@ -5047,6 +5062,7 @@ components:
               "risk_assessment": 4,
               "overall_program": 2,
               "comments": "Program on track, no major issues.",
+              "is_manual_metrics_entry": false,
               "team_members": [],
               "program": {
                 "id": 1,
@@ -5214,6 +5230,7 @@ components:
             "risk_assessment": None,
             "overall_program": None,
             "comments": "",
+            "is_manual_metrics_entry": False,
             "tasks": [
               {
                 "id": 135,

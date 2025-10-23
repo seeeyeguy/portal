@@ -38,6 +38,7 @@
       "risk_assessment": 1,
       "overall_program": 2,
       "comments": "Program is making progress.",
+      "is_manual_metrics_entry": false,
       "created": "2026-05-01T16:00:00Z"
     }
   },
@@ -80,6 +81,7 @@
       "risk_assessment": 3,
       "overall_program": 3,
       "comments": "Program spending is within estimated budget.",
+      "is_manual_metrics_entry": false,
       "created": "2026-09-01T16:00:00Z"
     }
   }

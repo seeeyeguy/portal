@@ -38,6 +38,7 @@
       "risk_assessment": 2,
       "overall_program": 3,
       "comments": "All milestones on track.",
+      "is_manual_metrics_entry": false,
       "created": "2024-01-01T16:00:00Z"
     }
   }

@@ -117,21 +117,49 @@ def transform_contract_value(contract_value: float) -> Union[int, None]:
     return round(contract_value) if not pd.isnull(contract_value) else None
 
 
+def transform_is_manual_metrics_entry(value: str) -> bool:
+    """Given a boolean as a string, return a boolean indicating
+    whether the manually entry is required if it has cobra data(False), otherwise(True)."""
+
+    if pd.isnull(value):
+        return True
+    return str(value).strip().upper() != "Y"
+
+
 def transform_active_status(status: str) -> bool:
     """Given a status as a string, return a boolean indicating
     whether the status is active(True) or inactive(False)."""
 
-    return str(status).lower() in {"active", "o", "l", "y", "yes"}
+    if pd.isnull(status):
+        return False
+    return str(status).strip().upper() == "Y"
 
 
 def query_programs_from_axis(pa_numbers: List[str] | None = None) -> List[dict]:
     """Query program data from `AXIS` given a set of pa numbers."""
-
     try:
         conn = ExternalDatabaseConnector("axis")
-        sql = "SELECT * FROM program"
+
+        base_sql = """
+            SELECT *
+            FROM program p
+            WHERE p.FISCAL_PERIOD = (
+                SELECT MAX(FISCAL_PERIOD)
+                FROM program
+                WHERE pa_number = p.pa_number
+            )
+        """
+
         if pa_numbers:
-            sql = f"{sql} WHERE pa_number IN {tuple(pa_numbers)}"
+            sql = f"""
+                SELECT *
+                FROM ({base_sql}) sub
+                WHERE sub.pa_number IN {tuple(pa_numbers)}
+            """
+            df = conn.query_db(sql=sql)
+        else:
+            df = conn.query_db(sql=base_sql)
+
         df = conn.query_db(sql=sql)
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
@@ -148,31 +176,31 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
     try:
         conn = ExternalDatabaseConnector("fdw")
         base_sql = """
-                SELECT bcom.PROJECT_ID AS pa_number,
-                    bcom.PROGRAM_NAME AS program_name,
-                    bcom.SEGMENT AS segment,
-                    bcom.SECTOR AS sector,
-                    bcom.DIVISION AS division,
-                    bcom.PROGRAM_TIER AS tier,
+                SELECT 
+                    ppv.PA_NUMBER AS pa_number,
+                    ppv.PROGRAM_NAME AS program_name,
+                    ppv.SEGMENT AS segment,
+                    ppv.SECTOR AS sector,
+                    ppv.DIVISION AS division,
+                    ppv.TIER AS tier,
                     ppv.CONTRACT_TYPE AS contract_type,
                     ppv.CONTRACT_NUMBER AS contract_number,
-                    bcom.CV AS contract_value,
+                    ppv.CONTRACT_VALUE AS contract_value,
                     ppv.CONTRACT_START_DATE AS contract_start_date,
                     ppv.CONTRACT_END_DATE AS contract_end_date,
-                    ppv.CUM_ACWP AS actual_cost_work_performed_cum,
-                    ppv.CUM_BCWP AS budget_cost_work_performed_cum,
-                    ppv.CUM_BCWS AS budget_cost_work_scheduled_cum,
-                    ppv.CUM_CPI_CURRENT AS cost_performance_index_cum,
-                    ppv.CUM_SPI_CURRENT AS schedule_performance_index_cum,
-                    ppv.BAC AS budget_at_complete,
-                    ppv.EAC AS estimate_at_complete,
-                    ppv.ETC AS estimate_to_complete,
+                    ppv.ACTUAL_COST_WORK_PERFORMED_CUM AS actual_cost_work_performed_cum,
+                    ppv.BUDGET_COST_WORK_PERFORMED_CUM AS budget_cost_work_performed_cum,
+                    ppv.BUDGET_COST_WORK_SCHEDULED_CUM AS budget_cost_work_scheduled_cum,
+                    ppv.COST_PERFORMANCE_INDEX_CUM AS cost_performance_index_cum,
+                    ppv.SCHEDULE_PERFORMANCE_INDEX_CUM AS schedule_performance_index_cum,
+                    ppv.BUDGET_AT_COMPLETE AS budget_at_complete,
+                    ppv.ESTIMATE_AT_COMPLETE AS estimate_at_complete,
+                    ppv.ESTIMATE_TO_COMPLETE AS estimate_to_complete,
                     ppv.MANAGEMENT_RESERVE AS management_reserve,
-                    ppv.WEIGHTED_RO AS weighted_risks_opportunities,
-                    bcom.ACTIVEINACTIVE AS active_status
-                FROM BUSANA.BA_CONTRACT_ORG_MASTER bcom
-                LEFT JOIN BUSANA.PROGRAM_PERFORMANCE_VIEW ppv
-                ON bcom.PROJECT_ID = ppv.PA
+                    ppv.WEIGHTED_RISKS_OPPORTUNITIES AS weighted_risks_opportunities,
+                    ppv.HAS_COBRA_DATA AS is_manual_metrics_entry,
+                    ppv.ACTIVE_STATUS AS active_status
+                FROM BUSANA.PORTAL_PROGRAMS_VIEW ppv
         """
 
         df = pd.DataFrame()
@@ -180,7 +208,7 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
             if len(pa_numbers) < FDW_WHERE_IN_LIMIT:
                 sql = f"""
                 {base_sql}
-                WHERE bcom.PROJECT_ID IN {tuple(pa_numbers)}
+                WHERE ppv.PA IN {tuple(pa_numbers)}
                 """
                 df = conn.query_db(sql=sql)
             else:
@@ -188,7 +216,7 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
                 while i < len(pa_numbers):
                     sql = f"""
                         {base_sql}
-                        WHERE bcom.PROJECT_ID IN {tuple(pa_numbers[i:j])}
+                        WHERE ppv.PA IN {tuple(pa_numbers[i:j])}
                         """
                     query_df = conn.query_db(sql=sql)
                     df = pd.concat([df, query_df])
@@ -262,6 +290,9 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
 
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
+        df["is_manual_metrics_entry"] = df["is_manual_metrics_entry"].apply(
+            transform_is_manual_metrics_entry
+        )
         df["active_status"] = df["active_status"].apply(transform_active_status)
 
         records: List[dict] = df.to_dict("records")
@@ -331,6 +362,7 @@ def update_programs_from_external_database() -> None:
             weighted_risks_and_opportunities=convert_nullish_to_none(
                 record["weighted_risks_and_opportunities"]
             ),
+            is_manual_metrics_entry=record["is_manual_metrics_entry"],
             active_status=record["active_status"],
             modified=timezone.now(),
         )
@@ -424,6 +456,7 @@ def ingest_new_programs_from_external_database() -> None:
                     weighted_risks_and_opportunities=convert_nullish_to_none(
                         record["weighted_risks_and_opportunities"]
                     ),
+                    is_manual_metrics_entry=record["is_manual_metrics_entry"],
                     active_status=record["active_status"],
                     created=timezone.now(),
                     modified=timezone.now(),

@@ -116,6 +116,7 @@ class CreateRecordRequest(serializers.Serializer):
     )
     comments = serializers.CharField(allow_blank=True, default="")
     tasks = TaskSerializer(many=True, required=False, default=list)
+    is_manual_metrics_entry = serializers.BooleanField(required=False, default=False)
 
 
 class FetchRecordRequestQueryParams(serializers.Serializer):
