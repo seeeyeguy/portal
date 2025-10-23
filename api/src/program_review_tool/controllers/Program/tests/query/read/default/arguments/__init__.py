@@ -367,6 +367,7 @@ EXPECTED_PROGRAMS_PROGRAM_ID_VALIDATE_PARAMS: dict = {
         "management_reserve": 47.9,
         "weighted_risks_and_opportunities": 30.27,
         "active_status": True,
+        "is_manual_metrics_entry": False,
         "team_members": [],
     },
     FETCH_PROGRAM_IDS_2: {
@@ -395,6 +396,7 @@ EXPECTED_PROGRAMS_PROGRAM_ID_VALIDATE_PARAMS: dict = {
         "management_reserve": 47.9,
         "weighted_risks_and_opportunities": 30.27,
         "active_status": True,
+        "is_manual_metrics_entry": False,
         "team_members": [],
     },
 }

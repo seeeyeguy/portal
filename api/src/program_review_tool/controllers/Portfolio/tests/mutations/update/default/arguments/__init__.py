@@ -71,6 +71,7 @@ UPDATE_PORTFOLIO_EXPECTED_PORTFOLIO: dict = {
             "management_reserve": 31.08,
             "weighted_risks_and_opportunities": 59.75,
             "active_status": True,
+            "is_manual_metrics_entry": False,
             "team_members": [],
         },
         {
@@ -99,6 +100,7 @@ UPDATE_PORTFOLIO_EXPECTED_PORTFOLIO: dict = {
             "management_reserve": 74.61,
             "weighted_risks_and_opportunities": 89.8,
             "active_status": True,
+            "is_manual_metrics_entry": False,
             "team_members": [],
         },
     ],

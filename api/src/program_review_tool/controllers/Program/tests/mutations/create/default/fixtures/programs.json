@@ -11,6 +11,7 @@
       "tier": 2,
       "contract_value": 85025623,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2025-05-01T04:40:34-04:00",
       "modified": "2025-05-01T03:55:11-04:00"
     }
@@ -27,6 +28,7 @@
       "tier": 1,
       "contract_value": 602634937,
       "active_status": true,
+      "is_manual_metrics_entry": false,
       "created": "2025-05-02T04:40:34-04:00",
       "modified": "2025-05-02T03:55:11-04:00"
     }

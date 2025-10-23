@@ -48,6 +48,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
                 "management_reserve": 47.9,
                 "weighted_risks_and_opportunities": 30.27,
                 "active_status": True,
+                "is_manual_metrics_entry": False,
                 "team_members": [],
             },
             {
@@ -76,6 +77,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
                 "management_reserve": 29.55,
                 "weighted_risks_and_opportunities": 72.65,
                 "active_status": True,
+                "is_manual_metrics_entry": False,
                 "team_members": [],
             },
         ],
@@ -120,6 +122,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
                 "management_reserve": 88.7,
                 "weighted_risks_and_opportunities": 12.17,
                 "active_status": True,
+                "is_manual_metrics_entry": False,
                 "team_members": [],
             },
             {
@@ -148,6 +151,7 @@ FETCH_PORTFOLIOS_EXPECTED_PORTFOLIOS = [
                 "management_reserve": 40.63,
                 "weighted_risks_and_opportunities": 38.8,
                 "active_status": True,
+                "is_manual_metrics_entry": False,
                 "team_members": [],
             },
         ],

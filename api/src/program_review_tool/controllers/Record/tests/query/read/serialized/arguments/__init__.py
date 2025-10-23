@@ -61,6 +61,7 @@ FETCH_RECORD_EXPECTED_RECORD_DATA: dict = {
     "risk_assessment": 3,
     "overall_program": 3,
     "comments": "Program spending is within estimated budget.",
+    "is_manual_metrics_entry": False,
     "tasks": [
         {
             "id": 3,
@@ -179,6 +180,7 @@ FETCH_RECORD_NO_CURRENT_RECORD_FOR_REPORTING_PERIOD_EXPECTED_RECORD_DATA: dict =
     "risk_assessment": None,
     "overall_program": None,
     "comments": "",
+    "is_manual_metrics_entry": True,
     "user": None,
     "created": None,
     "tasks": [
@@ -287,6 +289,7 @@ FETCH_RECORD_NO_EXISTING_RECORD_EXPECTED_RECORD_DATA: dict = {
     "risk_assessment": None,
     "overall_program": None,
     "comments": "",
+    "is_manual_metrics_entry": False,
     "tasks": [],
 }
 
@@ -356,6 +359,7 @@ FETCH_RECORD_WITH_REFRESH_EXPECTED_RECORD_DATA: dict = {
     "risk_assessment": 3,
     "overall_program": 3,
     "comments": "Program spending is within estimated budget.",
+    "is_manual_metrics_entry": True,
     "tasks": [
         {
             "id": 3,

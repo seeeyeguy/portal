@@ -44,6 +44,7 @@ DEFAULT_PROGRAM_METRICS_DATA: dict = {
     "management_reserve": None,
     "weighted_risks_and_opportunities": None,
     "team_members": [],
+    "is_manual_metrics_entry": False,
 }
 
 
@@ -131,6 +132,7 @@ class Record:
         overall_program: Union[int, None] = None,
         comments: str = "",
         tasks: Optional[List[TaskPayload]] = None,
+        is_manual_metrics_entry: bool = False,
     ) -> models.Record:
         """
         Create a `Record` record in the database.
@@ -188,6 +190,7 @@ class Record:
             * overall_program (int | none): The program manager's subjective overall program assessment (1-4).
             * comments (str): Additional comments.
             * tasks: (List[Task]): Array of tasks to be associated with the record.
+            * is_manual_metrics_entry (bool): Whether the `Record` used manual entry of program metrics.
         Returns:
             * record (models.Record): The newly created `Record` record.
         """
@@ -257,6 +260,7 @@ class Record:
                 "risk_assessment": risk_assessment,
                 "overall_program": overall_program,
                 "comments": comments,
+                "is_manual_metrics_entry": is_manual_metrics_entry,
             }
 
             # Create the `Record` record.
