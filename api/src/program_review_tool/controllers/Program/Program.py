@@ -6,6 +6,7 @@ modification, deletion, fetching, and processing of data.
 import logging
 import os
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from typing import cast, List, Optional, Set, Tuple
 
 import django_rq
@@ -316,9 +317,9 @@ class Program:
 
         program_manager_names = ", ".join(program_manager_names_list)
 
-        # Set period for export from the current time.
-        period: str = datetime.now().strftime("%Y%m")
-
+        # Set the reporting period for the export to the previous reporting period
+        period: str = (datetime.now() - relativedelta(months=1)).strftime("%Y%m") 
+        
         # Retrieve a Tableau token and its cache key.
         tableau_token_cache_key, tableau_token_for_job = get_tableau_token_for_job()
 
