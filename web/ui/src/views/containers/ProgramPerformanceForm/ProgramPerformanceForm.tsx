@@ -257,99 +257,107 @@ export default function ProgramPerformanceForm({
     }
   };
 
-  const validate = async (
-    data: IRecord | null
-  ): Promise<Record<string, string | Record<number, string[]>>> => {
-    const err: Record<string, string | Record<number, string[]>> = {};
+  const normalizeHarrisEmail = React.useCallback((email: string) => {
+    const localPart = email.trim().toLowerCase().split("@")[0];
+    return `${localPart}@harris.com`;
+  }, []);
 
-    if (!data) return err;
+  const validate = React.useCallback(
+    async (
+      data: IRecord | null
+    ): Promise<Record<string, string | Record<number, string[]>>> => {
+      const err: Record<string, string | Record<number, string[]>> = {};
 
-    // ---- required text fields -------------------------------------------------
-    if (!data.programPhase?.trim()) {
-      err.programPhase = "Program Phase is required.";
-    }
-    if (!data.site?.trim()) {
-      err.site = "Site is required.";
-    }
-    if (!data.earnedValueManagementSystemReportingRequirement?.trim()) {
-      err.earnedValueManagementSystemReportingRequirement =
-        "EVMS Reporting Requirement is required.";
-    }
+      if (!data) return err;
 
-    // ---- required radio buttons -------------------------------------------------
-    if (lodash.isNil(data.defenseFinancialAcquisitionRegulationClause)) {
-      err.defenseFinancialAcquisitionRegulationClause =
-        "DFARS Clause has not been selected.";
-    }
-    if (lodash.isNil(data.costAndSoftwareDataReportingSystemClause)) {
-      err.costAndSoftwareDataReportingSystemClause =
-        "CSDR Clause has not been selected.";
-    }
+      // ---- required text fields -------------------------------------------------
+      if (!data.programPhase?.trim()) {
+        err.programPhase = "Program Phase is required.";
+      }
+      if (!data.site?.trim()) {
+        err.site = "Site is required.";
+      }
+      if (!data.earnedValueManagementSystemReportingRequirement?.trim()) {
+        err.earnedValueManagementSystemReportingRequirement =
+          "EVMS Reporting Requirement is required.";
+      }
 
-    // ---- required assessments -------------------------------------------------
-    if (data.customerAssessment === null) {
-      err.customerAssessment = "Select a Customer assessment.";
-    }
-    if (data.technicalAssessment === null) {
-      err.technicalAssessment = "Select a Technical assessment.";
-    }
-    if (data.riskAssessment === null) {
-      err.riskAssessment = "Select a Risk assessment.";
-    }
-    if (data.overallProgram === null) {
-      err.overallProgram = "Select an Overall Program assessment.";
-    }
+      // ---- required radio buttons -------------------------------------------------
+      if (lodash.isNil(data.defenseFinancialAcquisitionRegulationClause)) {
+        err.defenseFinancialAcquisitionRegulationClause =
+          "DFARS Clause has not been selected.";
+      }
+      if (lodash.isNil(data.costAndSoftwareDataReportingSystemClause)) {
+        err.costAndSoftwareDataReportingSystemClause =
+          "CSDR Clause has not been selected.";
+      }
 
-    const missingOwners: string[] = [];
+      // ---- required assessments -------------------------------------------------
+      if (data.customerAssessment === null) {
+        err.customerAssessment = "Select a Customer assessment.";
+      }
+      if (data.technicalAssessment === null) {
+        err.technicalAssessment = "Select a Technical assessment.";
+      }
+      if (data.riskAssessment === null) {
+        err.riskAssessment = "Select a Risk assessment.";
+      }
+      if (data.overallProgram === null) {
+        err.overallProgram = "Select an Overall Program assessment.";
+      }
 
-    if (data.tasks) {
-      const taskErrors: Record<number, string[]> = {};
+      const missingOwners: string[] = [];
 
-      for (let index = 0; index < data.tasks.length; index++) {
-        const task = data.tasks[index];
-        const errors: string[] = [];
+      if (data.tasks) {
+        const taskErrors: Record<number, string[]> = {};
 
-        if (!task.name?.trim()) {
-          errors.push("name");
-        }
-        if (!task.description?.trim()) {
-          errors.push("description");
-        }
-        if (!task.owner?.trim()) {
-          errors.push("owner");
-        } else {
-          // check owner existence via LDAP service
-          const response = await searchForEmployees(task.owner.trim());
-          const ownerExists =
-            response.data.length === 1 &&
-            task.owner.trim().toLowerCase() ===
-              response.data[0].email.toLowerCase();
+        for (let index = 0; index < data.tasks.length; index++) {
+          const task = data.tasks[index];
+          const errors: string[] = [];
 
-          if (!ownerExists) {
+          if (!task.name?.trim()) {
+            errors.push("name");
+          }
+          if (!task.description?.trim()) {
+            errors.push("description");
+          }
+          if (!task.owner?.trim()) {
             errors.push("owner");
-            missingOwners.push(task.owner.trim());
+          } else {
+            // check owner existence via LDAP service
+            const response = await searchForEmployees(task.owner.trim());
+            const ownerExists =
+              response.data.length === 1 &&
+              normalizeHarrisEmail(task.owner) ===
+                normalizeHarrisEmail(response.data[0].email);
+
+            if (!ownerExists) {
+              errors.push("owner");
+              missingOwners.push(task.owner.trim());
+            }
+          }
+          if (!task.targetDate) {
+            errors.push("targetDate");
+          }
+
+          if (errors.length) {
+            taskErrors[index] = errors;
           }
         }
-        if (!task.targetDate) {
-          errors.push("targetDate");
-        }
 
-        if (errors.length) {
-          taskErrors[index] = errors;
+        if (Object.keys(taskErrors).length > 0) {
+          err.tasks = taskErrors;
         }
       }
 
-      if (Object.keys(taskErrors).length > 0) {
-        err.tasks = taskErrors;
+      if (missingOwners.length > 0) {
+        err.missingOwners = `One or more Tasks owners cannot be found: ${missingOwners}`;
       }
-    }
 
-    if (missingOwners.length > 0) {
-      err.missingOwners = `One or more Tasks owners cannot be found: ${missingOwners}`;
-    }
-
-    return err;
-  };
+      return err;
+    },
+    [normalizeHarrisEmail] // <-- stable dependency
+  );
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -447,7 +455,7 @@ export default function ProgramPerformanceForm({
       handleEdit(false);
       toast.success("Record Created");
     },
-    [formData, handleEdit]
+    [formData, validate, handleEdit]
   );
 
   return (
