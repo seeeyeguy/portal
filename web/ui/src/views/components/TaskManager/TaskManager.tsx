@@ -25,7 +25,6 @@ import { debounce } from "utils/PromiseUtility";
 
 import { ITask } from "views/definitions/ProgramReviewTool.types";
 
-
 import styles from "views/components/TaskManager/TaskManager.module.css";
 
 const validateTask = (task: ITask) => {
@@ -74,7 +73,7 @@ export default function TaskManager({
     }),
     [externalValidationErrors, localValidationErrors]
   );
-  
+
   /**
    * Called when the user (un)checks the `Completed` box.
    * If checking, required fields (name, description, owner, targetDate)
@@ -100,18 +99,28 @@ export default function TaskManager({
         return copy;
       });
 
-      handleInputChange(index, "status", "Complete");
+      handleInputChange([
+        { index: index, name: "status", value: "Complete" },
+        {
+          index: index,
+          name: "completeDate",
+          value: new Date().toISOString().split("T")[0],
+        },
+      ]);
+      setCompleteCheckedMap((prev) => ({ ...prev, [index]: checked }));
+
+      return;
     }
 
-    // ---- store the checkbox state ----
     setCompleteCheckedMap((prev) => ({ ...prev, [index]: checked }));
-
-    // if the user un‑checks, also clear the stored completeDate
-    handleInputChange(
-      index,
-      "completeDate",
-      !checked ? null : new Date().toISOString().split("T")[0]
-    );
+    // if the user un‑checks, clear the stored completeDate
+    handleInputChange([
+      {
+        index: index,
+        name: "completeDate",
+        value: null,
+      },
+    ]);
   };
 
   const renumberActive = (list: ITask[]) => {
@@ -298,9 +307,17 @@ export default function TaskManager({
   };
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const handleInputChange = (index: number, name: string, value: any) => {
+  const handleInputChange = (
+    changes: { index: number; name: string; value: any }[]
+  ) => {
     const newTaskList = [...tasks];
-    newTaskList[index] = { ...newTaskList[index], [name]: value };
+
+    changes.forEach(({ index, name, value }) => {
+      newTaskList[index] = {
+        ...newTaskList[index],
+        [name]: value,
+      };
+    });
 
     onTasksChange(newTaskList);
   };
@@ -506,7 +523,9 @@ export default function TaskManager({
                     value={task.name}
                     disabled={!!task.archiveDate || !!task.completeDate}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "name", e.target.value)
+                      handleInputChange([
+                        { index: realIdx, name: "name", value: e.target.value },
+                      ])
                     }
                     placeholder="Task Name"
                     className={`${styles["task-input"]}`}
@@ -521,7 +540,13 @@ export default function TaskManager({
                     completeMethod={debouncedFetchUsers}
                     onDropdownClick={fetchUserOptions}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "owner", e.target.value)
+                      handleInputChange([
+                        {
+                          index: realIdx,
+                          name: "owner",
+                          value: e.target.value,
+                        },
+                      ])
                     }
                     placeholder="Owner"
                     className={`${styles["task-input"]} ${styles["autocomplete-input"]}`}
@@ -536,7 +561,13 @@ export default function TaskManager({
                     value={task.targetDate ?? ""}
                     disabled={!!task.archiveDate || !!task.completeDate}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "targetDate", e.target.value)
+                      handleInputChange([
+                        {
+                          index: realIdx,
+                          name: "targetDate",
+                          value: e.target.value,
+                        },
+                      ])
                     }
                     placeholder="Target Date"
                     className={`${styles["task-input"]} ${styles["date-input"]}`}
@@ -551,7 +582,13 @@ export default function TaskManager({
                     value={task.completeDate ?? ""}
                     disabled={!!task.archiveDate || !completedChecked}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "completeDate", e.target.value)
+                      handleInputChange([
+                        {
+                          index: realIdx,
+                          name: "completeDate",
+                          value: e.target.value,
+                        },
+                      ])
                     }
                     placeholder="Complete Date"
                     className={`${styles["task-input"]} ${styles["date-input"]}`}
@@ -562,7 +599,13 @@ export default function TaskManager({
                     tooltip="Current Status"
                     disabled={!!task.archiveDate || !!task.completeDate}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "status", e.target.value)
+                      handleInputChange([
+                        {
+                          index: realIdx,
+                          name: "status",
+                          value: e.target.value,
+                        },
+                      ])
                     }
                     placeholder="Status"
                     className={`${styles["task-input"]} ${styles["dropdown-input"]}`}
@@ -575,7 +618,13 @@ export default function TaskManager({
                     tooltip="Description"
                     disabled={!!task.archiveDate || !!task.completeDate}
                     onChange={(e) =>
-                      handleInputChange(realIdx, "description", e.target.value)
+                      handleInputChange([
+                        {
+                          index: realIdx,
+                          name: "description",
+                          value: e.target.value,
+                        },
+                      ])
                     }
                     placeholder="Description"
                     className={`${styles["task-input"]} ${styles["area-input"]}`}

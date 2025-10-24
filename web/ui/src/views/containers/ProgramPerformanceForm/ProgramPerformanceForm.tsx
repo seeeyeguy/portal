@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lodash from "lodash";
 import numeral from "numeral";
 import { Dropdown } from "primereact/dropdown";
+import { InputNumber } from "primereact/inputnumber";
 import { InputTextarea } from "primereact/inputtextarea";
 
 import TaskManager from "views/components/TaskManager/TaskManager";
@@ -15,6 +16,8 @@ import recordApi, {
   TApiPostRecordTaskRequest,
 } from "state/query/api/portal/programReviewTool/RecordApi";
 import store from "state/store/store";
+
+import { searchForEmployees } from "services/auth/ldapService";
 
 import {
   assessmentOptions,
@@ -39,14 +42,12 @@ const assessmentOptionsDropdown = [
 interface ProgramPerformanceFormProps {
   record: IRecord | null;
   isEditing: boolean | null;
-  redIndicators: string[];
   handleEdit: (value: boolean) => void;
 }
 
 export default function ProgramPerformanceForm({
   record,
   isEditing = false,
-  redIndicators = [],
   handleEdit,
 }: ProgramPerformanceFormProps) {
   const [formData, setFormData] = React.useState<IRecord | null>(record);
@@ -59,7 +60,99 @@ export default function ProgramPerformanceForm({
     setFormData(record);
   }, [record]);
 
-  const handleTaskChange = React.useCallback((newTasks: ITask[]) => {    
+  const classifiedSpi: number | string = React.useMemo(
+    () =>
+      formData?.budgetedCostWorkPerformedCumulative &&
+      formData?.budgetedCostWorkScheduledCumulative
+        ? (
+            formData?.budgetedCostWorkPerformedCumulative /
+            formData?.budgetedCostWorkScheduledCumulative
+          ).toFixed(2)
+        : "-",
+    [
+      formData?.budgetedCostWorkPerformedCumulative,
+      formData?.budgetedCostWorkScheduledCumulative,
+    ]
+  );
+
+  const classifiedCpi: number | string = React.useMemo(
+    () =>
+      formData?.budgetedCostWorkPerformedCumulative &&
+      formData?.actualCostWorkPerformedCumulative
+        ? (
+            formData?.budgetedCostWorkPerformedCumulative /
+            formData?.actualCostWorkPerformedCumulative
+          ).toFixed(2)
+        : "-",
+    [
+      formData?.budgetedCostWorkPerformedCumulative,
+      formData?.actualCostWorkPerformedCumulative,
+    ]
+  );
+
+  const redIndicators: string[] = React.useMemo(() => {
+    if (!formData) return [];
+
+    const programIssues: string[] = [];
+    if (
+      // Ignore if these values are null or undefined.
+      !lodash.isNil(formData?.budgetedCostWorkPerformedCumulative) &&
+      !lodash.isNil(formData?.budgetAtComplete) &&
+      !lodash.isNil(formData?.estimateToComplete) &&
+      !lodash.isNil(formData?.estimateAtComplete) &&
+      // Ignore programs over 95% complete and less then 7% cost overrun.
+      formData.budgetedCostWorkPerformedCumulative / formData.budgetAtComplete <
+        0.95 &&
+      formData.estimateToComplete > 0.07 * formData.estimateAtComplete
+    ) {
+      // Indicator 1.
+      if (
+        !lodash.isNil(formData.costPerformanceIndexCumulative) &&
+        formData.costPerformanceIndexCumulative < 0.9
+      ) {
+        programIssues.push("CPI (CPI < 0.9)");
+      }
+
+      // Indicator 2.
+      if (
+        !lodash.isNil(formData.schedulePerformanceIndexCumulative) &&
+        formData.schedulePerformanceIndexCumulative < 0.9
+      ) {
+        programIssues.push("SPI (SPI < 0.9)");
+      }
+
+      // Indicator 3.
+      if (formData.estimateAtComplete > 1.1 * formData.budgetAtComplete) {
+        programIssues.push("EAC Growth (EAC > BAC by 10%)");
+      }
+
+      // Indicator 4.
+      if (
+        !lodash.isNil(formData.contractEndDate) &&
+        formData.estimateAtComplete > 1.1 * formData.budgetAtComplete &&
+        new Date().toISOString().split("T")[0] > formData.contractEndDate
+      ) {
+        programIssues.push("Past Period of Performance");
+      }
+
+      // Indicator 5.
+      if (
+        !lodash.isNil(formData.contractValue) &&
+        formData.estimateAtComplete > formData.contractValue
+      ) {
+        programIssues.push("Over Target Cost (EAC > CV)");
+      }
+    }
+
+    // Indicator 6.
+    if (formData?.overallProgram === 1) {
+      programIssues.push("Overall Program Assessment");
+    }
+
+    return programIssues;
+  }, [formData]);
+
+  const handleTaskChange = React.useCallback((newTasks: ITask[]) => {
     setFormData((prev) => {
       if (!prev) return null;
       if (lodash.isEqual(prev.tasks, newTasks)) return prev;
@@ -147,23 +240,26 @@ export default function ProgramPerformanceForm({
     }
   };
 
-  const getIndexClass = (value: number | undefined | null) => {
-    if (!lodash.isNumber(value)) return styles["finance-metric-box-grey"];
+  const getIndexClass = (value: number | string | undefined | null) => {
+    const numberValue = lodash.toNumber(value);
 
-    if (value > 1.0) {
+    if (!lodash.isFinite(numberValue) || lodash.isNaN(numberValue))
+      return styles["finance-metric-box-grey"];
+
+    if (numberValue > 1.0) {
       return styles["finance-metric-box-blue"];
-    } else if (value > 0.95 && value <= 1.0) {
+    } else if (numberValue > 0.95 && numberValue <= 1.0) {
       return styles["finance-metric-box-green"];
-    } else if (value > 0.9 && value <= 0.95) {
+    } else if (numberValue > 0.9 && numberValue <= 0.95) {
       return styles["finance-metric-box-yellow"];
     } else {
       return styles["finance-metric-box-red"];
     }
   };
 
-  const validate = (
+  const validate = async (
     data: IRecord | null
-  ): Record<string, string | Record<number, string[]>> => {
+  ): Promise<Record<string, string | Record<number, string[]>>> => {
     const err: Record<string, string | Record<number, string[]>> = {};
 
     if (!data) return err;
@@ -204,10 +300,13 @@ export default function ProgramPerformanceForm({
       err.overallProgram = "Select an Overall Program assessment.";
     }
 
+    const missingOwners: string[] = [];
+
     if (data.tasks) {
       const taskErrors: Record<number, string[]> = {};
 
-      data.tasks.forEach((task, index) => {
+      for (let index = 0; index < data.tasks.length; index++) {
+        const task = data.tasks[index];
         const errors: string[] = [];
 
         if (!task.name?.trim()) {
@@ -218,6 +317,18 @@ export default function ProgramPerformanceForm({
         }
         if (!task.owner?.trim()) {
           errors.push("owner");
+        } else {
+          // check owner existence via LDAP service
+          const response = await searchForEmployees(task.owner.trim());
+          const ownerExists =
+            response.data.length === 1 &&
+            task.owner.trim().toLowerCase() ===
+              response.data[0].email.toLowerCase();
+
+          if (!ownerExists) {
+            errors.push("owner");
+            missingOwners.push(task.owner.trim());
+          }
         }
         if (!task.targetDate) {
           errors.push("targetDate");
@@ -226,11 +337,15 @@ export default function ProgramPerformanceForm({
         if (errors.length) {
           taskErrors[index] = errors;
         }
-      });
+      }
 
       if (Object.keys(taskErrors).length > 0) {
         err.tasks = taskErrors;
       }
+    }
+
+    if (missingOwners.length > 0) {
+      err.missingOwners = `One or more Tasks owners cannot be found: ${missingOwners}`;
     }
 
     return err;
@@ -249,7 +364,7 @@ export default function ProgramPerformanceForm({
         return;
       }
 
-      const newErrors = validate(formData);
+      const newErrors = await validate(formData);
       setErrors(newErrors);
       if (Object.values(newErrors).some((msg) => msg)) {
         const errorList = (
@@ -266,10 +381,10 @@ export default function ProgramPerformanceForm({
                             ([taskField, taskError]) =>
                               taskError && (
                                 <li key={taskField}>
-                                {taskError
-                                  .map((err) => lodash.startCase(err))
-                                  .join(", ")}
-                              </li>
+                                  {taskError
+                                    .map((err) => lodash.startCase(err))
+                                    .join(", ")}
+                                </li>
                               )
                           )}
                         </ul>
@@ -324,7 +439,8 @@ export default function ProgramPerformanceForm({
       const { error } = response;
 
       if (error) {
-        toast.error(`Error creating record: ${error}`);
+        const errorMsg = "data" in error ? error.data : error;
+        toast.error(`Error creating record: ${JSON.stringify(errorMsg)}`);
         return;
       }
 
@@ -335,7 +451,20 @@ export default function ProgramPerformanceForm({
   );
 
   return (
-    <form className={styles["program-record-content"]} onSubmit={handleSubmit}>
+    <form
+      className={styles["program-record-content"]}
+      onSubmit={handleSubmit}
+      onKeyDown={(e) => {
+        // Allow line‑breaks inside a textarea.
+        if (
+          e.key === "Enter" &&
+          (e.target as HTMLElement).tagName !== "TEXTAREA"
+        ) {
+          // stop the form from submitting.
+          e.preventDefault();
+        }
+      }}
+    >
       <div
         className={styles["section-wrapper"]}
         aria-description="container for program meta data"
@@ -362,9 +491,7 @@ export default function ProgramPerformanceForm({
               {record?.paNumber}
             </div>
             {redIndicators.length > 0 && (
-              <label className={styles["pa-label-warning"]}>
-                WARNING RED PROGRAM
-              </label>
+              <div className={styles["pa-label-warning"]}>RED PROGRAM</div>
             )}
           </div>
           {redIndicators.length > 0 && (
@@ -389,7 +516,11 @@ export default function ProgramPerformanceForm({
             >
               <h3 className={styles["field-label"]}>Sector:</h3>
               <p className={styles["field-value"]}>{formData?.sector || "-"}</p>
-              <h3 className={styles["field-label"]}>Division:</h3>
+              <h3
+                className={`${styles["field-label"]} ${styles["margin-top"]}`}
+              >
+                Division:
+              </h3>
               <p className={styles["field-value"]}>
                 {formData?.division || "-"}
               </p>
@@ -406,7 +537,9 @@ export default function ProgramPerformanceForm({
                     {`${member.user.firstName} ${member.user.lastName}${index < array.length - 1 ? "," : ""}`}
                   </p>
                 )) ?? "-"}
-              <h3 className={styles["field-label"]}>
+              <h3
+                className={`${styles["field-label"]} ${styles["margin-top"]}`}
+              >
                 Program Financial Analyst:
               </h3>
               {formData?.teamMembers
@@ -704,31 +837,39 @@ export default function ProgramPerformanceForm({
           >
             <div
               className={`${styles["floating-box"]} ${getIndexClass(
-                formData?.schedulePerformanceIndexCumulative
+                record?.isManualMetricsEntry
+                  ? classifiedSpi
+                  : formData?.schedulePerformanceIndexCumulative
               )}`}
             >
               <span className={styles["floating-label"]}>SPI</span>
-              <span className={styles["floating-value"]}>
-                {!lodash.isNil(formData?.schedulePerformanceIndexCumulative)
-                  ? formData?.schedulePerformanceIndexCumulative.toFixed(2)
-                  : "-"}
-              </span>
-
-              <Tooltip
-                id="spi-tooltip"
-                place="right"
-                className={styles["program-performance-form-tooltip"]}
-              >
-                <strong>Schedule Performance Index (SPI)</strong>
-                <div className={styles["tooltip-description-list"]}>
-                  {IndexTooltipTemplate({
-                    type: "SPI",
-                    denominator: "BCWS",
-                  })}
-                </div>
-              </Tooltip>
+              {record?.isManualMetricsEntry ? (
+                <span className={styles["floating-value"]}>
+                  {classifiedSpi}
+                </span>
+              ) : (
+                <span className={styles["floating-value"]}>
+                  {!lodash.isNil(formData?.schedulePerformanceIndexCumulative)
+                    ? formData?.schedulePerformanceIndexCumulative.toFixed(2)
+                    : "-"}
+                </span>
+              )}
             </div>
           </span>
+          <Tooltip
+            id="spi-tooltip"
+            place="right"
+            className={styles["program-performance-form-tooltip"]}
+            opacity={1}
+          >
+            <strong>Schedule Performance Index (SPI)</strong>
+            <div className={styles["tooltip-description-list"]}>
+              {IndexTooltipTemplate({
+                type: "SPI",
+                denominator: "BCWS",
+              })}
+            </div>
+          </Tooltip>
 
           {/* CPI. */}
           <span
@@ -737,31 +878,39 @@ export default function ProgramPerformanceForm({
           >
             <div
               className={`${styles["floating-box"]} ${getIndexClass(
-                formData?.costPerformanceIndexCumulative
+                record?.isManualMetricsEntry
+                  ? classifiedCpi
+                  : formData?.costPerformanceIndexCumulative
               )}`}
             >
               <span className={styles["floating-label"]}>CPI</span>
-              <span className={styles["floating-value"]}>
-                {!lodash.isNil(formData?.costPerformanceIndexCumulative)
-                  ? formData?.costPerformanceIndexCumulative.toFixed(2)
-                  : "-"}
-              </span>
-
-              <Tooltip
-                id="cpi-tooltip"
-                place="right"
-                className={styles["program-performance-form-tooltip"]}
-              >
-                <strong>Cost Performance Index (CPI)</strong>
-                <div className={styles["tooltip-description-list"]}>
-                  {IndexTooltipTemplate({
-                    type: "CPI",
-                    denominator: "ACWP",
-                  })}
-                </div>
-              </Tooltip>
+              {record?.isManualMetricsEntry ? (
+                <span className={styles["floating-value"]}>
+                  {classifiedCpi}
+                </span>
+              ) : (
+                <span className={styles["floating-value"]}>
+                  {!lodash.isNil(formData?.costPerformanceIndexCumulative)
+                    ? formData?.costPerformanceIndexCumulative.toFixed(2)
+                    : "-"}
+                </span>
+              )}
             </div>
           </span>
+          <Tooltip
+            id="cpi-tooltip"
+            place="right"
+            className={styles["program-performance-form-tooltip"]}
+            opacity={1}
+          >
+            <strong>Cost Performance Index (CPI)</strong>
+            <div className={styles["tooltip-description-list"]}>
+              {IndexTooltipTemplate({
+                type: "CPI",
+                denominator: "ACWP",
+              })}
+            </div>
+          </Tooltip>
         </div>
 
         <div
@@ -773,78 +922,186 @@ export default function ProgramPerformanceForm({
             aria-description="BCWS container"
           >
             <h3 className={styles["field-label"]}>BCWS:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.budgetedCostWorkScheduledCumulative
-                ? numeral(formData?.budgetedCostWorkScheduledCumulative)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.budgetedCostWorkScheduledCumulative || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      budgetedCostWorkScheduledCumulative: lodash.toNumber(
+                        event?.value
+                      ),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.budgetedCostWorkScheduledCumulative
+                  ? numeral(formData?.budgetedCostWorkScheduledCumulative)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="EAC container"
           >
             <h3 className={styles["field-label"]}>EAC:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.estimateAtComplete
-                ? numeral(formData?.estimateAtComplete)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.estimateAtComplete || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      estimateAtComplete: lodash.toNumber(event?.value),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.estimateAtComplete
+                  ? numeral(formData?.estimateAtComplete)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="BCWP container"
           >
             <h3 className={styles["field-label"]}>BCWP:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.budgetedCostWorkPerformedCumulative
-                ? numeral(formData?.budgetedCostWorkPerformedCumulative)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.budgetedCostWorkPerformedCumulative || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      budgetedCostWorkPerformedCumulative: lodash.toNumber(
+                        event?.value
+                      ),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.budgetedCostWorkPerformedCumulative
+                  ? numeral(formData?.budgetedCostWorkPerformedCumulative)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="ETC container"
           >
             <h3 className={styles["field-label"]}>ETC:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.estimateToComplete
-                ? numeral(formData?.estimateToComplete)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.estimateToComplete || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      estimateToComplete: lodash.toNumber(event?.value),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.estimateToComplete
+                  ? numeral(formData?.estimateToComplete)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="ACWP container"
           >
             <h3 className={styles["field-label"]}>ACWP:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.actualCostWorkPerformedCumulative
-                ? numeral(formData?.actualCostWorkPerformedCumulative)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.actualCostWorkPerformedCumulative || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      actualCostWorkPerformedCumulative: lodash.toNumber(
+                        event?.value
+                      ),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.actualCostWorkPerformedCumulative
+                  ? numeral(formData?.actualCostWorkPerformedCumulative)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="BCWS container"
           >
             <h3 className={styles["field-label"]}>Management Reserve:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.managementReserve
-                ? numeral(formData?.managementReserve)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.managementReserve || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      managementReserve: lodash.toNumber(event?.value),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.managementReserve
+                  ? numeral(formData?.managementReserve)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
 
           <div
@@ -852,26 +1109,62 @@ export default function ProgramPerformanceForm({
             aria-description="BAC container"
           >
             <h3 className={styles["field-label"]}>BAC:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.budgetAtComplete
-                ? numeral(formData?.budgetAtComplete)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.budgetAtComplete || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      budgetAtComplete: lodash.toNumber(event?.value),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.budgetAtComplete
+                  ? numeral(formData?.budgetAtComplete)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
           <div
             className={styles["two-column-field"]}
             aria-description="weighted r/o container"
           >
             <h3 className={styles["field-label"]}>Weighted R/O:</h3>
-            <p className={styles["field-value"]}>
-              {formData?.weightedRisksAndOpportunities
-                ? numeral(formData?.weightedRisksAndOpportunities)
-                    .format("$0,0")
-                    .toUpperCase()
-                : "-"}
-            </p>
+            {isEditing && record?.isManualMetricsEntry ? (
+              <InputNumber
+                prefix="$ "
+                className={styles["field-currency-input"]}
+                value={formData?.weightedRisksAndOpportunities || null}
+                onChange={(event) =>
+                  setFormData((prev): IRecord | null => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      weightedRisksAndOpportunities: lodash.toNumber(
+                        event?.value
+                      ),
+                    };
+                  })
+                }
+              />
+            ) : (
+              <p className={styles["field-value"]}>
+                {formData?.weightedRisksAndOpportunities
+                  ? numeral(formData?.weightedRisksAndOpportunities)
+                      .format("$0,0")
+                      .toUpperCase()
+                  : "-"}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -922,6 +1215,7 @@ export default function ProgramPerformanceForm({
                 id="customer-assessment-tooltip"
                 place="right"
                 className={styles["program-performance-form-tooltip"]}
+                opacity={1}
               >
                 <strong>Customer Assessment:</strong>
                 {AssessmentTooltipTemplate(
@@ -971,6 +1265,7 @@ export default function ProgramPerformanceForm({
                 id="technical-assessment-tooltip"
                 place="right"
                 className={styles["program-performance-form-tooltip"]}
+                opacity={1}
               >
                 <strong>Technical Assessment:</strong>
                 {AssessmentTooltipTemplate(
@@ -1020,6 +1315,7 @@ export default function ProgramPerformanceForm({
                 id="risk-assessment-tooltip"
                 place="right"
                 className={styles["program-performance-form-tooltip"]}
+                opacity={1}
               >
                 <strong>Risk Assessment:</strong>
                 {AssessmentTooltipTemplate(
@@ -1068,6 +1364,7 @@ export default function ProgramPerformanceForm({
                 id="overall-program-assessment-tooltip"
                 place="left"
                 className={styles["program-performance-form-tooltip"]}
+                opacity={1}
               >
                 <strong>Overall Program Assessment:</strong>
                 {AssessmentTooltipTemplate(
@@ -1106,10 +1403,7 @@ export default function ProgramPerformanceForm({
           <h2
             className={`${styles["section-header"]} ${redIndicators.length ? styles["return-to-green"] : ""}`}
           >
-            Return to Green Tasks
-            {redIndicators.length > 0 && (
-              <label>*Remember to update your Return-To-Green plan</label>
-            )}
+            Return to Green Plan <label>Required for all Red Programs</label>
           </h2>
           <div
             className={`${styles["section-wrapper"]} ${styles["no-padding"]} ${redIndicators.length ? styles["return-to-green"] : ""}`}

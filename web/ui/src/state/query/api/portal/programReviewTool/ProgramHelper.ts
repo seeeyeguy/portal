@@ -42,6 +42,7 @@ export interface IApiProgram {
   weighted_risks_and_opportunities: number | null;
   active_status: boolean;
   team_members: IApiProgramMember[];
+  is_manual_metrics_entry?: boolean | null;
   created: Date;
   modified: Date;
 }

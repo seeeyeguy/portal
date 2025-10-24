@@ -4,6 +4,8 @@ the `Program Review Tool` database for each `User`
 created or updated in the `BI Portal` database.
 """
 
+import logging
+
 # pylint: disable=imported-auth-user,unused-argument
 from django.contrib.auth.models import User
 from django.db import connections, models
@@ -13,6 +15,7 @@ from django.utils import timezone
 
 from manager.settings import ApplicationBuild, BUILD
 
+LOGGER = logging.getLogger(__name__)
 
 DATABASE_ALIAS: str = "prt"
 
@@ -27,6 +30,8 @@ def create_user_in_prt_database(
     create the same user in the `Program Review Tool`
     database.
     """
+
+    LOGGER.info(f"Syncing user create: {instance.username}")
 
     if (
         BUILD != ApplicationBuild.TEST
@@ -57,6 +62,8 @@ def update_user_in_prt_database(sender: User, instance: User, **_: dict) -> None
     """When a User object is saved in the `BI Portal` database,
     update the same user in the `Program Review Tool`
     database."""
+
+    LOGGER.info(f"Syncing user update: {instance.username}")
 
     if (
         BUILD != ApplicationBuild.TEST

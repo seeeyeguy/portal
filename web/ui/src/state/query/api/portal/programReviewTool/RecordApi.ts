@@ -62,6 +62,7 @@ export type TApiPostRecordRequest = {
   overallProgram: number | null;
   comments: string;
   tasks: TApiPostRecordTaskRequest[];
+  isManualMetricsEntry: boolean;
 };
 
 export type TApiFetchRecordRequest = {
@@ -118,6 +119,7 @@ const recordApi = api.injectEndpoints({
           overall_program: body.overallProgram,
           comments: body.comments,
           tasks: body.tasks,
+          is_manual_metrics_entry: body.isManualMetricsEntry,
         },
       }),
       transformResponse: (response: IApiRecord, meta): TApiRecordResponse => ({

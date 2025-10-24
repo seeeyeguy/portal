@@ -60,6 +60,7 @@ export interface IProgram {
   weightedRisksAndOpportunities: number | null;
   activeStatus: boolean;
   teamMembers: IProgramMember[];
+  isManualMetricsEntry: boolean | null;
   created: string;
   modified: string;
   disabled: boolean;

@@ -629,7 +629,7 @@ export default function AdminResources() {
                               }
                               aria-label="save Revision edit"
                             >
-                              Save Revision
+                              Save as Draft
                             </button>
                             <button
                               className={`${styles["admin-button"]} ${styles["admin-button-submit"]}`}
