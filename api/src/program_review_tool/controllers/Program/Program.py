@@ -318,8 +318,8 @@ class Program:
         program_manager_names = ", ".join(program_manager_names_list)
 
         # Set the reporting period for the export to the previous reporting period
-        period: str = (datetime.now() - relativedelta(months=1)).strftime("%Y%m") 
-        
+        period: str = (datetime.now() - relativedelta(months=1)).strftime("%Y%m")
+
         # Retrieve a Tableau token and its cache key.
         tableau_token_cache_key, tableau_token_for_job = get_tableau_token_for_job()
 
