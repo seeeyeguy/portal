@@ -309,23 +309,38 @@ def ingest_program_member_data() -> Optional[int]:
     duplicates = set()
 
     for _, row in df.iterrows():
-        composite_key = (row["program"], row["role"], row["email"])
+        program_id: int = int(row["program"])
+        role_id: int = int(row["role"])
+        # E-mails in the `DataFrame` have the `l3harris.com` domain
+        # and need to be converted to `harris.com` domain for the
+        # correct verification.
+        user_email: str = row["email"].replace("@l3harris.com", "@harris.com")
+
+        # Construct the composite key from the `Program` id,
+        # `ProgramRole` id and the `User` email.
+        composite_key = (program_id, role_id, user_email)
         if (
             not existing_program_members.filter(
-                id=row["program"],
-                role__id=row["role"],
-                user__email__iexact=row["email"],
+                program__id=program_id,
+                role__id=role_id,
+                user__email__iexact=user_email,
                 expiry_date__isnull=True,
             ).exists()
             and composite_key not in duplicates
         ):
             verified_employee = verified_employees[row["email"]]
+
+            if not verified_employee or not hasattr(verified_employee, "id"):
+                LOGGER.info(
+                    f"Skipping ProgramMember insert: No valid User found for {row['email']}"
+                )
+                continue
             if verified_employee:
                 try:
                     records_to_add.append(
                         models.ProgramMember(
-                            program=existing_programs[row["program"]],
-                            role=existing_program_roles[row["role"]],
+                            program=existing_programs[program_id],
+                            role=existing_program_roles[role_id],
                             user=verified_employee,
                             created=row["created"],
                             expiry_date=None,
@@ -333,10 +348,17 @@ def ingest_program_member_data() -> Optional[int]:
                         )
                     )
                     duplicates.add(composite_key)
-                except KeyError:
+                except Exception as exc:
+                    err_msg = (
+                        f"ERROR: Failed to stage adding ProgramMember for {row['email']} "
+                        f"(program={row['program']}, role={row['role']}): {exc}"
+                    )
+                    LOGGER.error(err_msg)
                     continue
 
     models.ProgramMember.objects.bulk_create(records_to_add)
+
+    LOGGER.info("Created: %s ProgramMember records.", len(records_to_add))
 
     records_to_expire: List[int] = []
     for record in existing_program_members.select_related(
@@ -344,7 +366,10 @@ def ingest_program_member_data() -> Optional[int]:
     ).filter(expiry_date__isnull=True):
         filtered_df = df.loc[
             (df["program"] == record.program.id)
-            & (df["email"] == record.user.username.lower())
+            & (
+                df["email"]
+                == record.user.email.replace("@harris.com", "@l3harris.com").lower()
+            )
             & (df["role"] == record.role.id)
         ]
         if filtered_df.empty:
@@ -353,5 +378,6 @@ def ingest_program_member_data() -> Optional[int]:
     models.ProgramMember.objects.filter(id__in=records_to_expire).update(
         expiry_date=expiry_date
     )
+    LOGGER.info("Expired: %s ProgramMember records.", len(records_to_expire))
 
     return None
