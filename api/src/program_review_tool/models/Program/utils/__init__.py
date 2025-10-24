@@ -208,7 +208,7 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
             if len(pa_numbers) < FDW_WHERE_IN_LIMIT:
                 sql = f"""
                 {base_sql}
-                WHERE ppv.PA IN {tuple(pa_numbers)}
+                WHERE ppv.PA_NUMBER IN {tuple(pa_numbers)}
                 """
                 df = conn.query_db(sql=sql)
             else:
@@ -216,7 +216,7 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
                 while i < len(pa_numbers):
                     sql = f"""
                         {base_sql}
-                        WHERE ppv.PA IN {tuple(pa_numbers[i:j])}
+                        WHERE ppv.PA_NUMBER IN {tuple(pa_numbers[i:j])}
                         """
                     query_df = conn.query_db(sql=sql)
                     df = pd.concat([df, query_df])

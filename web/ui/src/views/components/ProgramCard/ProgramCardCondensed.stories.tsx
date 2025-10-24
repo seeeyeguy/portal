@@ -60,6 +60,7 @@ export const IsValid: Story = {
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
       disabled: false,
+      isManualMetricsEntry: null,
     },
   },
   render: (args) => {
@@ -96,6 +97,7 @@ export const IsInvalid: Story = {
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
       disabled: false,
+      isManualMetricsEntry: null,
     },
   },
   render: (args) => {
@@ -132,6 +134,7 @@ export const IsDisabled: Story = {
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
       disabled: true,
+      isManualMetricsEntry: null,
     },
   },
   render: (args) => {

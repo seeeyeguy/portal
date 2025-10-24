@@ -272,6 +272,8 @@ def transform_program_member_data_from_external_database(
 def ingest_program_member_data() -> Optional[int]:
     """Ingest `ProgramMember` data from an external database."""
 
+    LOGGER.info("Starting ingestion of new Program Members....")
+
     existing_program_roles = cast(
         dict[int, models.ProgramRole], models.ProgramRole.objects.in_bulk()
     )
@@ -303,7 +305,8 @@ def ingest_program_member_data() -> Optional[int]:
 
     verified_employees = {}
     for employee in set(df["email"]):
-        verified_employees[employee] = fetch_authorized_employee(employee, "prt")
+        LOGGER.info(f"Verifying ProgramMember: {employee}")
+        verified_employees[employee] = fetch_authorized_employee(employee)
 
     records_to_add: List[models.ProgramMember] = []
     duplicates = set()
@@ -355,6 +358,7 @@ def ingest_program_member_data() -> Optional[int]:
                     )
                     LOGGER.error(err_msg)
                     continue
+    LOGGER.info("Attempt to Create: %s ProgramMember records.", len(records_to_add))
 
     models.ProgramMember.objects.bulk_create(records_to_add)
 

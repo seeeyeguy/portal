@@ -105,12 +105,9 @@ export default function ProgramPerformance() {
     [reportingPeriods]
   );
 
-  const handlePeriodChange = React.useCallback(
-    (event: { value: number }) => {
-      setSelectedPeriod(event.value);
-    },
-    [] 
-  );
+  const handlePeriodChange = React.useCallback((event: { value: number }) => {
+    setSelectedPeriod(event.value);
+  }, []);
 
   const programOptions = React.useMemo(
     () =>
@@ -125,7 +122,7 @@ export default function ProgramPerformance() {
     (event: { value: string | null }) => {
       setSelectedPA(event.value);
     },
-    [] 
+    []
   );
 
   if (!loaderData.user.email) {
@@ -225,7 +222,6 @@ export default function ProgramPerformance() {
             key={`${record?.data.paNumber}-${record?.data.reportingPeriod}`}
             isEditing={inCurrentPeriod && !record?.data.id && edit}
             record={record?.data ?? null}
-            redIndicators={[]}
             handleEdit={handleEdit}
           />
         )}
