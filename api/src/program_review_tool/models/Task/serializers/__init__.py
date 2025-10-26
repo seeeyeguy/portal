@@ -7,18 +7,27 @@ from rest_framework import serializers
 
 from program_review_tool.models.Task import Task
 
-from program_review_tool.models.Program.serializers import ProgramSerializer
-from users.models.User.serializers import UserSerializer
-
 
 class TaskSerializer(serializers.ModelSerializer):
     """Model Base Serializer for `Task`."""
 
-    user = UserSerializer(read_only=True)
-    program = ProgramSerializer(read_only=True)
+    name = serializers.CharField(source="task_name", read_only=False)
 
     class Meta:
         """Meta for `Task` serializer."""
 
         model = Task
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "description",
+            "status",
+            "order",
+            "owner",
+            "pa_number",
+            "reporting_period",
+            "create_date",
+            "target_date",
+            "complete_date",
+            "archive_date",
+        ]

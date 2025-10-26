@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("name", models.CharField(max_length=512)),
+                ("name", models.CharField(max_length=512, unique=True)),
                 ("description", models.TextField()),
                 ("pa_number", models.CharField(max_length=64)),
                 (

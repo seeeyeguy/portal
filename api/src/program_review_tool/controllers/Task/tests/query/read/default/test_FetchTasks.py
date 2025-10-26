@@ -2,7 +2,7 @@
 Collection of pytests for Task's fetch controller.
 """
 
-from typing import List, Dict, Union
+from typing import List
 
 from django.db.models import QuerySet
 from django.test import tag
@@ -47,12 +47,7 @@ class TestFetchTask(MultiDBTestCase):
         # Ensure data is a `Task` queryset.
         self.assertIsInstance(tasks, QuerySet[models.Task])
 
-        data: List[Dict[str, Union[bool, int, str]]] = TaskSerializer(
-            tasks, many=True
-        ).data
-
-        for task in data:
-            del task["program"]
+        data = list(TaskSerializer(tasks, many=True).data)
 
         # Ensure the data is correct.
         self.assertEqual(data, arguments.FETCH_TASKS_PREVIOUS_EXPECTED_TASKS)
@@ -71,12 +66,7 @@ class TestFetchTask(MultiDBTestCase):
         # Ensure data is a `Task` queryset.
         self.assertIsInstance(tasks, QuerySet[models.Task])
 
-        data: List[Dict[str, Union[bool, int, str]]] = TaskSerializer(
-            tasks, many=True
-        ).data
-
-        for task in data:
-            del task["program"]
+        data = list(TaskSerializer(tasks, many=True).data)
 
         # Ensure the data is correct.
         self.assertEqual(data, arguments.FETCH_TASKS_CURRENT_EXPECTED_TASKS)
@@ -95,9 +85,7 @@ class TestFetchTask(MultiDBTestCase):
         # Ensure data is a `Task` queryset.
         self.assertIsInstance(tasks, QuerySet[models.Task])
 
-        data: List[Dict[str, Union[bool, int, str]]] = TaskSerializer(
-            tasks, many=True
-        ).data
+        data = list(TaskSerializer(tasks, many=True).data)
 
         # Ensure the data is correct.
         self.assertEqual(data, [])
@@ -116,9 +104,7 @@ class TestFetchTask(MultiDBTestCase):
         # Ensure data is a `Task` queryset.
         self.assertIsInstance(tasks, QuerySet[models.Task])
 
-        data: List[Dict[str, Union[bool, int, str]]] = TaskSerializer(
-            tasks, many=True
-        ).data
+        data = list(TaskSerializer(tasks, many=True).data)
 
         # Ensure the data is correct.
         self.assertEqual(data, [])

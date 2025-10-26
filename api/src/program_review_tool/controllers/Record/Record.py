@@ -17,6 +17,7 @@ from program_review_tool.controllers.Task.Task import Task
 from program_review_tool import exceptions, models
 from program_review_tool.models.Program.serializers import ProgramSerializer
 from program_review_tool.models.Record.serializers import RecordSerializer
+from program_review_tool.models.Task.serializers import TaskSerializer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -320,8 +321,11 @@ class Record:
             ]
 
             existing_tasks_qs = Task.fetch_tasks(pa_number, reporting_period)
-            existing_tasks = {t.id: t for t in existing_tasks_qs}
-
+            existing_tasks = {
+                t["id"]: t
+                for t in list(TaskSerializer(existing_tasks_qs, many=True).data)
+            }
+            # existing_tasks = {t.id: t for t in existing_tasks_qs}
             # -----------------------------------------------------------------
             #  Handle any existing DB tasks that are NOT present in the payload.
             #  IE: The user deleted them from their view in the front-end.
@@ -377,9 +381,9 @@ class Record:
                     db_task = models.Task.objects.get(id=payload_id)
                     db_task_dict = {
                         "order": db_task.order,
-                        "name": db_task.name,
+                        "name": db_task.task_name,
                         "description": db_task.description,
-                        "owner": db_task.owner.email,  # type: ignore[union-attr]
+                        "owner": db_task.owner.email,
                         "status": db_task.status,
                         "target_date": db_task.target_date,
                         "complete_date": db_task.complete_date,
@@ -449,22 +453,7 @@ class Record:
                 pa_number=pa_number, reporting_period=reporting_period
             )
 
-            updated_tasks = list(
-                updated_tasks_qs.values(
-                    "id",
-                    "pa_number",
-                    "reporting_period",
-                    "order",
-                    "name",
-                    "description",
-                    "owner",
-                    "status",
-                    "create_date",
-                    "target_date",
-                    "complete_date",
-                    "archive_date",
-                )
-            )
+            updated_tasks = list(TaskSerializer(updated_tasks_qs, many=True).data)
 
             setattr(record, "tasks", updated_tasks)
 
@@ -646,22 +635,7 @@ class Record:
                 pa_number=pa_number, reporting_period=tasks_period
             )
 
-            tasks = list(
-                tasks_qs.values(
-                    "id",
-                    "pa_number",
-                    "reporting_period",
-                    "order",
-                    "name",
-                    "description",
-                    "owner",
-                    "status",
-                    "create_date",
-                    "target_date",
-                    "complete_date",
-                    "archive_date",
-                )
-            )
+            tasks = list(TaskSerializer(tasks_qs, many=True).data)
 
             # Merge all data the in the three dictionaries containing
             # the `Program`s record data into one.

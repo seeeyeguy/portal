@@ -66,8 +66,6 @@ class TestUpdateTask(MultiDBTestCase):
 
         data: dict = TaskSerializer(task).data
 
-        del data["program"]
-
         # Ensure data is correct.
         self.assertDictEqual(data, arguments.UPDATE_TASK_EXPECTED_RESPONSE)
 

@@ -7,6 +7,7 @@ the `Task` table.
 import logging
 import datetime
 from typing import Tuple, Union
+from uuid import uuid4
 
 from django.contrib.auth import models as AuthModels
 from django.db.models import QuerySet
@@ -92,7 +93,8 @@ class Task:
                 "pa_number": pa_number,
                 "reporting_period": [reporting_period],  # ArrayField expects a list
                 "order": order,
-                "name": name,
+                "name": str(uuid4()),
+                "task_name": name,
                 "description": description,
                 "owner": verify_user(owner),
                 "status": status,
@@ -184,7 +186,7 @@ class Task:
 
             task_data = {
                 "order": order,
-                "name": name,
+                "task_name": name,
                 "description": description,
                 "owner": verify_user(owner),
                 "status": status,

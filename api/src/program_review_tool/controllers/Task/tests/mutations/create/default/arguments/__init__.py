@@ -23,7 +23,6 @@ CREATE_TASK_PA_NUMBER_DNE: str = "123ABC"
 
 CREATE_TASK_EXPECTED_RESPONSE: dict = {
     "id": 6,
-    "previous_revision": None,
     "name": CREATE_TASK_NAME,
     "description": CREATE_TASK_DESCRIPTION,
     "status": CREATE_TASK_STATUS,
@@ -39,7 +38,6 @@ CREATE_TASK_EXPECTED_RESPONSE: dict = {
 
 CREATE_TASK_PREVIOUS_REVISION_EXPECTED_RESPONSE: dict = {
     "id": 7,
-    "previous_revision": CREATE_TASK_PREVIOUS_REVISION,
     "name": CREATE_TASK_NAME,
     "description": CREATE_TASK_DESCRIPTION,
     "status": CREATE_TASK_STATUS,

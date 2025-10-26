@@ -16,7 +16,6 @@ FETCH_TASKS_FUTURE_PERIOD = 202503
 FETCH_TASKS_PREVIOUS_EXPECTED_TASKS = [
     {
         "id": 2,
-        "previous_revision": None,
         "name": "Task Beta",
         "description": "Initial analysis of system requirements.",
         "status": "Not Started",
@@ -31,7 +30,6 @@ FETCH_TASKS_PREVIOUS_EXPECTED_TASKS = [
     },
     {
         "id": 5,
-        "previous_revision": None,
         "name": "Task Delta",
         "description": "Finalize design, documentation, and handover.",
         "status": "Not Started",
@@ -46,7 +44,6 @@ FETCH_TASKS_PREVIOUS_EXPECTED_TASKS = [
     },
     {
         "id": 1,
-        "previous_revision": None,
         "name": "Task Alpha",
         "description": "Beginning Planning.",
         "status": "Completed",
@@ -64,7 +61,6 @@ FETCH_TASKS_PREVIOUS_EXPECTED_TASKS = [
 FETCH_TASKS_CURRENT_EXPECTED_TASKS = [
     {
         "id": 3,
-        "previous_revision": 2,
         "name": "Task Beta",
         "description": "Initial analysis of system requirements.",
         "status": "In Progress",
@@ -79,7 +75,6 @@ FETCH_TASKS_CURRENT_EXPECTED_TASKS = [
     },
     {
         "id": 4,
-        "previous_revision": None,
         "name": "Task Gamma",
         "description": "Develop prototype and conduct preliminary testing.",
         "status": "Pending Review",
@@ -94,7 +89,6 @@ FETCH_TASKS_CURRENT_EXPECTED_TASKS = [
     },
     {
         "id": 5,
-        "previous_revision": None,
         "name": "Task Delta",
         "description": "Finalize design, documentation, and handover.",
         "status": "Not Started",
@@ -109,7 +103,6 @@ FETCH_TASKS_CURRENT_EXPECTED_TASKS = [
     },
     {
         "id": 1,
-        "previous_revision": None,
         "name": "Task Alpha",
         "description": "Beginning Planning.",
         "status": "Completed",
