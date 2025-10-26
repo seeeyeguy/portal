@@ -62,8 +62,6 @@ class TestCreateTask(MultiDBTestCase):
 
         data: dict = TaskSerializer(task).data
 
-        del data["program"]
-
         # Ensure data is correct.
         self.assertDictEqual(data, arguments.CREATE_TASK_EXPECTED_RESPONSE)
 
@@ -93,8 +91,6 @@ class TestCreateTask(MultiDBTestCase):
         self.assertIsInstance(task, models.Task)
 
         data: dict = TaskSerializer(task).data
-
-        del data["program"]
 
         # Ensure data is correct.
         self.assertDictEqual(

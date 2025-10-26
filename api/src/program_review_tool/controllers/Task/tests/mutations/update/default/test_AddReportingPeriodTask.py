@@ -58,8 +58,6 @@ class TestAddReportingPeriodTask(MultiDBTestCase):
 
         data: dict = TaskSerializer(task).data
 
-        del data["program"]
-
         # Ensure data is correct.
         self.assertDictEqual(data, arguments.ADD_REPORTING_PERIOD_EXPECTED_RESPONSE)
 

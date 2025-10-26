@@ -26,7 +26,6 @@ UPDATE_TASK_REPORTING_PERIOD_WRONG_REPORTING_PERIOD: int = 202503
 
 UPDATE_TASK_EXPECTED_RESPONSE: dict = {
     "id": UPDATE_TASK_TASK_ID,
-    "previous_revision": None,
     "name": UPDATE_TASK_NAME,
     "description": UPDATE_TASK_DESCRIPTION,
     "status": UPDATE_TASK_STATUS,
@@ -48,7 +47,6 @@ ADD_REPORTING_PERIOD_PERIOD: int = 202503
 
 ADD_REPORTING_PERIOD_EXPECTED_RESPONSE: dict = {
     "id": UPDATE_TASK_TASK_ID,
-    "previous_revision": None,
     "name": "Task Gamma",
     "description": "Develop prototype and conduct preliminary testing.",
     "status": "Pending Review",
@@ -68,7 +66,6 @@ REMOVE_REPORTING_PERIOD_PERIOD: int = 202502
 
 REMOVE_REPORTING_PERIOD_EXPECTED_RESPONSE: dict = {
     "id": UPDATE_TASK_TASK_ID,
-    "previous_revision": None,
     "name": "Task Gamma",
     "description": "Develop prototype and conduct preliminary testing.",
     "status": "Pending Review",
