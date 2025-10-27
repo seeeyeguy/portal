@@ -1,3 +1,4 @@
+import logging
 import os
 from jinja2 import Environment, FileSystemLoader
 from typing import Any, List
@@ -9,6 +10,7 @@ from manager import settings
 # Load template directory for mail module.
 TEMPLATE_DIR = os.path.join(settings.BASE_DIR, "manager/mail/templates/")
 env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+LOGGER = logging.getLogger(__name__)
 
 
 def create_base_template_context_for_email(
@@ -78,10 +80,18 @@ def send_email(
         * None
     """
 
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=from_email,
-        recipient_list=recipients,
-        html_message=html_message,
-    )
+    if settings.BUILD == settings.ApplicationBuild.PRODUCTION:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=recipients,
+            html_message=html_message,
+        )
+    else:
+        log_msg = (
+                f"Subject({subject})"
+                f" Recipients({recipients})"
+                f" Message={message}"
+            )
+        LOGGER.info(log_msg)
