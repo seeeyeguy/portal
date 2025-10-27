@@ -87,7 +87,10 @@ export default function ProgramsForm({
 
       setFetchingProgram(true);
       const promise = store.dispatch(
-        programApi.endpoints.getPrograms.initiate({ paNumbers: [paNumber] })
+        programApi.endpoints.getPrograms.initiate({
+          paNumbers: [paNumber],
+          activeOnly: false,
+        })
       );
       const response = await promise;
       setFetchingProgram(false);
@@ -127,7 +130,6 @@ export default function ProgramsForm({
               aria-description="container for controls of a program"
             >
               <button
-                disabled={!program.activeStatus}
                 onClick={() => handleDisableProgram(key)}
                 aria-description="program control button to disable program"
               >
@@ -182,7 +184,6 @@ export default function ProgramsForm({
               aria-description="container for controls of a program"
             >
               <button
-                disabled={!program.activeStatus}
                 onClick={() => handleDisableProgram(key)}
                 aria-description="program control button to disable program"
               >

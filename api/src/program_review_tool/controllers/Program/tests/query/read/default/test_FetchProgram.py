@@ -69,6 +69,48 @@ class TestFetchProgram(MultiDBTestCase):
 
     @tag("controllers.program.fetch_programs")
     def test_fetch_programs(self) -> None:
+        """Success Case: Fetch `Program` records."""
+
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
+            program_ids=[],
+            pa_numbers=[],
+            tiers=[],
+            program_member="",
+            page=None,
+            limit=None,
+            active_only=False,
+        )
+
+        self.assertIsInstance(programs, QuerySet[models.Program])
+
+        self.assertEqual(
+            programs.filter(
+                id__in=arguments.FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS
+            ).count(),
+            len(arguments.FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS),
+        )
+
+        for program in programs:
+            self.assertIsInstance(program, models.Program)
+
+            program_id: int = program.id
+
+            self.assertIn(program_id, self.program_fixtures)
+
+            serialized_program = ProgramSerializer(program).data
+            expected_program = self.program_fixtures[program_id]
+
+            del serialized_program["segment"]
+            del serialized_program["created"]
+            del serialized_program["modified"]
+
+            self.assertEqual(
+                serialized_program,
+                expected_program,
+            )
+
+    @tag("controllers.program.fetch_active_programs")
+    def test_fetch_active_programs(self) -> None:
         """Success Case: Fetch active `Program` records."""
 
         programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
@@ -78,13 +120,16 @@ class TestFetchProgram(MultiDBTestCase):
             program_member="",
             page=None,
             limit=None,
+            active_only=True,
         )
 
         self.assertIsInstance(programs, QuerySet[models.Program])
 
         self.assertEqual(
-            programs.filter(id__in=arguments.FETCH_PROGRAMS_ALL_VALID_IDS).count(),
-            len(arguments.FETCH_PROGRAMS_ALL_VALID_IDS),
+            programs.filter(
+                id__in=arguments.FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS
+            ).count(),
+            len(arguments.FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS),
         )
 
         for program in programs:

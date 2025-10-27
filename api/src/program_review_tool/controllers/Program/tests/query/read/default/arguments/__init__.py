@@ -11,6 +11,9 @@ FETCH_PROGRAMS_USER: str = "May.Parker@harris.com"
 # Email of `ProgramMember` `User` that does not exist.
 FETCH_PROGRAMS_PROGRAM_MEMBER_USER_DNE_EMAIL: str = "User.DNE@harris.com"
 
+# Valid and Active `Program` ids used to ensure the validity of our success case.
+FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS: List[int] = list(range(1, 1000))
+
 # Valid `Program` ids used to ensure the validity of our success case.
 FETCH_PROGRAMS_ALL_VALID_IDS: List[int] = list(range(1, 1001))
 
@@ -272,7 +275,6 @@ FETCH_PROGRAMS_BY_TIERS_VALID_IDS: List[int] = [
     993,
     996,
     997,
-    1000,
 ]
 
 # `User` email used when testing fetch `Program`s by `ProgramMember`.

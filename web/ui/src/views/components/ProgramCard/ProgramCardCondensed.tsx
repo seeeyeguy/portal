@@ -65,7 +65,7 @@ export default function ProgramCardCondensed({
 
   return (
     <section
-      className={`${styles["program-card"]} ${styles["condensed"]} ${program?.disabled ? styles["disabled"] : ""} ${program && !program?.activeStatus ? styles["invalid"] : ""}`}
+      className={`${styles["program-card"]} ${styles["condensed"]} ${program?.disabled ? styles["disabled"] : ""}`}
       aria-description="container for program information"
     >
       <input

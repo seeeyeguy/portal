@@ -250,7 +250,7 @@ export default function PortfolioMenu({
         <button
           disabled={
             !Object.values(selectedPortfolio?.programs ?? {}).some(
-              (program) => program.activeStatus && !program.disabled
+              (program) => !program.disabled
             )
           }
           onClick={() => generatePortfolio()}

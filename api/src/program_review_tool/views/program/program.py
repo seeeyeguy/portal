@@ -90,6 +90,9 @@ class Program(View):
             tiers: List[int] = req.validated_data.get("tiers")
             page: int = req.validated_data.get("page")
             limit: int = req.validated_data.get("limit")
+            active_only: bool = not (
+                request.GET.get("active_only", "true").lower() == "false"
+            )
 
             request_params = f"?ids={ids}" if ids else ""
             request_params = (
@@ -105,6 +108,11 @@ class Program(View):
             request_params = (
                 f"{request_params}{'&' if request_params else '?'}tiers={tiers}"
                 if tiers
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if request_params else '?'}active_only={active_only}"
+                if active_only
                 else request_params
             )
             request_params = (
@@ -125,6 +133,7 @@ class Program(View):
                 program_ids=ids,
                 pa_numbers=pa_numbers,
                 tiers=tiers,
+                active_only=active_only,
                 program_member=program_member,
                 page=page,
                 limit=limit,

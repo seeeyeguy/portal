@@ -58,6 +58,7 @@ class Program:
         pa_numbers: List[str],
         tiers: List[int] = [],
         program_member: str = "",
+        active_only: bool = True,
         page: Optional[int] = None,
         limit: Optional[int] = None,
     ) -> QuerySet[models.Program]:
@@ -119,7 +120,10 @@ class Program:
 
             LOGGER.info(info_log_msg)
 
-            programs = models.Program.objects.filter(active_status=True)
+            if active_only:
+                programs = models.Program.objects.filter(active_status=True)
+            else:
+                programs = models.Program.objects.all()
 
             programs = programs.order_by("id") if page or limit else programs
 
@@ -284,7 +288,7 @@ class Program:
 
         # Fetch active `Program`s that match the given ids.
         programs: QuerySet[models.Program] = models.Program.objects.filter(
-            id__in=program_ids, active_status=True
+            id__in=program_ids
         )
 
         # Verify that number of retrieved `Program`s is equal

@@ -21,6 +21,7 @@ class FetchProgramRequestQueryParams(serializers.Serializer):
     )
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)
+    active_only = serializers.BooleanField(default=True)
 
 
 class ReviewProgramRequest(serializers.Serializer):

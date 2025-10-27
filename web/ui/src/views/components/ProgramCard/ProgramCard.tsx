@@ -84,7 +84,7 @@ export default function ProgramCard({
 
   return (
     <section
-      className={`${styles["program-card"]} ${program?.disabled ? styles["disabled"] : ""} ${program && !program?.activeStatus ? styles["invalid"] : ""}`}
+      className={`${styles["program-card"]} ${program?.disabled ? styles["disabled"] : ""}`}
       aria-description="container for program information"
     >
       <input
@@ -113,7 +113,7 @@ export default function ProgramCard({
           >
             {program?.contractValue
               ? `${numeral(program.contractValue).format("$0.0a").toUpperCase()}`
-              : (!program?.paNumber && "Contract Value")}
+              : !program?.paNumber && "Contract Value"}
           </span>
         </header>
         <div
