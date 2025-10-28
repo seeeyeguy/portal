@@ -71,6 +71,44 @@ class TestFetchProgram(MultiDBTestCase):
 
     @tag("views.program.fetch_programs")
     def test_fetch_programs(self) -> None:
+        """Success Case: Fetch `Program` records."""
+
+        program_params: dict = {"active_only": False}
+
+        response = self.client.get(
+            self.url, program_params, content_type="application/json"
+        )
+
+        programs = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(programs, list)
+
+        self.assertEqual(len(programs), len(arguments.FETCH_PROGRAMS_ALL_VALID_IDS))
+
+        for program in programs:
+            program_id: int = program["id"]
+
+            self.assertIsInstance(program, dict)
+
+            self.assertIn(program_id, self.program_fixtures)
+
+            expected_program = self.program_fixtures[program_id]
+
+            del program["created"]
+            del program["modified"]
+
+            del expected_program["created"]
+            del expected_program["modified"]
+
+            self.assertEqual(
+                program,
+                expected_program,
+            )
+
+    @tag("views.program.fetch_active_programs")
+    def test_fetch_active_programs(self) -> None:
         """Success Case: Fetch active `Program` records."""
 
         response = self.client.get(
@@ -84,7 +122,9 @@ class TestFetchProgram(MultiDBTestCase):
 
         self.assertIsInstance(programs, list)
 
-        self.assertEqual(len(programs), len(arguments.FETCH_PROGRAMS_ALL_VALID_IDS))
+        self.assertEqual(
+            len(programs), len(arguments.FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS)
+        )
 
         for program in programs:
             program_id: int = program["id"]

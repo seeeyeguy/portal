@@ -28,7 +28,9 @@ import {
   updateCurrentPortfolioState,
 } from "state/actions/ProgramReviewActions";
 import { useGetPortfoliosQuery } from "state/query/api/portal/programReviewTool/PortfolioApi";
-import programApi, {TApiProgramReviewErrorResponse} from "state/query/api/portal/programReviewTool/ProgramApi";
+import programApi, {
+  TApiProgramReviewErrorResponse,
+} from "state/query/api/portal/programReviewTool/ProgramApi";
 import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 import store, { useAppDispatch, useTypedSelector } from "state/store/store";
 
@@ -96,18 +98,16 @@ export default function ProgramReviewTool() {
     citizenship: "UNKNOWN",
   }) as IProfile;
 
-
   const { data: portfoliosResponse, isLoading } = useGetPortfoliosQuery(
     loaderData.user.email
   );
 
   // Load initial user portfolios and program review state data.
   React.useEffect(() => {
-    if(isLoading){
+    if (isLoading) {
       dispatch(loadProgramReviewState(loaderData.user.email));
     }
   }, [isLoading, loaderData, dispatch]);
-
 
   const portfolios = portfoliosResponse?.data as IPortfolios;
 
@@ -158,7 +158,11 @@ export default function ProgramReviewTool() {
         setPolling(0);
         setProgressMarkers([]);
         setCurrentMarker(null);
-        toast.error(ProgramReviewResponse?.error ? `${(ProgramReviewResponse.error as TApiProgramReviewErrorResponse)?.data}` : `Error: Portfolio generation failed.`);
+        toast.error(
+          ProgramReviewResponse?.error
+            ? `${(ProgramReviewResponse.error as TApiProgramReviewErrorResponse)?.data}`
+            : `Error: Portfolio generation failed.`
+        );
         return;
       }
 
@@ -195,7 +199,7 @@ export default function ProgramReviewTool() {
   const handleGeneratePortfolio = React.useCallback(async () => {
     if (!lodash.isEmpty(currentPortfolio.programs)) {
       const validPrograms = Object.values(currentPortfolio.programs)
-        .filter((program) => program.activeStatus && !program.disabled)
+        .filter((program) => !program.disabled)
         .map((program) => program.id);
 
       let createdReviewName = currentPortfolio.name;

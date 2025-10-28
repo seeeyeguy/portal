@@ -162,6 +162,7 @@ export default {
       paNumbers: string[] | null = null,
       programMember: string | null = null,
       tiers: number[] | null = null,
+      activeOnly: boolean | null = null,
       page: number | null = null,
       limit: number | null = null
     ) => {
@@ -187,6 +188,7 @@ export default {
       }
 
       base = appendQueryParamToURL(base, "program_member", programMember);
+      base = appendQueryParamToURL(base, "active_only", activeOnly);
       base = appendQueryParamToURL(base, "page", page);
       base = appendQueryParamToURL(base, "limit", limit);
 

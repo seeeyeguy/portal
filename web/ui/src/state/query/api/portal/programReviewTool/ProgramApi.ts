@@ -25,6 +25,7 @@ export type TApiFetchProgramRequest = {
   paNumbers?: string[];
   programMember?: string;
   tiers?: number[];
+  activeOnly?: boolean;
   page?: number;
   limit?: number;
 };
@@ -52,6 +53,7 @@ const programApi = api.injectEndpoints({
         paNumbers = null,
         programMember = null,
         tiers = null,
+        activeOnly = null,
         page = null,
         limit = null,
       }) => ({
@@ -60,6 +62,7 @@ const programApi = api.injectEndpoints({
           paNumbers,
           programMember,
           tiers,
+          activeOnly,
           page,
           limit
         ),

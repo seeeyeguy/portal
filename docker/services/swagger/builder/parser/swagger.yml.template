@@ -1457,7 +1457,7 @@ paths:
     get:
       tags:
         - "program_review_tool.program.fetch"
-      summary: "Fetch active `Program` records."
+      summary: "Fetch `Program` records."
       parameters:
         - in: query
           name: ids
@@ -1480,6 +1480,11 @@ paths:
             items:
               type: integer
           description: "Tiers of the desired `Program`s."
+        - in: query
+          name: active_only
+          schema:
+            type: boolean
+          description: "Filter out inactive `Program`s"
         - in: query
           name: program_member
           schema:
