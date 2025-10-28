@@ -172,7 +172,9 @@ export default function TagSelectionWidget({
           value={selectedCategory}
           options={visibleCategories}
           onChange={handleCategoryChange}
-          placeholder="Select Category"
+          placeholder="Filter by Category"
+          tooltip="Categories are more in-depth tags that provide functional effects to the resource."
+          tooltipOptions={{ position: 'top' }}
           showClear
         />
 
@@ -182,7 +184,9 @@ export default function TagSelectionWidget({
           options={visibleSubCategories}
           disabled={disabled || lodash.isEmpty(visibleSubCategories)}
           onChange={handleSubCategoryChange}
-          placeholder="Select Sub-Category"
+          placeholder="Filter by Sub-Category"
+          tooltip="Sub-Categories are where/how to apply those effects."
+          tooltipOptions={{ position: 'top' }}
         />
       </div>
       <div
@@ -198,6 +202,8 @@ export default function TagSelectionWidget({
           filter
           filterInputAutoFocus
           placeholder="Select Tag"
+          tooltip="Tags assist with searching in the toolbar"
+          tooltipOptions={{ position: 'top' }}
           virtualScrollerOptions={{
             itemSize: 32,
           }}

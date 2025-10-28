@@ -16,12 +16,12 @@ export const tagSchema: RJSFSchema = {
     },
     category: {
       type: "string",
-      title: "Category",
+      title: "Category (optional)",
       examples: [], // Overwrite with Categories at render time.
     },
     subcategory: {
       type: "string",
-      title: "Sub-Category",
+      title: "Sub-Category (optional)",
       examples: [], // Overwrite with Sub-Categories at render time.
     },
   },
