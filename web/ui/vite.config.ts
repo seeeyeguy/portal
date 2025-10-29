@@ -26,6 +26,10 @@ export default defineConfig({
     __APP_NAME__: JSON.stringify(process.env.APP_NAME),
     __APP_TITLE__: JSON.stringify(process.env.APP_TITLE),
     __DATA_ENCRYPTION_KEY__: JSON.stringify(process.env.DATA_ENCRYPTION_KEY),
+    __PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS__:
+      Number(process.env.PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS) > 0
+        ? Number(process.env.PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS)
+        : 3600,
     __SCHEME__: JSON.stringify(process.env.SCHEME),
     __SERVER_PORT__: JSON.stringify(process.env.SERVER_PORT),
     __WEB_HOST__: JSON.stringify(process.env.WEB_HOST),

@@ -21,6 +21,7 @@ from django.core.cache import cache
 from django_rq import job as job_decorator
 from django.utils import timezone
 
+from manager.settings import PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS
 from program_review_tool import controllers
 from program_review_tool.exceptions import ProgramReviewToolError
 from program_review_tool.utils.review.export.config import (
@@ -39,7 +40,6 @@ from program_review_tool.utils.review.export.ppt_generator import (
 from program_review_tool.utils.review.tableau import (
     TABLEAU_AUTH_CACHE_TIMEOUT,
 )
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -106,14 +106,7 @@ def generate_program_review_powerpoint_wrapper(
             token=tableau_token,
         )
 
-        # Calculate the cache timeout (in seconds) for the export
-        # based on the time difference (in seconds) next day at 2:59 AM
-        # and the current time.
-        current_time = datetime.now()
-        expiration_time = (current_time + timedelta(days=1)).replace(
-            hour=2, minute=59, second=0, microsecond=0
-        )
-        cache_timeout = (expiration_time - current_time).total_seconds()
+        cache_timeout = PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS
         cache.set(export_cache_key, (ExportStatus.DONE, export_path), cache_timeout)
 
         # Get the scheduler and queue the job for
