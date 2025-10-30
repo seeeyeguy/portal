@@ -215,7 +215,21 @@ export default function ProgramPerformance() {
             className={styles["awaiting-selection"]}
             aria-description="container to display when awaiting program selection"
           >
-            Select a reporting period and program to begin
+            <div className={styles["selection-container"]}>
+              <div className={styles["selection-header"]}>
+                Select a Reporting Period and Project ID to begin.
+              </div>
+              <div className={styles["selection-details"]}>
+                If you are unable to access your assigned Tier 1 or Tier 2
+                programs, please review the Program Team Members in PeopleSoft
+                to ensure the program team information is accurate. Additional
+                details can be found in the{" "}
+                <a href="https://connect.l3harris.com/sites/sas-pgm-mgmt/PRT/_layouts/15/WopiFrame.aspx?sourcedoc=%7bCF03E2D1-964A-40D8-BB09-979297E80AD2%7d&file=PRT%20Web%20FAQ%20and%20Error%20Mitigation.docx&action=default&IsList=1&ListId=%7b8231D670-4D3F-4735-808C-D9ECB08CC79D%7d&ListItemId=84">
+                  FAQs
+                </a>{" "}
+                .
+              </div>
+            </div>
           </div>
         ) : (
           <ProgramPerformanceForm

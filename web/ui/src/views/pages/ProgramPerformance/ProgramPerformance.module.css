@@ -1,9 +1,9 @@
 .awaiting-selection {
-  font-size: 1.2rem;
-  font-weight: 500;
-  left: 40%;
+  text-align: center;
   position: absolute;
   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .button-container {
@@ -124,6 +124,26 @@
 .record-select {
   align-items: center;
   display: flex;
+}
+
+.selection-container {
+  display: inline-block;
+  max-width: 600px;
+  text-align: center;
+}
+
+.selection-header {
+  color: var(--color-stealth);
+  font-size: large;
+  font-weight: bold;
+  padding: 0.75rem;
+}
+
+.selection-details {
+  color: var(--color-stealth);
+  font-size: normal;
+  font-weight: normal;
+  padding: 0.75rem;
 }
 
 @media screen and (min-width: 0px) {
