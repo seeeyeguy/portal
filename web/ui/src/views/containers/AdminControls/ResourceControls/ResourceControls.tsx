@@ -6,6 +6,7 @@ import { Tooltip } from "react-tooltip";
 import { faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lodash from "lodash";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
 import FormType from "@rjsf/core";
@@ -76,7 +77,7 @@ export default function AdminResources() {
 
   // Multi-Select filter options, non-superusers get their resources
   // filtered by default so the first option is removed.
-  const FILTER_OPTIONS = React.useMemo(
+  const filterOptions = React.useMemo(
     () =>
       selectedFilters.includes(0)
         ? [
@@ -131,17 +132,29 @@ export default function AdminResources() {
     setTotalRows(rows);
   };
 
+  const [selectedSubFunction, setSelectedSubFunction] = React.useState<
+    number[]
+  >([]);
+
+  const handleSubFunctionChange = (event: DropdownChangeEvent) => {
+    const selectedValues: number[] = event.value ? [event.value] : [];
+    setSelectedSubFunction(selectedValues);
+    setTotalRows(rows);
+  };
+
   const usersPermittedSubFunctions = React.useMemo(
     () =>
       Array.from(
         loaderData.user.accesses?.reduce((acc, access) => {
           access.subfunctions.forEach((id) => {
+            if (!superuserPermissions) {
               acc.add(id);
+            }
           });
           return acc;
         }, new Set<number>())
       ),
-    [loaderData]
+    [loaderData, superuserPermissions]
   );
 
   // Queries.
@@ -166,7 +179,7 @@ export default function AdminResources() {
       }
       return acc;
     }, [] as number[]),
-    subfunctions: superuserPermissions ? null : usersPermittedSubFunctions,
+    subfunctions: selectedSubFunction ?? usersPermittedSubFunctions,
     page: page + 1,
     limit: rows,
   });
@@ -195,6 +208,29 @@ export default function AdminResources() {
   const { data: subfunctions, isLoading: isSubfunctionsLoading } =
     useGetSubFunctionsQuery(null);
   const resourceTypes = Object.keys(resourceTypeThumbnailPaths);
+
+  const filterSubfunctionOptions = React.useMemo(
+    () =>
+      ((subfunctions?.data ?? []) as ISubFunction[]).reduce(
+        (acc, record) => {
+          if (
+            !superuserPermissions &&
+            !usersPermittedSubFunctions.includes(record.id)
+          ) {
+            return acc;
+          }
+          return [
+            ...acc,
+            {
+              name: `${record.name} (${record.function.name})`,
+              value: record.id,
+            },
+          ];
+        },
+        [] as { name: string; value: number }[]
+      ),
+    [subfunctions, superuserPermissions, usersPermittedSubFunctions]
+  );
 
   const fetchUserOptions = React.useCallback(
     async (
@@ -472,10 +508,20 @@ export default function AdminResources() {
           rowsPerPageOptions={[5, 10, 20]}
           onPageChange={onPageChange}
         />
+        <Dropdown
+          className={styles["admin-dropdown-filter"]}
+          value={selectedSubFunction[0]}
+          options={filterSubfunctionOptions}
+          optionLabel="name"
+          optionValue="value"
+          onChange={handleSubFunctionChange}
+          placeholder="Filter by SubFunction"
+          showClear
+        />
         <MultiSelect
           value={selectedFilters}
           onChange={handleFilterChange}
-          options={FILTER_OPTIONS}
+          options={filterOptions}
           optionLabel="name"
           display="chip"
           placeholder=""
