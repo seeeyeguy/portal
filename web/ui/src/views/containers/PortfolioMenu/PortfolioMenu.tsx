@@ -1,6 +1,7 @@
 import React from "react";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
+import { Tooltip } from "react-tooltip";
 import {
   faPlusSquare,
   faSave,
@@ -22,6 +23,8 @@ import {
   IPortfolios,
   DEFAULT_PORTFOLIO_ID,
 } from "views/definitions/ProgramReviewTool.types";
+
+import { formatSeconds } from "views/utils/FormatUtility";
 
 import styles from "views/containers/PortfolioMenu/PortfolioMenu.module.css";
 
@@ -247,32 +250,40 @@ export default function PortfolioMenu({
           discreteUnit={""}
         />
       ) : (
-        <button
-          disabled={
-            !Object.values(selectedPortfolio?.programs ?? {}).some(
-              (program) => !program.disabled
-            )
-          }
-          onClick={() => generatePortfolio()}
-          className={styles["portfolio-menu-button"]}
-          aria-label="generate portfolio powerpoint"
-        >
-          <span
-            className={styles["portfolio-menu-icon"]}
-            aria-description="portfolio menu button icon"
+        <>
+          <button
+            disabled={
+              !Object.values(selectedPortfolio?.programs ?? {}).some(
+                (program) => !program.disabled
+              )
+            }
+            onClick={() => generatePortfolio()}
+            className={styles["portfolio-menu-button"]}
+            aria-label="generate portfolio powerpoint"
+            data-tooltip-id="generate-portfolio-tooltip"
+            data-tooltip-delay-show={200}
           >
-            <img
-              className={styles["power-point-icon"]}
-              src="/thirdParty/power_point.svg"
-            ></img>
-          </span>
-          <span
-            className={styles["portfolio-menu-label"]}
-            aria-description="portfolio menu button label"
-          >
-            Generate Slides
-          </span>
-        </button>
+            <span
+              className={styles["portfolio-menu-icon"]}
+              aria-description="portfolio menu button icon"
+            >
+              <img
+                className={styles["power-point-icon"]}
+                src="/thirdParty/power_point.svg"
+              ></img>
+            </span>
+            <span
+              className={styles["portfolio-menu-label"]}
+              aria-description="portfolio menu button label"
+            >
+              Generate Slides
+            </span>
+          </button>
+          <Tooltip id="generate-portfolio-tooltip" place={"left"}>
+            Program Review will be cached for{" "}
+            {formatSeconds(__PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS__)}
+          </Tooltip>
+        </>
       )}
 
       <button

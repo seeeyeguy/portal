@@ -486,6 +486,11 @@ CACHES = {
     }
 }
 
+PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS = int(
+    os.getenv("PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS") or 3600
+)
+
+
 ##########################
 ## DJANGO DEBUG TOOLBAR ##
 ##########################
