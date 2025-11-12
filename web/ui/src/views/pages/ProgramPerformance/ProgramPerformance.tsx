@@ -4,6 +4,7 @@ import { MoonLoader } from "react-spinners";
 import { Dropdown } from "primereact/dropdown";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
+import { FAQ_CONTEXTS } from "views/components/FAQModal/FAQModalProps";
 import NavBar from "views/components/NavBar/NavBar";
 import ProgramPerformanceForm from "views/containers/ProgramPerformanceForm/ProgramPerformanceForm";
 
@@ -131,8 +132,7 @@ export default function ProgramPerformance() {
 
   return (
     <>
-      <FAQModal />
-
+      <FAQModal context={FAQ_CONTEXTS.PPR} />
       <NavBar hideSearchBar profile={profile} />
       <div id="page-content" ref={pageContentRef}>
         <span className={styles["menu-break-top"]} />
