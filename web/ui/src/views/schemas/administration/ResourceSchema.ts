@@ -1,7 +1,9 @@
 import { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 import AutoCompleteWidget from "views/components/AutoCompleteWidget/AutoCompleteWidget";
+import DownloadCheckboxWidget from "views/components/DownloadCheckboxWidget/DownloadCheckboxWidget";
 import FileUploadWidget from "views/components/FileUploadWidget/FileUploadWidget";
+import ResourceTypeWidget from "views/components/ResourceTypeWidget/ResourceTypeWidget"
 import TagSelectionWidget from "views/components/TagSelectionWidget/TagSelectionWidget";
 
 import { IEmployeeLevel } from "definitions/portal/directory/EmployeeLevel.types";
@@ -262,11 +264,11 @@ export const resourceUiSchema: UiSchema = {
     "ui:placeholder": "Select Secondary POC",
   },
   type: {
-    "ui:widget": "select",
+    "ui:widget": "ResourceTypeWidget",
     "ui:placeholder": "Select Resource Type",
   },
   download: {
-    "ui:widget": "checkbox",
+    "ui:widget": "DownloadCheckboxWidget",
   },
 };
 
@@ -304,4 +306,6 @@ export const resourceWidgets = {
   AutoCompleteWidget,
   FileUploadWidget,
   TagSelectionWidget,
+  ResourceTypeWidget,
+  DownloadCheckboxWidget,
 };
