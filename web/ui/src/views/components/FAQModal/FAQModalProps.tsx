@@ -5,6 +5,7 @@ import { FAQ } from "views/definitions/FAQModal.types";
 
 export const FAQ_CONTEXTS = {
   PORTAL: "portal",
+  PRT: "prt",
 };
 
 export const FAQs: FAQ[] = [
@@ -89,5 +90,63 @@ export const FAQs: FAQ[] = [
       </>
     ),
     contexts: [FAQ_CONTEXTS.PORTAL],
+  },
+  {
+    category: "General",
+    question:
+      "Where can I find additional information about the Program Review Tool (PRT)?",
+    answer: (
+      <>
+        Additional information can be found on the SAS PMX Business Intelligence
+        SharePoint site:{" "}
+        <a href="https://connect.l3harris.com/sites/sas-pgm-mgmt/PRT/SitePages/PM-BUSINESS-INTELLIGENCE-TOOLS.aspx">
+          PMX BI Tools
+        </a>
+        .
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PRT],
+  },
+  {
+    category: "Errors/Issues",
+    question: `What should I do if I receive a “Request timed out” error?`,
+    answer: (
+      <>
+        The PRT generation service relies on connectivity to certain internal
+        resources that may occasionally be unavailable. Please wait 15 minutes
+        and try again. If the service remains unavailable, please contact:{" "}
+        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PRT],
+  },
+  {
+    category: "Errors/Issues",
+    question:
+      "Why am I receiving a “Portfolio generation service unavailable, please try again later” error?”",
+    answer: (
+      <>
+        The PRT generation service relies on connectivity to the Tableau API,
+        which may occasionally experience degraded performance or temporary
+        outages. Please wait 15 minutes before retrying slide generation. If the
+        issue persists, please contact:{" "}
+        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PRT],
+  },
+  {
+    category: "Errors/Issues",
+    question:
+      "Who should I contact if I am having other technical difficulties not listed in the FAQ?",
+    answer: (
+      <>
+        Please contact:{" "}
+        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+        Include a description of what occurred, any error messages, and
+        screenshots if available.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PRT],
   },
 ];

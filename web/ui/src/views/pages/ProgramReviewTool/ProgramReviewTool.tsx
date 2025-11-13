@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import lodash from "lodash";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
+import { FAQ_CONTEXTS } from "views/components/FAQModal/FAQModalProps";
 import NavBar from "views/components/NavBar/NavBar";
 import PortfolioMenu from "views/containers/PortfolioMenu/PortfolioMenu";
 import ProgramList from "views/containers/ProgramList/ProgramList";
@@ -268,7 +269,7 @@ export default function ProgramReviewTool() {
       }}
       aria-description="container for program review tool application"
     >
-      <FAQModal />
+      <FAQModal context={FAQ_CONTEXTS.PRT} />
       <NavBar
         profile={profile}
         hideSearchBar={true}
