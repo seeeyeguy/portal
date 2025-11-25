@@ -314,10 +314,7 @@ def ingest_program_member_data() -> Optional[int]:
     for _, row in df.iterrows():
         program_id: int = int(row["program"])
         role_id: int = int(row["role"])
-        # E-mails in the `DataFrame` have the `l3harris.com` domain
-        # and need to be converted to `harris.com` domain for the
-        # correct verification.
-        user_email: str = row["email"].replace("@l3harris.com", "@harris.com")
+        user_email: str = row["email"]
 
         # Construct the composite key from the `Program` id,
         # `ProgramRole` id and the `User` email.
@@ -370,10 +367,7 @@ def ingest_program_member_data() -> Optional[int]:
     ).filter(expiry_date__isnull=True):
         filtered_df = df.loc[
             (df["program"] == record.program.id)
-            & (
-                df["email"]
-                == record.user.email.replace("@harris.com", "@l3harris.com").lower()
-            )
+            & (df["email"].lower() == record.user.email.lower())
             & (df["role"] == record.role.id)
         ]
         if filtered_df.empty:

@@ -134,7 +134,9 @@ class Access:
                 raise exceptions.UsersError(err_msg, 403)
 
             # Fetch `User` record.
-            user_record: Optional[AuthModels.User] = fetch_authorized_employee(user)
+            user_record: Optional[AuthModels.User] = fetch_authorized_employee(
+                email=user
+            )
             if not user_record:
                 raise AuthModels.User.DoesNotExist()
 

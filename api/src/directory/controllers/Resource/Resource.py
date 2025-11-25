@@ -270,12 +270,8 @@ class Resource:
                 raise exceptions.DirectoryError(err_msg, 404)
 
             # Verify `PointOfContact` emails were given.
-            point_of_contacts = list(
-                map(
-                    lambda email: f"{email.split('@')[0].lower()}@harris.com",
-                    params["point_of_contacts"],
-                )
-            )
+            point_of_contacts = params["point_of_contacts"]
+
             if not point_of_contacts:
                 err_msg = "Resource must have at least one PointOfContact."
                 LOGGER.error(err_msg)
@@ -487,12 +483,6 @@ class Resource:
             subfunctions: List[int] = new_params.pop("subfunctions")
             tags: List[int] = new_params.pop("tags")
             point_of_contacts: List[str] = new_params.pop("point_of_contacts")
-            point_of_contacts = list(
-                map(
-                    lambda email: f"{email.split('@')[0].lower()}@harris.com",
-                    point_of_contacts,
-                )
-            )
 
             # Verify `EmployeeLevel` ids were given.
             if not employee_levels:

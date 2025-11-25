@@ -24,11 +24,11 @@ class ResourceSerializer(serializers.ModelSerializer):
         primary_point_of_contact: Union[
             PointOfContact, None
         ] = PointOfContact.objects.filter(resource=instance, primary=True).first()
-        primary_point_of_contact_l3harris_email = None
+        poc_email = None
         if primary_point_of_contact:
-            email_username, _ = primary_point_of_contact.contact.email.split("@")
-            primary_point_of_contact_l3harris_email = f"{email_username}@l3harris.com"
-        record["primary_point_of_contact"] = primary_point_of_contact_l3harris_email
+            poc_email = primary_point_of_contact.contact.email
+
+        record["primary_point_of_contact"] = poc_email
 
         # Secondary POCs
         secondary_point_of_contacts: list[PointOfContact] = list(
