@@ -1,6 +1,6 @@
 import React from "react";
 import { Tooltip } from "react-tooltip";
-import { RecursiveAccordion } from "adas-react-components";
+import RecursiveAccordion from "views/components/RecursiveAccordion/RecursiveAccordion";
 import lodash from "lodash";
 import { Button } from "primereact/button";
 
@@ -65,7 +65,6 @@ export default React.memo(function ResourceAccordion({
       className={styles["resource-accordion"]}
       dataSet={resources}
       isLoading={isLoading}
-      spinner="moon"
       recursionDepth={0}
     >
       {(props: unknown) => {
