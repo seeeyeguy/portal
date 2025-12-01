@@ -6,6 +6,7 @@ import { FAQ } from "views/definitions/FAQModal.types";
 export const FAQ_CONTEXTS = {
   PORTAL: "portal",
   PRT: "prt",
+  PPR: "ppr",
 };
 
 export const FAQs: FAQ[] = [
@@ -65,6 +66,103 @@ export const FAQs: FAQ[] = [
     contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
+    question:
+      "What is the Program Performance Reporting (PPR) tool used for and which programs are required to input data?",
+    answer: (
+      <>
+        Each period, Tier 1 and Tier 2 programs are required to report their
+        performance data to CHQ. The Program Performance Reporting (PPR) tool
+        streamlines this process by automatically collecting data from
+        PeopleSoft and Cobra, helping reduce reporting time for program teams.
+        <br />
+        <br />
+        Each program is responsible for completing the subjective assessment and
+        entering any data that cannot be automatically pulled from source
+        systems.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
+    question: "How do I manage my program team?",
+    answer: (
+      <>
+        The program team is populated directly from the Support Team Members
+        listed in PeopleSoft. Any necessary updates should be made in
+        PeopleSoft.
+        <br />
+        <br />
+        Team member information in the Program Performance Reporting tool is
+        refreshed daily at 3 a.m., 11 a.m., and 3 p.m. to reflect any changes
+        made in the system.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
+    question:
+      "When is data for program team member assignments in PeopleSoft updated?",
+    answer: (
+      <>
+        If you make changes to program team member assignments, you will see
+        those changes reflected in our system at 5 a.m., 1 p.m., and 5 p.m.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
+    question: "Why isn't my Project ID available in the tool?",
+    answer: (
+      <>
+        Access to program data is managed utilizing the program team in
+        PeopleSoft. If you are unable to access your assigned Tier 1 or Tier 2
+        programs, please review the Program Team Members in PeopleSoft to ensure
+        the program team information is accurate.
+        <br />
+        <br />
+        Team member information in the Program Performance Reporting tool is
+        refreshed daily at 3 a.m., 11 a.m., and 3 p.m. to reflect any changes
+        made in the system.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
+    question: "How do I view data submitted for prior reporting periods?",
+    answer: (
+      <>
+        The Reporting Period filter allows programs teams to view data submitted
+        in the prior reporting period. For additional periods, please utilize
+        the Program Performance report in the
+        <br />
+        <a href="https://app.high.powerbigov.us/groups/me/apps/ac2afc6b-21b6-4e6f-8676-598620024698/reports/fc05f2a9-2782-4972-a5f8-179fb7aa9b23/8581b61c07df049490e9">
+          Power BI Program Management app
+        </a>
+        .
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
+    question: `Why was my program identified as a "Red Program"?`,
+    answer: (
+      <>
+        Programs are identified as "Red Programs" if they meet one or more of
+        the following criteria:
+        <ol>
+          <li>{"CPI < 0.9"}</li>
+          <li>{"SPI < 0.9"}</li>
+          <li>EAC Growth (EAC is greater than BAC by 10% or more)</li>
+          <li>Over Target Cost (EAC is greater than Contract Value)</li>
+          <li>Red Overall Program Subjective Assessment</li>
+        </ol>
+        Hovering over the "Red Program" badge will present a tooltip with the
+        specific conditions that marked the program as a red program.
+      </>
+    ),
+    contexts: [FAQ_CONTEXTS.PPR],
+  },
+  {
     question: "Who should I contact regarding technical difficulties?",
     answer: (
       <>
@@ -73,7 +171,7 @@ export const FAQs: FAQ[] = [
         <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
       </>
     ),
-    contexts: [FAQ_CONTEXTS.PORTAL],
+    contexts: [FAQ_CONTEXTS.PORTAL, FAQ_CONTEXTS.PPR],
   },
   {
     question:
