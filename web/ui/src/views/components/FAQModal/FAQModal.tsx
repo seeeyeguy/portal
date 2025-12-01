@@ -73,18 +73,31 @@ export default function FAQModal({
         className={styles["faq-modal-content"]}
         aria-description="container for frequently asked questions"
       >
-        {FAQs.reduce((acc: JSX.Element[], faq, i) => {
-          if (faq.contexts.includes(context)) {
-            return [
-              ...acc,
-              <details key={"faq" + i}>
-                <summary>{faq.question}</summary>
-                <p aria-description="faq answer">{faq.answer}</p>
-              </details>,
-            ];
-          }
-          return acc;
-        }, [])}
+        {(() => {
+          const filteredFAQs = FAQs.filter((faq) =>
+            faq.contexts.includes(context)
+          );
+
+          const categories = Array.from(
+            new Set(filteredFAQs.map((faq) => faq.category || "No Category"))
+          ).sort((a, b) =>
+            a === "No Category" ? -1 : b === "No Category" ? 1 : 0
+          );
+
+          return categories.map((category, i) => (
+            <div key={`category-${i}`}>
+              {category !== "No Category" && <h3>{category}</h3>}
+              {filteredFAQs
+                .filter((faq) => (faq.category || "No Category") === category)
+                .map((faq, j) => (
+                  <details key={`faq-${i}-${j}`}>
+                    <summary>{faq.question}</summary>
+                    <p aria-description="faq answer">{faq.answer}</p>
+                  </details>
+                ))}
+            </div>
+          ));
+        })()}
       </div>
     </dialog>
   );
