@@ -1,8 +1,10 @@
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router";
+import { useGetProgramsQuery } from "state/query/api/portal/programReviewTool/ProgramApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarCheck,
+  faFileLines,
   faChartLine,
   faCheckToSlot,
   faFolder,
@@ -69,6 +71,17 @@ export default function RouteMenu({ children }: RouteMenuProps) {
   const loaderData = useLoaderData() as { user: IAuthUser };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  //Check for programs that are active_status and tier 1 and 2
+  const { data: programs } = useGetProgramsQuery({
+    programMember: loaderData.user.email,
+    tiers: [1, 2],
+  });
+
+  const hasPrograms = React.useMemo(
+    () => Object.keys(programs?.data ?? {}).length > 0,
+    [programs?.data]
+  );
 
   const superuserPermissions = React.useMemo(
     () => hasSuperuserPermissions(loaderData.user),
@@ -183,6 +196,14 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           pathToCheck = item.path;
         }
 
+        if (item.label == "Program Performance (PPR)") {
+          return {
+            ...item,
+            visible:
+              requiredPermissions(loaderData.user, pathToCheck) && hasPrograms,
+          };
+        }
+
         // All permissions must be true for page to be visible.
         return {
           ...item,
@@ -230,6 +251,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           },
           icon: <FontAwesomeIcon icon={faChartLine} />,
           data: { path: "https://tableau.l3harris.com/#/workbooks/9049/views" },
+        },
+        {
+          label: "Program Performance (PPR)",
+          command: () => navigate("/ppr"),
+          icon: <FontAwesomeIcon icon={faFileLines} />,
+          data: { path: "/ppr" },
         },
         {
           label: "Program Review Tool (PRT)",
