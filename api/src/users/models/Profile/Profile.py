@@ -14,7 +14,7 @@ from django.db import models, DatabaseError
 
 from users.models.Segment.Segment import Segment
 
-from manager.services.ldap.provider.utils import fetch_employee_record_from_ldap
+from manager.services.ldap.provider.utils import fetch_employee_records_from_ldap
 
 
 LOGGER = logging.getLogger(__name__)
@@ -107,7 +107,8 @@ class Profile(models.Model):
         """Update a user's profile with data fetched from LDAP."""
 
         try:
-            user_info = fetch_employee_record_from_ldap(self.user.email)
+            full_name = f"{self.user.first_name} {self.user.last_name}".strip()
+            ldap_entries = fetch_employee_records_from_ldap(full_name)
         except (
             requests.exceptions.ConnectionError,
             requests.HTTPError,
@@ -116,7 +117,24 @@ class Profile(models.Model):
         ):
             return None
 
+        if not ldap_entries:
+            return None
+
+        # Find the profile entry that belongs to this user.
+        user_info = None
+        for entry in ldap_entries:
+            # `username` is the canonical SSO UPN (UserPrincipalName).
+            ldap_username = entry.get("username")
+            if ldap_username and ldap_username.lower() == self.user.username.lower():
+                user_info = entry
+                break
+
         if not user_info:
+            LOGGER.warning(
+                "No LDAP entry for user %s matched username %s",
+                full_name,
+                self.user.username,
+            )
             return None
 
         LOGGER.info("Updating user profile...")
@@ -147,6 +165,13 @@ class Profile(models.Model):
 
         self.location = user_info.get("location", "")
         self.citizenship = user_info.get("citizenship", "")
+
+        ldap_email = user_info.get("email")
+        if ldap_email and ldap_email != self.user.email:
+            self.user.email = ldap_email
+            # Persist only the email field to avoid an extra full‑save.
+            self.user.save(update_fields=["email"])
+            LOGGER.info("User email updated from LDAP: %s", ldap_email)
 
         self.save()
         return None

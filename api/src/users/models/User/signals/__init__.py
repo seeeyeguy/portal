@@ -74,6 +74,7 @@ def update_user_in_prt_database(sender: User, instance: User, **_: dict) -> None
         )
         if user_queryset.exists():
             user_queryset.update(
+                email=instance.email,
                 first_name=instance.first_name,
                 last_name=instance.last_name,
                 is_superuser=instance.is_superuser,
