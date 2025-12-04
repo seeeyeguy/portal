@@ -131,8 +131,20 @@ def fetch_authorized_employee(email: str, db: str = "default") -> Optional[model
         user = User.objects.filter(email__iexact=user_info["email"]).first()
         if user:
             return user
-        # If the email lookup fails, fall back to a username lookup.
-        return User.objects.filter(username__iexact=user_info["username"]).first()
+
+        # If the email lookup fails, fall back to a username and update email.
+        user_to_update = User.objects.get(username__iexact=user_info["username"])
+        if user_to_update:
+            _ = User.objects.filter(username__iexact=user_info["username"]).update(
+                email=user_info["email"],
+                first_name=user_info["firstName"],
+                last_name=user_info["lastName"],
+            )
+            user_to_update.refresh_from_db()
+            LOGGER.info(f"User updated: {user_to_update}")
+            return user_to_update
+        LOGGER.error(f"User not found, User ({user_info['username']}).")
+        return None
     except DatabaseError:
-        LOGGER.error(f"Could not create User ({user_info['username']}).")
+        LOGGER.error(f"User not found, User ({user_info['username']}).")
         return None
