@@ -1,6 +1,8 @@
 """
 `Program` Controllers module. Controllers permit the addition,
 modification, deletion, fetching, and processing of data.
+
+Updated to use PowerBI API instead of Tableau.
 """
 
 import logging
@@ -23,9 +25,11 @@ from program_review_tool.utils.review.export import (
     generate_program_review_powerpoint_wrapper,
     PROGRAM_REVIEW_CACHE_PREFIX,
 )
-from program_review_tool.utils.review.tableau import (
-    get_tableau_token_for_job,
-    TABLEAU_AUTH_CACHE_TIMEOUT,
+from program_review_tool.utils.review.powerbi.config import (
+    AZURE_TOKEN_CACHE_KEY,
+)
+from program_review_tool.utils.review.powerbi.scripts.authenticate_with_powerbi import (
+    get_powerbi_token_for_job,
 )
 
 from manager.settings import ApplicationBuild, BUILD
@@ -46,6 +50,8 @@ EXPORT_JOB_CACHE_EXPIRED_TEXT: str = "no_program_review_export_job_found"
 # Program review export job cache value set when in queue.
 EXPORT_JOB_CACHE_QUEUED_TEXT: str = "program_review_export_job_queued"
 
+# Azure AD token cache timeout (1 hour minus 10% for safety)
+AZURE_AUTH_CACHE_TIMEOUT: int = int(os.getenv("AZURE_AUTH_CACHE_TIMEOUT", 3240))
 
 class Program:
     """
@@ -332,21 +338,21 @@ class Program:
         # Set the reporting period for the export to the previous reporting period
         period: str = (datetime.now() - relativedelta(months=1)).strftime("%Y%m")
 
-        # Retrieve a Tableau token and its cache key.
-        tableau_token_cache_key, tableau_token_for_job = get_tableau_token_for_job()
+        # Retrieve a PowerBI token and its cache key.
+        powerbi_token_cache_key, powerbi_token_for_job = get_powerbi_token_for_job()
 
         # If there is no token then raise an error.
-        if not tableau_token_for_job:
+        if not powerbi_token_for_job:
             err_msg = "Export generation service is overloaded. Please try again later."
             raise exceptions.ProgramReviewToolError(err_msg, 529)
 
         # Set the retrieved token as 'in use'.
         cache.set(
-            tableau_token_cache_key,
-            (tableau_token_for_job, True),
-            TABLEAU_AUTH_CACHE_TIMEOUT,
+            powerbi_token_cache_key,
+            (powerbi_token_for_job, True),
+            AZURE_AUTH_CACHE_TIMEOUT,
         )
-
+        
         # Create `Usage` entry for export job.
         usage = controllers.Usage.create_usage(user_email, pa_numbers)
 
@@ -361,8 +367,8 @@ class Program:
             program_manager_names,
             review_name,
             export_cache_key,
-            tableau_token_cache_key,
-            tableau_token_for_job,
+            powerbi_token_cache_key,
+            powerbi_token_for_job,
             usage.id,
             meta={
                 "job_name": PROGRAM_REVIEW_EXPORT_JOB_NAME,

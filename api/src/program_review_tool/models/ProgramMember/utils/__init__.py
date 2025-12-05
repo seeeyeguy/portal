@@ -249,7 +249,6 @@ def query_program_members_from_external_database(
 
     return df
 
-
 def transform_program_member_data_from_external_database(
     data_source: str, pa_number: Optional[str] = None, role: Optional[int] = None
 ) -> pd.DataFrame:
@@ -285,10 +284,7 @@ def ingest_program_member_data() -> Optional[int]:
     ] = models.ProgramMember.objects.all()
 
     data_source = None
-    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS or BUILD in {
-        ApplicationBuild.DEVELOPMENT,
-        ApplicationBuild.TEST,
-    }:
+    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS:
         data_source = AcceptedExternalDatabases.AXIS.upper()
     elif EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.FDW:
         data_source = AcceptedExternalDatabases.FDW.upper()
@@ -306,7 +302,7 @@ def ingest_program_member_data() -> Optional[int]:
     if df.empty:
         LOGGER.error("No data returned from external source; skipping expiration.")
         return None
-
+    
     verified_employees = {}
     for employee in set(df["email"]):
         LOGGER.info(f"Verifying ProgramMember: {employee}")

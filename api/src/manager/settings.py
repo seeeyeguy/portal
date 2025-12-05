@@ -256,9 +256,8 @@ SHELL_PLUS = "ipython"
 SHELL_PLUS_PRINT_SQL = True
 
 IPYTHON_ARGUMENTS = [
-    "--ext",
-    "django_extensions.management.notebook_extension",
-    "--debug",
+    "--no-banner",
+    "--no-confirm-exit"
 ]
 
 IPYTHON_KERNEL_DISPLAY_NAME = f"{APP_NAME} Shell-Plus"
