@@ -187,7 +187,7 @@ def download_image(
         period_param = period[:4] if len(date_str) == 4 else period
         uri = (
             f"{tableau_view_base_uri.strip()}{str(row.internal_view_id).strip()}/image"
-            f"?vf_{str(row.pa_code_filter).strip()}={pa_numbers}&maxAge=1&vf_None={period_param}"
+            f"?vf_{str(row.pa_code_filter).strip()}={pa_numbers.upper()}&maxAge=1&vf_None={period_param}"
         )
         file_name = f"{row.internal_view_id}"
         image_path_name = os.path.join(images_directory, f"{file_name}.png")

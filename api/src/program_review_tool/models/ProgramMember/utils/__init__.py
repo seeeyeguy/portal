@@ -300,8 +300,12 @@ def ingest_program_member_data() -> Optional[int]:
         raise ValueError(
             "Accepted data source was not specified in `.env` `EXTERNAL_SOURCE_DATABASE`."
         )
-
+        
     df = transform_program_member_data_from_external_database(data_source=data_source)
+
+    if df.empty:
+        LOGGER.error("No data returned from external source; skipping expiration.")
+        return None
 
     verified_employees = {}
     for employee in set(df["email"]):
