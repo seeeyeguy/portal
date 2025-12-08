@@ -76,7 +76,7 @@ const programApi = api.injectEndpoints({
           ? response.reduce(
               (acc, program) => ({
                 ...acc,
-                [program.pa_number]: transformProgramRecord(program),
+                [program.pa_number.toUpperCase()]: transformProgramRecord(program),
               }),
               {}
             )

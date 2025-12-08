@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
+from django.db.models.functions import Lower, Trim
 
 from program_review_tool import controllers, exceptions, models
 from program_review_tool.utils.review.export import (
@@ -142,11 +143,18 @@ class Program:
 
             # If PA numbers are given, filter the QuerySet to corresponding `Program` records.
             if pa_numbers:
-                programs = programs.filter(pa_number__in=pa_numbers).order_by("id")
+                lowered_pa_numbers = [pa.lower().strip() for pa in pa_numbers]
+
+                programs = (
+                    programs.annotate(_pa_clean=Lower(Trim("pa_number")))
+                    .filter(_pa_clean__in=lowered_pa_numbers)
+                    .order_by("id")
+                )
+
                 # If some `Program`s with PA numbers not in `Program` QuerySet, throw an error.
                 if programs.count() != len(pa_numbers):
-                    missing_programs_pa_numbers = set(pa_numbers) - set(
-                        programs.values_list("pa_number", flat=True)
+                    missing_programs_pa_numbers = set(lowered_pa_numbers) - set(
+                        programs.values_list("_pa_clean", flat=True)
                     )
                     raise exceptions.ProgramReviewToolError(
                         f"Programs(pa_numbers={missing_programs_pa_numbers}) do not exist.",
