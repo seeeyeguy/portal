@@ -1,9 +1,9 @@
 import React from "react";
 import { Tooltip } from "react-tooltip";
-import { RecursiveAccordion } from "adas-react-components";
+import RecursiveAccordion from "views/components/RecursiveAccordion/RecursiveAccordion";
 import type { RecursiveDataSet } from "adas-react-components/types";
 import lodash from "lodash";
-import { Button } from 'primereact/button';
+import { Button } from "primereact/button";
 
 import ResourceLinks from "views/components/ResourceLinks/ResourceLinks";
 
@@ -29,7 +29,7 @@ export default function Favorites({ favorites, profile }: IFavoritesProps) {
 
   const sortedFavoriteResources = React.useMemo(() => {
     if (sort === ESortTypes.ALPHABETICAL) {
-      return lodash.sortBy(favoriteResources, ['name']);
+      return lodash.sortBy(favoriteResources, ["name"]);
     }
     return favoriteResources;
   }, [favoriteResources, sort]);
@@ -60,7 +60,6 @@ export default function Favorites({ favorites, profile }: IFavoritesProps) {
           title="Favorites"
           dataSet={sortedFavoriteResources as unknown as RecursiveDataSet}
           className={styles["favorite-accordion"]}
-          spinner="moon"
           recursionDepth={0}
         >
           {() => (
@@ -82,7 +81,7 @@ export default function Favorites({ favorites, profile }: IFavoritesProps) {
                     onClick={handleSortChange}
                     data-tooltip-id="resource-favorite-sort-tooltip"
                     data-tooltip-delay-show={200}
-                    icon={`pi ${sort === ESortTypes.ADDED_DATE ? 'pi-sort-numeric-down' : 'pi-sort-alpha-down'}`}
+                    icon={`pi ${sort === ESortTypes.ADDED_DATE ? "pi-sort-numeric-down" : "pi-sort-alpha-down"}`}
                   />
                   <Tooltip
                     id="resource-favorite-sort-tooltip"
