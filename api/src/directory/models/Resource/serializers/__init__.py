@@ -20,6 +20,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance: Resource) -> dict:
         record: dict = super().to_representation(instance)
+        # Primary POC
         primary_point_of_contact: Union[
             PointOfContact, None
         ] = PointOfContact.objects.filter(resource=instance, primary=True).first()
@@ -28,6 +29,16 @@ class ResourceSerializer(serializers.ModelSerializer):
             email_username, _ = primary_point_of_contact.contact.email.split("@")
             primary_point_of_contact_l3harris_email = f"{email_username}@l3harris.com"
         record["primary_point_of_contact"] = primary_point_of_contact_l3harris_email
+
+        # Secondary POCs
+        secondary_point_of_contacts: list[PointOfContact] = list(
+            PointOfContact.objects.filter(resource=instance, primary=False)
+        )
+        secondary_emails: list[str] = [
+            poc.contact.email for poc in secondary_point_of_contacts
+        ]
+        if secondary_emails:  # only include if non-empty
+            record["secondary_point_of_contacts"] = secondary_emails
 
         return record
 

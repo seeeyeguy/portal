@@ -16,6 +16,7 @@ export interface IResource {
   url: string;
   thumbnail: string | null;
   primaryPointOfContact: string;
+  secondaryPointOfContacts?: string[]; 
   employeeLevels: IEmployeeLevel[];
   subfunctions: ISubFunction[];
   tags: ITag[];
