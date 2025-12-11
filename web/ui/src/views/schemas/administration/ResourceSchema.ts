@@ -43,6 +43,9 @@ export function transformResourceToFormData(
     ),
     tags: resource.tags.map((tag: ITag) => tag.id),
     primaryPoc: resource.primaryPointOfContact,
+    secondaryPoc: resource.secondaryPointOfContacts?.length
+      ? resource.secondaryPointOfContacts.join(", ")
+      : undefined,
     type: resource.type,
     download: resource.download,
   };

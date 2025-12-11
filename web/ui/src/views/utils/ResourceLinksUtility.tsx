@@ -75,6 +75,7 @@ export const createResourceCollection = (
         url={resource.url}
         thumbnail={getThumbnailPath(resource)}
         primaryPointOfContact={resource.primaryPointOfContact}
+        secondaryPointOfContacts={resource.secondaryPointOfContacts} 
         download={resource.download}
         favoriteId={resourceFavoriteMap[resource.id].favoriteId}
         restricted={
@@ -83,3 +84,4 @@ export const createResourceCollection = (
         key={resourceFavoriteMap[resource.id].id}
       />
     ));
+    

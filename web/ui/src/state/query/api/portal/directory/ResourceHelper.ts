@@ -25,6 +25,7 @@ export interface IApiResource {
   url: string;
   thumbnail: string;
   primary_point_of_contact: string;
+  secondary_point_of_contacts?: string[];
   employee_levels: IApiEmployeeLevel[];
   subfunctions: IApiSubFunction[];
   tags: IApiTag[];
