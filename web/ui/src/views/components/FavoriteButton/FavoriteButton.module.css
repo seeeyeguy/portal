@@ -1,0 +1,12 @@
+.favorite-button {
+  background: transparent;
+  border: none;
+  color: var(--color-stealth);
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.favorite-button:disabled {
+  color: var(--color-vibrant-red);
+  cursor: not-allowed;
+}
