@@ -63,6 +63,12 @@ paths:
           schema:
             type: integer
           description: Maximum number of `Query` records to return.
+        - in: query
+          name: search_term
+          schema:
+            type: string
+            maxLength: 512
+          description: A search term used when searching for resources.
       requestBody:
         content:
           application/json: {}
@@ -130,6 +136,180 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateVisitResourceDoesNotExistErrorResponse"
+    get:
+      tags:
+        - "analytics.visit.fetch"
+      summary: "Fetch most visited resources."
+      description: |
+        Retrieve aggregated `Visit` data showing the most visited resources. 
+        Supports filtering by user email, resource ID, and pagination. 
+        Results are ordered by visit count descending.
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: Email address (stored as username) of the `User` whose visits should be considered.
+        - in: query
+          name: resource
+          schema:
+            type: integer
+          description: Primary key of the `Resource` record to filter visits by.
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Page number to select from a paginated response of aggregated resource visits.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          description: Maximum number of aggregated resource results to return per page.
+        - in: query
+          name: top
+          schema:
+            type: integer
+            minimum: 1
+          description: Return only the top N most visited resources (alternative to pagination).
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchVisitResponse"
+        "400":
+          description: "Invalid parameters (e.g. mixing 'top' with 'page/limit' or invalid resource id)."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchVisitTopwithLimitandPageResponse"
+                  - $ref: "#/components/schemas/FetchVisitInvalidParametersResponse"
+        "404":
+          description: "User or Resource not found."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchVisitNotFoundResponse"
+  /analytics/favorites:
+    get:
+      tags:
+        - "analytics.favorite.fetch"
+      summary: "Fetch favorited resources."
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "Email address (stored as username) of the User whose favorites should be filtered."
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Page number to select from a paginated response of favorited resources. Must be used with `limit`.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          description: Maximum number of favorited resources to return. Must be used with `page`.
+        - in: query
+          name: top
+          schema:
+            type: integer
+            minimum: 1
+          description: Return only the top N favorited resources (ordered by popularity). Cannot be used with `page` or `limit`.
+      responses:
+        "200":
+          description: "OK. Returns favorited resources or an empty array if user exists but has no favorites."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFavoriteResponse"
+                  - type: array
+                    items: {}
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFavoriteTopwithLimitandPageResponse"
+                  - $ref: "#/components/schemas/FetchFavoriteInvalidParametersResponse"
+        "404":
+          description: "User does not exist or resource not favorited."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchFavoriteNotFoundResponse"
+  /analytics/prt/usage:
+    get:
+      tags:
+        - "analytics.usage.fetch"
+      summary: "Fetch Usage record(s)."
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: Primary key of the `Usage` record to fetch.
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: "User's email related to the desired `Usage` records."
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number to select from a paginated response of `Usage` records.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of `Usage` records to return.
+        - in: query
+          name: pa_number
+          schema:
+            type: string
+          description: "Program PA number to filter `Usage` records."
+        - in: query
+          name: success
+          schema:
+            type: boolean
+          description: "Filter `Usage` records by success flag (true or false)."
+      requestBody:
+        content:
+          application/json: {}         
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchUsageResponse"
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchUsageInvalidParametersResponse"          
+        "404":
+          description: "Usage does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchUsageNotFoundResponse"
   /directory/employee-levels:
     post:
       tags:
@@ -2786,6 +2966,174 @@ components:
       title: "Create `Visit` error response due to supplying an id
         for a `Resource` that does not exist."
       example: "Resource (id=resource_id), does not exist."
+
+    FetchVisitResponse:
+      title: "Fetch aggregated `Visit` response."
+      type: object
+      properties:
+        resource:
+          type: object
+          description: "Resource that was visited."
+          properties:
+            id:
+              type: integer
+              description: "Unique identifier for the resource."
+            name:
+              type: string
+              description: "Name of the resource."
+            url:
+              type: string
+              description: "URL of the resource."
+            active:
+              type: boolean
+              description: "Whether the resource is active."
+            deleted:
+              type: boolean
+              description: "Whether the resource is deleted."
+        visit_count:
+          type: integer
+          description: "Number of times the resource was visited."
+      example:
+        {
+          "resource": {
+            "id": 1,
+            "name": "Resource 1 Revision 1",
+            "url": "example.org",
+            "active": true,
+            "deleted": false
+          },
+          "visit_count": 2
+        }
+
+    FetchVisitTopwithLimitandPageResponse:
+      title: "Fetch `Visit` error response due Top being used with Page + Limit."
+      example: "Cannot use 'top' with 'limit' or 'page'."
+
+    FetchVisitInvalidParametersResponse:
+      title: "Fetch `Visit` error response due to using invalid parameters."
+      example: "Invalid parameters given."
+
+    FetchVisitNotFoundResponse:
+      title: "Fetch `Visit` error response due to user or resource not found."
+      example: "User or Resource not found."
+
+    FetchFavoriteResponse:
+      title: "Fetch favorited resources response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              resource:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  active:
+                    type: boolean
+                  deleted:
+                    type: boolean
+              favorite_count:
+                type: integer
+            required:
+              - resource
+              - favorite_count
+          example:
+            [
+              {
+                "resource": {
+                  "name": "CRM Data Quality GBD Metrics",
+                  "url": "https://tableau.l3harris.com/#/workbooks/10469/views",
+                  "active": true,
+                  "deleted": false
+                },
+                "favorite_count": 42
+              },
+              {
+                "resource": {
+                  "name": "Marketing Dashboard",
+                  "url": "https://tableau.l3harris.com/#/workbooks/20831/views",
+                  "active": true,
+                  "deleted": false
+                },
+                "favorite_count": 17
+              }
+            ]
+
+    FetchFavoriteTopwithLimitandPageResponse:
+      title: "Fetch `Favorite` error response due Top being used with Page + Limit."
+      example: "Cannot use 'top' with 'limit' or 'page'."
+
+    FetchFavoriteInvalidParametersResponse:
+      title: "Fetch `Favorite` error response due to using invalid parameters."
+      example: "Invalid parameters given."
+
+    FetchFavoriteNotFoundResponse:
+      title: "Fetch `Favorite` error response due to resource not found."
+      example: "Favorite not found."
+
+    FetchUsageResponse:
+      title: "Fetch `Usage` response."
+      type: object
+      description: "Represents a single Usage record."
+      properties:
+        id:
+          type: integer
+          description: "Unique identifier for the usage record."
+          example: 1
+        user:
+          type: string
+          format: email
+          description: "Email of the user associated with the usage."
+          example: "May.Parker@harris.com"
+        programs:
+          type: array
+          items:
+            type: string
+          description: "List of program PA numbers associated with the usage."
+          example: ["6C27", "10LR"]
+        created:
+          type: string
+          format: date-time
+          description: "Date and time when the usage was recorded."
+          example: "2025-01-27T16:00:00Z"
+        duration:
+          type: integer
+          nullable: true
+          description: "Duration of the usage in seconds, if available."
+          example: null
+        success:
+          type: boolean
+          description: "Indicates whether the usage was successful."
+          example: true
+        error_msg:
+          type: string
+          description: "Error message if the usage failed."
+          example: ""
+      example:
+        {
+          "id": 1,
+          "user": "May.Parker@harris.com",
+          "programs": ["6C27", "10LR"],
+          "created": "2025-01-27T16:00:00Z",
+          "duration": null,
+          "success": true,
+          "error_msg": ""
+        }
+
+
+    FetchUsageInvalidParametersResponse:
+      title: "Fetch `Usage` error response due to using invalid parameters."
+      example: "Invalid parameters given."
+
+    FetchUsageNotFoundResponse:
+      title: "Fetch `Usage` error response due to resource not found."
+      example: "Usage not found."
 
     ResourceSearchRequest:
       title: "`Resource` search request."

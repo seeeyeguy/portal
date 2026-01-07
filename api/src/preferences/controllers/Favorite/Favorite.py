@@ -1,20 +1,23 @@
 """
-`BI Portal` `Favorite` controller module. Controllers utilize the
-Django ORM to create, fetch, update, and delete records within
-the `Favorite` table. `Favorite` represents a preferred `Resource`
-for a user.
+`BI Portal` `Favorite` controller module.
+
+Controllers utilize the Django ORM to create, fetch, update, and delete
+records within the `Favorite` table. A `Favorite` represents a preferred
+`Resource` for a user.
+
 """
 
 import logging
-from typing import List
+from typing import List, Dict
 
-from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Max, QuerySet
+from django.db.models import Count, Max, QuerySet
 from django.db.utils import IntegrityError
+from django.contrib.auth.models import User
 
 from directory.models import Resource
 from preferences import exceptions, models
+from analytics import exceptions as analytics_exceptions
 
 LOGGER = logging.getLogger(__name__)
 
@@ -237,3 +240,112 @@ class Favorite:
             err_msg: str = f"User (email={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
+
+    @staticmethod
+    def fetch_favorited_resources(
+        user: str | None = None,
+        top: int | None = None,
+        page: int | None = None,
+        limit: int | None = None,
+    ) -> List[Dict]:
+        """
+        Return resources that are favorited, with the total favorite count for each resource.
+
+        Args:
+            user (str, optional): username of the user
+            top (int, optional): return the top N resources ordered by total favorite count (desc).
+            page (int, optional): page number for pagination (1-indexed).
+            limit (int, optional): number of resources per page.
+
+        Returns:
+            List[Dict]: Each dict contains:
+                {
+                    "resource": {
+                        "name": str,
+                        "url": str,
+                        "active": bool,
+                        "deleted": bool
+                    },
+                    "favorite_count": int
+                }
+        """
+        try:
+            LOGGER.info(
+                "Fetching favorited resources user=%s, top=%s, page=%s, limit=%s",
+                user,
+                top,
+                page,
+                limit,
+            )
+
+            # Resolve user record if provided
+            user_record: User | None = None
+            if user:
+                user_record = User.objects.get(username__iexact=user)
+
+            # Build base queryset of active resources with favorites
+            base_qs = (
+                models.Favorite.objects.filter(resource__active=True)
+                .values(
+                    "resource__id",
+                    "resource__name",
+                    "resource__url",
+                    "resource__active",
+                    "resource__deleted",
+                )
+                .annotate(favorite_count=Count("id"))
+                .order_by("-favorite_count", "resource__name")
+            )
+
+            # Restrict to resources favorited by the user if provided
+            if user_record is not None:
+                user_resource_ids = (
+                    models.Favorite.objects.filter(user=user_record)
+                    .values_list("resource_id", flat=True)
+                    .distinct()
+                )
+                base_qs = base_qs.filter(resource__id__in=list(user_resource_ids))
+
+            # Apply `top`
+            if top is not None:
+                if top <= 0:
+                    raise analytics_exceptions.AnalyticsError(
+                        "`top` must be positive.", 400
+                    )
+                base_qs = base_qs[:top]
+
+            # Apply pagination
+            if page is not None or limit is not None:
+                if not (page and limit):
+                    raise analytics_exceptions.AnalyticsError(
+                        "`page` and `limit` must be provided together.", 400
+                    )
+                if page <= 0 or limit <= 0:
+                    raise analytics_exceptions.AnalyticsError(
+                        "`page` and `limit` must be positive integers.", 400
+                    )
+                offset = (page - 1) * limit
+                base_qs = base_qs[offset : offset + limit]
+
+            # Build compact response
+            results: List[Dict] = []
+            for row in base_qs:
+                resource_obj = {
+                    "name": row["resource__name"],
+                    "url": row["resource__url"],
+                    "active": row["resource__active"],
+                    "deleted": row["resource__deleted"],
+                }
+                results.append(
+                    {
+                        "resource": resource_obj,
+                        "favorite_count": row["favorite_count"],
+                    }
+                )
+
+            return results
+
+        except User.DoesNotExist as exc:
+            err_msg = f"User (username={user}) does not exist."
+            LOGGER.error(err_msg)
+            raise analytics_exceptions.AnalyticsError(err_msg, 404) from exc

@@ -294,3 +294,9 @@ VALID_QUERY_RECORDS: dict = {
         "search_term": "Example Search Term 3.",
     },
 }
+
+# For testing `search_term` parameter
+FETCH_QUERY_WITH_SEARCH_TERM: str = "Example Search Term 1."
+FETCH_QUERY_WITH_SEARCH_TERM_RECORD_COUNT: int = (
+    1  # Only QUERY_ID_1 matches this exactly
+)

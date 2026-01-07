@@ -328,7 +328,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_user")
     def test_fetch_query_by_user(self) -> None:
-        """Success Case: Fetch `Query` records given a user's email."""
+        """Success Case: Fetch `Query` records given a username."""
 
         query_params: dict = {
             "user": arguments.FETCH_QUERY_BY_USER,
@@ -360,7 +360,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_resource_id_for_user")
     def test_fetch_query_by_resource_id_for_user(self) -> None:
-        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email."""
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a username."""
 
         query_params: dict = {
             "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -394,7 +394,7 @@ class TestFetchQuery(MultiDBTestCase):
     @tag("views.query.fetch_query_by_user_with_page")
     def test_fetch_query_by_user_with_page(self) -> None:
         """Success Case: Fetch a page of `Query` records given a
-        user's email."""
+        username."""
 
         query_params: dict = {
             "user": arguments.FETCH_QUERY_BY_USER,
@@ -429,7 +429,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_resource_id_for_user_with_page")
     def test_fetch_query_by_resource_id_for_user_with_page(self) -> None:
-        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email."""
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a username."""
 
         query_params: dict = {
             "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -463,7 +463,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_user_with_limit")
     def test_fetch_query_by_user_with_limit(self) -> None:
-        """Success Case: Fetch `Query` records given a user's email
+        """Success Case: Fetch `Query` records given a username
         up to limit."""
 
         query_params: dict = {
@@ -499,7 +499,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_resource_id_for_user_with_limit")
     def test_fetch_query_by_resource_id_for_user_with_limit(self) -> None:
-        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email up to limit."""
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a username up to limit."""
 
         query_params: dict = {
             "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -536,7 +536,7 @@ class TestFetchQuery(MultiDBTestCase):
     @tag("views.query.fetch_query_by_user_with_page_and_limit")
     def test_fetch_query_by_user_with_page_and_limit(self) -> None:
         """Success Case: Fetch a page of `Query` records given a
-        user's email up to limit."""
+        username up to limit."""
 
         query_params: dict = {
             "user": arguments.FETCH_QUERY_BY_USER,
@@ -573,7 +573,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_resource_id_for_user_with_page_and_limit")
     def test_fetch_query_by_resource_id_for_user_with_page_and_limit(self) -> None:
-        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email up to limit."""
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a username up to limit."""
 
         query_params: dict = {
             "resource_id": arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -609,6 +609,21 @@ class TestFetchQuery(MultiDBTestCase):
                 arguments.VALID_QUERY_RECORDS[query_id],
             )
 
+    @tag("views.query.fetch_query_with_search_term_no_match")
+    def test_fetch_query_with_search_term_no_match(self) -> None:
+        """Success Case: `search_term` returns no matching records."""
+
+        query_params: dict = {
+            "search_term": "nonexistent term",
+        }
+
+        response = self.client.get(
+            self.url, query_params, headers={"content-type": "application/json"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), [])
+
     @tag("views.query.fetch_query_by_id_dne")
     def test_fetch_query_by_id_dne(self) -> None:
         """Fail Case: Fetch a `Query` record given an id where record
@@ -640,7 +655,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("views.query.fetch_query_by_user_dne")
     def test_fetch_query_by_user_dne(self) -> None:
-        """Fail Case: Fetch a `Query` record given a user's email
+        """Fail Case: Fetch a `Query` record given a username
         where `User` does not exist."""
 
         query_params: dict = {

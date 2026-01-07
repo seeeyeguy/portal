@@ -10,7 +10,6 @@ particularly in regards to committed searches.
 import logging
 
 from django import http
-from django.db.models import QuerySet
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -50,7 +49,6 @@ class Query(View):
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
 
-    @method_decorator(login_required())
     @method_decorator(with_serializer(serializer_class=serializers.FetchQueryRequest))
     @method_decorator(cache_request(DEFAULT_TIMEOUT))
     def get(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
@@ -84,6 +82,12 @@ class Query(View):
                 if body["limit"]
                 else request_params
             )
+            request_params = (
+                f"{request_params}&search_term={body['search_term']}"
+                if body.get("search_term")
+                else request_params
+            )
+
             LOGGER.info(f"GET /v1/analytics/queries{request_params}.")
 
             queries = controllers.Query.fetch_query(
@@ -92,6 +96,7 @@ class Query(View):
                 user=body["user"],
                 page=body["page"],
                 limit=body["limit"],
+                search_term=body.get("search_term"),
             )
 
             is_many = body["id"] is None

@@ -8,3 +8,5 @@ data science initiative.
 
 from .query.query import Query
 from .visit.visit import Visit
+from .favorites.favorite import FavoriteView
+from .usage.usage import UsageView

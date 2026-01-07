@@ -6,10 +6,26 @@ controller pytests.
 from typing import List
 
 # `User` email used for testing fetching user `Favorite`(s).
-FETCH_FAVORITE_USER_EMAIL: str = "May.Parker@harris.com"
+FETCH_FAVORITE_USER: str = "May.Parker@harris.com"
 
 # `User` DNE email used for testing failure case.
-FETCH_FAVORITE_USER_EMAIL_DNE: str = "DNE.User@harris.com"
+FETCH_FAVORITE_USER_DNE: str = "DNE.User@harris.com"
+
+# Pagination
+FETCH_FAVORITE_PAGE = 1
+FETCH_FAVORITE_LIMIT = 1
+FETCH_FAVORITE_TOP = 2
+
+# Resource identifiers (from fixtures)
+FETCH_FAVORITE_RESOURCE_ID = 1
+FETCH_FAVORITE_RESOURCE_NAME = "Resource 1 Revision 1"
+
+# Rank
+FETCH_FAVORITE_RANK = 1
+
+# Optional error messages
+FETCH_FAVORITE_ERROR_INVALID_USER = "User (email=DNE.User@harris.com) does not exist"
+FETCH_FAVORITE_ERROR_TOP = "Top must be a positive integer"
 
 # List of serialized `Favorite`s to validate
 # results from the fetch.

@@ -3,7 +3,7 @@ Collection of pytests for Query's fetch controller.
 """
 
 import pytest
-from typing import List
+from typing import List, cast
 
 from django.db.models import QuerySet
 from django.test import tag
@@ -250,7 +250,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_user")
     def test_fetch_query_by_user(self) -> None:
-        """Success Case: Fetch `Query` records given a user's email."""
+        """Success Case: Fetch `Query` records given a username."""
 
         queries = Query.fetch_query(user=arguments.FETCH_QUERY_BY_USER)
 
@@ -272,7 +272,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_resource_id_for_user")
     def test_fetch_query_by_resource_id_for_user(self) -> None:
-        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email."""
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a username"""
 
         queries = Query.fetch_query(
             resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -297,8 +297,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_user_with_page")
     def test_fetch_query_by_user_with_page(self) -> None:
-        """Success Case: Fetch a page of `Query` records given a
-        user's email."""
+        """Success Case: Fetch a page of `Query` records given a username."""
 
         queries = Query.fetch_query(
             user=arguments.FETCH_QUERY_BY_USER, page=arguments.FETCH_QUERY_WITH_PAGE
@@ -322,7 +321,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_resource_id_for_user_with_page")
     def test_fetch_query_by_resource_id_for_user_with_page(self) -> None:
-        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email."""
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a username."""
 
         queries = Query.fetch_query(
             resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -348,7 +347,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_user_with_limit")
     def test_fetch_query_by_user_with_limit(self) -> None:
-        """Success Case: Fetch `Query` records given a user's email
+        """Success Case: Fetch `Query` records given a username
         up to limit."""
 
         queries = Query.fetch_query(
@@ -373,7 +372,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_resource_id_for_user_with_limit")
     def test_fetch_query_by_resource_id_for_user_with_limit(self) -> None:
-        """Success Case: Fetch `Query` records filtered by `Resource` id and a user's email up to limit."""
+        """Success Case: Fetch `Query` records filtered by `Resource` id and a username up to limit."""
 
         queries = Query.fetch_query(
             resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -400,7 +399,7 @@ class TestFetchQuery(MultiDBTestCase):
     @tag("controllers.query.fetch_query_by_user_with_page_and_limit")
     def test_fetch_query_by_user_with_page_and_limit(self) -> None:
         """Success Case: Fetch a page of `Query` records given a
-        user's email up to limit."""
+        username up to limit."""
 
         queries = Query.fetch_query(
             user=arguments.FETCH_QUERY_BY_USER,
@@ -426,7 +425,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_resource_id_for_user_with_page_and_limit")
     def test_fetch_query_by_resource_id_for_user_with_page_and_limit(self) -> None:
-        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a user's email up to limit."""
+        """Success Case: Fetch page of `Query` records filtered by `Resource` id and a username up to limit."""
 
         queries = Query.fetch_query(
             resource_id=arguments.FETCH_QUERY_BY_RESOURCE_ID,
@@ -468,7 +467,7 @@ class TestFetchQuery(MultiDBTestCase):
 
     @tag("controllers.query.fetch_query_by_user_dne")
     def test_fetch_query_by_user_dne(self) -> None:
-        """Fail Case: Fetch a `Query` record given a user's email
+        """Fail Case: Fetch a `Query` record given a username
         where `User` does not exist."""
 
         with pytest.raises(AnalyticsError):
@@ -506,4 +505,28 @@ class TestFetchQuery(MultiDBTestCase):
                 record_id=arguments.FETCH_QUERY_BY_ID,
                 page=arguments.FETCH_QUERY_WITH_PAGE,
                 limit=arguments.FETCH_QUERY_WITH_LIMIT,
+            )
+
+    @tag("controllers.query.fetch_query_with_search_term")
+    def test_fetch_query_with_search_term(self) -> None:
+        """Success Case: Fetch `Query` records filtered by search term."""
+
+        queries = cast(
+            QuerySet[QueryModel],
+            Query.fetch_query(search_term=arguments.FETCH_QUERY_WITH_SEARCH_TERM),
+        )
+
+        self.assertIsInstance(queries, QuerySet[QueryModel])
+        self.assertEqual(
+            queries.count(),
+            arguments.FETCH_QUERY_WITH_SEARCH_TERM_RECORD_COUNT,
+        )
+
+        # materialize and narrow element type for mypy
+        queries_list = cast(List[QueryModel], list(queries))
+
+        for query in queries_list:
+            self.assertIn(
+                arguments.FETCH_QUERY_WITH_SEARCH_TERM.lower(),
+                query.search_term.lower(),
             )
