@@ -46,7 +46,7 @@ export default function Controls() {
           aria-description="container for the background of the role filter buttons"
         />
         <h1 aria-description="segment of company">
-          Space and Airborne Systems
+          Space and Mission Systems
         </h1>
 
         <FilterButtons
