@@ -360,6 +360,7 @@ CUSTOM_APPS: list[str] = [
     "preferences",
     "request",
     "program_review_tool",
+    "content",
 ]
 
 INSTALLED_APPS = [
