@@ -38,7 +38,7 @@ class TestCreateAccess(MultiDBTestCase):
         """Success Case: Create an `Access` record."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
 
         access = controllers.Access.create_access(
@@ -65,7 +65,7 @@ class TestCreateAccess(MultiDBTestCase):
         role level."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -82,7 +82,7 @@ class TestCreateAccess(MultiDBTestCase):
         related to the given user email does not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -99,7 +99,7 @@ class TestCreateAccess(MultiDBTestCase):
         related to the given role level does not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -116,7 +116,7 @@ class TestCreateAccess(MultiDBTestCase):
         the given subfunctions do not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -133,7 +133,7 @@ class TestCreateAccess(MultiDBTestCase):
         `Stage`s related to the given stage levels do not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -150,7 +150,7 @@ class TestCreateAccess(MultiDBTestCase):
         is not permitted assigned `Subfunction`s"""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -167,7 +167,7 @@ class TestCreateAccess(MultiDBTestCase):
         is not permitted assigned `Stage`s."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -184,7 +184,7 @@ class TestCreateAccess(MultiDBTestCase):
         stage level belongs to a terminal `Stage`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -201,7 +201,7 @@ class TestCreateAccess(MultiDBTestCase):
         stage level belongs to the `DRAFT` `Stage`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -218,7 +218,7 @@ class TestCreateAccess(MultiDBTestCase):
         stage levels are not valid for the `Role`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(
@@ -249,7 +249,7 @@ class TestCreateAccess(MultiDBTestCase):
         admin does not have the appropriate permissions."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_NON_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_NON_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.create_access(

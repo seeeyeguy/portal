@@ -34,7 +34,7 @@ BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS: UpdateResourceParams = {
     "employee_levels": [2],
     "subfunctions": [1],
     "tags": [1, 5],
-    "point_of_contacts": ["May.Parker@harris.com"],
+    "point_of_contacts": ["May.Parker@l3harris.com"],
     "type": "test update type",
     "download": False,
 }

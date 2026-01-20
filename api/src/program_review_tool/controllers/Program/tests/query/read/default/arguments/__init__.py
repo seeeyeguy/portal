@@ -278,7 +278,7 @@ FETCH_PROGRAMS_BY_TIERS_VALID_IDS: List[int] = [
 ]
 
 # `User` email used when testing fetch `Program`s by `ProgramMember`.
-FETCH_PROGRAMS_BY_PROGRAM_MEMBER_USER_EMAIL: str = "Peter.Parker@harris.com"
+FETCH_PROGRAMS_BY_PROGRAM_MEMBER_USER_EMAIL: str = "Peter.Parker@l3harris.com"
 
 # Valid `Program` ids expected for fetching `Program`s by `ProgramMember`
 # tests.
@@ -294,7 +294,7 @@ FETCH_PROGRAMS_BY_TIERS_AND_PROGRAM_MEMBER_VALID_IDS: List[int] = [5, 8, 35]
 # `User` email used when testing fetch `Program`s by `ProgramMember` that does
 # not have an active `ProgramMember` entry.
 FETCH_PROGRAMS_BY_PROGRAM_MEMBER_NO_ACTIVE_PROGRAM_MEMBER_USER_EMAIL: str = (
-    "Tony.Stark@harris.com"
+    "Tony.Stark@l3harris.com"
 )
 
 # Number of `Program` records expected for fetching `Program`s by `ProgramMember`

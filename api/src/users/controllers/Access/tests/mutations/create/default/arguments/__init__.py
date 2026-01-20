@@ -9,7 +9,7 @@ CREATE_ACCESS_ADMIN_USER_EMAIL: str = "Tony.Stark@harris.com"
 
 CREATE_ACCESS_NON_ADMIN_USER_EMAIL: str = "Peter.Parker@harris.com"
 
-CREATE_ACCESS_USER_EMAIL: str = "Ben.Parker@harris.com"
+CREATE_ACCESS_USER_EMAIL: str = "Ben.Parker@l3harris.com"
 CREATE_ACCESS_ROLE_LEVEL: int = 2
 CREATE_ACCESS_SUBFUNCTION_IDS: List[int] = [3, 4]
 CREATE_ACCESS_STAGE_LEVELS: List[int] = [2]

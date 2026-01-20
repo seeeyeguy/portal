@@ -43,11 +43,11 @@ class TestCreateDisposition(MultiDBTestCase):
         "request/controllers/Disposition/tests/mutations/create/default/fixtures/dispositions.json",
     ]
 
-    def _fetch_approver(self, email: str) -> AuthModels.User:
-        """Fetch `User` record, given an email."""
+    def _fetch_approver(self, username: str) -> AuthModels.User:
+        """Fetch `User` record, given a username."""
 
         try:
-            return AuthModels.User.objects.get(email=email)
+            return AuthModels.User.objects.get(username=username)
         except AuthModels.User.DoesNotExist:
             return cast(AuthModels.User, AuthModels.AnonymousUser())
 
@@ -58,7 +58,7 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            approver=self._fetch_approver(username=arguments.CREATE_DISPOSITION_USER),
             request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
         )
@@ -106,7 +106,7 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            approver=self._fetch_approver(username=arguments.CREATE_DISPOSITION_USER),
             request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_REJECTED_DISPOSITION,
             justification=arguments.CREATE_DISPOSITION_REJECTED_JUSTIFICATION,
@@ -155,7 +155,7 @@ class TestCreateDisposition(MultiDBTestCase):
 
         # Create `Disposition` record.
         disposition = controllers.Disposition.create_disposition(
-            approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+            approver=self._fetch_approver(username=arguments.CREATE_DISPOSITION_USER),
             request=arguments.CREATE_DISPOSITION_REQUEST_ID,
             disposition=arguments.CREATE_DISPOSITION_REVISE_DISPOSITION,
             justification=arguments.CREATE_DISPOSITION_REVISE_JUSTIFICATION,
@@ -205,7 +205,7 @@ class TestCreateDisposition(MultiDBTestCase):
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
                 approver=self._fetch_approver(
-                    email=arguments.CREATE_DISPOSITION_USER_DNE
+                    username=arguments.CREATE_DISPOSITION_USER_DNE
                 ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
@@ -218,7 +218,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_DNE,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
@@ -230,7 +232,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_TRANSITION_DNE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
@@ -242,7 +246,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_ACTIVE_RESOURCE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
@@ -254,7 +260,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_HISTORICAL_RESOURCE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
@@ -266,7 +274,7 @@ class TestCreateDisposition(MultiDBTestCase):
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
                 approver=self._fetch_approver(
-                    email=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS
+                    username=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS
                 ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
@@ -281,7 +289,7 @@ class TestCreateDisposition(MultiDBTestCase):
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
                 approver=self._fetch_approver(
-                    email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
+                    username=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
                 ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
@@ -295,7 +303,7 @@ class TestCreateDisposition(MultiDBTestCase):
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
                 approver=self._fetch_approver(
-                    email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE
+                    username=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE
                 ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
@@ -308,7 +316,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_INVALID_STAGE_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_APPROVED_DISPOSITION,
             )
@@ -319,7 +329,9 @@ class TestCreateDisposition(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             _ = controllers.Disposition.create_disposition(
-                approver=self._fetch_approver(email=arguments.CREATE_DISPOSITION_USER),
+                approver=self._fetch_approver(
+                    username=arguments.CREATE_DISPOSITION_USER
+                ),
                 request=arguments.CREATE_DISPOSITION_REQUEST_ID,
                 disposition=arguments.CREATE_DISPOSITION_INVALID_DISPOSITION,
             )

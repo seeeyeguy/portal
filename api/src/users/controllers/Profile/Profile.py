@@ -35,10 +35,10 @@ class Profile:
             LOGGER.info(f"Fetching Profile for user: {user}.")
 
             # Query the profile for the given user.
-            profile = models.Profile.objects.get(user__email__iexact=user)
+            profile = models.Profile.objects.get(user__username__iexact=user)
 
             return profile
         except models.Profile.DoesNotExist as exc:
-            err_msg = f"Profile for user (email={user}) does not exist."
+            err_msg = f"Profile for user (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.UsersError(err_msg, 404) from exc

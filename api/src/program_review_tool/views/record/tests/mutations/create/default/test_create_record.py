@@ -43,7 +43,7 @@ class TestCreateRecord(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.CREATE_RECORD_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.CREATE_RECORD_USER_EMAIL)
         self.client.force_login(user=user)
 
     url: str = reverse("program_review_tool.record")
@@ -146,7 +146,7 @@ class TestCreateRecord(MultiDBTestCase):
         that is not a program team member."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_RECORD_USER_EMAIL_UNAUTHORIZED
+            username=arguments.CREATE_RECORD_USER_EMAIL_UNAUTHORIZED
         )
         self.client.force_login(user=user)
 

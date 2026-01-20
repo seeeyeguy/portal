@@ -48,11 +48,13 @@ class Disposition:
                 record.
         """
 
-        approver_email: str = approver.email if approver.is_authenticated else None
+        approver_username: str = (
+            approver.username if approver.is_authenticated else None
+        )
 
         log_msg: str = (
             f"Creating Disposition (disposition={disposition})"
-            f" for Request (id={request}) by User (email={approver_email})."
+            f" for Request (id={request}) by User (username={approver_username})."
         )
 
         if justification:

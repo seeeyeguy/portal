@@ -30,7 +30,7 @@ class TestRankFavorite(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.RANK_FAVORITE_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.RANK_FAVORITE_USER_EMAIL)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

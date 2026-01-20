@@ -30,7 +30,7 @@ class TestCreateFavorite(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = User.objects.get(email=arguments.CREATE_FAVORITE_USER)
+        user = User.objects.get(username=arguments.CREATE_FAVORITE_USER)
         self.client.force_login(user=user)
 
     # pylint: disable=line-too-long

@@ -44,7 +44,7 @@ class Usage:
 
             # Fetch the `User` record.
             user_record: AuthModels.User = AuthModels.User.objects.get(
-                email__iexact=user
+                username__iexact=user
             )
 
             # Create the `Query` record.
@@ -55,7 +55,7 @@ class Usage:
             return usage
 
         except AuthModels.User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
 

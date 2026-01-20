@@ -40,7 +40,7 @@ class TestCreateAccess(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_ADMIN_USER_EMAIL
         )
         self.client.force_login(user=user)
 
@@ -214,7 +214,7 @@ class TestCreateAccess(MultiDBTestCase):
         does not have the appropriate permissions."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_ACCESS_NON_ADMIN_USER_EMAIL
+            username=arguments.CREATE_ACCESS_NON_ADMIN_USER_EMAIL
         )
 
         self.client.force_login(user=user)

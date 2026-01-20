@@ -204,7 +204,7 @@ class Record:
                 )
 
             LOGGER.info(
-                f"Creating Record for User: {user.email} for program: {pa_number} and reporting period: {reporting_period}."
+                f"Creating Record for User: {user.username} for program: {pa_number} and reporting period: {reporting_period}."
             )
 
             # Fetch the associated `Program` instance.

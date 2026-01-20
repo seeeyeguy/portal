@@ -43,9 +43,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         self.client = APIClient()
 
-        user = AuthModels.User.objects.get(
-            email__iexact=arguments.UPDATE_REQUEST_USER_EMAIL
-        )
+        user = AuthModels.User.objects.get(username=arguments.UPDATE_REQUEST_USER_EMAIL)
         self.client.force_login(user=user)
 
         # Create a standard set of params.
@@ -201,7 +199,7 @@ class TestUpdateRequest(MultiDBTestCase):
         does not have the appropriate permissions."""
 
         user = AuthModels.User.objects.get(
-            email__iexact=arguments.UPDATE_REQUEST_USER_EMAIL_INVALID_ROLE
+            username=arguments.UPDATE_REQUEST_USER_EMAIL_INVALID_ROLE
         )
         self.client.force_login(user=user)
 
@@ -219,7 +217,7 @@ class TestUpdateRequest(MultiDBTestCase):
         is not the originator."""
 
         user = AuthModels.User.objects.get(
-            email__iexact=arguments.UPDATE_REQUEST_USER_EMAIL_NOT_ORIGINATOR
+            username=arguments.UPDATE_REQUEST_USER_EMAIL_NOT_ORIGINATOR
         )
         self.client.force_login(user=user)
 

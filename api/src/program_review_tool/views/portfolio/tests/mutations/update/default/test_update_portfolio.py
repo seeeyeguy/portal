@@ -39,7 +39,9 @@ class TestUpdatePortfolio(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.UPDATE_PORTFOLIO_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.UPDATE_PORTFOLIO_USER_EMAIL
+        )
         self.client.force_login(user=user)
 
     url: str = reverse("program_review_tool.portfolio")

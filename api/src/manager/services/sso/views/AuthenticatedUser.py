@@ -77,7 +77,7 @@ class AuthenticatedUser(APIView):
 
         if request.user.is_authenticated:
             accesses = Access.objects.filter(
-                user__email__iexact=request.user.email,
+                user__username__iexact=request.user.username,
                 role__level__in=ADMIN_ROLE_LEVELS,
                 access_revoked_date__isnull=True,
             )

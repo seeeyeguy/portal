@@ -153,7 +153,7 @@ class Resource:
             if not user.accesses.filter(
                 access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
             ).exists():
-                err_msg = f"User (email={user.email}) does not have a valid role."
+                err_msg = f"User (username={user.username}) does not have a valid role."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 
@@ -407,7 +407,7 @@ class Resource:
             if not user.accesses.filter(
                 access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
             ).exists():
-                err_msg = f"User (email={user.email}) does not have a valid role."
+                err_msg = f"User (username={user.username}) does not have a valid role."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 

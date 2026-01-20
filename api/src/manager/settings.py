@@ -125,7 +125,7 @@ DNS_NAME = os.getenv("DNS_NAME", "theportal.l3harris.com")
 DEBUG = BUILD != ApplicationBuild.PRODUCTION
 
 # Ensure that the default admin list is kept up to date.
-DEFAULT_ADMINS = "Michael.C.Mullings@l3harris.com;"
+DEFAULT_ADMINS = "nathaniel.charbonneau@L3Harris.com;"
 # These admins will receive an email if the application
 # encounters an error.
 ADMINS_FROM_ENV = os.getenv("ADMINS", DEFAULT_ADMINS).split(";")

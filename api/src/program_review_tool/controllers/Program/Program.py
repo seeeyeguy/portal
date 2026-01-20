@@ -128,9 +128,15 @@ class Program:
             LOGGER.info(info_log_msg)
 
             if active_only:
-                programs = models.Program.objects.filter(active_status=True)
+                programs = cast(
+                    QuerySet[models.Program],
+                    models.Program.objects.filter(active_status=True),
+                )
             else:
-                programs = models.Program.objects.all()
+                programs = cast(
+                    QuerySet[models.Program],
+                    models.Program.objects.all(),
+                )
 
             programs = programs.order_by("id") if page or limit else programs
 
@@ -199,7 +205,7 @@ class Program:
                 # If `page` number supplied in the params is greater than the number of available pages,
                 # then return an empty `Program` Queryset.
                 if page > paginator.num_pages:
-                    return models.Program.objects.none()
+                    return cast(QuerySet[models.Program], models.Program.objects.none())
 
                 # Get the corresponding Page.
                 program_page: Page = paginator.page(page)
@@ -211,7 +217,7 @@ class Program:
 
             return programs
         except User.DoesNotExist as exc:
-            err_msg = f"User (email={program_member}) does not exist."
+            err_msg = f"User (username={program_member}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.ProgramReviewToolError(err_msg, 404) from exc
 
@@ -301,8 +307,9 @@ class Program:
             raise exceptions.ProgramReviewToolError(err_msg, error_code)
 
         # Fetch active `Program`s that match the given ids.
-        programs: QuerySet[models.Program] = models.Program.objects.filter(
-            id__in=program_ids
+        programs: QuerySet[models.Program] = cast(
+            QuerySet[models.Program],
+            models.Program.objects.filter(id__in=program_ids),
         )
 
         # Verify that number of retrieved `Program`s is equal

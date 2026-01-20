@@ -25,7 +25,7 @@ BASE_CREATE_REQUEST_STRUCTURE_PARAMS: CreateRequestParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
-    "point_of_contacts": ["May.Parker@harris.com"],
+    "point_of_contacts": ["May.Parker@l3harris.com"],
     "type": "test create type",
     "download": False,
     "originator": CREATE_REQUEST_USER_EMAIL,

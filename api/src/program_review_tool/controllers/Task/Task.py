@@ -71,7 +71,7 @@ class Task:
                 (
                     f"Creating Task with name: {name} and program: {pa_number}"
                     f" in reporting period: {reporting_period} with previous_id: {previous_id}"
-                    f" for user: {user.email if user.is_authenticated else 'None'}."
+                    f" for user: {user.username if user.is_authenticated else 'None'}."
                 )
             )
 

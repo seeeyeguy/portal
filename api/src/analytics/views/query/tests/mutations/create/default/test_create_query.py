@@ -30,9 +30,7 @@ class TestCreateQuery(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(
-            email__iexact=arguments.CREATE_QUERY_USER_EMAIL
-        )
+        user = AuthModels.User.objects.get(username=arguments.CREATE_QUERY_USER_EMAIL)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

@@ -36,7 +36,7 @@ BASE_CREATE_RESOURCE_STRUCTURE_PARAMS: CreateResourceParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
-    "point_of_contacts": ["May.Parker@harris.com"],
+    "point_of_contacts": ["May.Parker@l3harris.com"],
     "type": "test create type",
     "download": False,
 }
@@ -52,7 +52,7 @@ BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS: CreateResourceParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
-    "point_of_contacts": ["May.Parker@harris.com"],
+    "point_of_contacts": ["May.Parker@l3harris.com"],
     "type": "resource type 1",
     "download": False,
 }

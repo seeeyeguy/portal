@@ -6,7 +6,7 @@ controller pytests.
 from datetime import date
 
 CREATE_TASK_USER_EMAIL: str = "May.Parker@harris.com"
-CREATE_TASK_OWNER_EMAIL: str = "Peter.Parker@harris.com"
+CREATE_TASK_OWNER_EMAIL: str = "Peter.Parker@l3harris.com"
 
 CREATE_TASK_PA_NUMBER: str = "489AB"
 CREATE_TASK_REPORTING_PERIOD: int = 202502

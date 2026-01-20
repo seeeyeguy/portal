@@ -41,7 +41,7 @@ class TestReviewProgram(MultiDBTestCase):
         the given ids."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
+            username=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
         )
 
         review_status, review_path = controllers.Program.review_programs(
@@ -59,7 +59,7 @@ class TestReviewProgram(MultiDBTestCase):
         an empty ids list."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
+            username=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
         )
         with pytest.raises(exceptions.ProgramReviewToolError):
             _ = controllers.Program.review_programs(
@@ -74,7 +74,7 @@ class TestReviewProgram(MultiDBTestCase):
         review name."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
+            username=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
         )
         with pytest.raises(exceptions.ProgramReviewToolError):
             _ = controllers.Program.review_programs(
@@ -89,7 +89,7 @@ class TestReviewProgram(MultiDBTestCase):
         for Programs that do not exist."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
+            username=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
         )
         with pytest.raises(exceptions.ProgramReviewToolError):
             _ = controllers.Program.review_programs(

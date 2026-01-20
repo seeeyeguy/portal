@@ -41,7 +41,7 @@ class TestFetchProgram(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_PROGRAMS_USER)
+        user = AuthModels.User.objects.get(username=arguments.FETCH_PROGRAMS_USER)
         self.client.force_login(user=user)
 
         program_fixtures_path: str = "program_review_tool/controllers/Program/tests/query/read/default/fixtures/programs.json"

@@ -39,7 +39,9 @@ class TestDeletePortfolio(MultiDBTestCase):
     def test_delete_portfolio(self) -> None:
         """Success Case: Delete `Portfolio` record with the given id."""
 
-        user = AuthModels.User.objects.get(email=arguments.DELETE_PORTFOLIO_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.DELETE_PORTFOLIO_USER_EMAIL
+        )
         rows_affected = controllers.Portfolio.delete_portfolio(
             portfolio_id=arguments.DELETE_PORTFOLIO_PORTFOLIO_ID, user=user
         )
@@ -61,7 +63,7 @@ class TestDeletePortfolio(MultiDBTestCase):
         """Fail Case: Delete `Portfolio` record for the wrong user."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.DELETE_PORTFOLIO_USER_EMAIL_PERMISSIONS_DENIED
+            username=arguments.DELETE_PORTFOLIO_USER_EMAIL_PERMISSIONS_DENIED
         )
         with pytest.raises(exceptions.ProgramReviewToolError):
             controllers.Portfolio.delete_portfolio(

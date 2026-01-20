@@ -31,7 +31,7 @@ class TestUpdateSubFunction(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_SUBFUNCTION_USER_EMAIL
+            username=arguments.UPDATE_SUBFUNCTION_USER_EMAIL
         )
         self.client.force_login(user=user)
 

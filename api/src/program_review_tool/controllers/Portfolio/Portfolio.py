@@ -45,7 +45,7 @@ class Portfolio:
         LOGGER.info(
             (
                 f"Creating Portfolio with name: {name} and Programs:{programs} "
-                f"for user: {user.email if user.is_authenticated else 'None'}."
+                f"for user: {user.username if user.is_authenticated else 'None'}."
             )
         )
 
@@ -115,7 +115,7 @@ class Portfolio:
                 (
                     f"Updating Portfolio(id={portfolio_id}) with name: {name} "
                     f"and Programs: {programs} "
-                    f"for user: {user.email if user.is_authenticated else 'None'}."
+                    f"for user: {user.username if user.is_authenticated else 'None'}."
                 )
             )
 
@@ -223,7 +223,7 @@ class Portfolio:
         """
 
         LOGGER.info(
-            f"Fetching Portfolios for user: {user.email if user.is_authenticated else 'None'}."
+            f"Fetching Portfolios for user: {user.username if user.is_authenticated else 'None'}."
         )
 
         if not (user and user.is_authenticated):

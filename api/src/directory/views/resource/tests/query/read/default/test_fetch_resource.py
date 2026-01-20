@@ -32,7 +32,7 @@ class TestFetchResource(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_RESOURCE_BY_USER)
+        user = AuthModels.User.objects.get(username=arguments.FETCH_RESOURCE_BY_USER)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

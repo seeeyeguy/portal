@@ -146,7 +146,7 @@ class Access:
                 role__level=role_level, access_revoked_date__isnull=True
             ).exists():
                 err_msg = (
-                    f"Access for User(email={user}) & Role(level={role_level}) "
+                    f"Access for User(username={user_record.username}) & Role(level={role_level}) "
                     "already exists."
                 )
                 LOGGER.error(err_msg)
@@ -211,7 +211,7 @@ class Access:
 
             return access
         except (AuthModels.User.DoesNotExist, ConnectionError) as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.UsersError(err_msg, 404) from exc
         except models.Role.DoesNotExist as exc:
@@ -315,7 +315,7 @@ class Access:
 
         # Verify that the `Access`es being revoked do not belong
         # to the `admin`.
-        if access_records.filter(user__email=admin.email).exists():
+        if access_records.filter(user__username=admin.username).exists():
             err_msg = "Admins can't revoke one of their accesses."
             LOGGER.error(err_msg)
             raise exceptions.UsersError(err_msg, 400)

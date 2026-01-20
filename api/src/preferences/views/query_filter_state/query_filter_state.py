@@ -42,7 +42,7 @@ class QueryFilterState(View):
 
             # Call controller to create `QueryFilterState`.
             query_filter_state = controllers.QueryFilterState.create_query_filter_state(
-                user=request.user.email,
+                user=request.user.username,
                 search=body["search"],
                 functions=body["functions"],
                 employee_levels=body["employee_levels"],
@@ -82,7 +82,7 @@ class QueryFilterState(View):
                 functions=body["functions"],
                 employee_levels=body["employee_levels"],
                 tags=body["tags"],
-                user=request.user.email,
+                user=request.user.username,
             )
 
             # Serialize `QueryFilterState`.

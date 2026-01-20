@@ -43,11 +43,11 @@ class Visit(View):
         try:
             LOGGER.info("POST /v1/analytics/visits.")
 
-            user_email: str = request.user.email
+            user_username: str = request.user.username
 
             # Create `Visit`.
             visit = controllers.Visit.create_visit(
-                user=user_email, resource=body["resource"]
+                user=user_username, resource=body["resource"]
             )
 
             # Serialize Visit.

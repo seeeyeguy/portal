@@ -521,7 +521,7 @@ class Request:
             # those belonging to the `originator`.
             if originator:
                 user_record: AuthModels.User = AuthModels.User.objects.get(
-                    email__iexact=originator
+                    username__iexact=originator
                 )
 
                 access_records: QuerySet[

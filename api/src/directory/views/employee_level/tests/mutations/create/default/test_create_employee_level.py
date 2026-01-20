@@ -33,7 +33,7 @@ class TestCreateEmployeeLevel(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_EMPLOYEELEVEL_USER_EMAIL_SUPERUSER
+            username=arguments.CREATE_EMPLOYEELEVEL_USER_EMAIL_SUPERUSER
         )
         self.client.force_login(user=user)
 
@@ -104,7 +104,7 @@ class TestCreateEmployeeLevel(MultiDBTestCase):
         """Fail Case: Create an `EmployeeLevel` when 'is_superuser' is False."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_EMPLOYEELEVEL_USER_EMAIL_NONSUPERUSER
+            username=arguments.CREATE_EMPLOYEELEVEL_USER_EMAIL_NONSUPERUSER
         )
         self.client.force_login(user=user)
 

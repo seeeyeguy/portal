@@ -61,11 +61,11 @@ class QueryFilterState:
             LOGGER.info(log_msg)
 
             # Fetch `User` record.
-            user_record: User = User.objects.get(email__iexact=user)
+            user_record: User = User.objects.get(username__iexact=user)
 
             # Ensure `QueryFilterState` doesn't already exist for the `User`.
             if models.QueryFilterState.objects.filter(user=user_record).exists():
-                err_msg = f"User (email={user}) may only have one search & filter session state."
+                err_msg = f"User (username={user}) may only have one search & filter session state."
                 LOGGER.error(err_msg)
                 raise exceptions.PreferencesError(err_msg, 400)
 
@@ -116,7 +116,7 @@ class QueryFilterState:
 
             return query_filter_state
         except User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except AnalyticsModels.Query.DoesNotExist as exc:
@@ -159,7 +159,7 @@ class QueryFilterState:
             LOGGER.info(log_msg)
 
             # Fetch `User` record.
-            user_record: User = User.objects.get(email__iexact=user)
+            user_record: User = User.objects.get(username__iexact=user)
 
             # Fetch `QueryFilterState` record.
             query_filter_state: models.QueryFilterState = (
@@ -225,7 +225,7 @@ class QueryFilterState:
 
             return query_filter_state
         except User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except models.QueryFilterState.DoesNotExist as exc:
@@ -254,7 +254,7 @@ class QueryFilterState:
             LOGGER.info(f"Fetching QueryFilterState for user: {user}.")
 
             # Fetch `User` record for the given email.
-            user_record = User.objects.get(email__iexact=user)
+            user_record = User.objects.get(username__iexact=user)
 
             # Fetch the corresponding `QueryFilterState` record.
             query_filter_state: models.QueryFilterState = (
@@ -263,7 +263,7 @@ class QueryFilterState:
 
             return query_filter_state
         except User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except models.QueryFilterState.DoesNotExist as exc:

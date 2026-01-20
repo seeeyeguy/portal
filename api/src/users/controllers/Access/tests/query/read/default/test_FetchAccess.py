@@ -50,7 +50,7 @@ class TestFetchAccess(MultiDBTestCase):
         """Success Case: Fetch an `Access` record, given its id."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_record = controllers.Access.fetch_accesses(
@@ -75,7 +75,7 @@ class TestFetchAccess(MultiDBTestCase):
         """Success Case: Fetch all `Access` records."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -114,7 +114,7 @@ class TestFetchAccess(MultiDBTestCase):
         """Success Case: Fetch all `Access` records for a `User`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -153,7 +153,7 @@ class TestFetchAccess(MultiDBTestCase):
         set of `Role`s."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -192,7 +192,7 @@ class TestFetchAccess(MultiDBTestCase):
         set of `SubFunction`s."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -230,7 +230,7 @@ class TestFetchAccess(MultiDBTestCase):
         set of `Role`s for a `User`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -270,7 +270,7 @@ class TestFetchAccess(MultiDBTestCase):
         set of `SubFunction`s for a `User`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -310,7 +310,7 @@ class TestFetchAccess(MultiDBTestCase):
         set of `Role`s and `SubFunction`s for a `User`."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -352,7 +352,7 @@ class TestFetchAccess(MultiDBTestCase):
         revoked `Access` records."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         access_records = controllers.Access.fetch_accesses(
@@ -389,7 +389,7 @@ class TestFetchAccess(MultiDBTestCase):
         that `Access` record does not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
 
         with pytest.raises(exceptions.UsersError):
@@ -423,7 +423,7 @@ class TestFetchAccess(MultiDBTestCase):
         does not have the appropriate permissions."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_NON_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_NON_ADMIN_USER_EMAIL
         )
 
         with pytest.raises(exceptions.UsersError):

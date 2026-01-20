@@ -71,7 +71,7 @@ def structure_resources(
         # Construct list of emails of the `User`s that favorited this
         # `Resource` and assign it to the `favorited_by` key.
         resource_favorited_by: List[str] = list(
-            resource.favorites.values_list("user__email", flat=True)
+            resource.favorites.values_list("user__username", flat=True)
         )
         serialized_resource_data["favorited_by"] = resource_favorited_by
 

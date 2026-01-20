@@ -40,7 +40,7 @@ class TestDeleteTask(MultiDBTestCase):
     def test_delete_task(self) -> None:
         """Success Case: Delete `Task` record with the given id."""
 
-        user = AuthModels.User.objects.get(email=arguments.DELETE_TASK_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.DELETE_TASK_USER_EMAIL)
         rows_affected = controllers.Task.delete_task(
             task_id=arguments.DELETE_TASK_TASK_ID,
             user=user,
@@ -65,7 +65,7 @@ class TestDeleteTask(MultiDBTestCase):
     def test_delete_task_multiple_reporting_periods(self) -> None:
         """Fail Case: Delete `Task` record with multiple reporting periods."""
 
-        user = AuthModels.User.objects.get(email=arguments.DELETE_TASK_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.DELETE_TASK_USER_EMAIL)
         with pytest.raises(exceptions.ProgramReviewToolError):
             controllers.Task.delete_task(
                 task_id=arguments.DELETE_TASK_TASK_ID_MULTIPLE_REPORTING_PERIODS,
@@ -77,7 +77,7 @@ class TestDeleteTask(MultiDBTestCase):
     def test_delete_task_wrong_reporting_period(self) -> None:
         """Fail Case: Delete `Task` record with wrong reporting period."""
 
-        user = AuthModels.User.objects.get(email=arguments.DELETE_TASK_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.DELETE_TASK_USER_EMAIL)
         with pytest.raises(exceptions.ProgramReviewToolError):
             controllers.Task.delete_task(
                 task_id=arguments.DELETE_TASK_TASK_ID,

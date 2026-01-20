@@ -33,7 +33,7 @@ class TestCreateDisposition(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = User.objects.get(email=arguments.CREATE_DISPOSITION_USER)
+        user = User.objects.get(username=arguments.CREATE_DISPOSITION_USER)
         self.client.force_login(user=user)
 
     # pylint: disable=line-too-long
@@ -206,7 +206,9 @@ class TestCreateDisposition(MultiDBTestCase):
     def test_create_disposition_revoked_user_access(self) -> None:
         """Fail Case: Create a `Disposition` record with a `User` whose `Access` is revoked."""
 
-        user = User.objects.get(email=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS)
+        user = User.objects.get(
+            username=arguments.CREATE_DISPOSITION_REVOKED_USER_ACCESS
+        )
         self.client.force_login(user=user)
 
         body: dict = {
@@ -227,7 +229,7 @@ class TestCreateDisposition(MultiDBTestCase):
         `SubFunction`s."""
 
         user = User.objects.get(
-            email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
+            username=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_SUBFUNCTIONS
         )
         self.client.force_login(user=user)
 
@@ -248,7 +250,7 @@ class TestCreateDisposition(MultiDBTestCase):
         `Access` to vote on the current `Stage`."""
 
         user = User.objects.get(
-            email=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE
+            username=arguments.CREATE_DISPOSITION_USER_INVALID_ACCESS_FOR_STAGE
         )
         self.client.force_login(user=user)
 

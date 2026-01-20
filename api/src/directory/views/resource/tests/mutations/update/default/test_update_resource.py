@@ -32,7 +32,9 @@ class TestUpdateResource(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.UPDATE_RESOURCE_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.UPDATE_RESOURCE_USER_EMAIL
+        )
         self.client.force_login(user=user)
 
     fixtures: List[str] = [
@@ -258,7 +260,7 @@ class TestUpdateResource(MultiDBTestCase):
         permissions to update a `Resource` within the given `SubFunction`s."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+            username=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
         )
         self.client.force_login(user=user)
 
@@ -333,7 +335,7 @@ class TestUpdateResource(MultiDBTestCase):
         request_url = f"{self.url}?id={arguments.UPDATE_RESOURCE_ID}"
 
         user_with_invalid_role = AuthModels.User.objects.get(
-            email=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+            username=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
         )
         self.client.force_login(user_with_invalid_role)
 

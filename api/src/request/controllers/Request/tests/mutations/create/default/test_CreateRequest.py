@@ -38,7 +38,7 @@ class TestCreateRequest(MultiDBTestCase):
         """Success Case: Create a `Request` record."""
 
         originator = AuthModels.User.objects.get(
-            email=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
+            username=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
         )
         request = controllers.Request.create_request(
             {
@@ -66,7 +66,7 @@ class TestCreateRequest(MultiDBTestCase):
         """Success Case: Create and submit a `Request` record."""
 
         originator = AuthModels.User.objects.get(
-            email=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
+            username=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
         )
         request = controllers.Request.create_request(
             {
@@ -98,7 +98,7 @@ class TestCreateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             originator = AuthModels.User.objects.get(
-                email=arguments.CREATE_REQUEST_USER_EMAIL_INVALID_ROLE
+                username=arguments.CREATE_REQUEST_USER_EMAIL_INVALID_ROLE
             )
             _ = controllers.Request.create_request(
                 {
@@ -115,7 +115,7 @@ class TestCreateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             originator = AuthModels.User.objects.get(
-                email=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
+                username=arguments.BASE_CREATE_REQUEST_STRUCTURE_PARAMS["originator"]
             )
             _ = controllers.Request.create_request(
                 {

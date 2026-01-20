@@ -36,7 +36,7 @@ class TestFetchAccess(MultiDBTestCase):
         super().setUp()
 
         user = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_ADMIN_USER_EMAIL
         )
         self.client.force_login(user=user)
 
@@ -388,7 +388,7 @@ class TestFetchAccess(MultiDBTestCase):
         request.`User` does not have the appropriate permissions."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.FETCH_ACCESSES_NON_ADMIN_USER_EMAIL
+            username=arguments.FETCH_ACCESSES_NON_ADMIN_USER_EMAIL
         )
         self.client.force_login(user=user)
 
