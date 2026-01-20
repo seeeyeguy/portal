@@ -464,7 +464,7 @@ def run(*args: str) -> None:
     try:
         file_path = args[0]
         sheet_name = args[1]
-        out_path = "portal/db/init/data/init.json"
+        out_path = "portal/db/init/data/init-dev.json"
         rejected_log = "portal/db/init/data/errors/rejected_rows.xlsx"
         error_log = "portal/db/init/data/errors/error_log.csv"
         generator = PortalFixtureGenerator(

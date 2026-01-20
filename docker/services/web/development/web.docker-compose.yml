@@ -39,9 +39,14 @@ services:
             PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS: ${PROGRAM_REVIEW_EXPORT_CACHE_TIMEOUT_SECONDS}
             SCHEME: ${SCHEME}
             SERVER_PORT: ${SERVER_PORT}
+            SSL_DIRECTORY: ${SSL_DIRECTORY}
+            SSL_CERT: ${SSL_CERT}
+            SSL_KEY: ${SSL_KEY}
+            SSL_PASS: ${SSL_PASS}
             WEB_HOST: ${WEB_HOST}
             WEB_PORT: ${WEB_PORT}
         ports:
             - ${WEB_PORT}:3000
         volumes:
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/web/ui:/apps/${APP_NAME}/
+            - ${SSL_DIRECTORY}:${SSL_DIRECTORY}

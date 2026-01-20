@@ -54,12 +54,13 @@ class DevelopmentAuthenticationMiddleware:
         Returns:
             * None
         """
-
-        if settings.BUILD not in (settings.ApplicationBuild.DEVELOPMENT,):
+    
+        if settings.BUILD not in (settings.ApplicationBuild.DEVELOPMENT,) or settings.CONNECTION in (settings.ConnectionSetup.ONLINE,):
             return None
 
         first_name = settings.SSO_DEVELOPMENT_USER["first_name"]
         last_name = settings.SSO_DEVELOPMENT_USER["last_name"]
+        username = f"{first_name.lower()}.{last_name.lower()}@harris.com"
         email = f"{first_name}.{last_name}@l3harris.com"
 
         if settings.SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY in request.headers:
@@ -73,7 +74,11 @@ class DevelopmentAuthenticationMiddleware:
             except (json.decoder.JSONDecodeError, KeyError):
                 pass  # fail silently, login dev user.
 
-        if not User.objects.filter(email=email).exists():
+        LOGGER.info(
+            f"Creating DEV Super User for username: {username} | email: {email}"
+        )
+
+        if not User.objects.filter(username__iexact=username).exists():
             User.objects.create_superuser(
                 username=email,
                 email=email,

@@ -42,6 +42,15 @@ class ApplicationBuild:
     TEST = "test"
 
     VALID_BUILDS = (PRODUCTION, STAGING, DEVELOPMENT, TEST)
+    
+# Specify connection setup for application.
+class ConnectionSetup:
+    """Supported Connection Types."""
+
+    ONLINE = "online"
+    OFFLINE = "offline"
+
+    VALID_CONNECTIONS = (ONLINE, OFFLINE)
 
 
 # Specify valid web protocols for application.
@@ -84,6 +93,10 @@ BUILD = os.getenv("BUILD", ApplicationBuild.DEVELOPMENT)
 if BUILD not in ApplicationBuild.VALID_BUILDS:
     BUILD = ApplicationBuild.DEVELOPMENT
 
+# Specify the connection setup for the application, default to online.
+CONNECTION = os.getenv("CONNECTION", ConnectionSetup.ONLINE)
+if CONNECTION not in ConnectionSetup.VALID_CONNECTIONS:
+    CONNECTION = ConnectionSetup.ONLINE
 
 #######################################
 ## SERVER HOST ENVIRONMENT VARIABLES ##

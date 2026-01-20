@@ -8,6 +8,7 @@ view will return relevant user data.
 """
 
 import json
+import logging
 
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
@@ -17,9 +18,11 @@ from rest_framework.response import Response
 
 from users.models import Access, Role
 
+LOGGER = logging.getLogger(__name__)
+
 from manager.settings import (
-    ApplicationBuild,
-    BUILD,
+    ConnectionSetup,
+    CONNECTION,
     SSO_DEVELOPMENT_USER,
     SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY,
     SSO_SERVICE_APP_URL,
@@ -40,6 +43,10 @@ class AuthenticatedUser(APIView):
     def get(self, request: request.DjangoHttpRequest) -> Response:
         """Return the data for an authenticated user, else redirect to SSO."""
 
+        LOGGER.debug(
+            "AuthenticatedUser::get – SSO request details: %s",
+            request.user,
+        )
         data = {
             "first_name": SSO_DEVELOPMENT_USER["first_name"],
             "last_name": SSO_DEVELOPMENT_USER["last_name"],
@@ -57,7 +64,7 @@ class AuthenticatedUser(APIView):
             ],
         }
 
-        if BUILD == ApplicationBuild.DEVELOPMENT:
+        if CONNECTION == ConnectionSetup.OFFLINE:
             if SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY in request.headers:
                 dev_user_from_request = json.loads(
                     request.headers[SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY]
