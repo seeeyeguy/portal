@@ -47,6 +47,7 @@ storage/media/
 .mypy_cache
 .pylint/*
 .venv
+venv
 .vite
 api/bin
 api/ca-bundle.crt
