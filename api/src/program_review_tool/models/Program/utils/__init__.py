@@ -397,8 +397,7 @@ def ingest_new_programs_from_external_database() -> None:
     LOGGER.info(f"Retrieved {len(records)} from the external database.")
     for record in records:
         if (
-            record["active_status"]
-            and record["pa_number"] not in existing_pa_numbers
+            record["pa_number"] not in existing_pa_numbers
             and record["program_name"] not in existing_program_names
         ):
             programs_to_ingest.append(
