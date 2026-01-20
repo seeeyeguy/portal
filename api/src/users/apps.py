@@ -9,6 +9,8 @@ from typing import cast
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
+from django.utils import timezone
+
 
 class UsersConfig(AppConfig):
     """App Config for Users app."""
@@ -28,6 +30,7 @@ class UsersConfig(AppConfig):
 
         from directory.models import Resource, Tag
         from request.models import Request
+        from users.models import Access, Role
 
         from manager import settings
 
@@ -47,13 +50,14 @@ class UsersConfig(AppConfig):
 
             first_name = settings.SSO_DEVELOPMENT_USER["first_name"]
             last_name = settings.SSO_DEVELOPMENT_USER["last_name"]
+            username = f"{first_name}.{last_name}@harris.com"
             email = f"{first_name}.{last_name}@l3harris.com"
             password = settings.CONTAINER_PASSWORD
 
-            if not User.objects.using(database_alias).filter(email=email).exists():
-                User.objects.using(database_alias).create(
-                    username=email,
-                    email=email,
+            if not User.objects.using(database_alias).filter(username__iexact=username).exists():
+                dev_user = User.objects.using(database_alias).create(
+                    username=username.lower(),
+                    email=email.lower(),
                     first_name=first_name,
                     last_name=last_name,
                     password=password,
@@ -61,6 +65,13 @@ class UsersConfig(AppConfig):
                     is_staff=True,
                     is_active=True,
                 )
+                
+                Access.objects.create(
+                    user=dev_user,
+                    role=Role.objects.get(level=1),
+                    access_granted_date=timezone.now(),
+                )
+
             return None
 
         def load_initial_dataset(**kwargs: dict) -> None:
@@ -72,7 +83,7 @@ class UsersConfig(AppConfig):
 
             call_command(
                 "loaddata",
-                "portal/db/init/data/init.json",
+                "portal/db/init/data/init-dev.json",
                 verbosity=3,
                 database=DEFAULT_DATABASE_ALIAS,
             )

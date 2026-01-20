@@ -29,6 +29,6 @@ services:
             AXIS_DATABASE_PORT: ${AXIS_DATABASE_PORT}
         <<: *logging-settings
         ports:
-            - ${POSTGRES_PORT}:5432
+            - ${EXTERNAL_DB_PORT}:5432
         volumes:
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/db/init:/docker-entrypoint-initdb.d
