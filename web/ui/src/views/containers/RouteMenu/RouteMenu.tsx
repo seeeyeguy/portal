@@ -244,7 +244,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           command: () => {
             onLinkClick(RESOURCE_LINKS.PROGRAM_HEALTH_DASHBOARD);
             window.open(
-              "https://tableau.l3harris.com/#/workbooks/9049/views",
+              "https://app.high.powerbigov.us/groups/me/apps/ac2afc6b-21b6-4e6f-8676-598620024698/reports/abc7a419-1eb8-4d3b-8512-901ecbf6f324/8581b61c07df049490e9",
               "_blank",
               "noopener,noreferrer"
             );
