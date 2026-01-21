@@ -30,7 +30,7 @@ class TestFetchFavorite(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_FAVORITE_USER_EMAIL)
+        user = AuthModels.User.objects.get(email=arguments.FETCH_FAVORITE_USER)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [
@@ -50,7 +50,7 @@ class TestFetchFavorite(MultiDBTestCase):
         """Success Case: Fetch all `Favorite` records for
         the given user."""
 
-        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL}"
+        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER}"
         response = self.client.get(
             request_url, headers={"content-type": "application/json"}
         )
@@ -63,7 +63,7 @@ class TestFetchFavorite(MultiDBTestCase):
         """Fail Case: Fetch all `Favorite` records for
         a `User` that does not exist."""
 
-        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_EMAIL_DNE}"
+        request_url: str = f"{self.url}?user={arguments.FETCH_FAVORITE_USER_DNE}"
         response = self.client.get(
             request_url, headers={"content-type": "application/json"}
         )

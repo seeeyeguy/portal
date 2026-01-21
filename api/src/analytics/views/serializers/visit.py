@@ -9,14 +9,14 @@ from rest_framework import serializers
 class CreateVisitRequest(serializers.Serializer):
     """Request serializer for POST /v1/analytics/visits."""
 
-    resource = serializers.IntegerField()
+    resource = serializers.IntegerField(min_value=1)
 
 
 class FetchVisitRequest(serializers.Serializer):
     """Request serializer for GET /v1/analytics/visits."""
 
-    id = serializers.IntegerField(allow_null=True, default=None)
     user = serializers.EmailField(allow_blank=True, default="")
-    resource = serializers.IntegerField(allow_null=True, default=None)
-    page = serializers.IntegerField(allow_null=True, default=None)
-    limit = serializers.IntegerField(allow_null=True, default=None)
+    resource = serializers.IntegerField(min_value=1, allow_null=True, default=None)
+    page = serializers.IntegerField(min_value=1, allow_null=True, default=None)
+    limit = serializers.IntegerField(min_value=1, allow_null=True, default=None)
+    top = serializers.IntegerField(min_value=1, allow_null=True, default=None)

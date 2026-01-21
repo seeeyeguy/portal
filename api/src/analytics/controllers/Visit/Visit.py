@@ -6,9 +6,9 @@ regards to the use of resources.
 """
 
 import logging
-from typing import Union
+from typing import List, Dict
 
-from django.db.models import QuerySet
+from django.db.models import Count
 from django.contrib.auth import models as AuthModels
 
 from analytics import exceptions, models
@@ -70,45 +70,132 @@ class Visit:
             raise exceptions.AnalyticsError(err_msg, 404) from exc
 
     @staticmethod
-    def fetch_visit(
-        record_id: int | None,
-        user: str,
-        resource: int | None,
+    def fetch_visited_resource(
+        user: str | None = None,
+        resource: int | None = None,
+        top: int | None = None,
         page: int | None = None,
         limit: int | None = None,
-    ) -> Union[models.Visit, QuerySet[models.Visit]]:
+    ) -> List[Dict]:
         """
-        Fetch all `Visit` records based on the arguments passed to this
-        controller. If page, limit, user, or resource are specified then
-        a QuerySet of `Visit` records will be returned matching the
-        arguments. If an id is specified then the associated `Visit` record
+        Fetch aggregated `Visit` records based on the arguments passed to this
+        controller. Results are grouped by resource and ordered by total visit
+        count (descending).
+
+        If `user`, `resource`, `top`, `page`, or `limit` are specified then
+        a list of aggregated resource dicts will be returned matching the
+        arguments. If no filters are provided, all active resources with visits
         will be returned.
 
         Accepts:
-            * record_id (int | None): The id of the `Visit` record.
-            * user (str): The user associated with the `Visit`.
-            * resource (int | None): The id of the `Resource` associated
-                with the `Visit`.
-            * page (int | None): The page of `Visit` records to return.
-            * limit (int | None): The limit of `Visit` records to return.
+            * user (str | None): The username/email of the `User` whose visits
+            should be considered.
+            * resource (int | None): The id of the `Resource` to filter visits by.
+            * top (int | None): Limit results to the top N resources ordered by
+            total visit_count.
+            * page (int | None): The page number of aggregated results to return
+            (1-indexed).
+            * limit (int | None): The number of aggregated results per page.
 
         Returns:
-            *visits (Union[models.Visit, QuerySet[models.Visit]]): The
-                `Visit` records based on the given arguments.
+            List[Dict]: Each dict contains:
+                {
+                    "resource": {
+                        "id": int,
+                        "name": str,
+                        "url": str,
+                        "active": bool,
+                        "deleted": bool
+                    },
+                    "visit_count": int
+                }
+
+        Raises:
+            AnalyticsError: If parameters are invalid (e.g. non-positive `top`,
+            `page`, or `limit`, or mixing `top` with `page/limit`).
+            AnalyticsError (404): If the specified user or resource does not exist,
+            or if no resources match the given parameters.
         """
 
-        optional_args = f" with record_id: {record_id}" if record_id else "s"
-        optional_args = f" for User: {user}" if user != "" else optional_args
-        optional_args = (
-            f" {optional_args} with resource: {resource}" if resource else optional_args
-        )
-        optional_args = f" {optional_args} with page: {page}" if page else optional_args
-        optional_args = (
-            f"{optional_args}{' and ' if page else 'with '}limit: {limit}"
-            if limit
-            else optional_args
-        )
+        try:
+            LOGGER.info(
+                "Fetching visited resources user=%s, resource=%s, top=%s, page=%s, limit=%s",
+                user,
+                resource,
+                top,
+                page,
+                limit,
+            )
 
-        LOGGER.info(f"Fetching `Visit`{optional_args}.")
-        # Please remove the ignore after implementation.
-        return []  # type: ignore[return-value]
+            # Resolve user record if provided
+            user_record: AuthModels.User | None = None
+            if user:
+                try:
+                    user_record = AuthModels.User.objects.get(username__iexact=user)
+                except AuthModels.User.DoesNotExist:
+                    return []
+
+            # Build base queryset of active resources with visits
+            base_qs = (
+                models.Visit.objects.filter(resource__active=True)
+                .values(
+                    "resource__id",
+                    "resource__name",
+                    "resource__url",
+                    "resource__active",
+                    "resource__deleted",
+                )
+                .annotate(visit_count=Count("id"))
+                .order_by("-visit_count", "resource__name")
+            )
+
+            # Restrict to user if provided
+            if user_record is not None:
+                base_qs = base_qs.filter(user=user_record)
+
+            # Restrict to specific resource if provided
+            if resource is not None:
+                base_qs = base_qs.filter(resource__id=resource)
+
+            # Apply `top`
+            if top is not None:
+                if top <= 0:
+                    raise exceptions.AnalyticsError("`top` must be positive.", 400)
+                base_qs = base_qs[:top]
+
+            # Apply pagination
+            if page is not None or limit is not None:
+                if not (page and limit):
+                    raise exceptions.AnalyticsError(
+                        "`page` and `limit` must be provided together.", 400
+                    )
+                if page <= 0 or limit <= 0:
+                    raise exceptions.AnalyticsError(
+                        "`page` and `limit` must be positive integers.", 400
+                    )
+                offset = (page - 1) * limit
+                base_qs = base_qs[offset : offset + limit]
+
+            # Build compact response
+            results: List[Dict] = []
+            for row in base_qs:
+                resource_obj = {
+                    "id": row["resource__id"],
+                    "name": row["resource__name"],
+                    "url": row["resource__url"],
+                    "active": row["resource__active"],
+                    "deleted": row["resource__deleted"],
+                }
+                results.append(
+                    {
+                        "resource": resource_obj,
+                        "visit_count": row["visit_count"],
+                    }
+                )
+
+            return results
+
+        except DirectoryModels.Resource.DoesNotExist as exc:
+            err_msg = f"Resource (id={resource}) does not exist."
+            LOGGER.error(err_msg)
+            raise exceptions.AnalyticsError(err_msg, 404) from exc

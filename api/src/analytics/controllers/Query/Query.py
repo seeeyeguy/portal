@@ -17,6 +17,7 @@ from directory.controllers.Resource.Resource import ResourceSearch, SearchParams
 from directory.controllers.Resource.search.utils import DEFAULT_STRUCTURE
 from directory.models.Resource import Resource
 
+
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_PAGE_LENGTH = 50
@@ -95,10 +96,11 @@ class Query:
         user: str | None = None,
         page: int | None = None,
         limit: int | None = None,
+        search_term: str | None = None,
     ) -> Union[models.Query, QuerySet[models.Query]]:
         """
         Fetch all `Query` records based on the arguments passed to this
-        controller. If resource_id, page, limit, or user are specified then a QuerySet
+        controller. If resource_id, page, limit, user, or search term  are specified then a QuerySet
         of `Query` records will be returned matching the arguments. If
         an id is specified then the associated `Query` record will be
         returned.
@@ -109,62 +111,50 @@ class Query:
             * user (str): The user associated with the `Query` record(s).
             * page (int | None): The page of `Query` records to return.
             * limit (int | None): The limit of `Query` records to return.
+            * search_term (str | None): A term to filter queries by.
 
         Returns:
             *queries (Union[models.Query, QuerySet[models.Query]]): The
                 `Query` records based on the given arguments.
         """
-
-        optional_args = f" with record_id: {record_id}" if record_id else ""
-        optional_args = (
-            f" with resource_id: {resource_id}" if resource_id else optional_args
-        )
-        optional_args_with_resource_id = (
-            f"{optional_args if (record_id or resource_id) else ''} for User: {user}"
-        )
-        optional_args = (
-            f" {optional_args_with_resource_id}" if user != "" else optional_args
-        )
-        optional_args = (
-            f"{optional_args}{' and ' if resource_id or user else ' with '}page: {page}"
-            if page
-            else optional_args
-        )
-        optional_args = (
-            f"{optional_args}{' and ' if resource_id or user or page else ' with '}limit: {limit}"
-            if limit
-            else optional_args
-        )
-
-        LOGGER.info(f"Fetching `Query`s{optional_args}.")
-
         try:
             # If a record id is given, along with a resource_id, page,
             # or limit then throw an invalid parameters error.
-            if record_id and (resource_id or page or limit):
+            if record_id and (resource_id or page or limit or search_term):
                 raise exceptions.AnalyticsError("Invalid parameters given.", 400)
+
+            # If `page` is provided, ensure it is a positive integer.
+            if page is not None and page < 1:
+                raise exceptions.AnalyticsError("Page must be a positive integer.", 400)
+
+            # If `limit` is provided, ensure it is a positive integer
+            if limit is not None and limit < 1:
+                raise exceptions.AnalyticsError(
+                    "Limit must be a positive integer.", 400
+                )
 
             # If `record_id` is provided, return the record with the given id.
             if record_id:
-                return models.Query.objects.get(id=record_id)
+                return cast(models.Query, models.Query.objects.get(id=record_id))
 
-            queries: QuerySet[models.Query, models.Query] = models.Query.objects.all()
+            queries: QuerySet[models.Query] = cast(
+                QuerySet[models.Query], models.Query.objects.all()
+            )
 
             # If `resource_id` is provided, filter all queries by the given `Resource`.
             if resource_id:
                 _ = Resource.objects.get(id=resource_id, deleted=False)
-                queries: QuerySet[models.Query, models.Query] = queries.filter(
-                    resources__in=[resource_id]
-                )
-
+                queries = queries.filter(resources__in=[resource_id])
             # If `user` is provided, filter all queries by the given `User`.
             if user:
                 user_record: AuthModels.User = AuthModels.User.objects.get(
                     email__iexact=user
                 )
-                queries: QuerySet[models.Query, models.Query] = queries.filter(
-                    user=user_record
-                )
+                queries = queries.filter(user=user_record)
+
+            # If `search_term` is given, then search queries for term.
+            if search_term:
+                queries = queries.filter(search_term__icontains=search_term)
 
             # If `limit` is given, then limit the number of results.
             if limit:
@@ -181,14 +171,15 @@ class Query:
                 # than the number of available pages, then return an
                 # empty `Query` QuerySet.
                 if page > paginator.num_pages:
-                    return models.Query.objects.none()
+                    return cast(QuerySet[models.Query], models.Query.objects.none())
 
                 # Get the corresponding Page.
                 pages: Page = paginator.page(page)
 
                 # Assigning the page's `Query` QuerySet to
                 # `queries`.
-                queries = cast(QuerySet[models.Query, models.Query], pages.object_list)
+                queries = cast(QuerySet[models.Query], pages.object_list)
+                return queries
 
             return queries
         except models.Query.DoesNotExist as exc:

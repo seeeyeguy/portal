@@ -8,9 +8,10 @@ from django.urls import path
 
 from analytics import views
 
-from manager.utils.types import urlconfig
 
-urlpatterns: urlconfig.PathPatternList = [
-    path("queries", view=views.Query.as_view(), name="analytics.query"),
-    path("visits", view=views.Visit.as_view(), name="analytics.visit"),
+urlpatterns = [
+    path("queries", views.Query.as_view(), name="analytics.query"),
+    path("visits", views.Visit.as_view(), name="analytics.visit"),
+    path("favorites", views.FavoriteView.as_view(), name="analytics.favorites"),
+    path("prt/usage", views.UsageView.as_view(), name="analytics.prt.usage"),
 ]

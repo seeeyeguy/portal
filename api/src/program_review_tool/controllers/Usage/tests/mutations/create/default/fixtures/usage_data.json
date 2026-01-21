@@ -1,0 +1,14 @@
+[
+  {
+    "model": "program_review_tool.usage",
+    "pk": 1,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "created": "2025-01-27T16:00:00Z",
+      "duration": null,
+      "success": true,
+      "error_msg": "",
+      "programs": ["6C27", "10LR"]
+    }
+  }
+]

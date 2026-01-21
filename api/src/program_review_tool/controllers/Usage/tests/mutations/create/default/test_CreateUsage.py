@@ -31,6 +31,7 @@ class TestCreateUsage(MultiDBTestCase):
 
     fixtures: List[str] = [
         "portal/models/fixtures/users/users.json",
+        "program_review_tool/controllers/Usage/tests/mutations/create/default/fixtures/usage_data.json",
     ]
 
     @tag("controllers.usage.create_usage")
@@ -39,6 +40,8 @@ class TestCreateUsage(MultiDBTestCase):
 
         # Query user from database.
         user = AuthModels.User.objects.get(username=arguments.CREATE_USAGE_USER_EMAIL)
+
+        print(f"this is usage data user", models.Usage.objects.count())
 
         # Create usage for generation.
         usage = controllers.Usage.create_usage(

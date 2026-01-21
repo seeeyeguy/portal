@@ -1,0 +1,39 @@
+[
+  {
+    "model": "analytics.Visit",
+    "pk": 1,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 1,
+      "created": "2024-08-27T16:00:00Z"
+    }
+  },
+  {
+    "model": "analytics.Visit",
+    "pk": 2,
+    "fields": {
+      "user": "May.Parker@harris.com",
+      "resource": 1,
+      "created": "2024-08-28T16:00:00Z"
+    }
+  },
+  {
+    "model": "analytics.Visit",
+    "pk": 3,
+    "fields": {
+      "user": "Peter.Parker@harris.com",
+      "resource": 1,
+      "created": "2024-08-29T16:00:00Z"
+    }
+  },
+  {
+  "model": "analytics.Visit",
+  "pk": 4,
+  "fields": {
+    "user": "May.Parker@harris.com",
+    "resource": 2,
+    "created": "2024-08-30T16:00:00Z"
+  }
+}
+
+]

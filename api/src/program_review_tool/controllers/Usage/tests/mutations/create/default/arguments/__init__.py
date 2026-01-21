@@ -14,7 +14,7 @@ CREATE_USAGE_USER_EMAIL_DNE: str = "non.existing.user@harris.com"
 CREATE_USAGE_PROGRAM_PAS: List[str] = ["TEST1", "TEST2"]
 
 CREATE_USAGE_EXPECTED_USAGE: dict = {
-    "id": 1,
+    "id": 2,
     "user": CREATE_USAGE_USER_EMAIL,
     "programs": CREATE_USAGE_PROGRAM_PAS,
     "duration": None,
