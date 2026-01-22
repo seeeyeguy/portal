@@ -152,6 +152,8 @@ EMAIL_PORT = 25
 
 LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en-us")
 
+SERVER_CACHE_TIMEOUT = int(os.getenv("SERVER_CACHE_TIMEOUT") or 1)
+
 ###########################
 ## DJANGO LOGGING CONFIG ##
 ###########################
@@ -496,7 +498,7 @@ CACHES = {
             ),
         ],
         "KEY_PREFIX": f"cache.{APP_NAME}",
-        "TIMEOUT": 15 * SECONDS_IN_A_MINUTE,
+        "TIMEOUT": SERVER_CACHE_TIMEOUT * SECONDS_IN_A_MINUTE,
     }
 }
 
