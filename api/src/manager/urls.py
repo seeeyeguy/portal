@@ -27,6 +27,7 @@ urlpatterns: urlconfig.PathPatternList = [
     path("admin/", admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path("v1/analytics/", include("analytics.urls")),
+    path("v1/content/", include("content.urls")),
     path("v1/directory/", include("directory.urls")),
     path("v1/preferences/", include("preferences.urls")),
     path("v1/program-review-tool/", include("program_review_tool.urls")),

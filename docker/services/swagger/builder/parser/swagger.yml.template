@@ -310,6 +310,38 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchUsageNotFoundResponse"
+  /content/content:
+    post:
+      tags:
+        - "content.content.create"
+      summary: "Create a Content record."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContentRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateContentResponse"
+        "400":
+          description: "Key is not unique or Content not JSON compliant."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateContentErrorResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateContentForbiddenErrorResponse"
   /directory/employee-levels:
     post:
       tags:
@@ -3016,6 +3048,44 @@ components:
     FetchVisitNotFoundResponse:
       title: "Fetch `Visit` error response due to user or resource not found."
       example: "User or Resource not found."
+    
+    CreateContentRequest:
+      title: "Create `Content` request."
+      type: object
+      properties:
+        key:
+          type: string
+          description: Unique alias for `Content`.
+          default: ''
+        content:
+          type: object
+          description: Dynamic content.
+          default: {}
+
+    CreateContentResponse:
+      title: "Create `Content` record."
+      type: object
+      properties:
+        data:
+          type: object
+          description: The created `Content`.
+          example:
+            {
+              "id": 1,
+              "key": "unique/key",
+              "content": {"content": "dynamic content"},
+              "created": "2024-08-27T12:00:00-04:00",
+              "modified": "2024-08-27T12:00:00-04:00",
+              "modified_by": "May.Parker@l3harris.com"
+            }
+
+    CreateContentErrorResponse:
+      title: "Create `Content` error response due to bad key or content."
+      example: "Content(key={key}, content={content}, modified_by={user}) record was not created. Please check params. ..."
+
+    CreateContentForbiddenErrorResponse:
+      title: "Create `Content` error response due to forbidden access."
+      example: "Permissions Denied."
 
     FetchFavoriteResponse:
       title: "Fetch favorited resources response."
