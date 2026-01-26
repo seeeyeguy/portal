@@ -47,6 +47,7 @@ export type TApiFetchRequestRequest = {
   page?: number | null;
   limit?: number | null;
   includeArchived?: boolean | null;
+  deleted?: boolean | null; 
 };
 
 export type TApiPutRequestRequest = {
@@ -137,6 +138,7 @@ const requestApi = api.injectEndpoints({
           page = null,
           limit = null,
           includeArchived = null,
+          deleted = null
         }: TApiFetchRequestRequest) =>
           endpoints.PORTAL.REQUEST.REQUEST(
             id,
@@ -146,7 +148,8 @@ const requestApi = api.injectEndpoints({
             status,
             page,
             limit,
-            includeArchived
+            includeArchived,
+            deleted
           ),
         transformResponse: (
           response: IApiRequest[],

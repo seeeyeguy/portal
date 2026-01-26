@@ -10,4 +10,5 @@ export interface IRequest {
   transitions: ITransitionGraph;
   created: Date;
   modified: Date;
+  deleted?: boolean
 }

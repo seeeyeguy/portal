@@ -91,6 +91,12 @@
   height: 4rem;
 }
 
+.admin-deleted-checkbox {
+  align-items: center;
+  display: flex;
+  gap: 0.4rem;
+}
+
 .admin-dropdown-filter {
   height: 2.3rem;
   width: 20rem;
@@ -160,8 +166,8 @@
 
 .button-container {
   display: flex;
-  height: 3.5rem;
   gap: 2rem;
+  height: 3.5rem;
   padding: 0.6rem 10rem 0 0;
 }
 

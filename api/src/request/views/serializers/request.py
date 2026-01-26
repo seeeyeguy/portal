@@ -44,3 +44,4 @@ class FetchRequestRequest(serializers.Serializer):
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)
     include_archived = serializers.BooleanField(allow_null=True, default=False)
+    deleted = serializers.BooleanField(allow_null=True, default=True)

@@ -9,6 +9,7 @@ import lodash from "lodash";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { Paginator, PaginatorPageChangeEvent } from "primereact/paginator";
+import { Checkbox } from "primereact/checkbox";
 import FormType from "@rjsf/core";
 import Form from "@rjsf/primereact";
 import validator from "@rjsf/validator-ajv8";
@@ -29,6 +30,7 @@ import {
   useAddRequestMutation,
   useGetRequestsQuery,
   useUpdateRequestMutation,
+  useRemoveRequestMutation,
 } from "state/query/api/portal/request/RequestApi";
 import {
   TApiPostRequestRequest,
@@ -74,6 +76,8 @@ export default function AdminResources() {
   const [selectedFilters, setSelectedFilters] = React.useState<
     (string | number)[]
   >([]);
+
+  const [showDeleted, setShowDeleted] = React.useState(false);
 
   // Multi-Select filter options, non-superusers get their resources
   // filtered by default so the first option is removed.
@@ -182,8 +186,9 @@ export default function AdminResources() {
     subfunctions: selectedSubFunction ?? usersPermittedSubFunctions,
     page: page + 1,
     limit: rows,
+    deleted: showDeleted
   });
-
+  
   // Adjust pagination pages after data load.
   React.useEffect(() => {
     const currentRows = (requests?.data.length ?? 0) * (first / rows + 1) + 1;
@@ -198,6 +203,8 @@ export default function AdminResources() {
   const [updateResource] = useUpdateRequestMutation();
 
   const [addResource] = useAddRequestMutation();
+
+  const [removeRequest] = useRemoveRequestMutation();
 
   const [refreshRequestNotifications] =
     useRefreshRequestNotificationsMutation();
@@ -368,6 +375,7 @@ export default function AdminResources() {
   const [newFormKey, setNewFormKey] = React.useState(Date.now());
 
   const [showNewModal, setShowNewModal] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState<number | null>(null);
 
   const handleEdit = React.useCallback(
     async (id: number, stage: "DRAFT" | "SUBMITTED") => {
@@ -411,63 +419,63 @@ export default function AdminResources() {
     [refreshRequestNotifications, updateResource]
   );
 
-  const handleCreate = React.useCallback(
-    async (
-      stage: "DRAFT" | "SUBMITTED",
-      uid?: string,
-      previousRevision?: number,
-      requestId?: number
+const handleCreate = React.useCallback(
+  async (
+    stage: "DRAFT" | "SUBMITTED",
+    uid?: string,
+    previousRevision?: number,
+    requestId?: number,
     ) => {
       // For revisions we use an existing request form.
-      const formRef = requestId
-        ? formRefs.current.get(requestId)
-        : newFormRef.current;
+    const formRef = requestId
+      ? formRefs.current.get(requestId)
+      : newFormRef.current;
 
-      if (formRef && formRef.validateForm()) {
-        const formSubmission: ResourceFormData = {
-          ...formRef.state.formData,
-        };
+    if (formRef && formRef.validateForm()) {
+      const formSubmission: ResourceFormData = {
+        ...formRef.state.formData,
+      };
 
         // Create request body.
-        const body: TApiPostRequestRequest = {
-          ...formSubmission,
+      const body: TApiPostRequestRequest = {
+        ...formSubmission,
           // merge all POCs into one array.
-          pointOfContacts: [
-            formSubmission.primaryPoc,
-            ...(formSubmission.secondaryPoc
+        pointOfContacts: [
+          formSubmission.primaryPoc,
+          ...(formSubmission.secondaryPoc
               ? formSubmission.secondaryPoc
                   .split(",")
                   .map((item) => item.trim())
               : []),
-          ],
-          thumbnail: base64ImageToFile(formSubmission.thumbnail as string),
-          stage,
-          uid: uid ?? null,
-          previousRevision: previousRevision ?? null,
-        };
+        ],
+        thumbnail: base64ImageToFile(formSubmission.thumbnail as string),
+        stage,
+        uid: uid ?? null,
+        previousRevision: previousRevision ?? null,
+      };
 
-        const response = await addResource(body);
+      const response = await addResource(body);
 
-        // Handle the createRequest API error.
-        if (response.error) {
-          const message =
-            "data" in response.error
-              ? resolveApiErrorMessage(response.error.data as string | object)
-              : DEFAULT_API_ERROR_MESSAGE;
+      // Handle the createRequest API error.
+      if (response.error) {
+        const message =
+          "data" in response.error
+            ? resolveApiErrorMessage(response.error.data as string | object)
+            : DEFAULT_API_ERROR_MESSAGE;
 
-          console.error(message);
-          toast.error(`Error Saving Request: ${message}`);
-        } else {
-          toast.success("Request Created");
-          refreshRequestNotifications();
-          // Reset form on success.
-          setShowNewModal(false);
-          setNewFormKey(Date.now());
-        }
+        console.error(message);
+        toast.error(`Error Saving Request: ${message}`);
+      } else {
+        toast.success("Request Created");
+        refreshRequestNotifications();
+        // Reset form on success.
+        setShowNewModal(false);
+        setNewFormKey(Date.now());
       }
-    },
-    [addResource, refreshRequestNotifications]
-  );
+    }
+  },
+  [addResource, refreshRequestNotifications]
+);
 
   // Reset existing resource form back its original data.
   const handleReset = React.useCallback(
@@ -518,6 +526,15 @@ export default function AdminResources() {
           placeholder="Filter by SubFunction"
           showClear
         />
+        <div className={styles["admin-deleted-checkbox"]}>
+          <Checkbox
+            inputId="showDeleted"
+            checked={showDeleted}
+            onChange={(e) => setShowDeleted(!!e.checked)}
+
+          />
+          <label htmlFor="showDeleted">Show Deleted</label>
+        </div>
         <MultiSelect
           value={selectedFilters}
           onChange={handleFilterChange}
@@ -677,6 +694,15 @@ export default function AdminResources() {
                             >
                               Save as Draft
                             </button>
+                          {request.status === "APPROVED" && (
+                            <button
+                              className={`${styles["admin-button"]} ${styles["admin-button-delete"]}`}
+                              onClick={() => setShowDeleteModal(request.id)}
+                              aria-label="delete"
+                            >
+                              Delete
+                            </button>
+                          )}
                             <button
                               className={`${styles["admin-button"]} ${styles["admin-button-submit"]}`}
                               onClick={() =>
@@ -702,6 +728,37 @@ export default function AdminResources() {
           </ul>
         </div>
       )}
+      <ConfirmModal
+        title="Submit Resource Deletion"
+        open={!!showDeleteModal}
+        acceptLabel={<>Delete</>}
+        rejectLabel={<>Cancel</>}
+        onAccept={async () => {
+          const req = requests?.data.find(r => r.id === showDeleteModal);
+
+          try {
+            if (!req?.resource?.id) {
+              throw new Error("Request resource ID is missing");
+            }
+
+            await removeRequest(req.resource.id).unwrap();
+
+            toast.success("Delete Request Submitted");
+            refreshRequestNotifications();
+            } catch (err: unknown) {
+              const apiErr = err as { data?: string | object };
+              const errorData: string | object = apiErr.data ?? apiErr;
+
+              toast.error(resolveApiErrorMessage(errorData));
+            }
+
+          setShowDeleteModal(null);
+        }}
+        onReject={() => setShowDeleteModal(null)}
+        acceptClassName={`${styles["admin-button"]} ${styles["admin-button-delete"]}`}
+        rejectClassName={`${styles["admin-button"]} ${styles["admin-button-cancel"]}`}
+      >
+      </ConfirmModal>
       <ConfirmModal
         title={"Add Resource"}
         open={showNewModal}

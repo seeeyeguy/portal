@@ -184,6 +184,7 @@ class Request(APIView):
                 page=body["page"],
                 limit=body["limit"],
                 include_archived=body["include_archived"],
+                deleted=body["deleted"],
             )
 
             many: bool = body["id"] is None
