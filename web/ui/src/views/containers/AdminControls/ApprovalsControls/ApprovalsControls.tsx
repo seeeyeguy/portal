@@ -360,6 +360,7 @@ export default function ApprovalsControls() {
     status: REQUEST_STATUSES.PENDING,
     page: page,
     limit: rows,
+    deleted: true
   } as unknown as void);
 
   const confirmDispositionButtonLabel = React.useMemo(() => {

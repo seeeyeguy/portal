@@ -112,7 +112,7 @@ class Request:
 
             log_msg = (
                 f"{'Creating' if stage != SUBMITTED else 'Submitting'}"
-                f" Request for Resource(name={params['name']}, url={params['url']})"
+                f" Request for Resource(name={params['name']})"
                 f" for Originator(email={params['originator'].email})."
             )
             LOGGER.info(log_msg)
@@ -168,7 +168,7 @@ class Request:
             raise exceptions.RequestError(err_msg, 400) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
-                f"Resource(name={params['name']}, url={params['url']})"
+                f"Resource(name={params['name']})"
                 " for Request was not created. There is an issue with the Resource's"
                 f" attributes. {exc.message}"
             )
@@ -193,7 +193,7 @@ class Request:
         try:
             log_msg = (
                 f"Updating Request(id={params['request_id']}) for"
-                f" Resource(name={params['name']}, url={params['url']})"
+                f" Resource(name={params['name']})"
                 f" at Stage(level={params['stage']})"
             )
             LOGGER.info(log_msg)
@@ -283,7 +283,7 @@ class Request:
             raise exceptions.RequestError(err_msg, 404) from exc
         except DirectoryExceptions.DirectoryError as exc:
             err_msg: str = (
-                f"Resource(name={params['name']}, url={params['url']})"
+                f"Resource(name={params['name']})"
                 " for Request was not updated. There is an issue with the Resource's"
                 f" attributes. {exc.message}"
             )
@@ -423,6 +423,7 @@ class Request:
         page: Optional[int] = None,
         limit: Optional[int] = None,
         include_archived: Optional[bool] = False,
+        deleted: Optional[bool] = True,
     ) -> Union[models.Request, QuerySet[models.Request]]:
         """
         Fetch a `Request` record from the database with the given id
@@ -455,6 +456,9 @@ class Request:
             * limit (int | None): The limit of `Request` records to return.
             * include_archived (bool): Whether to include `Request` records related
                 to historical `Resources`.
+            * deleted (bool | None): Optional parameter to filter by deletion state.
+                If `False`, only non-deleted `Request` records are returned.
+                If `None`, both deleted and non-deleted records are returned.
         """
 
         try:
@@ -502,6 +506,13 @@ class Request:
                         status=models.Request.RequestStatus.APPROVED,
                         resource__active=False,
                     )
+                )
+
+            # If not `deleted`, filter the `Request` records
+            # to only include ones that are not deleted.
+            if not deleted:
+                requests = requests.filter(
+                    resource__deleted=False,
                 )
 
             # If `originator` is given, proceed to fetch the associated

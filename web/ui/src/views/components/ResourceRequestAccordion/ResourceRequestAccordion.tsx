@@ -241,7 +241,20 @@ export default function ResourceRequestAccordion({
                 aria-description="request accordion name"
               >
                 {request.resource.name}{" "}
-              </span>
+              </span>      
+              {request.resource.deleted && (
+                <span
+                  className={
+                    request.resource.active === false
+                      ? styles["resource-marked-for-deletion"]
+                      : styles["resource-deleted"]
+                  }
+                >
+                  {request.resource.active === false
+                    ? "(Marked for Deletion)"
+                    : "(Deleted)"}
+                </span>
+              )}
               {tooltipContent && (
                 <FontAwesomeIcon
                   size={"lg"}

@@ -231,7 +231,8 @@ export default {
       status: string | null = null,
       page: number | null = null,
       limit: number | null = null,
-      includeArchived: boolean | null = null
+      includeArchived: boolean | null = null,
+      deleted: boolean | null = null,
     ) => {
       let base = buildQueryResourceByIdURL(
         RESOURCE_PATHS.REQUEST,
@@ -267,7 +268,7 @@ export default {
           includeArchived,
           /originator|stage|status|page|limit/
         );
-
+        base = appendQueryParamToURL(base, "deleted", deleted);
         base = arrayParams.length
           ? `${base}${/\?(.*?)=/.test(base) ? "&" : "?"}${arrayParams}`
           : base;
