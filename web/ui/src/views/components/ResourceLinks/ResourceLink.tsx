@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { FavoriteThumbnailLink } from "adas-react-components";
+import FavoriteThumbnailLink from "views/components/FavoriteThumbnailLink/FavoriteThumbnailLink";
 import { Fernet } from "fernet-ts";
 import lodash from "lodash";
 
@@ -25,7 +25,7 @@ export interface IResourceLinkProps {
   url: string;
   thumbnail: string;
   primaryPointOfContact: string;
-	secondaryPointOfContacts?: string[];
+  secondaryPointOfContacts?: string[];
   download: boolean;
   restricted: boolean;
   favoriteId?: number | null | undefined;
@@ -40,7 +40,7 @@ export default function ResourceLink({
   url,
   thumbnail,
   primaryPointOfContact,
-  secondaryPointOfContacts, 
+  secondaryPointOfContacts,
   download,
   restricted,
   favoriteId = null,
@@ -80,7 +80,8 @@ export default function ResourceLink({
 
   const memoizedPrimaryPointOfContact = React.useMemo(
     () =>
-      primaryPointOfContact?.replace(/@harris.com|@l3.com/i, "@l3harris.com") ?? "N/A",
+      primaryPointOfContact?.replace(/@harris.com|@l3.com/i, "@l3harris.com") ??
+      "N/A",
     [primaryPointOfContact]
   );
 
@@ -152,29 +153,27 @@ export default function ResourceLink({
         target="_blank"
         tooltipHTMLContent={
           memoizedPrimaryPointOfContact === POINT_OF_CONTACT_PLACEHOLDER &&
-          memoizedSecondaryPointsOfContacts.length === 0
-            ? null
-            : (
-              <>
-                <h4>Point of Contact:</h4>
-                {memoizedPrimaryPointOfContact !== "N/A" && (
-                  <a href={`mailto:${memoizedPrimaryPointOfContact}`}>
-                    {memoizedPrimaryPointOfContact}
-                  </a>
-                )}
-                {memoizedSecondaryPointsOfContacts.length > 0 && (
-                  <>
-                    <h4>Secondary Point of Contact(s):</h4>
-                    {memoizedSecondaryPointsOfContacts.map((email: string) => (
-                      <div key={email}>
-                        <a href={`mailto:${email}`}>{email}</a>
-                      </div>
-                    ))}
-                  </>
-                )}
-              </>
-            )
-          }
+          memoizedSecondaryPointsOfContacts.length === 0 ? null : (
+            <>
+              <h4>Point of Contact:</h4>
+              {memoizedPrimaryPointOfContact !== "N/A" && (
+                <a href={`mailto:${memoizedPrimaryPointOfContact}`}>
+                  {memoizedPrimaryPointOfContact}
+                </a>
+              )}
+              {memoizedSecondaryPointsOfContacts.length > 0 && (
+                <>
+                  <h4>Secondary Point of Contact(s):</h4>
+                  {memoizedSecondaryPointsOfContacts.map((email: string) => (
+                    <div key={email}>
+                      <a href={`mailto:${email}`}>{email}</a>
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )
+        }
         isButtonActive={isButtonActive}
         isButtonDisabled={false}
         buttonClassName={styles["favorite-button"]}

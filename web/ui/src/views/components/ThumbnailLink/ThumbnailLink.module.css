@@ -1,0 +1,56 @@
+div.thumbnail-link-container,
+div.thumbnail-link-container + * {
+  --light-gray: var(--color-medium-gray);
+}
+
+.thumbnail-link-container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fit, minmax(85%, 1fr));
+  align-items: end;
+}
+
+.thumbnail-link {
+  color: var(--color-stealth);
+  cursor: pointer;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.thumbnail-link:hover {
+  text-decoration: underline;
+}
+
+.thumbnail-link-img {
+  border: 0.0625rem solid var(--light-gray);
+  border-radius: 0.25rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.5rem;
+  padding: 0.313rem;
+}
+
+.thumbnail-link-img:hover {
+  box-shadow: 0 0 0.125rem 0.063rem rgba(0, 140, 186, 0.5);
+}
+
+.thumbnail-link-content-container {
+  display: -webkit-box;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 15rem;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+}
+
+div.thumbnail-link-description-tooltip {
+  background: var(--color-stealth);
+  border-radius: 0.25rem;
+  max-width: 16rem;
+}
