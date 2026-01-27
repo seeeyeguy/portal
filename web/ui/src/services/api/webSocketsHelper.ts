@@ -1,4 +1,6 @@
+import React from "react"
 import { toast } from "react-toastify";
+import { DispositionToast } from "views/components/Toasts/DispositionToast";
 
 interface IWebSocketService<T, U> {
   connect(url: string): void;
@@ -51,13 +53,35 @@ class WebSocketService<T, U> implements IWebSocketService<T, U> {
     this.socket.onmessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event?.data ?? "{}");
-        if (this.url?.endsWith("disposition")) {
+        if (this.url?.includes("/ws/disposition")) {
+
+          // Ignore irrelevant messages
+          if (!data.resourceName && !data.resourceId && !data.disposition) {
+            return;
+          }
+
+          // Success case
           if (data?.status && data?.status < 300) {
+            const resource = data?.resourceName ?? data?.resourceId ?? "Unknown resource";
+            const action = data?.disposition ?? "Unknown action";
+            const user = `${data?.firstName ?? ""} ${data?.lastName ?? ""}`.trim() || "Unknown user";
+
             toast.success(
-              `Disposition was successful. It may take up to ${CACHE_TIMEOUT} minutes for your resource to appear on the main portal page.`
+              React.createElement(DispositionToast, {
+                resource,
+                action,
+                user,
+                cacheTimeout: CACHE_TIMEOUT
+              })
             );
+
           } else {
-            toast.error(`${data?.content ?? "Disposition failed."}`);
+            // Error case
+            toast.error(
+              `Disposition failed:\nReason: ${data?.content ?? "Unknown error"}\nResource: ${
+                data?.resourceName ?? data?.resourceId ?? "Unknown"
+              }`
+            );
           }
         }
         this.callbacks.forEach((cb) => cb(data));

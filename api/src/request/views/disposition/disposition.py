@@ -52,6 +52,24 @@ class Disposition(View):
             # Serialize `Disposition`.
             data: dict = DispositionSerializer(disposition).data
 
+            # Broadcast to WebSocket group
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "asgi_api_disposition",
+                {
+                    "type": "disposition.message",
+                    "payload": {
+                        "status": 201,
+                        "resourceId": disposition.transition.request.resource.id,
+                        "resourceName": disposition.transition.request.resource.name,
+                        "disposition": disposition.disposition,
+                        "firstName": disposition.approver.user.first_name,
+                        "lastName": disposition.approver.user.last_name,
+                        "content": "Disposition created successfully.",
+                    },
+                }
+            )
+
             return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)
         except exceptions.RequestError as exc:
             LOGGER.error(exc.message)
