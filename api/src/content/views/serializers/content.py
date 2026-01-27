@@ -16,3 +16,9 @@ class BaseContentRequest(serializers.Serializer):
 
 class CreateContentRequest(BaseContentRequest):
     """Request serializer for POST /v1/content/content."""
+
+
+class FetchContentRequest(serializers.Serializer):
+    """Request serializer for GET /v1/content/content."""
+
+    key = serializers.CharField(max_length=512)

@@ -81,3 +81,26 @@ class Content:
             )
             LOGGER.error(error_message)
             raise exceptions.ContentError(error_message, status=400) from exc
+
+    @staticmethod
+    def fetch_content(key: str) -> models.Content:
+        """
+        Fetch a `Content` record with the given key.
+
+        Accepts:
+            * key (str): The unique alias for the `Content` record.
+
+        Returns:
+            * record (models.Content): A `Content` record.
+        """
+
+        log_message = f"Fetching Content(key={key}) record."
+
+        try:
+            LOGGER.info(log_message)
+            record = models.Content.objects.get(key=key)
+            return record
+        except models.Content.DoesNotExist as exc:
+            error_message = f"Content(key={key}) does not exist."
+            LOGGER.error(error_message)
+            raise exceptions.ContentError(error_message, status=404) from exc

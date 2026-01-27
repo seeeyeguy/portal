@@ -1,0 +1,13 @@
+[
+  {
+    "model": "content.content",
+    "pk": 1,
+    "fields": {
+      "key": "test/key",
+      "content": { "data": "content" },
+      "modified_by": "May.Parker@harris.com",
+      "created": "2024-08-27T16:00:00Z",
+      "modified": "2024-08-27T16:00:00Z"
+    }
+  }
+]
