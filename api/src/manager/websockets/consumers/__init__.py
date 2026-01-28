@@ -154,4 +154,10 @@ class APIConsumerFactory:
                 # Send response content & status to client(s).
                 self.send_json({"content": event["content"], "status": event["status"]})
 
+            def disposition_message(self, event: dict) -> None:
+                """
+                Handle disposition WebSocket broadcasts.
+                """
+                self.send_json(event["payload"])
+
         return Consumer
