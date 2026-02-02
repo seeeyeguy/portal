@@ -22,3 +22,9 @@ class FetchContentRequest(serializers.Serializer):
     """Request serializer for GET /v1/content/content."""
 
     key = serializers.CharField(max_length=512)
+
+
+class DeleteContentRequest(serializers.Serializer):
+    """Request serializer for DELETE /v1/content/content."""
+
+    key = serializers.CharField(max_length=512)

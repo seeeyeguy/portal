@@ -1,0 +1,13 @@
+[
+  {
+    "model": "content.content",
+    "pk": 1,
+    "fields": {
+      "key": "example_key_1",
+      "content": { "data": "Example content data 1" },
+      "created": "2024-01-01T12:00:00Z",
+      "modified": "2024-01-01T12:00:00Z",
+      "modified_by": "May.Parker@harris.com"
+    }
+  }
+]
