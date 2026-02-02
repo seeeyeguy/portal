@@ -342,6 +342,34 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CreateContentForbiddenErrorResponse"
+    get:
+      tags:
+        - "content.content.fetch"
+      summary: "Fetch Content."
+      parameters:
+        - in: query
+          name: key
+          schema:
+            type: string
+          description: Alias for `Content` record to fetch.
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchContentWithParametersResponse"
+        "404":
+          description: "`Content` does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchContentByKeyDoesNotExistResponse"
   /directory/employee-levels:
     post:
       tags:
@@ -3086,6 +3114,27 @@ components:
     CreateContentForbiddenErrorResponse:
       title: "Create `Content` error response due to forbidden access."
       example: "Permissions Denied."
+    
+    FetchContentWithParametersResponse:
+      title: "Fetch `Content` response."
+      type: object
+      properties:
+        data:
+          type: object
+          example:
+             {
+                'id': 1,
+                'created': '2024-08-27T12:00:00-04:00',
+                'modified': '2024-08-27T12:00:00-04:00',
+                'key': 'test/key',
+                'content': {'data': 'content'},
+                'modified_by': 'May.Parker@harris.com'
+             }
+
+    FetchContentByKeyDoesNotExistResponse:
+      title: "Fetch `Content` error response due to using a
+        key for a `Content` record that does not exist."
+      example: "Content(key=key) does not exist."
 
     FetchFavoriteResponse:
       title: "Fetch favorited resources response."

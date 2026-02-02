@@ -54,7 +54,11 @@ class UsersConfig(AppConfig):
             email = f"{first_name}.{last_name}@l3harris.com"
             password = settings.CONTAINER_PASSWORD
 
-            if not User.objects.using(database_alias).filter(username__iexact=username).exists():
+            if (
+                not User.objects.using(database_alias)
+                .filter(username__iexact=username)
+                .exists()
+            ):
                 dev_user = User.objects.using(database_alias).create(
                     username=username.lower(),
                     email=email.lower(),
@@ -65,12 +69,13 @@ class UsersConfig(AppConfig):
                     is_staff=True,
                     is_active=True,
                 )
-                
-                Access.objects.create(
-                    user=dev_user,
-                    role=Role.objects.get(level=1),
-                    access_granted_date=timezone.now(),
-                )
+
+                if database_alias == DEFAULT_DATABASE_ALIAS:
+                    Access.objects.create(
+                        user=dev_user,
+                        role=Role.objects.get(level=1),
+                        access_granted_date=timezone.now(),
+                    )
 
             return None
 

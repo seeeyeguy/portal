@@ -54,14 +54,16 @@ class DevelopmentAuthenticationMiddleware:
         Returns:
             * None
         """
-    
-        if settings.BUILD not in (settings.ApplicationBuild.DEVELOPMENT,) or settings.CONNECTION in (settings.ConnectionSetup.ONLINE,):
+
+        if settings.BUILD not in (
+            settings.ApplicationBuild.DEVELOPMENT,
+        ) or settings.CONNECTION in (settings.ConnectionSetup.ONLINE,):
             return None
 
         first_name = settings.SSO_DEVELOPMENT_USER["first_name"]
         last_name = settings.SSO_DEVELOPMENT_USER["last_name"]
         username = f"{first_name.lower()}.{last_name.lower()}@harris.com"
-        email = f"{first_name}.{last_name}@l3harris.com"
+        email = f"{first_name.lower()}.{last_name.lower()}@l3harris.com"
 
         if settings.SSO_DEVELOPMENT_USER_REQUEST_HEADERS_KEY in request.headers:
             try:
