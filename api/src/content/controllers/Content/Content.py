@@ -20,8 +20,6 @@ LOGGER = logging.getLogger(__name__)
 # Valid `Role` levels.
 VALID_ROLE_LEVELS: Set[int] = {
     Role.RoleLevels.SUPERUSER,
-    Role.RoleLevels.BUSINESS_PROCESS_EXPERT,
-    Role.RoleLevels.DATA_STEWARD,
 }
 
 
@@ -104,3 +102,31 @@ class Content:
             error_message = f"Content(key={key}) does not exist."
             LOGGER.error(error_message)
             raise exceptions.ContentError(error_message, status=404) from exc
+
+    @staticmethod
+    def delete_content(key: str, deleted_by: User) -> int:
+        """
+        Delete a `Content` record with the given key.
+
+        Accepts:
+            * key (str): The unique alias for the `Content` record.
+            * deleted_by (auth.User): The user that deleted the content.
+
+        Returns:
+            * rows_affected (int): The number of rows deleted.
+        """
+
+        log_message = f"Deleting Content(key={key}) record."
+
+        LOGGER.info(log_message)
+
+        # Verify user has an `Access` with a valid Role.
+        if not deleted_by.accesses.filter(
+            access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
+        ).exists():
+            err_msg = "Permissions Denied."
+            LOGGER.error(err_msg)
+            raise exceptions.ContentError(err_msg, 403)
+
+        rows_affected, _ = models.Content.objects.filter(key=key).delete()
+        return rows_affected

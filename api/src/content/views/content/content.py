@@ -68,3 +68,20 @@ class Content(View):
         except ContentError as exc:
             LOGGER.error(exc.message)
             return http.JsonResponse(exc.message, status=exc.status, safe=False)
+
+    @method_decorator(login_required())
+    @method_decorator(admin_required())
+    @method_decorator(
+        with_serializer(serializer_class=serializers.DeleteContentRequest)
+    )
+    def delete(self, request: DjangoHttpRequest, body: dict) -> http.JsonResponse:
+        """Endpoint for DELETE /v1/content/content."""
+
+        LOGGER.info("DELETE /v1/content/content.")
+
+        rows_affected = ContentController.delete_content(
+            key=body["key"], deleted_by=request.user
+        )
+
+        data: int = rows_affected
+        return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)

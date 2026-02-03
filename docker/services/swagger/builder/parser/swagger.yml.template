@@ -370,6 +370,55 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchContentByKeyDoesNotExistResponse"
+    delete:
+      tags:
+        - "content.content.delete"
+      summary: "Delete a `Content` record."
+      parameters:
+        - in: query
+          name: key
+          schema:
+            type: string
+          description: Key for the desired 'Content'.
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteContentResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteContentInvalidParamsResponse"      
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteContentUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteContentForbiddenErrorResponse"
+        "404":
+          description: "Content does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeleteContentDoesNotExistResponse"   
   /directory/employee-levels:
     post:
       tags:
@@ -3183,6 +3232,29 @@ components:
                 "favorite_count": 17
               }
             ]
+
+    DeleteContentResponse:
+      title: "Delete `Content` response."
+      type: integer
+      example: 1
+
+    DeleteContentInvalidParamsResponse:
+      title: "Delete `Content` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    DeleteContentUnauthorizedResponse:
+      title: "Delete `Content` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    DeleteContentForbiddenErrorResponse:
+      title: "Delete `Content` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    DeleteContentDoesNotExistResponse:
+      title: "Delete `Content` error response due to a given content
+        key where that `Content` does not exist."
+      example: "Delete Content (key={key}) does not exist."
 
     FetchFavoriteTopwithLimitandPageResponse:
       title: "Fetch `Favorite` error response due Top being used with Page + Limit."
