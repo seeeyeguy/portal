@@ -24,6 +24,18 @@ class FetchContentRequest(serializers.Serializer):
     key = serializers.CharField(max_length=512)
 
 
+class UpdateContentRequest(BaseContentRequest):
+    """Request serializer for PUT /v1/content/content."""
+
+    key = None  # type: ignore[assignment]
+
+
+class UpdateContentRequestQueryParams(serializers.Serializer):
+    """Query parameters serializer for PUT /v1/content/content."""
+
+    key = serializers.CharField(max_length=512)
+
+
 class DeleteContentRequest(serializers.Serializer):
     """Request serializer for DELETE /v1/content/content."""
 

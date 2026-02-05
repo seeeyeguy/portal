@@ -104,6 +104,57 @@ class Content:
             raise exceptions.ContentError(error_message, status=404) from exc
 
     @staticmethod
+    def update_content(key: str, content: dict, modified_by: User) -> models.Content:
+        """
+        Update a `Content` record with the given params.
+
+        Accepts:
+            * key (str): The unique alias for the `Content` record.
+            * content (dict): JSON compliant dynamic content for `BI Portal`.
+            * modified_by (auth.User): The user that modified the content.
+
+        Returns:
+            * content (models.Content): The updated `Content` record.
+        """
+
+        log_message = (
+            f"Updating Content(key={key},"
+            f" content={content}, modified_by={modified_by}) record."
+        )
+
+        try:
+            LOGGER.info(log_message)
+
+            # Verify user has an `Access` with a valid Role.
+            if not modified_by.accesses.filter(
+                access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
+            ).exists():
+                err_msg = "Permissions Denied."
+                LOGGER.error(err_msg)
+                raise exceptions.ContentError(err_msg, 403)
+
+            # Update record.
+            content_record = models.Content.objects.get(key=key)
+            content_record.content = content
+            content_record.modified = timezone.now()
+            content_record.modified_by = modified_by
+            content_record.save()
+
+            return content_record
+        except models.Content.DoesNotExist as exc:
+            error_message = f"Content(key={key}) does not exist."
+            LOGGER.error(error_message)
+            raise exceptions.ContentError(error_message, status=404) from exc
+        except DatabaseError as exc:
+            error_message = (
+                f"Content(key={key},"
+                f" content={content}, modified_by={modified_by}) record not updated."
+                f" Please check params. {exc}"
+            )
+            LOGGER.error(error_message)
+            raise exceptions.ContentError(error_message, status=400) from exc
+
+    @staticmethod
     def delete_content(key: str, deleted_by: User) -> int:
         """
         Delete a `Content` record with the given key.

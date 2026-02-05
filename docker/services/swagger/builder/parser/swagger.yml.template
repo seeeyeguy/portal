@@ -370,6 +370,57 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchContentByKeyDoesNotExistResponse"
+    put:
+      tags:
+        - "content.content.update"
+      summary: "Update a `Content` record."
+      parameters:
+        - in: query
+          name: key
+          schema:
+            type: string
+          description: Key for the desired 'Content'.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContentRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateContentResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateContentInvalidParamsResponse"      
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateContentUnauthorizedResponse"
+        "403":
+          description: "FORBIDDEN"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateContentForbiddenErrorResponse"
+        "404":
+          description: "Content does not exist."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/UpdateContentDoesNotExistResponse"   
     delete:
       tags:
         - "content.content.delete"
@@ -3125,7 +3176,55 @@ components:
     FetchVisitNotFoundResponse:
       title: "Fetch `Visit` error response due to user or resource not found."
       example: "User or Resource not found."
-    
+
+    FetchFavoriteResponse:
+      title: "Fetch favorited resources response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              resource:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  active:
+                    type: boolean
+                  deleted:
+                    type: boolean
+              favorite_count:
+                type: integer
+            required:
+              - resource
+              - favorite_count
+          example:
+            [
+              {
+                "resource": {
+                  "name": "CRM Data Quality GBD Metrics",
+                  "url": "https://tableau.l3harris.com/#/workbooks/10469/views",
+                  "active": true,
+                  "deleted": false
+                },
+                "favorite_count": 42
+              },
+              {
+                "resource": {
+                  "name": "Marketing Dashboard",
+                  "url": "https://tableau.l3harris.com/#/workbooks/20831/views",
+                  "active": true,
+                  "deleted": false
+                },
+                "favorite_count": 17
+              }
+            ]
+
     CreateContentRequest:
       title: "Create `Content` request."
       type: object
@@ -3185,53 +3284,49 @@ components:
         key for a `Content` record that does not exist."
       example: "Content(key=key) does not exist."
 
-    FetchFavoriteResponse:
-      title: "Fetch favorited resources response."
+    UpdateContentRequest:
+      title: "Update `Content` request."
+      type: object
+      properties:
+        content:
+          type: object
+          description: Dynamic content.
+          default: {}
+
+    UpdateContentResponse:
+      title: "Update `Content` record."
       type: object
       properties:
         data:
-          type: array
-          items:
-            type: object
-            properties:
-              resource:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  url:
-                    type: string
-                    format: uri
-                  active:
-                    type: boolean
-                  deleted:
-                    type: boolean
-              favorite_count:
-                type: integer
-            required:
-              - resource
-              - favorite_count
+          type: object
+          description: The updated `Content`.
           example:
-            [
-              {
-                "resource": {
-                  "name": "CRM Data Quality GBD Metrics",
-                  "url": "https://tableau.l3harris.com/#/workbooks/10469/views",
-                  "active": true,
-                  "deleted": false
-                },
-                "favorite_count": 42
-              },
-              {
-                "resource": {
-                  "name": "Marketing Dashboard",
-                  "url": "https://tableau.l3harris.com/#/workbooks/20831/views",
-                  "active": true,
-                  "deleted": false
-                },
-                "favorite_count": 17
-              }
-            ]
+            {
+              "id": 1,
+              "key": "unique/key",
+              "content": {"content": "updated dynamic content"},
+              "created": "2024-08-27T12:00:00-04:00",
+              "modified": "2024-08-27T12:00:00-04:00",
+              "modified_by": "May.Parker@l3harris.com"
+            }
+
+    UpdateContentInvalidParamsResponse:
+      title: "Update `Content` error response due to providing invalid
+        parameters."
+      example: "Invalid parameters given."
+
+    UpdateContentUnauthorizedResponse:
+      title: "Update `Content` error response due to unauthorized access."
+      example: "Not authorized to access resource."
+
+    UpdateContentForbiddenErrorResponse:
+      title: "Update `Content` error response due to forbidden access."
+      example: "Permissions Denied."
+
+    UpdateContentDoesNotExistResponse:
+      title: "Update `Content` error response due to a given content
+        key where that `Content` does not exist."
+      example: "Update Content (key={key}) does not exist."
 
     DeleteContentResponse:
       title: "Delete `Content` response."
