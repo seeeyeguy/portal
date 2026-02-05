@@ -310,10 +310,7 @@ def update_programs_from_external_database() -> None:
     )
 
     records: List[dict] = []
-    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS or BUILD in {
-        ApplicationBuild.DEVELOPMENT,
-        ApplicationBuild.TEST,
-    }:
+    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS:
         records = query_programs_from_axis(existing_pa_numbers)
     elif EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.FDW:
         records = query_programs_from_fdw(existing_pa_numbers)
@@ -382,10 +379,7 @@ def ingest_new_programs_from_external_database() -> None:
     )
 
     records: List[dict] = []
-    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS or BUILD in {
-        ApplicationBuild.DEVELOPMENT,
-        ApplicationBuild.TEST,
-    }:
+    if EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.AXIS:
         records = query_programs_from_axis([])
     elif EXTERNAL_SOURCE_DATABASE.lower() == AcceptedExternalDatabases.FDW:
         records = query_programs_from_fdw([])

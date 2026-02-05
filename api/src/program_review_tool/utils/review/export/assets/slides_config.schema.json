@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PowerBI Slides Configuration Schema",
+  "description": "Configuration schema for PowerBI slide generation in PowerPoint exports",
+  "type": "object",
+  "required": [
+    "version",
+    "slides"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Configuration schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "slides": {
+      "type": "array",
+      "description": "Array of slide configurations",
+      "items": {
+        "$ref": "#/definitions/slide"
+      }
+    }
+  },
+  "definitions": {
+    "slide": {
+      "type": "object",
+      "required": [
+        "slide_num",
+        "slide_title",
+        "workspace_id",
+        "report_id",
+        "pageName",
+        "project_filter",
+        "identity_required",
+        "image_size",
+        "image_container_size",
+        "workspace_report_url",
+        "pa_type"
+      ],
+      "properties": {
+        "slide_num": {
+          "type": "integer",
+          "description": "Sequential slide number",
+          "minimum": 1
+        },
+        "slide_title": {
+          "type": "string",
+          "description": "Title of the slide",
+          "minLength": 1
+        },
+        "workspace_id": {
+          "type": "string",
+          "description": "PowerBI workspace GUID",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "report_id": {
+          "type": "string",
+          "description": "PowerBI report GUID",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "pageName": {
+
+          "type": "string",
+          "description": "Name of the report page in PowerBI"
+        },
+        "project_filter": {
+          "type": "object",
+          "description": "Filter configuration for project-specific data",
+          "required": [
+            "column_name",
+            "table_name"
+          ],
+          "properties": {
+            "column_name": {
+              "type": "string",
+              "description": "Column name to filter on"
+            },
+            "table_name": {
+              "type": "string",
+              "description": "Table name containing the filter column"
+            }
+          }
+        },
+        "identity_required": {
+          "type": "boolean",
+          "description": "Whether identity/authentication is required for this slide"
+        },
+        "identity": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "username",
+                "role",
+                "dataset_id"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "description": "Username for PowerBI authentication"
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Role for PowerBI row-level security"
+                },
+                "dataset_id": {
+                  "type": "string",
+                  "description": "PowerBI dataset GUID",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              }
+            }
+          ]
+        },
+        "crop": {
+          "type": "object",
+          "description": "Optional crop coordinates in pixels (left, top, right, bottom) - applied before adding to slide",
+          "required": ["left", "top", "right", "bottom"],
+          "properties": {
+            "left": {
+              "type": "integer",
+              "description": "Left pixel coordinate (x-axis start)",
+              "minimum": 0
+            },
+            "top": {
+              "type": "integer",
+              "description": "Top pixel coordinate (y-axis start)",
+              "minimum": 0
+            },
+            "right": {
+              "type": "integer",
+              "description": "Right pixel coordinate (x-axis end)",
+              "minimum": 1
+            },
+            "bottom": {
+              "type": "integer",
+              "description": "Bottom pixel coordinate (y-axis end)",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "image_size": {
+          "type": "object",
+          "description": "Native size of the PowerBI exported image in pixels",
+          "required": [
+            "height",
+            "width"
+          ],
+          "properties": {
+            "height": {
+              "type": "integer",
+              "description": "Image height in pixels",
+              "minimum": 1
+            },
+            "width": {
+              "type": "integer",
+              "description": "Image width in pixels",
+              "minimum": 1
+            }
+          }
+        },
+        "image_container_size": {
+          "type": "object",
+          "description": "Size of the image container in the PowerPoint slide in inches",
+          "required": [
+            "height",
+            "width"
+          ],
+          "properties": {
+            "height": {
+              "type": "number",
+              "description": "Container height in inches (must be greater than 0)",
+              "exclusiveMinimum": 0
+            },
+            "width": {
+              "type": "number",
+              "description": "Container width in inches (must be greater than 0)",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "layout": {
+          "type": "object",
+          "description": "Position of the image on the slide",
+          "properties": {
+            "top": {
+              "type": "number",
+              "description": "Top margin in inches",
+              "minimum": 0
+            },
+            "left": {
+              "type": "number",
+              "description": "Left margin in inches",
+              "minimum": 0
+            }
+          }
+        },
+        "workspace_report_url": {
+          "type": "string",
+          "description": "Full URL to the PowerBI report",
+          "format": "uri"
+
+        },
+        "pa_type": {
+          "type": "string",
+          "description": "Project arrangement type",
+          "enum": [
+            "single",
+            "multi",
+            "both"
+          ]
+        }
+      }
+    }
+  }
+}

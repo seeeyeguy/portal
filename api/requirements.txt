@@ -75,9 +75,6 @@ polars==1.0.0
 psycopg2-binary==2.9.9
 # Python bindings for the Enchant spellchecking system.
 pyenchant==3.2.2
-# Python interface to Graphviz. Can be used with django_extensions
-# to generate an ERD with the `graph_models` command.
-pygraphviz==1.13
 # DB API module for ODBC
 pyodbc==5.2.0
 # A module provides powerful extensions to the standard datetime

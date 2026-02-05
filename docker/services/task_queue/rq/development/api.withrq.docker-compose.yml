@@ -1,29 +1,29 @@
 include:
-    - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/task_queue/rq/common/queue/queue.docker-compose.yml
-    - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
+  - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/task_queue/rq/common/queue/queue.docker-compose.yml
+  - ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
 services:
-    rqscheduler:
-        extends:
-            file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
-            service: api
-        container_name: ${APP_NAME}-rqscheduler-${USER}
-        command: python manage.py rqscheduler
-        depends_on:
-            - queue
-            - api
-        environment:
-            REDIS_RQ_NODE: true
-        ports: !reset []
-    rqworker1:
-        extends:
-            file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
-            service: api
-        container_name: ${APP_NAME}-rqworker1-${USER}
-        command: python manage.py rqworker-pool default --num-workers ${RQWORKER_POOL_WORKER_NUM}
-        depends_on:
-            - queue
-            - api
-            - rqscheduler
-        environment:
-            REDIS_RQ_NODE: true
-        ports: !reset []
+  rqscheduler:
+    extends:
+      file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
+      service: api
+    container_name: ${APP_NAME}-rqscheduler-${USER}
+    command: python manage.py rqscheduler
+    depends_on:
+      - queue
+      - api
+    environment:
+      REDIS_RQ_NODE: true
+    ports: !reset []
+  rqworker1:
+    extends:
+      file: ${DOCKER_COMPOSE_PROJECT_ROOT}/docker/services/api/development/api.docker-compose.yml
+      service: api
+    container_name: ${APP_NAME}-rqworker1-${USER}
+    command: python manage.py rqworker-pool default --num-workers ${RQWORKER_POOL_WORKER_NUM}
+    depends_on:
+      - queue
+      - api
+      - rqscheduler
+    environment:
+      REDIS_RQ_NODE: true
+    ports: !reset []
