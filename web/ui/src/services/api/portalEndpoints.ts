@@ -5,6 +5,7 @@ import {
   appendQueryParamToURL,
   buildQueryResourceByIdURL,
   buildQueryResourceByIdsURL,
+  buildQueryResourceByKeyURL,
   buildQueryResourceByPANumberURL,
   buildQueryResourceByPANumbersURL,
   buildQueryResourceByRoleLevelsURL,
@@ -63,6 +64,10 @@ export default {
 
       return base;
     },
+  },
+  CONTENT: {
+    CONTENT: (key: string | null = null) =>
+      buildQueryResourceByKeyURL(RESOURCE_PATHS.CONTENT, "content")(key),
   },
   DIRECTORY: {
     EMPLOYEE_LEVELS: buildQueryResourceByIdURL(
@@ -232,7 +237,7 @@ export default {
       page: number | null = null,
       limit: number | null = null,
       includeArchived: boolean | null = null,
-      deleted: boolean | null = null,
+      deleted: boolean | null = null
     ) => {
       let base = buildQueryResourceByIdURL(
         RESOURCE_PATHS.REQUEST,
