@@ -2,6 +2,7 @@ import lodash from "lodash";
 
 export const RESOURCE_PATHS = {
   ANALYTICS: "analytics",
+  CONTENT: "content",
   DIRECTORY: "directory",
   PREFERENCES: "preferences",
   PROGRAM_REVIEW_TOOL: "program-review-tool",
@@ -13,6 +14,7 @@ type RESOURCE_PATHS_KEYS = keyof typeof RESOURCE_PATHS;
 type RESOURCE_PATHS = (typeof RESOURCE_PATHS)[RESOURCE_PATHS_KEYS];
 
 type ANALYTICS_RESOURCE = "queries" | "visits";
+type CONTENT_RESOURCE = "content";
 type DIRECTORY_RESOURCE =
   | "employee-levels"
   | "functions"
@@ -20,11 +22,16 @@ type DIRECTORY_RESOURCE =
   | "subfunctions"
   | "tags";
 type PREFERENCES_RESOURCE = "favorites" | "query-filter-state";
-type PROGRAM_REVIEW_TOOL_RESOURCE = "portfolio" | "program" | "record" | "reporting-period";
+type PROGRAM_REVIEW_TOOL_RESOURCE =
+  | "portfolio"
+  | "program"
+  | "record"
+  | "reporting-period";
 type REQUEST_RESOURCE = "disposition" | "request";
 type USERS_RESOURCE = "access" | "access/subfunctions";
 type RESOURCE =
   | ANALYTICS_RESOURCE
+  | CONTENT_RESOURCE
   | DIRECTORY_RESOURCE
   | PREFERENCES_RESOURCE
   | PROGRAM_REVIEW_TOOL_RESOURCE
@@ -36,6 +43,7 @@ type SUFFIX = "search" | "review" | null;
 type PARAM =
   | "id"
   | "ids"
+  | "key"
   | "label"
   | "page"
   | "pa_number"
@@ -116,6 +124,18 @@ export const buildQueryResourceByIdsURL = (
   resource: RESOURCE,
   suffix: SUFFIX = null
 ) => buildQueryResourceURL(path, resource, suffix, "ids");
+
+/**
+ * Build a URL with an optional key for an endpoint, given its application path, and
+ * resource name.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional key and returns the appropriate URL.
+ */
+export const buildQueryResourceByKeyURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE
+) => buildQueryResourceURL(path, resource, null, "key");
 
 /**
  * Build a URL with an optional PA number for an endpoint given its
