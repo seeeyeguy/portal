@@ -167,13 +167,13 @@ class Request:
             LOGGER.error(f"{err_msg} {exc}")
             raise exceptions.RequestError(err_msg, 400) from exc
         except DirectoryExceptions.DirectoryError as exc:
-            err_msg: str = (
-                f"Resource(name={params['name']})"
-                " for Request was not created. There is an issue with the Resource's"
-                f" attributes. {exc.message}"
+            # Log the full context for debugging
+            LOGGER.error(
+                f"Resource(name={params.get('name', 'Unknown')}) for Request was not created. "
+                f"There is an issue with the Resource's attributes. {exc.message}"
             )
-            LOGGER.error(err_msg)
-            raise exceptions.RequestError(err_msg, status=exc.status) from exc
+            # Raise only the actual error message to the user
+            raise exceptions.RequestError(exc.message, status=exc.status) from exc
 
     @staticmethod
     def update_request(params: UpdateRequestParams) -> Tuple[models.Request, int]:
@@ -335,7 +335,7 @@ class Request:
             resource_id: int = resource_params.pop("resource_id")
 
             resource_record = DirectoryModels.Resource.objects.get(
-                id=resource_id, active=True, deleted=False
+                id=resource_id, deleted=False
             )
 
             delete_resource_params = ResourceSerializer(resource_record).data

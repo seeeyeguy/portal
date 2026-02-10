@@ -212,7 +212,9 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, status=400)
 
-            validate_url(params["url"])
+            # Skip URL validation if this is a deletion request
+            if not params.get("deleted", False):
+                validate_url(params["url"])
 
             if not params["employee_levels"]:
                 err_msg = "Resource must be associated with at least one EmployeeLevel."
@@ -477,8 +479,9 @@ class Resource:
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, status=400)
 
-            # Validate `url`.
-            validate_url(params["url"])
+            # Skip URL validation if the resource being updated is marked for deletion
+            if not resource.deleted:
+                validate_url(params["url"])
 
             employee_levels: List[int] = new_params.pop("employee_levels")
             subfunctions: List[int] = new_params.pop("subfunctions")
