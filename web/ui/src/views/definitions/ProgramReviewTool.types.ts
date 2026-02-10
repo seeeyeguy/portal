@@ -1,5 +1,7 @@
 import { IUser } from "definitions/portal/users/User.types";
 
+export const REPORTING_PERIOD_CONTENT_KEY = "ADMIN_REPORTING_PERIOD_PPR";
+
 export const DEFAULT_PORTFOLIO_ID = -1;
 
 export enum assessmentOptions {

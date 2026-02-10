@@ -8,6 +8,7 @@ import { FAQ_CONTEXTS } from "views/components/FAQModal/FAQModalProps";
 import NavBar from "views/components/NavBar/NavBar";
 import ProgramPerformanceForm from "views/containers/ProgramPerformanceForm/ProgramPerformanceForm";
 
+import { useGetContentQuery } from "state/query/api/portal/content/ContentApi";
 import { useGetProgramsQuery } from "state/query/api/portal/programReviewTool/ProgramApi";
 import {
   useGetRecordQuery,
@@ -15,8 +16,10 @@ import {
 } from "state/query/api/portal/programReviewTool/RecordApi";
 import { useGetProfileUserQuery } from "state/query/api/portal/users/UsersApi";
 
+import { IContent } from "definitions/portal/content/Content.types";
 import { IProfile } from "definitions/portal/users/Profile.types";
 import { IUser } from "definitions/portal/users/User.types";
+import { REPORTING_PERIOD_CONTENT_KEY } from "views/definitions/ProgramReviewTool.types";
 
 import styles from "views/pages/ProgramPerformance/ProgramPerformance.module.css";
 
@@ -43,8 +46,33 @@ export default function ProgramPerformance() {
     tiers: [1, 2],
   });
 
-  const { data: reportingPeriods, isLoading: isLoadingReportingPeriods } =
+  const { data: reportingPeriodData, isLoading: isLoadingReportingPeriodData } =
     useGetReportingPeriodQuery(1);
+
+  const { data: reportingPeriodContent, isLoading: isLoadingReportingPeriodContent } =
+    useGetContentQuery(REPORTING_PERIOD_CONTENT_KEY);
+
+
+  const reportingPeriods: number[] = React.useMemo(() => {
+
+    // Use the Content Reporting Periods if they exist. 
+    if (reportingPeriodContent?.data) {
+      const content = (reportingPeriodContent.data as IContent)
+        .content as Record<string, unknown>;
+
+      const periods = content["periods"];
+      if (Array.isArray(periods) && periods.length > 0) {
+        return periods as number[];
+      }
+    }
+
+    // Fall back to reporting period query. 
+    if (Array.isArray(reportingPeriodData) && reportingPeriodData.length > 0) {
+      return reportingPeriodData as number[];
+    }
+
+    return [];
+  }, [reportingPeriodContent?.data, reportingPeriodData]);
 
   const [edit, setEdit] = React.useState(false);
   const toggleEdit = () => setEdit((prev) => !prev);
@@ -144,7 +172,7 @@ export default function ProgramPerformance() {
 
           <h1 aria-description="page title">Program Performance</h1>
 
-          {!isLoadingPrograms && !isLoadingReportingPeriods && (
+          {!isLoadingPrograms && !isLoadingReportingPeriodData && !isLoadingReportingPeriodContent && (
             <div
               className={`${styles["record-controls"]} ${scrolled ? styles["record-scrolled"] : ""}`}
               aria-description="container for selecting program performance record"
@@ -202,7 +230,8 @@ export default function ProgramPerformance() {
           )}
         </header>
         {isLoadingPrograms ||
-        isLoadingReportingPeriods ||
+        isLoadingReportingPeriodData ||
+        isLoadingReportingPeriodContent ||
         (isFetchingRecord && !edit) ? (
           <div
             className={styles["record-loading"]}
