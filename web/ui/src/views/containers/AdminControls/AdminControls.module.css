@@ -164,6 +164,13 @@
   border: none;
 }
 
+.admin-tooltip-content {
+  background: var(--color-stealth);
+  border-radius: 0.25rem;
+  max-width: 30rem;
+  z-index: var(--z-index-tooltip);
+}
+
 .button-container {
   display: flex;
   gap: 2rem;
@@ -188,6 +195,12 @@
   padding: 0;
 }
 
+.compare-row {
+  justify-content: center;
+  display: flex;
+  gap: 5rem;
+}
+
 .formcard-modal {
   width: 50%;
 }
@@ -206,4 +219,24 @@
 .new-modal-form header {
   border-bottom: solid 2px var(--color-black);
   margin-bottom: 1rem;
+}
+
+.reporting-period-dropdown {
+  width: 15rem;
+}
+
+.single-column-table {
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  width: 5rem;
+}
+
+.single-column-table td {
+  border-bottom: 1px solid var(--color-grayscale-2);
+  padding: 0.2rem;
+}
+
+.single-column-table tr:last-child td {
+  border-bottom: none;
 }

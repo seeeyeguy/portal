@@ -4,9 +4,10 @@ import { useGetProgramsQuery } from "state/query/api/portal/programReviewTool/Pr
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarCheck,
-  faFileLines,
+  faCalendarDay,
   faChartLine,
   faCheckToSlot,
+  faFileLines,
   faFolder,
   faFolderTree,
   faHome,
@@ -374,6 +375,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           command: () => navigate("/admin/accesses"),
           icon: <FontAwesomeIcon icon={faLock} />,
           data: { path: "/admin/accesses" },
+        },
+        {
+          label: "Reporting Period",
+          command: () => navigate("/admin/reporting-period"),
+          icon: <FontAwesomeIcon icon={faCalendarDay} />,
+          data: { path: "/admin/reporting-period" },
         },
       ],
     },

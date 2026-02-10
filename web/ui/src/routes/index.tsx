@@ -7,6 +7,7 @@ import {
   AdminApprovals,
   AdminEmployeeLevels,
   AdminFunctions,
+  AdminReportingPeriod,
   AdminResources,
   AdminSubFunctions,
   AdminTags,
@@ -143,6 +144,22 @@ const router = createBrowserRouter([
         element: (
           <RouteMenu>
             <AdminTags />
+          </RouteMenu>
+        ),
+
+        loader: async () => {
+          const user = (await login()) as Response | IAuthUser;
+          if ("status" in user && user.status === REDIRECT) {
+            return user;
+          }
+          return { user };
+        },
+      },
+      {
+        path: "reporting-period",
+        element: (
+          <RouteMenu>
+            <AdminReportingPeriod />
           </RouteMenu>
         ),
 
