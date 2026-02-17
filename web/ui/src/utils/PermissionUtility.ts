@@ -12,6 +12,8 @@ export const RESTRICTED_ADMIN_PAGES = {
     "/admin/employee-levels",
     "/admin/functions",
     "/admin/subfunctions",
+    "/admin/reporting-period",
+    "/admin/maintenance-banners",
   ]),
   BUSINESS_PROCESS_EXPERT: new Set(["/admin/approvals"]),
   DATA_STEWARD: new Set(["/admin", "/admin/tags"]),
