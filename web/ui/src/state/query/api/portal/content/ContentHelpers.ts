@@ -12,6 +12,8 @@ export interface IApiContent extends Omit<IContent, "modifiedBy"> {
  * @param data A `portal.content.Content` record.
  * @returns A `portal.content.Content` record with desired casing.
  */
-export function transformContentRecord(data: IApiContent): IContent {
+export function transformContentRecord(
+  data: IApiContent | object
+): IContent | object {
   return snakeCaseToCamelCase({ ...data }) as unknown as IContent;
 }

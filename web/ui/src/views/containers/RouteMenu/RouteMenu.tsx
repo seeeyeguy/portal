@@ -19,6 +19,7 @@ import {
   faSitemap,
   faTag,
   faUserGear,
+  faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import lodash from "lodash";
 import { MenuItem } from "primereact/menuitem";
@@ -381,6 +382,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           command: () => navigate("/admin/reporting-period"),
           icon: <FontAwesomeIcon icon={faCalendarDay} />,
           data: { path: "/admin/reporting-period" },
+        },
+        {
+          label: "Maintenance Banners",
+          command: () => navigate("/admin/maintenance-banners"),
+          icon: <FontAwesomeIcon icon={faWrench} />,
+          data: { path: "/admin/maintenance-banners" },
         },
       ],
     },

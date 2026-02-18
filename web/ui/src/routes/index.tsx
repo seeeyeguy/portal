@@ -7,6 +7,7 @@ import {
   AdminApprovals,
   AdminEmployeeLevels,
   AdminFunctions,
+  AdminMaintenanceBanners,
   AdminReportingPeriod,
   AdminResources,
   AdminSubFunctions,
@@ -21,7 +22,7 @@ import { login } from "services/auth/ssoService";
 
 import { IAuthUser } from "definitions/Sso.types";
 
-const router = createBrowserRouter([
+export const ROUTES = [
   {
     path: "/",
     element: (
@@ -171,6 +172,22 @@ const router = createBrowserRouter([
           return { user };
         },
       },
+      {
+        path: "maintenance-banners",
+        element: (
+          <RouteMenu>
+            <AdminMaintenanceBanners />
+          </RouteMenu>
+        ),
+
+        loader: async () => {
+          const user = (await login()) as Response | IAuthUser;
+          if ("status" in user && user.status === REDIRECT) {
+            return user;
+          }
+          return { user };
+        },
+      },
     ],
   },
   {
@@ -207,6 +224,8 @@ const router = createBrowserRouter([
     path: "*",
     loader: () => redirect("/"),
   },
-]);
+]
+
+const router = createBrowserRouter(ROUTES);
 
 export default router;

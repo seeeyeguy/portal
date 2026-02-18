@@ -18,6 +18,21 @@ export type TApiPostContentRequest = {
   content: object;
 };
 
+export const MAINTENANCE_BANNERS_CONTENT_KEY = "maintenance_banners";
+
+const transformContentRecordWithKey = (data: IApiContent): IContent => {
+  let transformedContent;
+  if (data.key === MAINTENANCE_BANNERS_CONTENT_KEY) {
+    transformedContent = data.content;
+  } else {
+    transformedContent = transformContentRecord(data.content);
+  }
+  return {
+    ...transformContentRecord(data),
+    content: transformedContent,
+  } as IContent;
+};
+
 const contentApi = api.injectEndpoints({
   endpoints: (builder) => ({
     addContent: builder.mutation<TApiContentResponse, TApiPostContentRequest>({
@@ -30,7 +45,7 @@ const contentApi = api.injectEndpoints({
         response: IApiContent,
         meta
       ): TApiContentResponse => ({
-        data: transformContentRecord(response),
+        data: transformContentRecordWithKey(response),
         status: meta?.response?.status,
       }),
       invalidatesTags: ["Content"],
@@ -43,7 +58,7 @@ const contentApi = api.injectEndpoints({
         response: IApiContent,
         meta
       ): TApiContentResponse => ({
-        data: transformContentRecord(response),
+        data: transformContentRecordWithKey(response),
         status: meta?.response?.status,
       }),
       providesTags: ["Content"],
@@ -61,7 +76,7 @@ const contentApi = api.injectEndpoints({
         response: IApiContent,
         meta
       ): TApiContentResponse => ({
-        data: transformContentRecord(response),
+        data: transformContentRecordWithKey(response),
         status: meta?.response?.status,
       }),
       invalidatesTags: ["Content"],
