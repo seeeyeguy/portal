@@ -19,7 +19,6 @@ services:
             args:
                 APP_NAME: ${APP_NAME}
                 CA_CERTIFICATE_FOR_API: ${CA_CERTIFICATE_FOR_API}
-                CA_CERTIFICATE_FOR_TABLEAU: ${CA_CERTIFICATE_FOR_TABLEAU}
                 USER: ${USER}
                 UID: ${UID}
                 PASSWORD: ${PASSWORD}
