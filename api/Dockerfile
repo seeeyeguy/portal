@@ -3,7 +3,6 @@ FROM python:3.12-bullseye AS base
 # Add needed env variables.
 ARG APP_NAME
 ARG CA_CERTIFICATE_FOR_API
-ARG CA_CERTIFICATE_FOR_TABLEAU
 
 # Construct path to project.
 # Need to change PROJECT to app name.
@@ -15,13 +14,10 @@ ENV PYTHONPATH ${APPDIR}
 # Send container output to stdout.
 ENV PYTHONUNBUFFERED 1
 
-# Add ssl cert file and set PIP env variable.
 ADD ${CA_CERTIFICATE_FOR_API} /usr/local/share/${CA_CERTIFICATE_FOR_API}
-ADD ${CA_CERTIFICATE_FOR_API} /etc/ssl/certs/ca-certificates.crt
+ADD ${CA_CERTIFICATE_FOR_API} /usr/local/share/ca-certificates/internal-ca.crt
+RUN update-ca-certificates
 ENV PIP_CERT=/usr/local/share/${CA_CERTIFICATE_FOR_API}
-
-ADD ${CA_CERTIFICATE_FOR_TABLEAU} /etc/ssl/certs/tableau-ca-certificate.crt
-ENV TABLEAU_CA_CERTIFICATE=/etc/ssl/certs/tableau-ca-certificate.crt
 
 # Install container dependencies.
 RUN DevTools="emacs iputils-ping less netcat openssh-client unzip vim zip" && \
