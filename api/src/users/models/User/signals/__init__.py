@@ -21,6 +21,7 @@ DATABASE_ALIAS: str = "prt"
 
 USER_TABLE: str = "auth_user"
 
+
 @receiver(post_save, sender=User)
 def create_user_in_prt_database(
     sender: User, instance: User, created: bool, **_: dict
@@ -94,4 +95,4 @@ def update_user_in_prt_database(sender: User, instance: User, **_: dict) -> None
                 is_staff=instance.is_staff,
                 is_active=instance.is_active,
                 date_joined=instance.date_joined,
-                )
+            )

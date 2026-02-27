@@ -40,6 +40,7 @@ class Profile(View):
             # Deny request if user does not have permissions.
             if (
                 request.user.username != body["user"]
+                and request.user.email != body["user"]
                 and not cast(QuerySet[models.Access], request.user.accesses)
                 .filter(role__level=models.Role.RoleLevels.SUPERUSER)
                 .exists()

@@ -26,7 +26,7 @@ class Profile(models.Model):
     user: User = cast(User, models.OneToOneField(User, on_delete=models.CASCADE))
 
     # User id data.
-    uid: models.CharField = models.CharField(max_length=10, blank=True, default="")
+    uid: models.CharField = models.CharField(max_length=64, blank=True, default="")
 
     # User name data.
     middle_initial: models.CharField = models.CharField(

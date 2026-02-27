@@ -65,6 +65,11 @@ export const SHARED = {
       changeOrigin: true,
       secure: false,
     },
+    "/v1/svc/ldap": {
+      target: "http://api:8080",
+      changeOrigin: true,
+      secure: false,
+    },
   },
   allowedHosts: [
     process.env.WEB_HOST as string,

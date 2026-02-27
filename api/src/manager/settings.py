@@ -42,7 +42,8 @@ class ApplicationBuild:
     TEST = "test"
 
     VALID_BUILDS = (PRODUCTION, STAGING, DEVELOPMENT, TEST)
-    
+
+
 # Specify connection setup for application.
 class ConnectionSetup:
     """Supported Connection Types."""
@@ -255,10 +256,7 @@ NOTEBOOK_ARGUMENTS = [
 SHELL_PLUS = "ipython"
 SHELL_PLUS_PRINT_SQL = True
 
-IPYTHON_ARGUMENTS = [
-    "--no-banner",
-    "--no-confirm-exit"
-]
+IPYTHON_ARGUMENTS = ["--no-banner", "--no-confirm-exit"]
 
 IPYTHON_KERNEL_DISPLAY_NAME = f"{APP_NAME} Shell-Plus"
 
@@ -269,6 +267,9 @@ if DEBUG:
 ## ADFS SSO SERVICE ENVIRONMENT VARIABLES ##
 ############################################
 
+# Name registered with SSO Service
+SSO_NAME = os.getenv("SSO_NAME", APP_NAME)
+
 # Ensure that the default origin is kept up to date.
 DEFAULT_SSO_ORIGIN = "https://uspby1lnhdped03.gcsd.harris.com:43339"
 
@@ -276,7 +277,7 @@ DEFAULT_SSO_ORIGIN = "https://uspby1lnhdped03.gcsd.harris.com:43339"
 SSO_ORIGIN = os.getenv("SSO_ORIGIN", DEFAULT_SSO_ORIGIN)
 
 # SSO service reverse URL.
-SSO_SERVICE_APP_URL = f"{SSO_ORIGIN}/app/{APP_NAME}"
+SSO_SERVICE_APP_URL = f"{SSO_ORIGIN}/app/{SSO_NAME}"
 
 # Default dev user.
 SSO_DEVELOPMENT_USER = {
@@ -562,7 +563,7 @@ RQ_QUEUES = {
         "DB": 0,
         "USERNAME": "default",
         "PASSWORD": f"{cache.config.TASKQUEUE.PASSWORD}",
-        "DEFAULT_TIMEOUT": 360,
+        "DEFAULT_TIMEOUT": 420,
     }
 }
 

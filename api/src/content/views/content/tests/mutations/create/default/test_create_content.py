@@ -32,7 +32,7 @@ class TestCreateContent(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_CONTENT_CONTENT_CREATED_BY
+            username=arguments.CREATE_CONTENT_CONTENT_CREATED_BY
         )
         self.client.force_login(user=user)
 

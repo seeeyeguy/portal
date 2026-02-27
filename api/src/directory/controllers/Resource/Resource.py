@@ -145,7 +145,7 @@ class Resource:
                 f"{params['previous_revision']}, url: {params['url']}, employee levels: "
                 f"{params['employee_levels']}, subfunctions: {params['subfunctions']}, "
                 f"tags: {params['tags']}, type: {params['type']}, and download: "
-                f"{params['download']}."
+                f"{params['download']} and {params['point_of_contacts']}."
             )
 
             # Verify user has an `Access` with a valid Role.
@@ -153,7 +153,7 @@ class Resource:
             if not user.accesses.filter(
                 access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
             ).exists():
-                err_msg = f"User (username={user.username}) does not have a valid role."
+                err_msg = f"User (email={user.email}) does not have a valid role."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 
@@ -300,7 +300,7 @@ class Resource:
                     for unverified_user in unverified_users.copy():
                         verified_user = fetch_authorized_employee(email=unverified_user)
                         if verified_user and unverified_users:
-                            unverified_users.remove(verified_user.email.lower())
+                            unverified_users.remove(verified_user.email)
                 if unverified_users:
                     err_msg = (
                         f"Some PointOfContacts (emails={unverified_users})"
@@ -407,7 +407,7 @@ class Resource:
             if not user.accesses.filter(
                 access_revoked_date__isnull=True, role__level__in=VALID_ROLE_LEVELS
             ).exists():
-                err_msg = f"User (username={user.username}) does not have a valid role."
+                err_msg = f"User (email={user.email}) does not have a valid role."
                 LOGGER.error(err_msg)
                 raise exceptions.DirectoryError(err_msg, 400)
 

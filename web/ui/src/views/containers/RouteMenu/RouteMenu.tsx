@@ -129,7 +129,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     () =>
       pendingRequests.reduce((count, request) => {
         if (
-          loaderData.user.email === request.originator &&
+          loaderData.user.username === request.originator &&
           request.stage === REVISE_STAGE
         ) {
           return count + 1;

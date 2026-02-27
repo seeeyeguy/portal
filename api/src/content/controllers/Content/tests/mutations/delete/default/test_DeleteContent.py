@@ -39,7 +39,7 @@ class TestDeleteContent(MultiDBTestCase):
         """Success Case: Delete a `Content` record."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.DELETE_CONTENT_DELETED_BY_USER
+            username=arguments.DELETE_CONTENT_DELETED_BY_USER
         )
         rows_affected = controllers.Content.delete_content(
             key=arguments.DELETE_CONTENT_CONTENT_KEY,
@@ -54,7 +54,7 @@ class TestDeleteContent(MultiDBTestCase):
 
         with pytest.raises(ContentError):
             user = AuthModels.User.objects.get(
-                email=arguments.DELETE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
+                username=arguments.DELETE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
             )
             controllers.Content.delete_content(
                 key=arguments.DELETE_CONTENT_CONTENT_KEY,

@@ -9,6 +9,8 @@ import logging
 import requests
 from typing import List, Optional, Union
 
+from functools import lru_cache
+
 from django.contrib.auth import get_user_model, models
 from django.db import DatabaseError, IntegrityError, transaction
 from manager.services.ldap.provider import search_ldap
@@ -18,6 +20,7 @@ LOGGER = logging.getLogger(__name__)
 User = get_user_model()
 
 
+@lru_cache(maxsize=32)
 def fetch_employee_record_from_ldap(search_term: str) -> Union[dict, None]:
     """
     Fetch a L3Harris employee record from LDAP.
@@ -55,6 +58,7 @@ def fetch_employee_record_from_ldap(search_term: str) -> Union[dict, None]:
     return entries[0]
 
 
+@lru_cache(maxsize=32)
 def fetch_employee_records_from_ldap(
     search_term: str,
     limit: int = 100,
@@ -114,6 +118,20 @@ def fetch_authorized_employee(email: str, db: str = "default") -> Optional[model
     if not user_info:
         return None
 
+    # Check if username from LDAP exists, and update user to one from LDAP.
+    user_q_username = User.objects.using(db).filter(
+        username__iexact=user_info["username"]
+    )
+    if user_q_username.exists():
+        _ = User.objects.filter(username__iexact=user_info["username"]).update(
+            email=user_info["email"],
+            first_name=user_info["firstName"],
+            last_name=user_info["lastName"],
+        )
+        updated_user = user_q_username.first().refresh_from_db()
+        LOGGER.info(f"User updated: {updated_user}")
+        return updated_user
+
     # If user exists in LDAP, add user to system.
     LOGGER.info("Creating new user....")
     try:
@@ -145,6 +163,8 @@ def fetch_authorized_employee(email: str, db: str = "default") -> Optional[model
             return user_to_update
         LOGGER.error(f"User not found, User ({user_info['username']}).")
         return None
-    except DatabaseError:
-        LOGGER.error(f"User not found, User ({user_info['username']}).")
+    except DatabaseError as exc:
+        LOGGER.error(
+            f"Database Error when creating user: ({user_info['username']}). {exc}"
+        )
         return None

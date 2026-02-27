@@ -112,8 +112,8 @@ class Request:
 
             log_msg = (
                 f"{'Creating' if stage != SUBMITTED else 'Submitting'}"
-                f" Request for Resource(name={params['name']})"
-                f" for Originator(email={params['originator'].email})."
+                f" Request for Resource(name={params['name']}, url={params['url']})"
+                f" for Originator(username={params['originator']})."
             )
             LOGGER.info(log_msg)
 
@@ -310,7 +310,7 @@ class Request:
             log_msg = (
                 f" Creating a Request to delete"
                 f" Resource(id={params['resource_id']})"
-                f" for Originator(email={params['originator']})."
+                f" for Originator(username={params['originator']})."
             )
             LOGGER.info(log_msg)
 
@@ -525,7 +525,7 @@ class Request:
                 )
 
                 access_records: QuerySet[
-                    UsersModels.Access
+                    UsersModels.Access, UsersModels.Access
                 ] = UsersModels.Access.objects.filter(
                     user=user_record,
                     role__level__in=VALID_ROLE_LEVELS_FOR_REQUESTS,
@@ -628,7 +628,7 @@ class RequestNotification:
 
         # Fetch `Request`s with `PENDING` status.
         pending_requests: QuerySet[
-            models.Request
+            models.Request, models.Request
         ] = models.Request.objects.prefetch_related("transitions").filter(
             status=models.Request.RequestStatus.PENDING
         )

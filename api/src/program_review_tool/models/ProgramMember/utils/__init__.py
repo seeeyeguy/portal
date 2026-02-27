@@ -249,6 +249,7 @@ def query_program_members_from_external_database(
 
     return df
 
+
 def transform_program_member_data_from_external_database(
     data_source: str, pa_number: Optional[str] = None, role: Optional[int] = None
 ) -> pd.DataFrame:
@@ -302,7 +303,7 @@ def ingest_program_member_data() -> Optional[int]:
     if df.empty:
         LOGGER.error("No data returned from external source; skipping expiration.")
         return None
-    
+
     verified_employees = {}
     for employee in set(df["email"]):
         LOGGER.info(f"Verifying ProgramMember: {employee}")
@@ -367,7 +368,7 @@ def ingest_program_member_data() -> Optional[int]:
     ).filter(expiry_date__isnull=True):
         filtered_df = df.loc[
             (df["program"] == record.program.id)
-            & (df["email"].lower() == record.user.email.lower())
+            & (df["email"].str.lower() == record.user.email.lower())
             & (df["role"] == record.role.id)
         ]
         if filtered_df.empty:

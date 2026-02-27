@@ -50,6 +50,10 @@ class AuthenticatedUser(APIView):
         data = {
             "first_name": SSO_DEVELOPMENT_USER["first_name"],
             "last_name": SSO_DEVELOPMENT_USER["last_name"],
+            "username": (
+                f"{SSO_DEVELOPMENT_USER['first_name']}."
+                f"{SSO_DEVELOPMENT_USER['last_name']}@harris.com"
+            ),
             "email": (
                 f"{SSO_DEVELOPMENT_USER['first_name']}."
                 f"{SSO_DEVELOPMENT_USER['last_name']}@l3harris.com"
@@ -72,6 +76,7 @@ class AuthenticatedUser(APIView):
                 data["first_name"] = dev_user_from_request["first_name"]
                 data["last_name"] = dev_user_from_request["last_name"]
                 data["email"] = dev_user_from_request["email"]
+                data["username"] = dev_user_from_request["username"]
 
             return Response(data, status=status.HTTP_200_OK)
 
@@ -93,6 +98,7 @@ class AuthenticatedUser(APIView):
             ]
             data["first_name"] = request.user.first_name
             data["last_name"] = request.user.last_name
+            data["username"] = request.user.username
             data["email"] = request.user.email
             data["is_superuser"] = request.user.is_superuser
             data["accesses"] = accesses

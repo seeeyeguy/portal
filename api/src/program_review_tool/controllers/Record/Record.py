@@ -334,10 +334,10 @@ class Record:
                 if not any(pt.get("id") == db_id for pt in incoming_tasks):
                     # We want to delete tasks that only existed for the current reporting period and
                     # just remove the current reporting period for tasks that exist across multiple periods.
-                    if (
-                        db_task.reporting_period
-                        and len(db_task.reporting_period) == 1
-                        and db_task.reporting_period[0] == reporting_period
+                    reporting_periods = db_task.get('reporting_period', None)
+
+                    if reporting_periods is None or (
+                        len(reporting_periods) == 1 and reporting_periods[0] == reporting_period
                     ):
                         Task.delete_task(
                             task_id=db_id,
@@ -506,9 +506,9 @@ class Record:
             program: models.Program = models.Program.objects.get(pa_number=pa_number)
 
             # Retrieve all `Record`s for the `Program`.
-            records_for_program: QuerySet[models.Record] = models.Record.objects.filter(
-                program=program
-            )
+            records_for_program: QuerySet[
+                models.Record, models.Record
+            ] = models.Record.objects.filter(program=program)
 
             # Get the most recent `Record`, for the given reporting period.
             latest_record_for_reporting_period: Union[models.Record, None] = (

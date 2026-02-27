@@ -32,7 +32,7 @@ class TestUpdateContent(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_CONTENT_UPDATED_BY_USER
+            username=arguments.UPDATE_CONTENT_UPDATED_BY_USER
         )
         self.client.force_login(user=user)
 
@@ -80,7 +80,7 @@ class TestUpdateContent(MultiDBTestCase):
 
         self.client.force_login(
             user=AuthModels.User.objects.get(
-                email=arguments.UPDATE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
+                username=arguments.UPDATE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
             )
         )
 

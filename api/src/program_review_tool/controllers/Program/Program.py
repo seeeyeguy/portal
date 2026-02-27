@@ -53,6 +53,7 @@ EXPORT_JOB_CACHE_QUEUED_TEXT: str = "program_review_export_job_queued"
 # Azure AD token cache timeout (1 hour minus 10% for safety)
 AZURE_AUTH_CACHE_TIMEOUT: int = int(os.getenv("AZURE_AUTH_CACHE_TIMEOUT", 3240))
 
+
 class Program:
     """
     Container class for functions related to retrieving
@@ -260,7 +261,7 @@ class Program:
             raise exceptions.ProgramReviewToolError(err_msg, 400)
 
         # Get the user's email.
-        user_email: str = user.email
+        user_username: str = user.username
         # Create a list of sorted `Program` ids.
         sorted_programs_ids = sorted(program_ids)
         # Construct string of `Program ids`.
@@ -268,7 +269,7 @@ class Program:
 
         # Construct cache key to track the export job for this user, review name,
         # and `Program` ids.
-        export_cache_key: str = f"{PROGRAM_REVIEW_CACHE_PREFIX}_{user_email}_{review_name}_{program_ids_str}"
+        export_cache_key: str = f"{PROGRAM_REVIEW_CACHE_PREFIX}_{user_username}_{review_name}_{program_ids_str}"
 
         # Query the cache by the export_cache_key for the
         # export's status and value (either the export's path or
@@ -359,9 +360,9 @@ class Program:
             (powerbi_token_for_job, True),
             AZURE_AUTH_CACHE_TIMEOUT,
         )
-        
+
         # Create `Usage` entry for export job.
-        usage = controllers.Usage.create_usage(user_email, pa_numbers)
+        usage = controllers.Usage.create_usage(user_username, pa_numbers)
 
         # Get the scheduler and queue the job for
         # generating the PowerPoint export.

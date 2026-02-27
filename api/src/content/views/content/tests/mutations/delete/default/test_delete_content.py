@@ -32,7 +32,7 @@ class TestDeleteContent(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.DELETE_CONTENT_DELETED_BY_USER
+            username=arguments.DELETE_CONTENT_DELETED_BY_USER
         )
         self.client.force_login(user=user)
 

@@ -5,6 +5,7 @@ export interface IAuthAccess {
 }
 
 export interface IAuthUser {
+  username: string
   email: string;
   firstName: string;
   lastName: string;

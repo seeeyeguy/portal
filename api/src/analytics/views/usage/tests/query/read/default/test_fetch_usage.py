@@ -20,7 +20,7 @@ class TestUsageFetchView(MultiDBTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_USAGE_USER)
+        user = AuthModels.User.objects.get(username=arguments.FETCH_USAGE_USER)
         self.client.force_login(user=user)
 
     url: str = reverse("analytics.prt.usage")

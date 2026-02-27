@@ -67,7 +67,7 @@ class Disposition(View):
                         "lastName": disposition.approver.user.last_name,
                         "content": "Disposition created successfully.",
                     },
-                }
+                },
             )
 
             return http.JsonResponse(data, status=status.HTTP_201_CREATED, safe=False)

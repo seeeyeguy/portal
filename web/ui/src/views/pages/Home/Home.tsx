@@ -43,13 +43,14 @@ export default function Home() {
       firstName: loaderData.user.firstName,
       lastName: loaderData.user.lastName,
       email: loaderData.user.email,
+      username: loaderData.user.username
     },
     jobTitle: "UNKNOWN",
     citizenship: "UNKNOWN",
   }) as IProfile;
 
   const { data: favoritesApiResponse } = useGetFavoritesQuery(
-    loaderData.user.email
+    loaderData.user.username
   );
   const favorites = (favoritesApiResponse?.data ?? []) as IFavorite[];
 
@@ -70,7 +71,7 @@ export default function Home() {
 
   // Load initial user session data.
   React.useEffect(() => {
-    dispatch(loadDirectoryResourceSearchState(loaderData.user.email));
+    dispatch(loadDirectoryResourceSearchState(loaderData.user.username));
   }, [loaderData, dispatch]);
 
   if (!loaderData.user.email) {
