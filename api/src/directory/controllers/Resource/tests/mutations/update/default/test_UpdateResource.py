@@ -51,7 +51,7 @@ class TestUpdateResource(MultiDBTestCase):
             {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
         )
@@ -74,7 +74,7 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL_INVALID_ROLE
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -88,7 +88,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_DNE_RESOURCE_ID,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -102,7 +102,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_WITH_DUPLICATE_PENDING_DRAFT_RESOURCE_ID,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -117,7 +117,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "resource_id": arguments.UPDATE_RESOURCE_APPROVED_RESOURCE_ID,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -132,7 +132,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "name": arguments.UPDATE_RESOURCE_DUPLICATE_RESOURCE_NAME,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -147,7 +147,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "description": arguments.UPDATE_RESOURCE_INVALID_RESOURCE_DESCRIPTION,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -161,7 +161,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "url": arguments.UPDATE_RESOURCE_MALFORMED_RESOURCE_URL,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -175,7 +175,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "thumbnail": arguments.UPDATE_RESOURCE_INVALID_RESOURCE_THUMBNAIL,  # type: ignore[typeddict-item,unused-ignore]
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -190,7 +190,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -205,7 +205,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": arguments.UPDATE_RESOURCE_EMPLOYEE_LEVEL_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -220,7 +220,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -235,7 +235,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": arguments.UPDATE_RESOURCE_SUBFUNCTION_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -249,7 +249,7 @@ class TestUpdateResource(MultiDBTestCase):
             params: UpdateResourceParams = {
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
                 ),
             }
 
@@ -265,7 +265,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.UPDATE_RESOURCE_TAG_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -280,7 +280,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "point_of_contacts": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)
@@ -296,7 +296,7 @@ class TestUpdateResource(MultiDBTestCase):
                 **arguments.BASE_UPDATE_RESOURCE_STRUCTURE_PARAMS,
                 "point_of_contacts": arguments.UPDATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.UPDATE_RESOURCE_USER_EMAIL
+                    username=arguments.UPDATE_RESOURCE_USER_EMAIL
                 ),
             }
             _, _ = Resource.update_resource(params)

@@ -31,19 +31,17 @@ def verify_user(email: str) -> AuthModels.User:
         The `User` instance that matches the e‑mail.
 
     """
-    # Normalize to the corporate domain format.
-    normalized = f"{email.split('@')[0].lower()}@harris.com"
 
     # Try local DB first.
     try:
-        return AuthModels.User.objects.get(email__iexact=normalized)
+        return AuthModels.User.objects.get(email__iexact=email)
     except AuthModels.User.DoesNotExist:
         # In non‑test environments attempt external verification.
         if BUILD != ApplicationBuild.TEST:
-            verified = fetch_authorized_employee(email=normalized)
+            verified = fetch_authorized_employee(email=email)
             if verified:
                 return verified
 
-        err_msg = f"User (email={normalized}) does not exist."
+        err_msg = f"User (email={email}) does not exist."
         LOGGER.error(err_msg)
         raise exceptions.ProgramReviewToolError(err_msg, 404)

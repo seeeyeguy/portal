@@ -253,7 +253,8 @@ export default function MaintenanceBannerControls() {
             ...(s?.properties?.level as object ?? {}),
             oneOf: [
               { const: null, title: "Select Clone" },
-              ...((s?.properties?.level as object)?.oneOf ?? []),
+              /* eslint-disable @typescript-eslint/no-explicit-any */
+              ...(((s?.properties?.level as any)?.oneOf) ?? [])
             ]
           }
         },

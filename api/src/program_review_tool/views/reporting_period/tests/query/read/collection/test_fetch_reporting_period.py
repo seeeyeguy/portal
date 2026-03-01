@@ -36,7 +36,9 @@ class TestFetchReportingPeriod(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_REPORTING_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.FETCH_REPORTING_USER_EMAIL
+        )
         self.client.force_login(user=user)
 
     url: str = reverse("program_review_tool.reporting_period")

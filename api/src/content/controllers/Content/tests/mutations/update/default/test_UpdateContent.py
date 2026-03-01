@@ -39,7 +39,7 @@ class TestUpdateContent(MultiDBTestCase):
         """Success Case: Update a `Content` record."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_CONTENT_UPDATED_BY_USER
+            username=arguments.UPDATE_CONTENT_UPDATED_BY_USER
         )
         content = controllers.Content.update_content(
             key=arguments.UPDATE_CONTENT_CONTENT_KEY,
@@ -57,7 +57,7 @@ class TestUpdateContent(MultiDBTestCase):
         """Fail Case: Update a `Content` record with a `key` that does not exist."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_CONTENT_UPDATED_BY_USER
+            username=arguments.UPDATE_CONTENT_UPDATED_BY_USER
         )
 
         with pytest.raises(ContentError):
@@ -72,7 +72,7 @@ class TestUpdateContent(MultiDBTestCase):
         """Fail Case: Update a `Content` record without proper permissions."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
+            username=arguments.UPDATE_CONTENT_CONTENT_USER_NOT_AUTHORIZED
         )
 
         with pytest.raises(ContentError):
@@ -87,7 +87,7 @@ class TestUpdateContent(MultiDBTestCase):
         """Fail Case: Update a `Content` record with bad content."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.UPDATE_CONTENT_UPDATED_BY_USER
+            username=arguments.UPDATE_CONTENT_UPDATED_BY_USER
         )
 
         with pytest.raises(ContentError):

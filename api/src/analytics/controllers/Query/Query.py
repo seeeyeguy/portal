@@ -53,7 +53,7 @@ class Query:
 
             # Fetch the `User` record.
             user_record: AuthModels.User = AuthModels.User.objects.get(
-                email__iexact=user
+                username__iexact=user
             )
 
             # Create the `Query` record.
@@ -85,7 +85,7 @@ class Query:
             return query
 
         except AuthModels.User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc
 
@@ -148,7 +148,7 @@ class Query:
             # If `user` is provided, filter all queries by the given `User`.
             if user:
                 user_record: AuthModels.User = AuthModels.User.objects.get(
-                    email__iexact=user
+                    username__iexact=user
                 )
                 queries = queries.filter(user=user_record)
 
@@ -191,6 +191,6 @@ class Query:
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc
         except AuthModels.User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc

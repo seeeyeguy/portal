@@ -45,7 +45,7 @@ class TestCreateUsage(MultiDBTestCase):
 
         # Create usage for generation.
         usage = controllers.Usage.create_usage(
-            user=user.email,
+            user=user.username,
             programs=arguments.CREATE_USAGE_PROGRAM_PAS,
         )
 

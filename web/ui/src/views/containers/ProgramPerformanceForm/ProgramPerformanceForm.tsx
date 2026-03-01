@@ -257,11 +257,6 @@ export default function ProgramPerformanceForm({
     }
   };
 
-  const normalizeHarrisEmail = React.useCallback((email: string) => {
-    const localPart = email.trim().toLowerCase().split("@")[0];
-    return `${localPart}@harris.com`;
-  }, []);
-
   const validate = React.useCallback(
     async (
       data: IRecord | null
@@ -328,8 +323,7 @@ export default function ProgramPerformanceForm({
             const response = await searchForEmployees(task.owner.trim());
             const ownerExists =
               response.data.length === 1 &&
-              normalizeHarrisEmail(task.owner) ===
-                normalizeHarrisEmail(response.data[0].email);
+              task.owner.toLowerCase() === response.data[0].email.toLowerCase()
 
             if (!ownerExists) {
               errors.push("owner");
@@ -356,7 +350,7 @@ export default function ProgramPerformanceForm({
 
       return err;
     },
-    [normalizeHarrisEmail] // <-- stable dependency
+    []
   );
 
   const handleSubmit = React.useCallback(

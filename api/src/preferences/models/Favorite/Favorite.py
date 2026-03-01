@@ -46,7 +46,7 @@ class Favorite(DateTimeAbstractModel):
         """String Representation of `Favorite`."""
 
         return (
-            f"Favorite(id={self.id}, user={self.user.email},"
+            f"Favorite(id={self.id}, user={self.user.username},"
             f" resource={self.resource.name}, rank={self.rank})"
         )
 

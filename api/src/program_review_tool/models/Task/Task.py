@@ -54,6 +54,7 @@ class Task(BasicInformationAbstractModel):
         base_field=models.IntegerField(), size=None, null=True, default=list
     )
     order = models.IntegerField(null=True)
+    name = models.CharField(max_length=512, unique=False)
     task_name = models.CharField(max_length=512, unique=False)
     owner = models.ForeignKey(
         get_user_model(), to_field="username", on_delete=models.SET_NULL, null=True

@@ -37,7 +37,7 @@ class TestRevokeAccess(MultiDBTestCase):
         """Success Case: Revoke an `Access` record, given its id."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
 
         access_records, rows_affected = controllers.Access.revoke_accesses(
@@ -62,7 +62,7 @@ class TestRevokeAccess(MultiDBTestCase):
         that `Access` does not exist."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.revoke_accesses(
@@ -86,7 +86,7 @@ class TestRevokeAccess(MultiDBTestCase):
         the given admin does not have the appropriate permissions."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_NON_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_NON_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.revoke_accesses(
@@ -99,7 +99,7 @@ class TestRevokeAccess(MultiDBTestCase):
         the given access id belongs to the given admin."""
 
         admin = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
         with pytest.raises(exceptions.UsersError):
             _ = controllers.Access.revoke_accesses(

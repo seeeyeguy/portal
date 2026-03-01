@@ -82,7 +82,7 @@ class DevelopmentAuthenticationMiddleware:
 
         if not User.objects.filter(username__iexact=username).exists():
             User.objects.create_superuser(
-                username=email,
+                username=username,
                 email=email,
                 first_name=first_name,
                 last_name=last_name,

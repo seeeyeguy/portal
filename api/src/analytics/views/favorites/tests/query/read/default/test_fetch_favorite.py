@@ -37,7 +37,7 @@ class TestFavoriteView(MultiDBTestCase):
         super().setUp()
 
         # Must match a user email in COMMON_FIXTURES
-        self.user = AuthModels.User.objects.get(email=arguments.FETCH_FAVORITE_USER)
+        self.user = AuthModels.User.objects.get(username=arguments.FETCH_FAVORITE_USER)
         self.client.force_login(user=self.user)
 
     @tag("views.favorites.create_not_allowed")

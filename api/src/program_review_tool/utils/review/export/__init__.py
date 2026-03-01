@@ -56,7 +56,8 @@ PROGRAM_REVIEW_CACHE_PREFIX: str = "program_review_tool_review"
 DEFAULT_EXPORT_ERROR_MESSAGE: str = "Failed to generate export."
 
 # Azure AD token cache timeout (1 hour minus 10% for safety)
-AZURE_AUTH_CACHE_TIMEOUT:int = int(os.getenv("AZURE_AUTH_CACHE_TIMEOUT", 3240))
+AZURE_AUTH_CACHE_TIMEOUT: int = int(os.getenv("AZURE_AUTH_CACHE_TIMEOUT", 3240))
+
 
 class ExportStatus:
     """Statuses for the `Program` review PowerPoint export job
@@ -151,9 +152,7 @@ def generate_program_review_powerpoint_wrapper(
         )
 
     # Set the PowerBI token used for the generation as not `in use`.
-    cache.set(
-        powerbi_token_cache_key, (powerbi_token, False), AZURE_AUTH_CACHE_TIMEOUT
-    )
+    cache.set(powerbi_token_cache_key, (powerbi_token, False), AZURE_AUTH_CACHE_TIMEOUT)
 
 
 def generate_program_review_powerpoint(
@@ -254,7 +253,7 @@ def generate_program_review_powerpoint(
     # Load the slide configuration.
     try:
         slides_config = load_slides_config(validate_schema=True)
-        slides = slides_config.get('slides', [])
+        slides = slides_config.get("slides", [])
 
         if not slides:
             err_msg = "Slides configuration is empty."

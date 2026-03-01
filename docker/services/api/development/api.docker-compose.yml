@@ -80,6 +80,7 @@ services:
             DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY}
             LDAP_SEARCH_ENDPOINT: ${LDAP_SEARCH_ENDPOINT}
             SSO_ORIGIN: ${SSO_ORIGIN}
+            SSO_NAME: ${SSO_NAME}
             SSO_DEVELOPMENT_USER_FIRST_NAME: ${SSO_DEVELOPMENT_USER_FIRST_NAME}
             SSO_DEVELOPMENT_USER_LAST_NAME: ${SSO_DEVELOPMENT_USER_LAST_NAME}
             SSO_SERVICE_ENCRYPTION_KEY: ${SSO_SERVICE_ENCRYPTION_KEY}
@@ -105,5 +106,7 @@ services:
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src:/apps/${APP_NAME}/
             # Mount ssh directory to enable ssh.
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/.ssh:/home/${USER}/.ssh:ro
+            # This volume is for hosting media files.
+            - ${DOCKER_COMPOSE_PROJECT_ROOT}/storage/media:/apps/${APP_NAME}/manager/storage/media
             # This volume is for fixing SSL CA Certs inside the container.
-            - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro
+            - /etc/ssl/certs/ca-bundle.crt:/etc/ssl/certs/ca-bundle.crt:ro        

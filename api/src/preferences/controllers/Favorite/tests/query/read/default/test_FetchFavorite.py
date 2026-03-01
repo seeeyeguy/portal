@@ -89,8 +89,7 @@ class TestFetchFavorite(MultiDBTestCase):
     @tag("controllers.favorite.fetch_favorited_resources_by_user")
     def test_fetch_favorited_resources_by_user(self) -> None:
         """Success Case: Returned resources are actually favorited by the user."""
-        user_email = arguments.FETCH_FAVORITE_USER
-        results = Favorite.fetch_favorited_resources(user=user_email)
+        results = Favorite.fetch_favorited_resources(user=arguments.FETCH_FAVORITE_USER)
 
         self.assertIsInstance(results, list)
         self.assertGreater(len(results), 0)
@@ -99,10 +98,12 @@ class TestFetchFavorite(MultiDBTestCase):
         for item in results:
             resource_name = item["resource"]["name"]
             exists = FavoriteModel.objects.filter(
-                resource__name=resource_name, user__email__iexact=user_email
+                resource__name=resource_name,
+                user__username__iexact=arguments.FETCH_FAVORITE_USER,
             ).exists()
             self.assertTrue(
-                exists, f"Resource {resource_name} should be favorited by {user_email}"
+                exists,
+                f"Resource {resource_name} should be favorited by {arguments.FETCH_FAVORITE_USER}",
             )
 
     @tag("controllers.favorite.fetch_favorited_resources_top")

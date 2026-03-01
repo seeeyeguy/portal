@@ -3042,7 +3042,7 @@ components:
     FetchQueryUserDoesNotExistResponse:
       title: "Fetch `Query` error response due to using an email
         for a `User` that does not exist."
-      example: "User (email=user) does not exist."
+      example: "User (username=user) does not exist."
 
     CreateVisitRequest:
       title: "Create `Visit` request."
@@ -3742,7 +3742,7 @@ components:
     CreateFavoriteUserDoesNotExistResponse:
       title: "Create `Favorite` error response due to using an email for a user that
         does not exist."
-      example: "User (email={user}) does not exist."
+      example: "User (username={user}) does not exist."
 
     CreateFavoriteResourceDoesNotExistResponse:
       title: "Create `Favorite` error response due to using an id for a `Resource` that
@@ -3835,7 +3835,7 @@ components:
     FetchFavoritesUserDoesNotExistResponse:
       title: "Fetch user's `Favorite`s error response due to using an email
         for a user that does not exist."
-      example: "User (email={user}) does not exist."
+      example: "User (username={user}) does not exist."
 
     RankFavoritesRequest:
       title: "Rank user `Favorite`s request."
@@ -3958,12 +3958,12 @@ components:
       title: "Rank user's `Favorite`s error response due to not supplying all
         of the user's `Favorite`s ids in the request body."
       example: "Favorite ids given: [id_1,id_2,...] do not exist for the
-        User (email={user})."
+        User (username={user})."
     
     RankFavoritesUserDoesNotExistResponse:
       title: "Rank user's `Favorite`s error response due to using an email
         for a user that does not exist."
-      example: "User (email={user}) does not exist."
+      example: "User (username={user}) does not exist."
 
     DeleteFavoriteResponse:
       title: "Delete `Favorite` response."
@@ -4513,7 +4513,7 @@ components:
     CreateResourceUserInvalidRoleResponse:
       title: "Create `Resource` error response due to `User` having
         an invalid `Role`."
-      example: "User (email={user_email}) does not have a valid role."
+      example: "User (username={user_email}) does not have a valid role."
     
     FetchResourcesWithParametersResponse:
       title: "Fetch `Resource`(s) response."
@@ -4848,7 +4848,7 @@ components:
     UpdateResourceUserInvalidRoleResponse:
       title: "Update `Resource` error response due to `User` having
         an invalid `Role`."
-      example: "User (email={user_email}) does not have a valid role."
+      example: "User (username={user_email}) does not have a valid role."
 
     FetchQueryFilterStateResponse:
       title: "Fetch `QueryFilterState` response."
@@ -4951,7 +4951,7 @@ components:
     FetchQueryFilterStateUserDoesNotExistResponse:
       title: "Fetch `QueryFilterState` error response due to using an email that
         does not exist."
-      example: "User (email={user}) does not exist."
+      example: "User (username={user}) does not exist."
 
     FetchQueryFilterStateQueryFilterStateForUserDoesNotExistResponse:
       title: "Fetch `QueryFilterState` error response due to using an email for
@@ -5405,7 +5405,7 @@ components:
     FetchProgramsUserDoesNotExistResponse:
       title: "Fetch `Program` error response due to fetching `Program` records
       for a `User` that does not exist."
-      example: "User (email={user_email}) do not exist."
+      example: "User (username={user_email}) do not exist."
 
     CreateRecordRequest:
       title: "Create a Record for a specific program and reporting period."
@@ -6086,7 +6086,7 @@ components:
     CreateAccessUserDoesNotExistResponse:
       title: "Fetch `Access` error response due to using an email
         for a `User` that does not exist."
-      example: "User (email={user_email}) does not exist."
+      example: "User (username={user_email}) does not exist."
     
     CreateAccessRoleDoesNotExistResponse:
       title: "Fetch `Access` error response due to using a level
@@ -6277,7 +6277,7 @@ components:
     RevokeAccessUserDoesNotExistResponse:
       title: "Revoke `Access` error response due to using an email
         for a `User` that does not exist."
-      example: "User (email={user_email}) does not exist."
+      example: "User (username={user_email}) does not exist."
 
     ModifyAccessRequest:
       title: "Modify `Access` request."

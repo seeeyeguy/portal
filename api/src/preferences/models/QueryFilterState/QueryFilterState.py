@@ -61,7 +61,7 @@ class QueryFilterState(BaseModels.DateTimeAbstractModel):
     def __str__(self) -> str:
         """String Representation of `QueryFilterState`."""
 
-        return f"QueryFilterState(id={self.id}, user={self.user.email})"
+        return f"QueryFilterState(id={self.id}, user={self.user.username})"
 
     @property
     def id(self) -> int:

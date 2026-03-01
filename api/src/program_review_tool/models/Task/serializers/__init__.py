@@ -12,6 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
     """Model Base Serializer for `Task`."""
 
     name = serializers.CharField(source="task_name", read_only=False)
+    owner = serializers.EmailField(source="owner.email", read_only=True)
 
     class Meta:
         """Meta for `Task` serializer."""

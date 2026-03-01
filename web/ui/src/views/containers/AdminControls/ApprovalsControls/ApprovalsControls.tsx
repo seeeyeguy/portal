@@ -165,7 +165,7 @@ export default function ApprovalsControls() {
       lodash.sortBy(
         accesses.map((access) => ({
           name: `${access.user.firstName} ${access.user.lastName} (${access.user.email})`,
-          value: access.user.email.toLowerCase(),
+          value: access.user.username.toLowerCase(),
         })),
         ["value"]
       ),
@@ -307,7 +307,7 @@ export default function ApprovalsControls() {
   } = useGetRequestsQuery({
     ...QUERY_REQUEST_PARAMS,
     originator: selectedAccessFilters?.length
-      ? selectedAccessFilters[0].replace(/@l3harris.com/i, "@harris.com")
+      ? selectedAccessFilters[0]
       : null,
     stages: selectedStageFilters?.length
       ? selectedStageFilters
@@ -349,7 +349,7 @@ export default function ApprovalsControls() {
   useSubscribeToDispositionQuery({
     ...QUERY_REQUEST_PARAMS,
     originator: selectedAccessFilters?.length
-      ? selectedAccessFilters[0].replace(/@l3harris.com/i, "@harris.com")
+      ? selectedAccessFilters
       : null,
     stages: selectedStageFilters?.length
       ? selectedStageFilters

@@ -37,7 +37,7 @@ BASE_UPDATE_REQUEST_STRUCTURE_PARAMS: UpdateRequestParams = {
     "employee_levels": [3],
     "subfunctions": [2, 5],
     "tags": [1, 2, 3],
-    "point_of_contacts": ["May.Parker@harris.com"],
+    "point_of_contacts": ["May.Parker@l3harris.com"],
     "type": "test update type",
     "download": False,
     "user": UPDATE_REQUEST_USER_EMAIL,  # type: ignore

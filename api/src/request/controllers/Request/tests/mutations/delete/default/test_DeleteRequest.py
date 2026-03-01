@@ -43,7 +43,7 @@ class TestDeleteRequest(MultiDBTestCase):
         """Success Case: Create a delete `Request` record."""
 
         originator = AuthModels.User.objects.get(
-            email=arguments.BASE_DELETE_REQUEST_STRUCTURE_PARAMS["originator"]
+            username=arguments.BASE_DELETE_REQUEST_STRUCTURE_PARAMS["originator"]
         )
 
         request = controllers.Request.delete_request(
@@ -75,7 +75,7 @@ class TestDeleteRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             originator = AuthModels.User.objects.get(
-                email=arguments.DELETE_REQUEST_USER_EMAIL_INVALID_ROLE
+                username=arguments.DELETE_REQUEST_USER_EMAIL_INVALID_ROLE
             )
             _ = controllers.Request.delete_request(
                 {

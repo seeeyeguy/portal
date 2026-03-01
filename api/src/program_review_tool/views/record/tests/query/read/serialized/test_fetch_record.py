@@ -43,7 +43,7 @@ class TestFetchRecord(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_RECORD_USER_EMAIL)
+        user = AuthModels.User.objects.get(username=arguments.FETCH_RECORD_USER_EMAIL)
         self.client.force_login(user=user)
 
     url: str = reverse("program_review_tool.record")

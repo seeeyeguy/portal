@@ -80,8 +80,7 @@ export default function ResourceLink({
 
   const memoizedPrimaryPointOfContact = React.useMemo(
     () =>
-      primaryPointOfContact?.replace(/@harris.com|@l3.com/i, "@l3harris.com") ??
-      "N/A",
+      primaryPointOfContact ?? "N/A",
     [primaryPointOfContact]
   );
 

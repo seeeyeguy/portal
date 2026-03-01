@@ -34,7 +34,7 @@ class TestModifyAccess(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.MODIFY_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.MODIFY_ACCESS_ADMIN_USER_EMAIL
         )
         self.client.force_login(user=user)
 

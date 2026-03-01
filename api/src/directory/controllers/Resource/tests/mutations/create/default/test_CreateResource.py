@@ -50,7 +50,7 @@ class TestCreateResource(MultiDBTestCase):
             {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
         )
@@ -74,7 +74,7 @@ class TestCreateResource(MultiDBTestCase):
             {
                 **arguments.BASE_CREATE_RESOURCE_REVISION_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
         )
@@ -98,7 +98,7 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
                 ),
             }
 
@@ -114,7 +114,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "previous_revision": arguments.CREATE_RESOURCE_PREVIOUS_RESOURCE_REVISION_DNE_ID,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -130,7 +130,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "previous_revision": 1,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -146,7 +146,7 @@ class TestCreateResource(MultiDBTestCase):
                 "uid": arguments.CREATE_RESOURCE_WITH_DUPLICATE_PENDING_DRAFT_RESOURCE_ID,
                 "previous_revision": arguments.CREATE_RESOURCE_PREVIOUS_RESOURCE_REVISION_ID,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -162,7 +162,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "name": arguments.CREATE_RESOURCE_DUPLICATE_RESOURCE_NAME,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -178,7 +178,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "description": arguments.CREATE_RESOURCE_INVALID_RESOURCE_DESCRIPTION,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -193,7 +193,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "url": arguments.CREATE_RESOURCE_MALFORMED_RESOURCE_URL,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -209,7 +209,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -225,7 +225,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "employee_levels": arguments.CREATE_RESOURCE_EMPLOYEE_LEVEL_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -241,7 +241,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -257,7 +257,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "subfunctions": arguments.CREATE_RESOURCE_SUBFUNCTION_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -272,7 +272,7 @@ class TestCreateResource(MultiDBTestCase):
             params: CreateResourceParams = {
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
                 ),
             }
 
@@ -288,7 +288,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "tags": arguments.CREATE_RESOURCE_TAG_DNE_IDS,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -304,7 +304,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "point_of_contacts": [],
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -321,7 +321,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "point_of_contacts": arguments.CREATE_RESOURCE_POINT_OF_CONTACT_EMAILS_DNE,
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 
@@ -336,7 +336,7 @@ class TestCreateResource(MultiDBTestCase):
                 **arguments.BASE_CREATE_RESOURCE_STRUCTURE_PARAMS,
                 "thumbnail": arguments.CREATE_RESOURCE_INVALID_RESOURCE_THUMBNAIL,  # type: ignore[typeddict-item,unused-ignore]
                 "user": AuthModels.User.objects.get(
-                    email=arguments.CREATE_RESOURCE_USER_EMAIL
+                    username=arguments.CREATE_RESOURCE_USER_EMAIL
                 ),
             }
 

@@ -30,7 +30,9 @@ class TestDeleteFavorite(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.DELETE_FAVORITE_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.DELETE_FAVORITE_USER_EMAIL
+        )
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

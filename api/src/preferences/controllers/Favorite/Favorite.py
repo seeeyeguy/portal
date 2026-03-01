@@ -48,7 +48,7 @@ class Favorite:
 
         try:
             # Fetch `User` record.
-            user_record: User = User.objects.only("username").get(email__iexact=user)
+            user_record: User = User.objects.only("username").get(username__iexact=user)
             # Fetch `Resource` record.
             resource_record: Resource = Resource.objects.only("id").get(
                 id=resource, active=True
@@ -80,7 +80,7 @@ class Favorite:
             return favorite_record
 
         except User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except Resource.DoesNotExist as exc:
@@ -114,7 +114,7 @@ class Favorite:
             LOGGER.info(log_msg)
 
             # Fetch `User` record.
-            user_record: User = User.objects.get(email__iexact=user)
+            user_record: User = User.objects.get(username__iexact=user)
 
             # Create a list of `Favorite` ids from `ranked_favorites`
             favorite_ids: List[int] = [favorite["id"] for favorite in ranked_favorites]
@@ -145,7 +145,7 @@ class Favorite:
                 ]
                 err_msg: str = (
                     f"Favorite ids given: {invalid_favorite_ids}"
-                    f" do not exist for the User (email: {user})."
+                    f" do not exist for the User (username: {user})."
                 )
                 LOGGER.error(err_msg)
                 raise exceptions.PreferencesError(err_msg, 404)
@@ -185,7 +185,7 @@ class Favorite:
 
             return favorite_records
         except User.DoesNotExist as exc:
-            err_msg: str = f"User (email={user}) does not exist."
+            err_msg: str = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
         except (KeyError, IntegrityError) as exc:
@@ -228,7 +228,7 @@ class Favorite:
             LOGGER.info(f"Fetching Favorites for user: {user}")
 
             # Fetch `User` record.
-            user_record: User = User.objects.get(email__iexact=user)
+            user_record: User = User.objects.get(username__iexact=user)
 
             # Query `Favorite` records of active `Resource`s for the user
             # and order the results by rank (ascending).
@@ -237,7 +237,7 @@ class Favorite:
             ).order_by("rank")
             return favorites
         except User.DoesNotExist as exc:
-            err_msg: str = f"User (email={user}) does not exist."
+            err_msg: str = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.PreferencesError(err_msg, 404) from exc
 

@@ -42,7 +42,7 @@ class TestUpdateRequest(MultiDBTestCase):
         """Success Case: Update a `Request` record."""
 
         requester = AuthModels.User.objects.get(
-            email=arguments.UPDATE_REQUEST_USER_EMAIL
+            username=arguments.UPDATE_REQUEST_USER_EMAIL
         )
 
         updated_request, rows_affected = controllers.Request.update_request(
@@ -72,7 +72,7 @@ class TestUpdateRequest(MultiDBTestCase):
         """Success Case: Update and submit a `Request` record."""
 
         requester = AuthModels.User.objects.get(
-            email=arguments.UPDATE_REQUEST_USER_EMAIL
+            username=arguments.UPDATE_REQUEST_USER_EMAIL
         )
 
         updated_request, rows_affected = controllers.Request.update_request(
@@ -105,7 +105,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             requester = AuthModels.User.objects.get(
-                email=arguments.UPDATE_REQUEST_USER_EMAIL_INVALID_ROLE
+                username=arguments.UPDATE_REQUEST_USER_EMAIL_INVALID_ROLE
             )
             _ = controllers.Request.update_request(
                 {
@@ -121,7 +121,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             requester = AuthModels.User.objects.get(
-                email=arguments.UPDATE_REQUEST_USER_EMAIL_NOT_ORIGINATOR
+                username=arguments.UPDATE_REQUEST_USER_EMAIL_NOT_ORIGINATOR
             )
             _ = controllers.Request.update_request(
                 {
@@ -137,7 +137,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             requester = AuthModels.User.objects.get(
-                email=arguments.UPDATE_REQUEST_USER_EMAIL
+                username=arguments.UPDATE_REQUEST_USER_EMAIL
             )
             _ = controllers.Request.update_request(
                 {
@@ -154,7 +154,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             requester = AuthModels.User.objects.get(
-                email=arguments.UPDATE_REQUEST_USER_EMAIL
+                username=arguments.UPDATE_REQUEST_USER_EMAIL
             )
             _ = controllers.Request.update_request(
                 {
@@ -171,7 +171,7 @@ class TestUpdateRequest(MultiDBTestCase):
 
         with pytest.raises(exceptions.RequestError):
             requester = AuthModels.User.objects.get(
-                email=arguments.UPDATE_REQUEST_USER_EMAIL
+                username=arguments.UPDATE_REQUEST_USER_EMAIL
             )
             _ = controllers.Request.update_request(
                 {

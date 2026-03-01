@@ -40,7 +40,7 @@ class TestReviewProgram(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
+            username=arguments.CREATE_PROGRAMS_REVIEW_USER_EMAIL
         )
         self.client.force_login(user=user)
 

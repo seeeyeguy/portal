@@ -32,7 +32,7 @@ class TestFetchQueryFilterState(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email__iexact=arguments.FETCH_QUERYFILTERSTATE_USER_EMAIL
+            username=arguments.FETCH_QUERYFILTERSTATE_USER_EMAIL
         )
         self.client.force_login(user=user)
 

@@ -46,7 +46,7 @@ class Visit:
 
             # Fetch the `User` record.
             user_record: AuthModels.User = AuthModels.User.objects.get(
-                email__iexact=user
+                username__iexact=user
             )
 
             # Fetch the `Resource` record.
@@ -60,7 +60,7 @@ class Visit:
             )
             return visit
         except AuthModels.User.DoesNotExist as exc:
-            err_msg = f"User (email={user}) does not exist."
+            err_msg = f"User (username={user}) does not exist."
             LOGGER.error(err_msg)
             raise exceptions.AnalyticsError(err_msg, 404) from exc
 

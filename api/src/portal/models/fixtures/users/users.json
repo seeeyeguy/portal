@@ -6,7 +6,7 @@
             "username": "May.Parker@harris.com",
             "first_name": "May",
             "last_name": "Parker",
-            "email": "May.Parker@harris.com",
+            "email": "May.Parker@l3harris.com",
             "is_superuser": false
         }
     },
@@ -17,7 +17,7 @@
             "username": "Peter.Parker@harris.com",
             "first_name": "Peter",
             "last_name": "Parker",
-            "email": "Peter.Parker@harris.com",
+            "email": "Peter.Parker@l3harris.com",
             "is_superuser": false
         }
     },
@@ -28,7 +28,7 @@
             "username": "Tony.Stark@harris.com",
             "first_name": "Tony",
             "last_name": "Stark",
-            "email": "Tony.Stark@harris.com",
+            "email": "Tony.Stark@l3harris.com",
             "is_superuser": true
         }
     }

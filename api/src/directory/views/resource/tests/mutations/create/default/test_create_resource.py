@@ -31,7 +31,9 @@ class TestCreateResource(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.CREATE_RESOURCE_USER_EMAIL)
+        user = AuthModels.User.objects.get(
+            username=arguments.CREATE_RESOURCE_USER_EMAIL
+        )
         self.client.force_login(user=user)
 
     fixtures: List[str] = [
@@ -250,7 +252,7 @@ class TestCreateResource(MultiDBTestCase):
         permissions to create a `Resource` within the given `SubFunction`s."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
+            username=arguments.CREATE_RESOURCE_USER_EMAIL_SUBFUNCTIONS_PERMISSIONS_DENIED
         )
         self.client.force_login(user=user)
 
@@ -332,7 +334,7 @@ class TestCreateResource(MultiDBTestCase):
         has an invalid `Role`."""
 
         user_with_invalid_role = AuthModels.User.objects.get(
-            email=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
+            username=arguments.CREATE_RESOURCE_USER_EMAIL_INVALID_ROLE
         )
         self.client.force_login(user_with_invalid_role)
 

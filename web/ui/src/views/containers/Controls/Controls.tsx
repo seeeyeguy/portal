@@ -31,7 +31,7 @@ export default function Controls() {
   const loaderData = useLoaderData() as { user: IAuthUser };
 
   const { data: queryFilterStateApiResponse } = useGetQueryFilterStateQuery(
-    loaderData.user.email
+    loaderData.user.username
   );
   const queryFilterStateId = queryFilterStateApiResponse?.data.id;
 

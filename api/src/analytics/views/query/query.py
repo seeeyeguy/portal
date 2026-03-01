@@ -40,7 +40,7 @@ class Query(View):
         try:
             LOGGER.info("POST /v1/analytics/queries.")
             query = controllers.Query.create_query(
-                user=request.user.email, search_term=body["search_term"]
+                user=request.user.username, search_term=body["search_term"]
             )
             # Serialize `Query`.
             data: dict = QuerySerializer(query).data

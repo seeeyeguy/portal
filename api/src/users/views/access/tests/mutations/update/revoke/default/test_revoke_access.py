@@ -34,7 +34,7 @@ class TestRevokeAccess(MultiDBTestCase):
 
         super().setUp()
         user = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_ADMIN_USER_EMAIL
         )
         self.client.force_login(user=user)
 
@@ -88,7 +88,7 @@ class TestRevokeAccess(MultiDBTestCase):
         request.`User` does not have the appropriate permissions."""
 
         user = AuthModels.User.objects.get(
-            email=arguments.REVOKE_ACCESS_NON_ADMIN_USER_EMAIL
+            username=arguments.REVOKE_ACCESS_NON_ADMIN_USER_EMAIL
         )
 
         self.client.force_login(user=user)

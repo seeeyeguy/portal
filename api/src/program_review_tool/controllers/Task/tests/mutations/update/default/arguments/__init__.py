@@ -6,7 +6,7 @@ controller pytests.
 from datetime import date
 
 UPDATE_TASK_USER_EMAIL: str = "May.Parker@harris.com"
-UPDATE_TASK_OWNER_EMAIL: str = "Peter.Parker@harris.com"
+UPDATE_TASK_OWNER_EMAIL: str = "Peter.Parker@l3harris.com"
 UPDATE_TASK_TASK_ID: int = 4
 UPDATE_TASK_PA_NUMBER: str = "489AB"
 UPDATE_TASK_REPORTING_PERIOD: int = 202502
@@ -51,7 +51,7 @@ ADD_REPORTING_PERIOD_EXPECTED_RESPONSE: dict = {
     "description": "Develop prototype and conduct preliminary testing.",
     "status": "Pending Review",
     "order": 2,
-    "owner": "Peter.Parker@harris.com",
+    "owner": "Peter.Parker@l3harris.com",
     "pa_number": UPDATE_TASK_PA_NUMBER,
     "reporting_period": [UPDATE_TASK_REPORTING_PERIOD, ADD_REPORTING_PERIOD_PERIOD],
     "create_date": "2025-01-01",
@@ -70,7 +70,7 @@ REMOVE_REPORTING_PERIOD_EXPECTED_RESPONSE: dict = {
     "description": "Develop prototype and conduct preliminary testing.",
     "status": "Pending Review",
     "order": 2,
-    "owner": "Peter.Parker@harris.com",
+    "owner": "Peter.Parker@l3harris.com",
     "pa_number": UPDATE_TASK_PA_NUMBER,
     "reporting_period": [],
     "create_date": "2025-01-01",

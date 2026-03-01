@@ -42,7 +42,7 @@ class Favorite(View):
 
             # Call controller to create `Favorite`.
             favorite = controllers.Favorite.create_favorite(
-                user=request.user.email, resource=body["resource"]
+                user=request.user.username, resource=body["resource"]
             )
 
             # Serialize `Favorite`.

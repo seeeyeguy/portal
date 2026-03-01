@@ -30,7 +30,7 @@ class TestFetchFavorite(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = AuthModels.User.objects.get(email=arguments.FETCH_FAVORITE_USER)
+        user = AuthModels.User.objects.get(username=arguments.FETCH_FAVORITE_USER)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

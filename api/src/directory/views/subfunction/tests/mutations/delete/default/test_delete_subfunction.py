@@ -30,7 +30,7 @@ class TestDeleteSubFunction(MultiDBTestCase):
     def setUp(self) -> None:
 
         super().setUp()
-        user = User.objects.get(email__iexact=arguments.DELETE_SUBFUNCTION_USER_EMAIL)
+        user = User.objects.get(username=arguments.DELETE_SUBFUNCTION_USER_EMAIL)
         self.client.force_login(user=user)
 
     fixtures: List[str] = [

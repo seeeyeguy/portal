@@ -169,7 +169,7 @@ export default function AdminResources() {
   } = useGetRequestsQuery({
     originator:
       // Filter to user requests if they have the filter or if they are not a superuser.
-      selectedFilters.includes(0) ? loaderData.user.email : null,
+      selectedFilters.includes(0) ? loaderData.user.username : null,
     // If "My Resources" is selected, filter request status by string value in selected filters, else only show APPROVED resources.
     status: selectedFilters.includes(0)
       ? ((selectedFilters.find((filter) =>

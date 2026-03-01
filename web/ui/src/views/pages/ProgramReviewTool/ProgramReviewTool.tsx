@@ -67,7 +67,7 @@ const GENERATE_REVIEW_PROGRESS_MARKERS = [
   },
 ];
 const PORTFOLIO_POLL_INTERVAL = 10000;
-const PORTFOLIO_POLL_MAX_REQUESTS = 18;
+const PORTFOLIO_POLL_MAX_REQUESTS = 30;
 
 export default function ProgramReviewTool() {
   const loaderData = useLoaderData() as { user: IAuthUser };
@@ -100,13 +100,13 @@ export default function ProgramReviewTool() {
   }) as IProfile;
 
   const { data: portfoliosResponse, isLoading } = useGetPortfoliosQuery(
-    loaderData.user.email
+    loaderData.user.username
   );
 
   // Load initial user portfolios and program review state data.
   React.useEffect(() => {
     if (isLoading) {
-      dispatch(loadProgramReviewState(loaderData.user.email));
+      dispatch(loadProgramReviewState(loaderData.user.username));
     }
   }, [isLoading, loaderData, dispatch]);
 
