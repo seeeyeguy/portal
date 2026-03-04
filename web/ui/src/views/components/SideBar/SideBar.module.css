@@ -301,20 +301,12 @@
 }
 
 @media screen and (min-width: 0px) {
-  .sibling-margin {
-    margin-left: initial;
-  }
-
   .side-bar {
     display: none;
   }
 }
 
 @media screen and (min-width: 640px) {
-  .sibling-margin {
-    margin-left: var(--side-bar-rail-width);
-  }
-
   .side-bar {
     display: initial;
     height: calc(100% - var(--nav-bar-height));

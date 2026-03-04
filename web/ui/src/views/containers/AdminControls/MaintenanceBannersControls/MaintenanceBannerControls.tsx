@@ -88,10 +88,9 @@ export default function MaintenanceBannerControls() {
     MAINTENANCE_BANNERS_CONTENT_KEY
   );
   const maintenanceBanners = resp?.data as IContent | undefined;
-  const bannerData = maintenanceBanners?.content as unknown as (Record<
-    string,
-    MaintenanceBannerFormData
-  > | undefined);
+  const bannerData = maintenanceBanners?.content as unknown as
+    | Record<string, MaintenanceBannerFormData>
+    | undefined;
 
   const [selectedMaintenanceBanner, setSelectedMaintenanceBanner] =
     React.useState<MaintenanceBannerFormData | null>(null);
@@ -136,9 +135,12 @@ export default function MaintenanceBannerControls() {
         if (route.children) {
           return [
             ...acc,
-            ...route.children.map((child) =>
-              !child.index ? `${route.path}/${child.path}` : route.path
-            ),
+            ...route.children.reduce((acc, child) => {
+              if (child.index) {
+                return acc;
+              }
+              return [...acc, `${route.path}/${child.path}`];
+            }, [] as string[]),
           ];
         }
         return [...acc, route.path];
@@ -169,9 +171,12 @@ export default function MaintenanceBannerControls() {
         if (route.children) {
           return [
             ...acc,
-            ...route.children.map((child) =>
-              !child.index ? `${route.path}/${child.path}` : route.path
-            ),
+            ...route.children.reduce((acc, child) => {
+              if (child.index) {
+                return acc;
+              }
+              return [...acc, `${route.path}/${child.path}`];
+            }, [] as string[]),
           ];
         }
         return [...acc, route.path];
@@ -213,9 +218,12 @@ export default function MaintenanceBannerControls() {
         if (route.children) {
           return [
             ...acc,
-            ...route.children.map((child) =>
-              !child.index ? `${route.path}/${child.path}` : route.path
-            ),
+            ...route.children.reduce((acc, child) => {
+              if (child.index) {
+                return acc;
+              }
+              return [...acc, `${route.path}/${child.path}`];
+            }, [] as string[]),
           ];
         }
         return [...acc, route.path];
@@ -250,13 +258,12 @@ export default function MaintenanceBannerControls() {
             ],
           },
           level: {
-            ...(s?.properties?.level as object ?? {}),
+            ...((s?.properties?.level as object) ?? {}),
             oneOf: [
               { const: null, title: "Select Clone" },
-              /* eslint-disable @typescript-eslint/no-explicit-any */
-              ...(((s?.properties?.level as any)?.oneOf) ?? [])
-            ]
-          }
+              ...((s?.properties?.level as Record<string, object[]>)?.oneOf ?? []),
+            ],
+          },
         },
       }));
     });
@@ -310,16 +317,10 @@ export default function MaintenanceBannerControls() {
         setNewFormKey(Date.now());
       }
     }
-  }, [
-    bannerData,
-    addContent,
-    setShowAddModal,
-    setNewFormKey,
-    updateContent,
-  ]);
+  }, [bannerData, addContent, setShowAddModal, setNewFormKey, updateContent]);
 
   const handleClone = React.useCallback(async () => {
-    cloneFormRef.current?.setState(s => ({ ...s, formData: cloneFormData }));
+    cloneFormRef.current?.setState((s) => ({ ...s, formData: cloneFormData }));
     if (cloneFormRef.current && cloneFormRef.current.validateForm()) {
       const formSubmission: MaintenanceBannerFormData = {
         ...cloneFormRef.current.state.formData,
@@ -343,29 +344,21 @@ export default function MaintenanceBannerControls() {
         key: MAINTENANCE_BANNERS_CONTENT_KEY,
         body: { content: body.content },
       })
-      .unwrap()
-      .then(() => toast.success("Maintenance Banner Created."))
-      .catch((error) => toast.error(error.data));
-      
+        .unwrap()
+        .then(() => toast.success("Maintenance Banner Created."))
+        .catch((error) => toast.error(error.data));
+
       // Reset form on success.
       setShowCloneModal(false);
       setCloneFormKey(Date.now());
     }
-  }, [
-    bannerData,
-    cloneFormData,
-    updateContent,
-    setShowCloneModal,
-  ]);
+  }, [bannerData, cloneFormData, updateContent, setShowCloneModal]);
 
   const handleCloneFormChange = React.useCallback(
     ({ formData }: { formData: MaintenanceBannerFormData }) => {
       setCloneFormData(formData);
       if (!lodash.isEmpty(formData?.clone)) {
-        if (
-          maintenanceBanners &&
-          !lodash.isEmpty(bannerData)
-        ) {
+        if (maintenanceBanners && !lodash.isEmpty(bannerData)) {
           const bannerKeyToClone = formData.clone as string;
           const bannerToClone = bannerData[bannerKeyToClone];
           if (bannerToClone) {
@@ -607,7 +600,11 @@ export default function MaintenanceBannerControls() {
           }}
           showErrorList={false}
           noHtml5Validate={true}
-          onChange={(event) => handleCloneFormChange(event as (typeof event & { formData: MaintenanceBannerFormData }))}
+          onChange={(event) =>
+            handleCloneFormChange(
+              event as typeof event & { formData: MaintenanceBannerFormData }
+            )
+          }
         />
       </ConfirmModal>
       <ConfirmModal

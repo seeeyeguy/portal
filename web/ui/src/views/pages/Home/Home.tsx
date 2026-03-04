@@ -4,8 +4,10 @@ import { useLoaderData } from "react-router";
 import FAQModal from "views/components/FAQModal/FAQModal";
 import IntroModal from "views/components/IntroModal/IntroModal";
 import NavBar from "views/components/NavBar/NavBar";
+import PageContent from "views/components/PageContent/PageContent";
 import Controls from "views/containers/Controls/Controls";
 import Favorites from "views/containers/Favorites/Favorites";
+import MaintenanceBanner from "views/containers/MaintenanceBanner/MaintenanceBanner";
 import Results from "views/containers/Results/Results";
 
 import { loadDirectoryResourceSearchState } from "state/actions/ResourceSearchActions";
@@ -43,7 +45,7 @@ export default function Home() {
       firstName: loaderData.user.firstName,
       lastName: loaderData.user.lastName,
       email: loaderData.user.email,
-      username: loaderData.user.username
+      username: loaderData.user.username,
     },
     jobTitle: "UNKNOWN",
     citizenship: "UNKNOWN",
@@ -74,34 +76,73 @@ export default function Home() {
     dispatch(loadDirectoryResourceSearchState(loaderData.user.username));
   }, [loaderData, dispatch]);
 
+  React.useLayoutEffect(() => {
+    const computePaddingBottom = () => {
+      const banner = document.querySelector(
+        'div[class*="maintenance-banner-level"]'
+      );
+      const content = document.getElementById("page-content");
+
+      if (banner && content) {
+        content.style.paddingBottom = "3rem";
+      }
+      else if (content) {
+        content.style.paddingBottom = "initial";
+      }
+    };
+
+    const targetNode = document.getElementById("root");
+
+    if (!targetNode) {
+      return;
+    }
+
+    const callback = (mutationsList: MutationRecord[]) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList" || mutation.type === "attributes") {
+          computePaddingBottom();
+        }
+      }
+    };
+
+    const observer = new MutationObserver(callback);
+    const config = { childList: true, subtree: true, attributes: true };
+    observer.observe(targetNode, config);
+
+    return () => observer.disconnect();
+  }, []);
+
   if (!loaderData.user.email) {
     return <div>:x: 404</div>;
   }
 
   return (
-    <div
-      id="app-container"
-      onClick={() => {
-        closeNavBarProfile();
-      }}
-      aria-description="container for main application"
-    >
-      <FAQModal />
-      <IntroModal />
-      <NavBar
-        profile={profile}
-        navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
-      />
-      <div id="page-content">
-        <Controls />
-        <Favorites favorites={favorites} profile={profile} />
-        <Results
-          favorites={favorites}
-          filterData={filterData}
-          filterTags={filterTags}
+    <>
+      <MaintenanceBanner page="/" />
+      <div
+        id="app-container"
+        onClick={() => {
+          closeNavBarProfile();
+        }}
+        aria-description="container for main application"
+      >
+        <FAQModal />
+        <IntroModal />
+        <NavBar
           profile={profile}
+          navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
         />
+        <PageContent>
+          <Controls />
+          <Favorites favorites={favorites} profile={profile} />
+          <Results
+            favorites={favorites}
+            filterData={filterData}
+            filterTags={filterTags}
+            profile={profile}
+          />
+        </PageContent>
       </div>
-    </div>
+    </>
   );
 }

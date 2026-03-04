@@ -6,7 +6,9 @@ import lodash from "lodash";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
 import { FAQ_CONTEXTS } from "views/components/FAQModal/FAQModalProps";
+import MaintenanceBanner from "views/containers/MaintenanceBanner/MaintenanceBanner";
 import NavBar from "views/components/NavBar/NavBar";
+import PageContent from "views/components/PageContent/PageContent";
 import PortfolioMenu from "views/containers/PortfolioMenu/PortfolioMenu";
 import ProgramList from "views/containers/ProgramList/ProgramList";
 
@@ -276,54 +278,57 @@ export default function ProgramReviewTool() {
         navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
       />
 
-      <div id="page-content">
+      <PageContent>
         <header className={styles["program-review-header"]}>
           <h1>Program Review Tool</h1>
         </header>
-        <div
-          className={styles["program-review-container"]}
-          aria-description="container for program review content"
-        >
-          {isLoading ? (
-            <div
-              className={styles["program-review-loading"]}
-              aria-description="container to display when loading data"
-            >
-              <MoonLoader />
-            </div>
-          ) : (
-            <ProgramList
-              portfolio={currentPortfolio}
-              setPortfolioPrograms={(updatedPrograms) =>
+        <MaintenanceBanner page="/prt" />
+          <div
+            className={styles["program-review-container"]}
+            aria-description="container for program review content"
+          >
+            {isLoading ? (
+              <div
+                className={styles["program-review-loading"]}
+                aria-description="container to display when loading data"
+              >
+                <MoonLoader />
+              </div>
+            ) : (
+              <ProgramList
+                portfolio={currentPortfolio}
+                setPortfolioPrograms={(updatedPrograms) =>
+                  dispatch(
+                    updateCurrentPortfolioState({
+                      ...currentPortfolio,
+                      programs: { ...updatedPrograms },
+                    })
+                  )
+                }
+              />
+            )}
+
+            <PortfolioMenu
+              portfolios={portfolios}
+              selectedPortfolio={currentPortfolio}
+              loading={isLoading}
+              progressMarkers={progressMarkers}
+              currentMarker={
+                lodash.isNumber(currentMarker) ? currentMarker : null
+              }
+              deletePortfolio={(id) => handleDeletePortfolio(id)}
+              generatePortfolio={() => handleGeneratePortfolio()}
+              savePortfolio={(name: string) =>
+                handleSavePortfolio(name, currentPortfolio)
+              }
+              setPortfolio={(id) =>
                 dispatch(
-                  updateCurrentPortfolioState({
-                    ...currentPortfolio,
-                    programs: { ...updatedPrograms },
-                  })
+                  updateCurrentPortfolioState(id ? portfolios[id] : null)
                 )
               }
             />
-          )}
-
-          <PortfolioMenu
-            portfolios={portfolios}
-            selectedPortfolio={currentPortfolio}
-            loading={isLoading}
-            progressMarkers={progressMarkers}
-            currentMarker={
-              lodash.isNumber(currentMarker) ? currentMarker : null
-            }
-            deletePortfolio={(id) => handleDeletePortfolio(id)}
-            generatePortfolio={() => handleGeneratePortfolio()}
-            savePortfolio={(name: string) =>
-              handleSavePortfolio(name, currentPortfolio)
-            }
-            setPortfolio={(id) =>
-              dispatch(updateCurrentPortfolioState(id ? portfolios[id] : null))
-            }
-          />
-        </div>
-      </div>
+          </div>
+      </PageContent>
     </div>
   );
 }

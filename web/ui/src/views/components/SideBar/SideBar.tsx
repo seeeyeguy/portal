@@ -30,15 +30,11 @@ export interface ISideBarProps {
 
   /** Menu values for the side bar. */
   menuLinks: IMenuLink[];
-
-  /** ID of sibling container to add margin to sidebar. */
-  siblingId?: string;
 }
 
 export default function SideBar({
   header,
   menuLinks,
-  siblingId,
 }: ISideBarProps) {
   const location = useLocation();
 
@@ -47,19 +43,51 @@ export default function SideBar({
   const [animationDone, setAnimationDone] = React.useState<boolean>(false);
   const [closed, setClosed] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    // Add the sibling-margin class to the sibling container.
-    const pageContent = document.getElementById(siblingId ?? "");
-    if (pageContent) {
-      pageContent.classList.add(styles["sibling-margin"]);
-    }
-    // Clean up on component unmount.
-    return () => {
-      if (pageContent) {
-        pageContent.classList.remove(styles["sibling-margin"]);
+  React.useLayoutEffect(() => {
+    const recomputeNavBarHeightProperty = () => {
+      // Query the visible navbar from the DOM.
+      const navBarElements = document.querySelectorAll(
+        'nav[class*="search-bar-container"]'
+      );
+      const visibleNavBarElement = Array.from(navBarElements).filter(
+        (element) => element.clientHeight > 0
+      )?.[0];
+
+      if (visibleNavBarElement) {
+        // Get the computed position of the bottom of the
+        // navbar relative to the viewport.
+        const computedHeight = Math.ceil(
+          visibleNavBarElement.getBoundingClientRect().bottom
+        );
+
+        // Set the navbar height dynamically.
+        const root = document.documentElement;
+        // --nav-bar-height used to help position the sidebar.
+        root.style.setProperty("--nav-bar-height", `${computedHeight}px`);
       }
     };
-  }, [siblingId, location.pathname]);
+
+    const targetNode = document.getElementById("root");
+
+    if (!targetNode) {
+      return;
+    }
+
+    const callback = (mutationsList: MutationRecord[]) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList" || mutation.type === "attributes") {
+          recomputeNavBarHeightProperty();
+        }
+      }
+    };
+
+    const observer = new MutationObserver(callback);
+    const config = { childList: true, subtree: true, attributes: true };
+    observer.observe(targetNode, config);
+
+    return () => observer.disconnect();
+
+  }, []);
 
   const handleSubHeaderClick = React.useCallback(
     (index: number) => {
@@ -246,10 +274,7 @@ export default function SideBar({
                     className={`${styles["menu-content"]} ${activeMenu === index ? styles["expanded"] : ""} ${animationDone ? styles["scrollable"] : ""}`}
                     aria-description="container for menu content"
                   >
-                    <Menu
-                      className={styles["menu-items"]}
-                      model={items}
-                    />
+                    <Menu className={styles["menu-items"]} model={items} />
                     {mainLink.customContent && (
                       <>
                         <hr />

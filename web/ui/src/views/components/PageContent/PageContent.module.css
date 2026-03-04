@@ -1,0 +1,15 @@
+:root {
+  --page-content-margin-left: 70px;
+}
+
+@media screen and (min-width: 0px) {
+  .page-content-margin {
+    margin-left: initial;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  .page-content-margin {
+    margin-left: var(--page-content-margin-left);
+  }
+}

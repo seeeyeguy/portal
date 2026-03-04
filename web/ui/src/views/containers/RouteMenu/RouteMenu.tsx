@@ -397,7 +397,6 @@ export default function RouteMenu({ children }: RouteMenuProps) {
     <>
       <SideBar
         header="Navigation"
-        siblingId="page-content"
         menuLinks={processMenuItems(MENU_LINKS) as IMenuLink[]}
       />
       {children}
