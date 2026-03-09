@@ -1,0 +1,45 @@
+.maintenance-banner-content {
+  align-items: center;
+  color: var(--color-white);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.maintenance-banner-content div:first-child {
+  flex-grow: 2;
+}
+
+.maintenance-banner-content div:last-child {
+  margin: auto 3%;
+}
+
+.maintenance-banner-content div:last-child button {
+  background: transparent;
+  border: none;
+  color: var(--color-light-gray);
+  cursor: pointer;
+  font-size: x-large;
+  font-weight: 500;
+}
+
+.maintenance-banner-level-CRITICAL {
+  background: var(--color-vibrant-red);
+}
+
+.maintenance-banner-level-INFO {
+  background: var(--color-air-3);
+}
+
+.maintenance-banner-level-SUCCESS {
+  background: var(--color-land-3);
+}
+
+.maintenance-banner-level-WARNING {
+  background: var(--color-horizon-3);
+}
+
+.maintenance-banner-page-content {
+  background: var(--color-light-gray);
+}

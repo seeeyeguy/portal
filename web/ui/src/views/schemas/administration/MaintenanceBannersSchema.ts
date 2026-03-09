@@ -8,7 +8,8 @@ export interface MaintenanceBannerFormData {
   subtext: string;
   level: string;
   enabled: boolean;
-  disablePage: boolean;
+  disableFunctionality: boolean;
+  dismissable: boolean;
 }
 
 export const maintenanceBannerSchema: RJSFSchema = {
@@ -52,13 +53,18 @@ export const maintenanceBannerSchema: RJSFSchema = {
       title: "Enabled",
       default: false,
     },
-    disablePage: {
+    disableFunctionality: {
       type: "boolean",
-      title: "Disable Page",
+      title: "Disable Functionality",
+      default: false,
+    },
+    dismissable: {
+      type: "boolean",
+      title: "Dismissable",
       default: false,
     },
   },
-  required: ["page", "level", "enabled", "disablePage"],
+  required: ["page", "level", "enabled", "disableFunctionality", "dismissable"],
 };
 
 export const maintenanceBannerUiSchema: UiSchema = {
@@ -75,7 +81,29 @@ export const maintenanceBannerUiSchema: UiSchema = {
         {
           "ui:col": {
             sm: 6,
-            children: ["header", "body", "subtext", "enabled", "disablePage"],
+            children: [
+              "header",
+              "body",
+              "subtext",
+              {
+                "ui:row": {
+                  children: [
+                    {
+                      "ui:col": {
+                        sm: 6,
+                        children: ["enabled", "dismissable"],
+                      },
+                    },
+                    {
+                      "ui:col": {
+                        sm: 6,
+                        children: ["disableFunctionality"],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
           },
         },
       ],
@@ -116,10 +144,16 @@ export const maintenanceBannerUiSchema: UiSchema = {
       label: "Enabled",
     },
   },
-  disablePage: {
+  disableFunctionality: {
     "ui:widget": "checkbox",
     "ui:options": {
-      label: "Disable Page",
+      label: "Disable Functionality",
+    },
+  },
+  dismissable: {
+    "ui:widget": "checkbox",
+    "ui:options": {
+      label: "Dismissable",
     },
   },
   "ui:submitButtonOptions": {

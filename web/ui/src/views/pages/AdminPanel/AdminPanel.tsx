@@ -3,6 +3,7 @@ import { Navigate, useLoaderData } from "react-router";
 
 import FAQModal from "views/components/FAQModal/FAQModal";
 import NavBar from "views/components/NavBar/NavBar";
+import PageContent from "views/components/PageContent/PageContent";
 
 import { IProfile } from "definitions/portal/users/Profile.types";
 import { IAuthUser } from "definitions/Sso.types";
@@ -82,13 +83,12 @@ export default function AdminPanel({
         hideSearchBar={true}
         navBarRefs={[smNavBarRef, mdNavBarRef, lgNavBarRef]}
       />
-      <div
-        id="page-content"
+      <PageContent
         className={`${styles["admin-content"]}`}
-        aria-description="admin page content"
+        ariaDescription="admin page content"
       >
         {children}
-      </div>
+      </PageContent>
     </div>
   );
 }
