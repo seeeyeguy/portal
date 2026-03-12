@@ -37,10 +37,10 @@ interface IConfirmModalProps {
   alternativeClassName?: string;
 
   /** Callback to invoke when the `Accept` button is clicked. */
-  onAccept: () => Promise<void> | void;
+  onAccept?: () => Promise<void> | void;
 
   /** Callback to invoke when the `Reject` button is clicked. */
-  onReject: () => Promise<void> | void;
+  onReject?: () => Promise<void> | void; 
 
   /** Callback to invoke when the dialog box is hidden. */
   onHide?: (() => void) | null;
@@ -54,8 +54,8 @@ export default function ConfirmModal({
   title = "Continue?",
   children,
   className = "",
-  acceptLabel = <>Confirm</>,
-  rejectLabel = <>Cancel</>,
+  acceptLabel,
+  rejectLabel,
   alternativeLabel,
   acceptClassName = "",
   rejectClassName = "",
@@ -63,14 +63,18 @@ export default function ConfirmModal({
   onAccept,
   onReject,
   onHide = null,
-  onAlternative = () => {},
+  onAlternative,
 }: IConfirmModalProps) {
   const handleAlternative = React.useCallback(async () => {
-    await onAlternative();
+    if (onAlternative) {
+      await onAlternative();
+    }
   }, [onAlternative]);
 
   const handleAccept = React.useCallback(async () => {
-    await onAccept();
+    if (onAccept) {
+      await onAccept();
+    }
   }, [onAccept]);
 
   const handleClickOutside = (
@@ -82,12 +86,20 @@ export default function ConfirmModal({
   };
 
   const handleHide = React.useCallback(async () => {
-    onHide ? onHide() : await onReject();
+    if (onHide) {
+      onHide();
+    } else if (onReject) {
+      await onReject();
+    }
   }, [onHide, onReject]);
 
   const handleReject = React.useCallback(async () => {
-    await onReject();
+    if (onReject) {
+      await onReject();
+    }
   }, [onReject]);
+
+  const showFooter = acceptLabel || rejectLabel || alternativeLabel;
 
   return (
     <dialog
@@ -107,31 +119,37 @@ export default function ConfirmModal({
           <h3>{title}</h3>
         </header>
         <main>{children}</main>
-        <footer>
-          <button
-            type="button"
-            className={`${styles["cancel-button"]} ${rejectClassName}`}
-            onClick={handleReject}
-          >
-            {rejectLabel}
-          </button>
-          {alternativeLabel && (
-            <button
-              type="button"
-              className={`${styles["alternative-button"]} ${alternativeClassName}`}
-              onClick={handleAlternative}
-            >
-              {alternativeLabel}
-            </button>
-          )}
-          <button
-            type="button"
-            className={`${styles["confirm-button"]} ${acceptClassName}`}
-            onClick={handleAccept}
-          >
-            {acceptLabel}
-          </button>
-        </footer>
+        {showFooter && (
+          <footer>
+            {rejectLabel && (
+              <button
+                type="button"
+                className={`${styles["cancel-button"]} ${rejectClassName}`}
+                onClick={handleReject}
+              >
+                {rejectLabel}
+              </button>
+            )}
+            {alternativeLabel && (
+              <button
+                type="button"
+                className={`${styles["alternative-button"]} ${alternativeClassName}`}
+                onClick={handleAlternative}
+              >
+                {alternativeLabel}
+              </button>
+            )}
+            {acceptLabel && (
+              <button
+                type="button"
+                className={`${styles["confirm-button"]} ${acceptClassName}`}
+                onClick={handleAccept}
+              >
+                {acceptLabel}
+              </button>
+            )}
+          </footer>
+        )}
       </section>
     </dialog>
   );

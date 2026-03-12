@@ -327,6 +327,12 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           data: { path: "/admin" },
         },
         {
+          label: "Requests",
+          command: () => navigate("/admin/requests"),
+          icon: <FontAwesomeIcon icon={faFileLines} />,
+          data: { path: "/admin/requests" },
+        },
+        {
           label: "Employee Levels",
           command: () => navigate("/admin/employee-levels"),
           icon: <FontAwesomeIcon icon={faSitemap} />,

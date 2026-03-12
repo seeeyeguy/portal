@@ -9,6 +9,7 @@ import {
   AdminFunctions,
   AdminMaintenanceBanners,
   AdminReportingPeriod,
+  AdminRequests,
   AdminResources,
   AdminSubFunctions,
   AdminTags,
@@ -188,8 +189,25 @@ export const ROUTES = [
           return { user };
         },
       },
+      {
+        path: "requests",
+        element: (
+          <RouteMenu>
+            <AdminRequests />
+          </RouteMenu>
+        ),
+
+        loader: async () => {
+          const user = (await login()) as Response | IAuthUser;
+          if ("status" in user && user.status === REDIRECT) {
+            return user;
+          }
+          return { user };
+        },
+      },
     ],
   },
+
   {
     path: "/prt",
     element: (
