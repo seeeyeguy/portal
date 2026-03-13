@@ -211,7 +211,8 @@
           "enum": [
             "single",
             "multi",
-            "both"
+            "both",
+            "omit"
           ]
         }
       }
