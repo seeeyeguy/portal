@@ -12,6 +12,7 @@ x-logging-settings: &logging-settings
 services:
     api:
         image: ${APP_NAME}-development-api:${DOCKER_COMPOSE_BUILD_TAG}
+
         build:
             context: ${DOCKER_COMPOSE_PROJECT_ROOT}/api/
             dockerfile: Dockerfile
@@ -25,6 +26,7 @@ services:
             tags:
                 - ${APP_NAME}-development-api:${DOCKER_COMPOSE_BUILD_TAG}
         restart: unless-stopped
+
         container_name: ${APP_NAME}-api-${USER}
         depends_on:
             - database
@@ -98,9 +100,11 @@ services:
             AZURE_TOKEN_CACHE_KEY_EXPIRES_ON: ${AZURE_TOKEN_CACHE_KEY_EXPIRES_ON}
             AZURE_AUTH_CACHE_TIMEOUT: ${AZURE_AUTH_CACHE_TIMEOUT}
             PBI_SLIDE_CONFIG_PATH: ${PBI_SLIDE_CONFIG_PATH}
+            ENABLE_DEBUGPY: ${ENABLE_DEBUGPY:-false}
         ports:
             - ${SERVER_PORT}:8080
             - ${NOTEBOOK_PORT}:8888
+            - ${API_DEBUG_PORT}:${API_DEBUG_PORT} 
         volumes:
             # Mount local development files into container.
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src:/apps/${APP_NAME}/
