@@ -10,7 +10,7 @@ CRON_SET_ENV_FOR_SYSTEM_COMMAND="printenv | grep -Ev 'LANG=' | sudo tee -a /etc/
 
 echo "Waiting for postgres..."
 
-if [[ -n $BUILD  && $BUILD == $PRODUCTION ]]; then
+if [[ -n $BUILD  && ($BUILD == $PRODUCTION || $BUILD == $STAGING) ]]; then
     DATABASE_HOST=$POSTGRES_HOST
     DATABASE_PORT=$POSTGRES_PORT
     CRON_START_COMMAND="service cron start"
