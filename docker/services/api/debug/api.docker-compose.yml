@@ -1,0 +1,39 @@
+# Docker Compose override for debugging with hot reload
+# Usage: docker compose -f docker-compose.yml -f docker-compose.debug.yml up
+
+services:
+  api:
+    environment:
+      # Enable debugpy but don't wait for client (allows hot reload)
+      ENABLE_DEBUGPY: "true"
+      DEBUGPY_WAIT_FOR_CLIENT: "false"
+    command: >
+      python -m debugpy
+      --listen 0.0.0.0:${API_DEBUG_PORT}
+      manage.py runserver 0.0.0.0:8080
+    ports:
+      - "${API_DEBUG_PORT}:${API_DEBUG_PORT}"  # Debug port
+      - "8080:8080"  # Django server
+    volumes:
+      # Mount source for hot reload
+      - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src:/apps/${APP_NAME}
+  rqscheduler:
+    environment:
+      ENABLE_DEBUGPY: "true"
+      DEBUGPY_WAIT_FOR_CLIENT: "false"
+    command: >
+      python -m debugpy
+      --listen 0.0.0.0:${RQSCHEDULER_DEBUG_PORT}
+      manage.py rqscheduler
+    ports:
+      - "${RQSCHEDULER_DEBUG_PORT}:${RQSCHEDULER_DEBUG_PORT}"
+  rqworker1:
+    environment:
+      ENABLE_DEBUGPY: "true"
+      DEBUGPY_WAIT_FOR_CLIENT: "false"
+    command: >
+      python -m debugpy
+      --listen 0.0.0.0:${RQWORKER1_DEBUG_PORT}
+      manage.py rqworker-pool default --num-workers ${RQWORKER1_POOL_WORKER_NUM}
+    ports:
+      - "${RQWORKER1_DEBUG_PORT}:${RQWORKER1_DEBUG_PORT}"

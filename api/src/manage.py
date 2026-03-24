@@ -7,6 +7,11 @@ import sys
 def main() -> None:
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "manager.settings")
+
+    from manager.debug import setup_debugpy  # pylint: disable=import-outside-toplevel
+
+    setup_debugpy()
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -16,7 +21,6 @@ def main() -> None:
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
 
 if __name__ == "__main__":
     main()
