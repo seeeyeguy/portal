@@ -333,6 +333,27 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           data: { path: "/admin/requests" },
         },
         {
+          label: "Request Approvals",
+          command: () => navigate("/admin/request-approvals"),
+          icon: (
+            <IconBadge
+              icon={<FontAwesomeIcon icon={faCheckToSlot} />}
+              badgeValue={
+                superuserNotifications + businessProcessExpertNotifications > 0
+                  ? (
+                      superuserNotifications +
+                      businessProcessExpertNotifications
+                    ).toString()
+                  : null
+              }
+              badgeClassName={
+                superuserNotifications ? styles["warning-badge"] : ""
+              }
+            />
+          ),
+          data: { path: "/admin/request-approvals" },
+        },
+        {
           label: "Employee Levels",
           command: () => navigate("/admin/employee-levels"),
           icon: <FontAwesomeIcon icon={faSitemap} />,
@@ -355,27 +376,6 @@ export default function RouteMenu({ children }: RouteMenuProps) {
           command: () => navigate("/admin/tags"),
           icon: <FontAwesomeIcon icon={faTag} />,
           data: { path: "/admin/tags" },
-        },
-        {
-          label: "Approvals",
-          command: () => navigate("/admin/approvals"),
-          icon: (
-            <IconBadge
-              icon={<FontAwesomeIcon icon={faCheckToSlot} />}
-              badgeValue={
-                superuserNotifications + businessProcessExpertNotifications > 0
-                  ? (
-                      superuserNotifications +
-                      businessProcessExpertNotifications
-                    ).toString()
-                  : null
-              }
-              badgeClassName={
-                superuserNotifications ? styles["warning-badge"] : ""
-              }
-            />
-          ),
-          data: { path: "/admin/approvals" },
         },
         {
           label: "Accesses",

@@ -5,6 +5,7 @@ import AdminFunctions from "views/pages/AdminPanel/AdminFunctions";
 import AdminMaintenanceBanners from "views/pages/AdminPanel/AdminMaintenanceBanners";
 import AdminReportingPeriod from "views/pages/AdminPanel/AdminReportingPeriod";
 import AdminRequests from "views/pages/AdminPanel/AdminRequests";
+import AdminRequestApprovals from "views/pages/AdminPanel/AdminRequestApprovals";
 import AdminResources from "views/pages/AdminPanel/AdminResources";
 import AdminSubFunctions from "views/pages/AdminPanel/AdminSubFunctions";
 import AdminTags from "views/pages/AdminPanel/AdminTags";
@@ -17,6 +18,7 @@ export {
   AdminMaintenanceBanners,
   AdminReportingPeriod,
   AdminRequests,
+  AdminRequestApprovals,
   AdminResources,
   AdminSubFunctions,
   AdminTags,
