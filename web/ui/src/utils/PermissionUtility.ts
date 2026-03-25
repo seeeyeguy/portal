@@ -15,12 +15,8 @@ export const RESTRICTED_ADMIN_PAGES = {
     "/admin/reporting-period",
     "/admin/maintenance-banners",
   ]),
-  BUSINESS_PROCESS_EXPERT: new Set(["/admin/approvals"]),
-  DATA_STEWARD: new Set([
-    "/admin",
-    "/admin/requests", 
-    "/admin/tags",
-  ]),
+  BUSINESS_PROCESS_EXPERT: new Set(["/admin/request-approvals"]),
+  DATA_STEWARD: new Set(["/admin", "/admin/requests", "/admin/tags"]),
 };
 
 /**

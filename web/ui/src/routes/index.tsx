@@ -4,12 +4,12 @@ import RouteMenu from "views/containers/RouteMenu/RouteMenu";
 
 import {
   AdminAccesses,
-  AdminApprovals,
   AdminEmployeeLevels,
   AdminFunctions,
   AdminMaintenanceBanners,
   AdminReportingPeriod,
   AdminRequests,
+  AdminRequestApprovals,
   AdminResources,
   AdminSubFunctions,
   AdminTags,
@@ -62,22 +62,6 @@ export const ROUTES = [
         element: (
           <RouteMenu>
             <AdminAccesses />
-          </RouteMenu>
-        ),
-
-        loader: async () => {
-          const user = (await login()) as Response | IAuthUser;
-          if ("status" in user && user.status === REDIRECT) {
-            return user;
-          }
-          return { user };
-        },
-      },
-      {
-        path: "approvals",
-        element: (
-          <RouteMenu>
-            <AdminApprovals />
           </RouteMenu>
         ),
 
@@ -196,7 +180,21 @@ export const ROUTES = [
             <AdminRequests />
           </RouteMenu>
         ),
-
+        loader: async () => {
+          const user = (await login()) as Response | IAuthUser;
+          if ("status" in user && user.status === REDIRECT) {
+            return user;
+          }
+          return { user };
+        },
+      },
+      {
+        path: "request-approvals",
+        element: (
+          <RouteMenu>
+            <AdminRequestApprovals />
+          </RouteMenu>
+        ),
         loader: async () => {
           const user = (await login()) as Response | IAuthUser;
           if ("status" in user && user.status === REDIRECT) {
@@ -207,7 +205,6 @@ export const ROUTES = [
       },
     ],
   },
-
   {
     path: "/prt",
     element: (
@@ -242,7 +239,7 @@ export const ROUTES = [
     path: "*",
     loader: () => redirect("/"),
   },
-]
+];
 
 const router = createBrowserRouter(ROUTES);
 
