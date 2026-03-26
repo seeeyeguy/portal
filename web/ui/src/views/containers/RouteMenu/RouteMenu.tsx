@@ -78,6 +78,7 @@ export default function RouteMenu({ children }: RouteMenuProps) {
   const { data: programs } = useGetProgramsQuery({
     programMember: loaderData.user.email,
     tiers: [1, 2],
+    segments: [1, 5],
   });
 
   const hasPrograms = React.useMemo(

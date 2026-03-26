@@ -88,6 +88,7 @@ class Program(View):
             pa_numbers: List[str] = req.validated_data.get("pa_numbers")
             program_member: str = req.validated_data.get("program_member")
             tiers: List[int] = req.validated_data.get("tiers")
+            segments: List[int] = req.validated_data.get("segments")
             page: int = req.validated_data.get("page")
             limit: int = req.validated_data.get("limit")
             active_only: bool = not (
@@ -108,6 +109,11 @@ class Program(View):
             request_params = (
                 f"{request_params}{'&' if request_params else '?'}tiers={tiers}"
                 if tiers
+                else request_params
+            )
+            request_params = (
+                f"{request_params}{'&' if request_params else '?'}segments={segments}"
+                if segments
                 else request_params
             )
             request_params = (
@@ -133,6 +139,7 @@ class Program(View):
                 program_ids=ids,
                 pa_numbers=pa_numbers,
                 tiers=tiers,
+                segments=segments,
                 active_only=active_only,
                 program_member=program_member,
                 page=page,

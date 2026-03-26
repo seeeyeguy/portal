@@ -30998,5 +30998,67 @@
       "created": "2024-12-05T07:02:58-04:00",
       "modified": "2024-09-20T20:03:59-04:00"
     }
+  },
+  {
+    "model": "program_review_tool.program",
+    "pk": 1001,
+    "fields": {
+      "pa_number": "TE4B",
+      "name": "Foxtrot Lima 854",
+      "segment": 5,
+      "sector": "Air Systems",
+      "division": "North Command",
+      "tier": 3,
+      "contract_type": "FFP",
+      "contract_number": "CT435182",
+      "contract_value": 851123960,
+      "contract_start_date": "2025-01-01",
+      "contract_end_date": "2025-12-01",
+      "actual_cost_work_performed_cumulative": 70.36,
+      "budgeted_cost_work_performed_cumulative": 20.55,
+      "budgeted_cost_work_scheduled_cumulative": 59.46,
+      "cost_performance_index_cumulative": 0.85,
+      "schedule_performance_index_cumulative": 1.77,
+      "budget_at_complete": 41.97,
+      "estimate_at_complete": 84.95,
+      "estimate_to_complete": 36.02,
+      "management_reserve": 47.9,
+      "weighted_risks_and_opportunities": 30.27,
+      "active_status": true,
+      "is_manual_metrics_entry": false,
+      "created": "2024-12-05T07:02:58-04:00",
+      "modified": "2024-09-20T20:03:59-04:00"
+    }
+  },
+  {
+    "model": "program_review_tool.program",
+    "pk": 1002,
+    "fields": {
+      "pa_number": "KL89",
+      "name": "Echo Terra Survey 854",
+      "segment": 5,
+      "sector": "Air Systems",
+      "division": "North Command",
+      "tier": 3,
+      "contract_type": "FFP",
+      "contract_number": "CL434182",
+      "contract_value": 851123960,
+      "contract_start_date": "2025-01-01",
+      "contract_end_date": "2025-12-01",
+      "actual_cost_work_performed_cumulative": 70.36,
+      "budgeted_cost_work_performed_cumulative": 20.55,
+      "budgeted_cost_work_scheduled_cumulative": 59.46,
+      "cost_performance_index_cumulative": 0.85,
+      "schedule_performance_index_cumulative": 1.77,
+      "budget_at_complete": 41.97,
+      "estimate_at_complete": 84.95,
+      "estimate_to_complete": 36.02,
+      "management_reserve": 47.9,
+      "weighted_risks_and_opportunities": 30.27,
+      "active_status": true,
+      "is_manual_metrics_entry": false,
+      "created": "2024-12-05T07:02:58-04:00",
+      "modified": "2024-09-20T20:03:59-04:00"
+    }
   }
 ]
