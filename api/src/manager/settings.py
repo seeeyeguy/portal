@@ -606,6 +606,12 @@ CRONJOBS = [
         "0 */4 * * *",
         "program_review_tool.models.ProgramMember.utils.ingest_program_member_data",
     ),
+    # Description: Send reminder email if needed.
+    # Execution time: Every day at 8:00 AM.
+    (
+        "0 8 * * *",
+        "portal.mail.helpers.ppr_queue_email.check_and_queue_email",
+    ),
 ]
 
 #########################
