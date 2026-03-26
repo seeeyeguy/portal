@@ -1,6 +1,7 @@
 import django_rq
+from typing import List, Tuple
 
-from manager.mail.helpers.base import (
+from portal.mail.helpers.base import (
     create_base_template_context_for_email,
     generate_html_message_for_email,
     send_email,
@@ -10,7 +11,7 @@ from .ppr_email_helpers import days_until_next_month, find_members_programs, is_
 REMINDER_DAYS = {1, 2, 5, 10}
 
 
-def format_message(member, overdue) -> str:
+def format_message(member: str, overdue: List) -> str:
     """
     Generates the reminder email string
 
@@ -46,7 +47,7 @@ def format_message(member, overdue) -> str:
     return message
 
 
-def format_html_message(member, overdue) -> str:
+def format_html_message(member: str, overdue: List) -> str:
     """
     Generates the reminder email html as a string
 
@@ -82,7 +83,7 @@ def format_html_message(member, overdue) -> str:
     return message
 
 
-def check_and_queue_email():
+def check_and_queue_email() -> None:
     """
     Queues a PPR reminder email on set days before the due date, or if overdue.
 
