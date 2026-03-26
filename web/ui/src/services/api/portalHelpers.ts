@@ -49,6 +49,7 @@ type PARAM =
   | "pa_number"
   | "pa_numbers"
   | "role_levels"
+  | "segments"
   | "subfunctions"
   | "stages"
   | "tiers"
@@ -58,6 +59,7 @@ const acceptedParamArrays = new Set([
   "ids",
   "pa_numbers",
   "role_levels",
+  "segments",
   "subfunctions",
   "stages",
   "tiers",
@@ -214,6 +216,19 @@ export const buildQueryResourceByTiersURL = (
   resource: RESOURCE,
   suffix: SUFFIX = null
 ) => buildQueryResourceURL(path, resource, suffix, "tiers");
+
+/**
+ * Build a URL with an optional array of segments for an endpoint given its
+ * application path, resource name, and optional suffix.
+ * @param path The path/prefix denoting the resource's application domain.
+ * @param resource The name of the resource.
+ * @returns A function that accepts an optional array of segments and returns the appropriate URL.
+ */
+export const buildQueryResourceBySegmentsURL = (
+  path: RESOURCE_PATHS,
+  resource: RESOURCE,
+  suffix: SUFFIX = null
+) => buildQueryResourceURL(path, resource, suffix, "segments");
 
 /**
  * Build a URL with an optional user for an endpoint, given its application path, and

@@ -75,6 +75,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=None,
             limit=None,
@@ -117,6 +118,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=None,
             limit=None,
@@ -180,6 +182,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=arguments.FETCH_PROGRAM_PA_NUMBERS,
             tiers=[],
+            segments=[],
             program_member="",
             page=None,
             limit=None,
@@ -202,6 +205,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=arguments.FETCH_PROGRAMS_BY_TIERS_TIERS,
+            segments=[],
             program_member="",
             page=None,
             limit=None,
@@ -233,6 +237,46 @@ class TestFetchProgram(MultiDBTestCase):
                 expected_program,
             )
 
+    @tag("controllers.program.fetch_programs_by_segments")
+    def test_fetch_programs_by_segments(self) -> None:
+        """Success Case: Fetch active `Program` records for
+        the given segments."""
+
+        programs = controllers.Program.fetch_programs(  # type: ignore[attr-defined]
+            program_ids=[],
+            pa_numbers=[],
+            tiers=[],
+            segments=arguments.FETCH_PROGRAMS_BY_SEGMENTS_SEGMENTS,
+            program_member="",
+            page=None,
+            limit=None,
+        )
+
+        self.assertIsInstance(programs, QuerySet[models.Program])
+
+        self.assertEqual(
+            programs.count(), len(arguments.FETCH_PROGRAMS_BY_SEGMENTS_VALID_IDS)
+        )
+
+        for program in programs:
+            self.assertIsInstance(program, models.Program)
+
+            program_id: int = program.id
+
+            self.assertIn(program_id, self.program_fixtures)
+            self.assertIn(program_id, arguments.FETCH_PROGRAMS_BY_SEGMENTS_VALID_IDS)
+
+            serialized_program = ProgramSerializer(program).data
+
+            del serialized_program["created"]
+            del serialized_program["modified"]
+
+            self.assertEqual(
+                serialized_program["segment"],
+                arguments.FETCH_PROGRAMS_BY_SEGMENTS_SEGMENT_NAME
+            )
+
+
     @tag("controllers.program.fetch_programs_by_program_member")
     def test_fetch_programs_by_program_member(self) -> None:
         """Success Case: Fetch active `Program` records for
@@ -242,6 +286,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member=arguments.FETCH_PROGRAMS_BY_PROGRAM_MEMBER_USER_EMAIL,
             page=None,
             limit=None,
@@ -285,6 +330,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member=arguments.FETCH_PROGRAMS_BY_PROGRAM_MEMBER_NO_ACTIVE_PROGRAM_MEMBER_USER_EMAIL,
             page=None,
             limit=None,
@@ -306,6 +352,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=arguments.FETCH_PROGRAMS_BY_TIERS_AND_PROGRAM_MEMBER_TIERS,
+            segments=[],
             program_member=arguments.FETCH_PROGRAMS_BY_PROGRAM_MEMBER_USER_EMAIL,
             page=None,
             limit=None,
@@ -349,6 +396,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=arguments.FETCH_PROGRAM_WITH_PAGE,
             limit=None,
@@ -388,6 +436,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=None,
             limit=arguments.FETCH_PROGRAM_WITH_LIMIT,
@@ -405,6 +454,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=arguments.FETCH_PROGRAM_WITH_PAGE,
             limit=arguments.FETCH_PROGRAM_WITH_LIMIT,
@@ -444,6 +494,7 @@ class TestFetchProgram(MultiDBTestCase):
             program_ids=[],
             pa_numbers=[],
             tiers=[],
+            segments=[],
             program_member="",
             page=arguments.FETCH_PROGRAM_WITH_PAGE_EXCEEDING_MAX_PAGE_COUNT,
             limit=None,
@@ -465,6 +516,7 @@ class TestFetchProgram(MultiDBTestCase):
                 program_ids=arguments.FETCH_PROGRAM_IDS,
                 pa_numbers=arguments.FETCH_PROGRAM_PA_NUMBERS,
                 tiers=[],
+                segments=[],
                 program_member="",
                 page=None,
                 limit=None,
@@ -480,6 +532,7 @@ class TestFetchProgram(MultiDBTestCase):
                 program_ids=arguments.FETCH_PROGRAM_BY_PROGRAM_ID_DNE,
                 pa_numbers=[],
                 tiers=[],
+                segments=[],
                 program_member="",
                 page=None,
                 limit=None,
@@ -495,6 +548,7 @@ class TestFetchProgram(MultiDBTestCase):
                 program_ids=[],
                 pa_numbers=arguments.FETCH_PROGRAM_BY_PROGRAM_PA_NUMBER_DNE,
                 tiers=[],
+                segments=[],
                 program_member="",
                 page=None,
                 limit=None,
@@ -510,6 +564,7 @@ class TestFetchProgram(MultiDBTestCase):
                 program_ids=[],
                 pa_numbers=[],
                 tiers=[],
+                segments=[],
                 program_member=arguments.FETCH_PROGRAMS_PROGRAM_MEMBER_USER_DNE_EMAIL,
                 page=None,
                 limit=None,

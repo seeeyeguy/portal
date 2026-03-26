@@ -9,6 +9,7 @@ import {
   buildQueryResourceByPANumberURL,
   buildQueryResourceByPANumbersURL,
   buildQueryResourceByRoleLevelsURL,
+  buildQueryResourceBySegmentsURL,
   buildQueryResourceByStagesURL,
   buildQueryResourceBySubFunctionsURL,
   buildQueryResourceByTiersURL,
@@ -167,6 +168,7 @@ export default {
       paNumbers: string[] | null = null,
       programMember: string | null = null,
       tiers: number[] | null = null,
+      segments: number[] | null = null,
       activeOnly: boolean | null = null,
       page: number | null = null,
       limit: number | null = null
@@ -190,6 +192,14 @@ export default {
           "program"
         )(tiers);
         arrayParams = `${/\?(.*)/.exec(baseWithTiers)?.[1] ?? ""}`;
+      }
+
+      if (segments?.length) {
+        const baseWithSegments = buildQueryResourceBySegmentsURL(
+          RESOURCE_PATHS.PROGRAM_REVIEW_TOOL,
+          "program"
+        )(segments);
+        arrayParams = `${arrayParams}${tiers ? "&" : ""}${/\?(.*)/.exec(baseWithSegments)?.[1] ?? ""}`;
       }
 
       base = appendQueryParamToURL(base, "program_member", programMember);

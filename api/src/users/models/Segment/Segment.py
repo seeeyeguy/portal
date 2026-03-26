@@ -16,12 +16,14 @@ SAS = (1, "SAS", "SPACE & AIRBORNE SYSTEMS")
 IMS = (2, "IMS", "INTEGRATED MISSION SYSTEMS")
 CS = (3, "CS", "COMMUNICATION SYSTEMS")
 AR = (4, "AR", "AEROJET ROCKETDYNE")
+SMS = (5, "SMS", "SPACE & MISSION SYSTEMS")
 
 SEGMENT_ALIAS = {
     SAS[1]: SAS[2],
     IMS[1]: IMS[2],
     CS[1]: CS[2],
     AR[1]: AR[2],
+    SMS[1]: SMS[2],
 }
 
 
@@ -44,6 +46,7 @@ class Segment(models.Model):
         INTEGRATED_MISSION_SYSTEMS = "INTEGRATED MISSION SYSTEMS"
         COMMUNICATION_SYSTEMS = "COMMUNICATION SYSTEMS"
         AEROJET_ROCKETDYNE = "AEROJET ROCKETDYNE"
+        SPACE_AND_MISSION_SYSTEMS = "SPACE & MISSION SYSTEMS"
 
         @classmethod
         def get_segment_choices(cls) -> Iterable[tuple[str, str]]:

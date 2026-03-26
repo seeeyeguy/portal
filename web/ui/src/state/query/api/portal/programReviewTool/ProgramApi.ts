@@ -25,6 +25,7 @@ export type TApiFetchProgramRequest = {
   paNumbers?: string[];
   programMember?: string;
   tiers?: number[];
+  segments?: number[];
   activeOnly?: boolean;
   page?: number;
   limit?: number;
@@ -53,6 +54,7 @@ const programApi = api.injectEndpoints({
         paNumbers = null,
         programMember = null,
         tiers = null,
+        segments = null,
         activeOnly = null,
         page = null,
         limit = null,
@@ -62,6 +64,7 @@ const programApi = api.injectEndpoints({
           paNumbers,
           programMember,
           tiers,
+          segments,
           activeOnly,
           page,
           limit
@@ -76,7 +79,8 @@ const programApi = api.injectEndpoints({
           ? response.reduce(
               (acc, program) => ({
                 ...acc,
-                [program.pa_number.toUpperCase()]: transformProgramRecord(program),
+                [program.pa_number.toUpperCase()]:
+                  transformProgramRecord(program),
               }),
               {}
             )

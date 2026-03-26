@@ -65,6 +65,7 @@ class Program:
         program_ids: List[int],
         pa_numbers: List[str],
         tiers: List[int] = [],
+        segments: List[int] = [],
         program_member: str = "",
         active_only: bool = True,
         page: Optional[int] = None,
@@ -80,6 +81,8 @@ class Program:
             * pa_numbers (List[str]): PA Numbers of a set of
                 Program records.
             * tiers (List[int]): Tiers of the `Program`
+                records to return.
+            * segments (List[int]): Segments of the `Program`
                 records to return.
             * program_member (str): E-mail of the `User` with
                 active `ProgramMember` records associated with
@@ -115,6 +118,9 @@ class Program:
             )
             info_log_msg = (
                 f"{info_log_msg}, by tiers: {tiers}" if tiers else info_log_msg
+            )
+            info_log_msg = (
+                f"{info_log_msg}, by segments: {segments}" if segments else info_log_msg
             )
             info_log_msg = (
                 f"{info_log_msg}, by Program Member: {program_member}"
@@ -177,6 +183,10 @@ class Program:
             # If program tiers are given, filter QuerySet to corresponding `Program` records.
             if tiers:
                 programs = programs.filter(tier__in=tiers)
+
+            # If program segments are given, filter QuerySet to corresponding `Program` records.
+            if segments:
+                programs = programs.filter(segment__id__in=segments)
 
             # If a `ProgramMember` `User` e-mail is given, filter the QuerySet to corresponding
             # `Program` records in which the `User` has associated active `ProgramMember` entries.

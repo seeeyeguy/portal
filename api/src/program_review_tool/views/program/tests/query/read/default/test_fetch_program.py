@@ -44,7 +44,10 @@ class TestFetchProgram(MultiDBTestCase):
         user = AuthModels.User.objects.get(username=arguments.FETCH_PROGRAMS_USER)
         self.client.force_login(user=user)
 
-        program_fixtures_path: str = "program_review_tool/controllers/Program/tests/query/read/default/fixtures/programs.json"
+        program_fixtures_path: str = (
+            "program_review_tool/controllers/Program/tests/query"
+            "/read/default/fixtures/programs.json"
+        )
         with open(
             program_fixtures_path,
             "r",
@@ -56,7 +59,11 @@ class TestFetchProgram(MultiDBTestCase):
             program["pk"]: {
                 **program["fields"],
                 "id": program["pk"],
-                "segment": "SPACE & AIRBORNE SYSTEMS",
+                "segment": (
+                    "SPACE & AIRBORNE SYSTEMS"
+                    if program["fields"]["segment"] == 1
+                    else "SPACE & MISSION SYSTEMS"
+                ),
                 "team_members": ProgramMemberSerializer(
                     models.ProgramMember.objects.filter(
                         program__id=program["pk"], expiry_date__isnull=True
@@ -251,6 +258,49 @@ class TestFetchProgram(MultiDBTestCase):
             program_id: int = program["id"]
 
             self.assertIn(program_id, arguments.FETCH_PROGRAMS_BY_TIERS_VALID_IDS)
+
+            self.assertIsInstance(program, dict)
+
+            expected_program = self.program_fixtures[program_id]
+
+            del program["created"]
+            del program["modified"]
+
+            del expected_program["created"]
+            del expected_program["modified"]
+
+            self.assertEqual(
+                program,
+                expected_program,
+            )
+
+    @tag("controllers.program.fetch_programs_by_segments")
+    def test_fetch_programs_by_segments(self) -> None:
+        """Success Case: Fetch active `Program` records for
+        the given segments."""
+
+        program_params: dict = {
+            "segments": arguments.FETCH_PROGRAMS_BY_SEGMENTS_SEGMENTS,
+        }
+
+        response = self.client.get(
+            self.url, program_params, content_type="application/json"
+        )
+
+        programs = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertIsInstance(programs, list)
+
+        self.assertEqual(
+            len(programs), len(arguments.FETCH_PROGRAMS_BY_SEGMENTS_VALID_IDS)
+        )
+
+        for program in programs:
+            program_id: int = program["id"]
+
+            self.assertIn(program_id, arguments.FETCH_PROGRAMS_BY_SEGMENTS_VALID_IDS)
 
             self.assertIsInstance(program, dict)
 
