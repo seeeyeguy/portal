@@ -49,9 +49,6 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     python manage.py migrate program_review_tool --database=prt
     python manage.py migrate --database=default   
     
-    # Run script to authenticate with Tableau and store token in cache.
-    python manage.py runscript program_review_tool.utils.review.tableau.scripts.authenticate_with_tableau
-
     # Start the cron service.
     eval "$CRON_START_COMMAND"    
 

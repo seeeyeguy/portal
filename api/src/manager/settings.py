@@ -578,13 +578,6 @@ CRONJOBS = [
         "0 3 * * *",
         "program_review_tool.utils.review.export.cleanup_expired_exports",
     ),
-    # Description: Sign-in to Tableau Server in order to keep the tokens,
-    #   used for fetching images from Tableau, fresh in the cache.
-    # Execution time: Everyday at 4:00 AM.
-    (
-        "0 4 * * *",
-        "program_review_tool.utils.review.tableau.cache_tableau_auth_tokens",
-    ),
     # Description: Communicate with external database to update the `Program`
     #   entries data.
     # Execution time: Everyday at 5:00 AM.
