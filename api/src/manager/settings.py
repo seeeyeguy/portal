@@ -235,6 +235,8 @@ SESSION_COOKIE_AGE = 172800
 ## DJANGO EXTENSIONS CONFIG ##
 ##############################
 
+USE_NOTEBOOKS = os.getenv("USE_NOTEBOOKS", "False").title() == "True"
+
 EXPORT_EMAILS_ORDER_BY = ["last_name", "first_name", "email"]
 EXPORT_EMAILS_FIELDS = ["last_name", "first_name", "email"]
 EXPORT_EMAILS_FULL_NAME_FUNC = None
@@ -257,6 +259,13 @@ SHELL_PLUS = "ipython"
 SHELL_PLUS_PRINT_SQL = True
 
 IPYTHON_ARGUMENTS = ["--no-banner", "--no-confirm-exit"]
+
+if USE_NOTEBOOKS:
+    IPYTHON_ARGUMENTS = [
+        "--ext",
+        "django_extensions.management.notebook_extension",
+        "--debug",
+    ]
 
 IPYTHON_KERNEL_DISPLAY_NAME = f"{APP_NAME} Shell-Plus"
 
