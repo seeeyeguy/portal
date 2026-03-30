@@ -28,22 +28,6 @@ export const FAQs: FAQ[] = [
     contexts: [FAQ_CONTEXTS.PORTAL],
   },
   {
-    question: "How do I request a new Tableau account?",
-    answer: (
-      <>
-        A Tableau account can be requested by submitting a{" "}
-        <a
-          href="https://l3harris.servicenowservices.com/sp?id=sc_cat_item&table=sc_cat_item&sys_id=9ff18fecdb6a841017cdf2821f961905"
-          target="_blank"
-        >
-          “Tableau Access Request”
-        </a>{" "}
-        ticket in ONEHub.
-      </>
-    ),
-    contexts: [FAQ_CONTEXTS.PORTAL],
-  },
-  {
     question: "How do I add/remove a resource to my favorites?",
     answer: (
       <>
@@ -168,7 +152,7 @@ export const FAQs: FAQ[] = [
       <>
         If you are experiencing technical difficulties with The Portal, please
         contact{" "}
-        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+        <a href="mailto:SAS_Portal@L3harris.com?cc=Nathaniel.Charbonneau@L3harris.com,Ryan.Pineres@L3Harris.com,Joseph.Pham@L3Harris.com,Oliver.Barnes@L3harris.com">SAS-Portal@L3Harris.com</a>.
       </>
     ),
     contexts: [FAQ_CONTEXTS.PORTAL, FAQ_CONTEXTS.PPR],
@@ -213,7 +197,7 @@ export const FAQs: FAQ[] = [
         The PRT generation service relies on connectivity to certain internal
         resources that may occasionally be unavailable. Please wait 15 minutes
         and try again. If the service remains unavailable, please contact:{" "}
-        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+        <a href="mailto:SAS_Portal@L3harris.com?cc=Nathaniel.Charbonneau@L3harris.com,Ryan.Pineres@L3Harris.com,Joseph.Pham@L3Harris.com,Oliver.Barnes@L3harris.com">SAS-Portal@L3Harris.com</a>.
       </>
     ),
     contexts: [FAQ_CONTEXTS.PRT],
@@ -224,11 +208,11 @@ export const FAQs: FAQ[] = [
       "Why am I receiving a “Portfolio generation service unavailable, please try again later” error?”",
     answer: (
       <>
-        The PRT generation service relies on connectivity to the Tableau API,
+        The PRT generation service relies on connectivity to the PowerBI API,
         which may occasionally experience degraded performance or temporary
         outages. Please wait 15 minutes before retrying slide generation. If the
         issue persists, please contact:{" "}
-        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+        <a href="mailto:SAS_Portal@L3harris.com?cc=Nathaniel.Charbonneau@L3harris.com,Ryan.Pineres@L3Harris.com,Joseph.Pham@L3Harris.com,Oliver.Barnes@L3harris.com">SAS-Portal@L3Harris.com</a>.
       </>
     ),
     contexts: [FAQ_CONTEXTS.PRT],
@@ -240,7 +224,7 @@ export const FAQs: FAQ[] = [
     answer: (
       <>
         Please contact:{" "}
-        <a href="mailto:SAS-Portal@L3Harris.com">SAS-Portal@L3Harris.com</a>.
+        <a href="mailto:SAS_Portal@L3harris.com?cc=Nathaniel.Charbonneau@L3harris.com,Ryan.Pineres@L3Harris.com,Joseph.Pham@L3Harris.com,Oliver.Barnes@L3harris.com">SAS-Portal@L3Harris.com</a>.
         Include a description of what occurred, any error messages, and
         screenshots if available.
       </>

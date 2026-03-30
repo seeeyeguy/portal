@@ -33,11 +33,6 @@ from program_review_tool.utils.review.powerbi.config import (
 
 LOGGER = logging.getLogger(__name__)
 
-# Azure auth token cache key prefix.
-AZURE_AUTH_TOKEN_CACHE_KEY_PREFIX: str = (
-    "program_review_tool_tableau_tableau_auth_token"
-)
-
 # Azure token cache expiration string.
 AZURE_AUTH_TOKEN_EXPIRATION_TEXT: str = "has_expired"
 
