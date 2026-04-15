@@ -3,6 +3,7 @@ FROM python:3.12-bullseye AS base
 # Add needed env variables.
 ARG APP_NAME
 ARG CA_CERTIFICATE_FOR_API
+ARG DOCKER_GROUP_ID
 
 # Construct path to project.
 # Need to change PROJECT to app name.
@@ -80,7 +81,8 @@ RUN chmod +x /apps/debug-wrapper.sh
 ARG USER
 ARG UID
 ARG PASSWORD
-RUN useradd --create-home --shell /bin/bash -u $UID -G users,sudo,root $USER && \
+RUN groupadd docker -g ${DOCKER_GROUP_ID} && \
+    useradd --create-home --shell /bin/bash -u $UID -G users,sudo,root,docker $USER && \
     mkdir -p /home/$USER/.ssh/ && \
     chown $USER:users /home/$USER/.ssh/ && \
     echo $USER:$PASSWORD | chpasswd
@@ -98,7 +100,7 @@ FROM development AS wsgi-development
 
 EXPOSE 8080
 EXPOSE 5678
-CMD ["/apps/debug-wrapper.sh", "5678", "django", "runserver", "--noreload", "0.0.0.0:8080"]
+CMD ["/apps/debug-wrapper.sh", "5678", "django", "runserver", "--noreload", "0.0.0.0:8080", "--settings=manager.settings"]
 
 #
 #   ASGI DEVELOPMENT

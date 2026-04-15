@@ -54,6 +54,7 @@ venv
 **/CloudServicesRootCA.crt
 **/id_rsa
 **/id_rsa.pub
+**/.ssh
 api/bin
 api/ca-bundle.crt
 api/certchain.pem

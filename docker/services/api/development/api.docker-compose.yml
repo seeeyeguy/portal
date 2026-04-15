@@ -20,6 +20,7 @@ services:
             args:
                 APP_NAME: ${APP_NAME}
                 CA_CERTIFICATE_FOR_API: ${CA_CERTIFICATE_FOR_API}
+                DOCKER_GROUP_ID: ${DOCKER_GROUP_ID:-992}
                 USER: ${USER}
                 UID: ${UID}
                 PASSWORD: ${PASSWORD}
@@ -39,6 +40,7 @@ services:
             CONNECTION: ${CONNECTION}
             CONTAINER_PASSWORD: ${PASSWORD}
             DNS_NAME: ${DNS_NAME}
+            DOCKER_GROUP_ID: ${DOCKER_GROUP_ID:-992}
             SCHEME: ${SCHEME}
             SERVER_HOST: ${SERVER_HOST}
             SERVER_PORT: ${SERVER_PORT}
