@@ -70,6 +70,12 @@ export const SHARED = {
       changeOrigin: true,
       secure: false,
     },
+    "/ws": {
+      target: "http://api:8080",
+      ws: true,
+      changeOrigin: true,
+      secure: false,
+    },
   },
   allowedHosts: [
     process.env.WEB_HOST as string,
