@@ -5,8 +5,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-
-
 // Read in certificates from SSL Directory and set up HTTPS if found.
 function getSslOptions() {
   const sslDir = process.env.SSL_DIRECTORY ?? "";
@@ -30,9 +28,7 @@ function getSslOptions() {
     return undefined;
   }
 
-  console.info(
-    `[vite] SSL files found in ${sslDir}. HTTPS will be enabled.`, 
-  );
+  console.info(`[vite] SSL files found in ${sslDir}. HTTPS will be enabled.`);
 
   const httpsOptions: { cert: Buffer; key: Buffer; passphrase?: string } = {
     cert: fs.readFileSync(certPath),
@@ -85,6 +81,7 @@ export const SHARED = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  cacheDir: "./.cache/vitest",
   define: {
     __APP_NAME__: JSON.stringify(process.env.APP_NAME),
     __APP_TITLE__: JSON.stringify(process.env.APP_TITLE),
@@ -112,6 +109,6 @@ export default defineConfig({
   server: {
     ...SHARED,
     port: 3000,
-    https: getSslOptions(), 
+    https: getSslOptions(),
   },
 });
