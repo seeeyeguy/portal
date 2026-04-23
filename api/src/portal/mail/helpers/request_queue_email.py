@@ -15,27 +15,16 @@ from portal.mail.helpers.base import (
 from portal.mail.helpers.request_email_helpers import (
     find_admins_with_pending_requests,
     get_pending_request_summary,
+    get_request_status_change_details,
+    get_stage_display,
     get_weekly_summary_for_superuser,
 )
+from request.models.Request import Request
 from request.models.Stage.Stage import Stage
 from users.models import Access, Role
 
 
 LOGGER = logging.getLogger(__name__)
-
-
-def get_stage_display(stage_level: int) -> str:
-    """Convert stage level to user-friendly display text"""
-    stage_map = {
-        Stage.StageLevels.SUBMITTED: "Awaiting BPE Review",
-        Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT: "Awaiting SU Approval",
-        Stage.StageLevels.APPROVED_BY_SUPERUSER: "Approved",
-        Stage.StageLevels.REJECTED_BY_BUSINESS_PROCESS_EXPERT: "Rejected by BPE",
-        Stage.StageLevels.REJECTED_BY_SUPERUSER: "Rejected by SU",
-        Stage.StageLevels.REVISE: "Revisions Requested",
-        Stage.StageLevels.DRAFT: "Draft",
-    }
-    return stage_map.get(stage_level, "Unknown")
 
 
 def queue_admin_reminder_emails() -> None:
@@ -212,6 +201,93 @@ def queue_superuser_weekly_summary_emails() -> None:
             LOGGER.error(
                 f"Failed to queue weekly summary for {access.user.email}: {exc}"
             )
+
+
+def queue_originator_status_change_email(request: Request, status_type: str) -> None:
+    """
+    Queues an email to the originator when their request status changes.
+
+    This function notifies the request originator about status changes:
+    - Approved: The request has been approved
+    - Rejected: The request has been denied by a reviewer
+    - Revised: The request needs modifications before it can be approved
+
+    The email includes:
+    - Request details (ID, resource name, current stage)
+    - Reviewer information (who made the decision)
+    - Reviewer comments explaining the decision
+    - Next steps for the originator (if applicable)
+
+    Accepts:
+        * request (Request): The request that had a status change.
+        * status_type (str): Type of status change - 'approved', 'rejected', or 'revised'.
+
+    Returns:
+        * None
+    """
+    if status_type not in ["approved", "rejected", "revised"]:
+        resource_name = getattr(getattr(request, "resource", None), "name", "Unknown")
+        LOGGER.error(
+            f"Invalid status_type: {status_type} for Request #{request.id} "
+            f"({resource_name}). Must be 'approved', 'rejected', or 'revised'."
+        )
+        return
+
+    try:
+        # Get request details
+        details = get_request_status_change_details(request)
+
+        if not details:
+            LOGGER.error(
+                f"Could not get details for request {request.id}. "
+                f"Skipping {status_type} notification email."
+            )
+            return
+
+        recipients = [details["originator_email"]]
+
+        # Prepare context for template
+        context = {
+            "originator_first_name": request.originator.user.first_name.capitalize(),
+            "request_id": details["request_id"],
+            "resource_name": details["resource_name"],
+            "stage_display": details["stage_display"],
+            "reviewer_name": details["reviewer_name"],
+            "reviewer_comments": details["reviewer_comments"],
+            "transition_date": details["transition_date"],
+            "status_type": status_type,
+        }
+
+        # Render the HTML template
+        html_content = render_to_string(
+            "request_reminders.html",
+            {"email_type": f"originator_{status_type}", **context},
+        )
+
+        context = create_base_template_context_for_email(
+            html_content,
+            app_name="BI Portal",
+        )
+        html_message = generate_html_message_for_email(context)
+
+        # Set subject based on status type
+        if status_type == "approved":
+            subject = f"Request #{details['request_id']} - {details['resource_name']} has been approved"
+        elif status_type == "rejected":
+            subject = f"Request #{details['request_id']} - {details['resource_name']} has been rejected"
+        else:  # revised
+            subject = f"Request #{details['request_id']} - {details['resource_name']} requires revisions"
+
+        django_rq.enqueue(send_email, recipients, None, html_message, subject)
+        LOGGER.info(
+            f"Queued {status_type} notification email for originator {details['originator_email']} "
+            f"(Request #{details['request_id']})"
+        )
+
+    except Exception as exc:
+        LOGGER.error(
+            f"Failed to queue {status_type} email for request {request.id}: {exc}"
+        )
 
 
 def check_and_queue_request_emails() -> None:

@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 
 from directory.models import Resource
+from portal.mail.helpers.request_queue_email import queue_originator_status_change_email
 from request import exceptions, models
 from request.utils.transitions import transition_request
 from users import models as UsersModels
@@ -239,14 +240,45 @@ class Disposition:
                     resource_record.active = True
                     resource_record.revision_number = new_resource_revision
                     resource_record.save()
+
+                    # Send approval email to originator
+                    try:
+                        queue_originator_status_change_email(request_record, "approved")
+                        LOGGER.info(
+                            f"Queued approval email for Request (id={request_record.id})"
+                        )
+                    except Exception as email_exc:
+                        LOGGER.error(f"Failed to queue approval email: {email_exc}")
+
                 elif stage_record.level in [
                     models.Stage.StageLevels.REJECTED_BY_SUPERUSER,
                     models.Stage.StageLevels.REJECTED_BY_BUSINESS_PROCESS_EXPERT,
                 ]:
                     new_request_status = "REJECTED"
+
+                    # Send rejection email to originator
+                    try:
+                        queue_originator_status_change_email(request_record, "rejected")
+                        LOGGER.info(
+                            f"Queued rejection email for Request (id={request_record.id})"
+                        )
+                    except Exception as email_exc:
+                        LOGGER.error(f"Failed to queue rejection email: {email_exc}")
+
                 else:
                     # Transition the `Request` from `REVISE` to `DRAFT`.
                     if stage_record.level == models.Stage.StageLevels.REVISE:
+                        # Send revision email to originator
+                        try:
+                            queue_originator_status_change_email(
+                                request_record, "revised"
+                            )
+                            LOGGER.info(
+                                f"Queued revision email for Request (id={request_record.id})"
+                            )
+                        except Exception as email_exc:
+                            LOGGER.error(f"Failed to queue revision email: {email_exc}")
+
                         _ = transition_request(request_record.id)
 
                     return disposition_record
