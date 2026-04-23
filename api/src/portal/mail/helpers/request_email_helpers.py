@@ -3,12 +3,13 @@ Helper functions for sending email reminders about pending requests.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from django.db.models import QuerySet
 from django.utils import timezone
 
 from directory.models.SubFunction import SubFunction
+from request.models import Disposition
 from request.models.Request import Request
 from request.models.Stage.Stage import Stage
 from request.models.Transition import Transition
@@ -16,6 +17,28 @@ from users.models import Access, Role
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+def get_stage_display(stage_level: int) -> str:
+    """
+    Convert stage level to user-friendly display text.
+
+    Accepts:
+        * stage_level (int): The stage level integer value.
+
+    Returns:
+        * (str): User-friendly display text for the stage.
+    """
+    stage_map = {
+        Stage.StageLevels.SUBMITTED: "Awaiting BPE Review",
+        Stage.StageLevels.APPROVED_BY_BUSINESS_PROCESS_EXPERT: "Awaiting SU Approval",
+        Stage.StageLevels.APPROVED_BY_SUPERUSER: "Approved",
+        Stage.StageLevels.REJECTED_BY_BUSINESS_PROCESS_EXPERT: "Rejected by BPE",
+        Stage.StageLevels.REJECTED_BY_SUPERUSER: "Rejected by SU",
+        Stage.StageLevels.REVISE: "Revisions Requested",
+        Stage.StageLevels.DRAFT: "Draft",
+    }
+    return stage_map.get(stage_level, "Unknown")
 
 
 def find_pending_requests(days_pending: int = 0) -> QuerySet[Request]:
@@ -332,4 +355,69 @@ def get_weekly_summary_for_superuser() -> Dict[str, Any]:
         "awaiting_su_count": awaiting_su_count,
         "by_subfunction": by_subfunction,
         "oldest_days_pending": oldest_days_in_stage,
+    }
+
+
+def get_request_status_change_details(request: Request) -> Optional[Dict[str, Any]]:
+    """
+    Gets details about a request status change for originator notification.
+
+    This function retrieves information about the most recent status change
+    to a request, including who made the change and any comments they provided.
+    Used for notifying originators when their requests are approved, rejected, or require revisions.
+
+    Accepts:
+        * request (Request): The request that had a status change.
+
+    Returns:
+        * details (dict or None): Dictionary containing request details, or None if no transition found.
+            Format: {
+                'request_id': int,
+                'resource_name': str,
+                'originator_name': str,
+                'originator_email': str,
+                'current_stage': str,
+                'current_stage_level': int,
+                'stage_display': str,
+                'reviewer_name': str,
+                'reviewer_comments': str,
+                'transition_date': datetime
+            }
+    """
+    latest_transition = (
+        Transition.objects.filter(request=request)
+        .select_related("stage")
+        .order_by("-created")
+        .first()
+    )
+
+    if not latest_transition:
+        LOGGER.warning(f"No transition found for request {request.id}")
+        return None
+
+    disposition = (
+        Disposition.objects.filter(transition=latest_transition)
+        .select_related("approver", "approver__user")
+        .first()
+    )
+
+    reviewer_name = "System"
+    reviewer_comments = ""
+
+    if disposition and disposition.approver:
+        reviewer_user = disposition.approver.user
+        reviewer_name = f"{reviewer_user.first_name} {reviewer_user.last_name}"
+        reviewer_comments = disposition.justification or ""
+
+    return {
+        "request_id": request.id,
+        "resource_name": request.resource.name,
+        "originator_name": f"{request.originator.user.first_name} {request.originator.user.last_name}",
+        "originator_email": request.originator.user.email,
+        "current_stage": latest_transition.stage.name,
+        "current_stage_level": latest_transition.stage.level,
+        "stage_display": get_stage_display(latest_transition.stage.level),
+        "reviewer_name": reviewer_name,
+        "reviewer_comments": reviewer_comments,
+        "transition_date": latest_transition.created,
     }
