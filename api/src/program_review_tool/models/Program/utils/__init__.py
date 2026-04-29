@@ -7,7 +7,7 @@ database operations that may affect the `Program` model.
 import logging
 import numpy as np
 import pandas as pd
-import pyodbc as mssqldb  # type: ignore[import-not-found]
+# import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
 from typing import cast, List, Union
 
