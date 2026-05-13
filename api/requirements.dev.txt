@@ -33,3 +33,7 @@ pytest-django==4.8.0
 # A plugin that enables you to set environment
 # variables in a pytest.ini or pyproject.toml file.
 pytest-env==1.1.3
+
+# An implimentation of the debug adapter protocol 
+# for python
+debugpy==1.8.20

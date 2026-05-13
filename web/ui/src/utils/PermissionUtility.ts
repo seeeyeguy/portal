@@ -14,13 +14,10 @@ export const RESTRICTED_ADMIN_PAGES = {
     "/admin/subfunctions",
     "/admin/reporting-period",
     "/admin/maintenance-banners",
+    "/admin/job-runs",
   ]),
-  BUSINESS_PROCESS_EXPERT: new Set(["/admin/approvals"]),
-  DATA_STEWARD: new Set([
-    "/admin",
-    "/admin/requests", 
-    "/admin/tags",
-  ]),
+  BUSINESS_PROCESS_EXPERT: new Set(["/admin/request-approvals"]),
+  DATA_STEWARD: new Set(["/admin", "/admin/requests", "/admin/tags"]),
 };
 
 /**

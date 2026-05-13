@@ -23,6 +23,12 @@ done
 
 echo "PostgreSQL started"
 
+# Save the original ENABLE_DEBUGPY value
+SAVED_ENABLE_DEBUGPY="${ENABLE_DEBUGPY}"
+
+# Temporarily disable debugpy for ALL initialization commands
+unset ENABLE_DEBUGPY
+
 if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     if [[ $BUILD != $PRODUCTION && $BUILD != $STAGING ]]; then
         # Flush the database.
@@ -43,18 +49,20 @@ if [[ -z $REDIS_RQ_NODE && -z $ASGI_SERVER ]]; then
     python manage.py migrate program_review_tool --database=prt
     python manage.py migrate --database=default   
     
-    # Run script to authenticate with Tableau and store token in cache.
-    python manage.py runscript program_review_tool.utils.review.tableau.scripts.authenticate_with_tableau
-
     # Start the cron service.
     eval "$CRON_START_COMMAND"    
+
     # Copy environment variables into the shared environment.
     # NOTE: Needed for cron.
     eval "$CRON_SET_ENV_FOR_SYSTEM_COMMAND"
+
     # Add cron jobs specified in CRON JOBS to the crontab.
     python manage.py crontab add
 
     /apps/init.sh
 fi
+
+# Restore ENABLE_DEBUGPY for the main command only
+export ENABLE_DEBUGPY="${SAVED_ENABLE_DEBUGPY}"
 
 exec "$@"

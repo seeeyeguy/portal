@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        thead tr {
+            background-color: #0066cc;
+            color: white;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        .bpe-column {
+            width: 250px;
+        }
+        
+        .days-red {
+            background-color: #f2dede;
+            color: #d9534f;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .days-orange {
+            background-color: #fcf8e3;
+            color: #f0ad4e;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .days-green {
+            background-color: #dff0d8;
+            color: #5cb85c;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .warning {
+            color: #d9534f;
+        }
+        
+        .no-bpe {
+            color: #d9534f;
+        }
+        
+        .footer {
+            color: #666;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .info-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid #0066cc;
+            margin: 20px 0;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+        }
+        
+        .approved-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        
+        .rejected-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid #d32f2f;
+            margin: 20px 0;
+        }
+        
+        .revised-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid #f57c00;
+            margin: 20px 0;
+        }
+        
+        .comments-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 20px 0;
+        }
+        
+        .comments-box p {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        
+        .status-approved {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .status-rejected {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .status-revised {
+            color: #f57c00;
+            font-weight: bold;
+        }
+        
+        .next-steps {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        
+        .next-steps ol {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+        
+        .next-steps li {
+            margin: 5px 0;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    {% if email_type == 'admin_reminder' %}
+        <!-- Admin Reminder Email -->
+        <p>Hello {{ admin_first_name }},</p>
+        
+        <p>There {% if request_count == 1 %}is{% else %}are{% endif %} currently {{ request_count }} pending request(s) awaiting your review:</p>
+        
+        <ul>
+            {% for request in requests %}
+            <li>
+                <b>{{ request.resource.name }}</b> (Request #{{ request.id }}) - 
+                Submitted by {{ request.originator.user.email }} on {{ request.created|date:"F d, Y" }}
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <p><b>Action Required:</b> Please review and approve or reject these requests at your earliest convenience.</p>
+        
+        <p>Access the requests here: <a href="https://theportal.l3harris.com/admin/requests">BI Portal Admin - Requests</a></p>
+    
+    {% elif email_type == 'superuser_weekly_summary' %}
+        <!-- Superuser Weekly Summary Email -->
+        <h2>Weekly Pending Requests Summary</h2>
+        
+        <p>Hello {{ superuser_first_name }},</p>
+        <p>Here's your weekly summary of pending resource requests.</p>
+        
+        <h3>Overview</h3>
+        <ul>
+            <li><b>Total Pending Requests:</b> {{ total_pending }}</li>
+            <li><b>Oldest Request:</b> {{ oldest_days_pending }} days pending in current stage</li>
+            {% if subfunctions_without_bpe %}
+            <li class="warning">
+                <b>WARNING: No Business Process Expert (BPE) assigned to the following SubFunction(s):</b> 
+                {{ subfunctions_without_bpe|join:", " }}
+            </li>
+            {% endif %}
+        </ul>
+        
+        <h3>Requests by Stage</h3>
+        <ul>
+            <li><b>Awaiting Business Process Expert (BPE) Review:</b> {{ awaiting_bpe_count }} request(s)</li>
+            <li><b>Awaiting Superuser Approval:</b> {{ awaiting_su_count }} request(s)</li>
+        </ul>
+        
+        <hr>
+        
+        {% if all_requests %}
+        <h3>All Pending Requests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Resource Name</th>
+                    <th>Function (SubFunction)</th>
+                    <th>Days Pending</th>
+                    <th>Stage</th>
+                    <th>Submitted By</th>
+                    <th class="bpe-column">Business Process Expert (BPE) Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in all_requests %}
+                <tr>
+                    <td>#{{ request.id }}</td>
+                    <td><b>{{ request.name }}</b></td>
+                    <td>{{ request.function_name }} ({{ request.subfunction }})</td>
+                    <td class="{% if request.days_pending > 7 %}days-red{% elif request.days_pending > 3 %}days-orange{% else %}days-green{% endif %}">
+                        {{ request.days_pending }} days
+                    </td>
+                    <td>{{ request.stage_display }}</td>
+                    <td>{{ request.originator }}</td>
+                    <td class="bpe-column">
+                        {% if request.bpe_reviewers %}
+                            {% for bpe in request.bpe_reviewers %}
+                                {{ bpe }}<br>
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-bpe">No Business Process Expert (BPE) assigned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
+        <hr>
+        
+        <h3>Next Steps</h3>
+        <ul>
+            <li>Review requests at <a href="https://theportal.l3harris.com/admin/requests">BI Portal Admin - Requests</a></li>
+            <li>Follow up with Business Process Experts (BPE) if needed</li>
+            <li>Prioritize requests pending more than 7 days (shown in red)</li>
+        </ul>
+        
+        <p class="footer">
+            <i>This is an automated weekly summary sent every Monday at 8:00 AM. You receive this because you are a superuser.</i>
+        </p>
+    
+    {% elif email_type == 'originator_approved' %}
+        <!-- Originator - Request Approved Email -->
+        <h2 style="color: #4caf50;">Request Approved</h2>
+        
+        <p>Hi {{ originator_first_name }},</p>
+        
+        <div class="success-message">
+            <p style="margin: 0; font-size: 16px;">
+                🎉 <b>Great news!</b> Your resource request has been <span class="status-approved">approved</span>.
+            </p>
+        </div>
+        
+        <div class="approved-box">
+            <p><b>Request ID:</b> #{{ request_id }}</p>
+            <p><b>Resource:</b> {{ resource_name }}</p>
+            <p><b>Status:</b> {{ stage_display }}</p>
+            <p><b>Approved by:</b> {{ reviewer_name }}</p>
+            <p><b>Date:</b> {{ transition_date|date:"F d, Y g:i A" }}</p>
+        </div>
+        
+        {% if reviewer_comments %}
+        <div class="comments-box">
+            <p style="margin: 0 0 10px 0;"><b>Reviewer Comments:</b></p>
+            <p>{{ reviewer_comments }}</p>
+        </div>
+        {% endif %}
+        
+        <p>Your request is now complete. You can view the full details in the <a href="https://theportal.l3harris.com/requests">BI Portal</a>.</p>
+        
+        <p class="footer">
+            Best regards,<br>
+            BI Portal Team
+        </p>
+    
+    {% elif email_type == 'originator_rejected' %}
+        <!-- Originator - Request Rejected Email -->
+        <h2 style="color: #d32f2f;">Request Rejected</h2>
+        
+        <p>Hi {{ originator_first_name }},</p>
+        
+        <p>Your resource request has been <span class="status-rejected">rejected</span>.</p>
+        
+        <div class="rejected-box">
+            <p><b>Request ID:</b> #{{ request_id }}</p>
+            <p><b>Resource:</b> {{ resource_name }}</p>
+            <p><b>Status:</b> {{ stage_display }}</p>
+            <p><b>Reviewed by:</b> {{ reviewer_name }}</p>
+            <p><b>Date:</b> {{ transition_date|date:"F d, Y g:i A" }}</p>
+        </div>
+        
+        {% if reviewer_comments %}
+        <div class="comments-box">
+            <p style="margin: 0 0 10px 0;"><b>Reviewer Comments:</b></p>
+            <p>{{ reviewer_comments }}</p>
+        </div>
+        {% endif %}
+        
+        <p>If you have questions about this decision, please contact {{ reviewer_name }} or your Business Process Expert.</p>
+        
+        <p>You can view the full request details in the <a href="https://theportal.l3harris.com/requests">BI Portal</a>.</p>
+        
+        <p class="footer">
+            Best regards,<br>
+            BI Portal Team
+        </p>
+    
+    {% elif email_type == 'originator_revised' %}
+        <!-- Originator - Request Requires Revisions Email -->
+        <h2 style="color: #f57c00;">Revisions Requested</h2>
+        
+        <p>Hi {{ originator_first_name }},</p>
+        
+        <p>Your resource request requires <span class="status-revised">revisions</span> before it can be approved.</p>
+        
+        <div class="revised-box">
+            <p><b>Request ID:</b> #{{ request_id }}</p>
+            <p><b>Resource:</b> {{ resource_name }}</p>
+            <p><b>Status:</b> {{ stage_display }}</p>
+            <p><b>Reviewed by:</b> {{ reviewer_name }}</p>
+            <p><b>Date:</b> {{ transition_date|date:"F d, Y g:i A" }}</p>
+        </div>
+        
+        {% if reviewer_comments %}
+        <div class="comments-box">
+            <p style="margin: 0 0 10px 0;"><b>Requested Changes:</b></p>
+            <p>{{ reviewer_comments }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="next-steps">
+            <p><b>Next Steps:</b></p>
+            <ol>
+                <li>Review the requested changes above</li>
+                <li>Log in to the <a href="https://theportal.l3harris.com/requests">BI Portal</a></li>
+                <li>Make the necessary revisions to your request</li>
+                <li>Resubmit for review</li>
+            </ol>
+        </div>
+        
+        <p>If you have questions about the requested revisions, please contact {{ reviewer_name }}.</p>
+        
+        <p class="footer">
+            Best regards,<br>
+            BI Portal Team
+        </p>
+    
+    {% endif %}
+
+</body>
+</html>

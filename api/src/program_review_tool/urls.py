@@ -31,4 +31,14 @@ urlpatterns: urlconfig.PathPatternList = [
         view=views.ReportingPeriod.as_view(),
         name="program_review_tool.reporting_period",
     ),
+    path(
+        "job-run/registry",
+        view=views.JobRunRegistry.as_view(),
+        name="program_review_tool.job_run_registry"
+    ),
+    path(
+        "job-run",
+        view=views.JobRun.as_view(),
+        name="program_review_tool.job_run"
+    )
 ]

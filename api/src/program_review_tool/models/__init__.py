@@ -19,3 +19,4 @@ from users.models.User.signals import (
     create_user_in_prt_database,
     update_user_in_prt_database,
 )
+from program_review_tool.models.JobRun import JobRun

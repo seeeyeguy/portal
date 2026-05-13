@@ -46,6 +46,7 @@ export default function ProgramPerformance() {
   const { data: programs, isLoading: isLoadingPrograms } = useGetProgramsQuery({
     programMember: loaderData.user.email,
     tiers: [1, 2],
+    segments: [1, 5],
   });
 
   const { data: reportingPeriodData, isLoading: isLoadingReportingPeriodData } =

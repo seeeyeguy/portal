@@ -12,6 +12,7 @@ x-logging-settings: &logging-settings
 services:
     api:
         image: ${APP_NAME}-development-api:${DOCKER_COMPOSE_BUILD_TAG}
+
         build:
             context: ${DOCKER_COMPOSE_PROJECT_ROOT}/api/
             dockerfile: Dockerfile
@@ -19,12 +20,14 @@ services:
             args:
                 APP_NAME: ${APP_NAME}
                 CA_CERTIFICATE_FOR_API: ${CA_CERTIFICATE_FOR_API}
+                DOCKER_GROUP_ID: ${DOCKER_GROUP_ID:-992}
                 USER: ${USER}
                 UID: ${UID}
                 PASSWORD: ${PASSWORD}
             tags:
                 - ${APP_NAME}-development-api:${DOCKER_COMPOSE_BUILD_TAG}
         restart: unless-stopped
+
         container_name: ${APP_NAME}-api-${USER}
         depends_on:
             - database
@@ -37,6 +40,7 @@ services:
             CONNECTION: ${CONNECTION}
             CONTAINER_PASSWORD: ${PASSWORD}
             DNS_NAME: ${DNS_NAME}
+            DOCKER_GROUP_ID: ${DOCKER_GROUP_ID:-992}
             SCHEME: ${SCHEME}
             SERVER_HOST: ${SERVER_HOST}
             SERVER_PORT: ${SERVER_PORT}
@@ -68,6 +72,7 @@ services:
             REDIS_CHANNEL_PASSWORD: ${REDIS_CHANNEL_PASSWORD}
             REDIS_CHANNEL_HOST: ${REDIS_CHANNEL_HOST}
             REDIS_CHANNEL_PORT: ${REDIS_CHANNEL_PORT}
+            USE_NOTEBOOKS: ${USE_NOTEBOOKS}
             ADMINS: ${ADMINS}
             DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
             LANGUAGE_CODE: ${LANGUAGE_CODE}
@@ -85,8 +90,6 @@ services:
             SSO_DEVELOPMENT_USER_LAST_NAME: ${SSO_DEVELOPMENT_USER_LAST_NAME}
             SSO_SERVICE_ENCRYPTION_KEY: ${SSO_SERVICE_ENCRYPTION_KEY}
             SWAGGER_PORT: ${SWAGGER_PORT}
-            TABLEAU_PERSONAL_ACCESS_TOKENS: ${TABLEAU_PERSONAL_ACCESS_TOKENS}
-            TABLEAU_SERVER: ${TABLEAU_SERVER}
             AZURE_POWERBI_URI: ${AZURE_POWERBI_URI}
             AZURE_POWERBI_URI_MYORG: ${AZURE_POWERBI_URI_MYORG}
             AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
@@ -98,9 +101,11 @@ services:
             AZURE_TOKEN_CACHE_KEY_EXPIRES_ON: ${AZURE_TOKEN_CACHE_KEY_EXPIRES_ON}
             AZURE_AUTH_CACHE_TIMEOUT: ${AZURE_AUTH_CACHE_TIMEOUT}
             PBI_SLIDE_CONFIG_PATH: ${PBI_SLIDE_CONFIG_PATH}
+            ENABLE_DEBUGPY: ${ENABLE_DEBUGPY:-false}
         ports:
             - ${SERVER_PORT}:8080
             - ${NOTEBOOK_PORT}:8888
+            - ${API_DEBUG_PORT}:${API_DEBUG_PORT} 
         volumes:
             # Mount local development files into container.
             - ${DOCKER_COMPOSE_PROJECT_ROOT}/api/src:/apps/${APP_NAME}/

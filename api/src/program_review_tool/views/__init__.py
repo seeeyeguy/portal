@@ -9,3 +9,4 @@ from .program.program import Program  # ordered to prevent potential circular de
 from .portfolio.portfolio import Portfolio
 from .record.record import Record
 from .reporting_period.reporting_period import ReportingPeriod
+from .jobrun import JobRun, JobRunRegistry

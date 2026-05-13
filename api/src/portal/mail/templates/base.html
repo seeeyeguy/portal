@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ app_name }}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block navbar %}
+        {% endblock %}
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+			<p>
+				<small>
+                    <em>
+                        This is an automated message from BI Portal Team.
+                    </em>
+                </small>
+			</p>
+			<p>
+				<small>
+                    <em>
+                        If you received this message in error, please contact 
+                        <a href="mailto:SAS_Portal@L3harris.com?cc=Nathaniel.Charbonneau@L3harris.com,Ryan.Pineres@L3Harris.com,Joseph.Pham@L3Harris.com,Oliver.Barnes@L3harris.com">
+                            SAS_Portal@L3harris.com
+                        </a>
+                    </em>
+                </small>
+			</p>
+		</footer>
+    </body>
+</html>

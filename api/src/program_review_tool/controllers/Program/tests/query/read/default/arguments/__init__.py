@@ -12,10 +12,10 @@ FETCH_PROGRAMS_USER: str = "May.Parker@harris.com"
 FETCH_PROGRAMS_PROGRAM_MEMBER_USER_DNE_EMAIL: str = "User.DNE@harris.com"
 
 # Valid and Active `Program` ids used to ensure the validity of our success case.
-FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS: List[int] = list(range(1, 1000))
+FETCH_PROGRAMS_ALL_ACTIVE_VALID_IDS: List[int] = [*list(range(1, 1000)), 1001, 1002]
 
 # Valid `Program` ids used to ensure the validity of our success case.
-FETCH_PROGRAMS_ALL_VALID_IDS: List[int] = list(range(1, 1001))
+FETCH_PROGRAMS_ALL_VALID_IDS: List[int] = [*list(range(1, 1001)), 1001, 1002]
 
 # `Program` ids used for testing success case.
 FETCH_PROGRAM_IDS: List[int] = [1, 2]
@@ -276,6 +276,16 @@ FETCH_PROGRAMS_BY_TIERS_VALID_IDS: List[int] = [
     996,
     997,
 ]
+
+# `Program` segments used for testing success case.
+FETCH_PROGRAMS_BY_SEGMENTS_SEGMENTS: List[int] = [5]
+
+# Valid `Program` ids expected for fetching `Program`s by segments
+# tests.
+FETCH_PROGRAMS_BY_SEGMENTS_VALID_IDS: List[int] = [1001, 1002]
+
+# `Program` segment name used for testing success case.
+FETCH_PROGRAMS_BY_SEGMENTS_SEGMENT_NAME = "SPACE & MISSION SYSTEMS"
 
 # `User` email used when testing fetch `Program`s by `ProgramMember`.
 FETCH_PROGRAMS_BY_PROGRAM_MEMBER_USER_EMAIL: str = "Peter.Parker@l3harris.com"

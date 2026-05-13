@@ -235,6 +235,8 @@ SESSION_COOKIE_AGE = 172800
 ## DJANGO EXTENSIONS CONFIG ##
 ##############################
 
+USE_NOTEBOOKS = os.getenv("USE_NOTEBOOKS", "False").title() == "True"
+
 EXPORT_EMAILS_ORDER_BY = ["last_name", "first_name", "email"]
 EXPORT_EMAILS_FIELDS = ["last_name", "first_name", "email"]
 EXPORT_EMAILS_FULL_NAME_FUNC = None
@@ -257,6 +259,13 @@ SHELL_PLUS = "ipython"
 SHELL_PLUS_PRINT_SQL = True
 
 IPYTHON_ARGUMENTS = ["--no-banner", "--no-confirm-exit"]
+
+if USE_NOTEBOOKS:
+    IPYTHON_ARGUMENTS = [
+        "--ext",
+        "django_extensions.management.notebook_extension",
+        "--debug",
+    ]
 
 IPYTHON_KERNEL_DISPLAY_NAME = f"{APP_NAME} Shell-Plus"
 
@@ -379,6 +388,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "manager",
+    "portal",
     *CUSTOM_APPS,
 ]
 
@@ -425,7 +435,10 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "NAME": "django",
-        "DIRS": [os.path.join(BASE_DIR, "manager/templates")],
+        "DIRS": [
+            os.path.join(BASE_DIR, "manager/templates"),
+            os.path.join(BASE_DIR, "portal/mail/templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -578,13 +591,6 @@ CRONJOBS = [
         "0 3 * * *",
         "program_review_tool.utils.review.export.cleanup_expired_exports",
     ),
-    # Description: Sign-in to Tableau Server in order to keep the tokens,
-    #   used for fetching images from Tableau, fresh in the cache.
-    # Execution time: Everyday at 4:00 AM.
-    (
-        "0 4 * * *",
-        "program_review_tool.utils.review.tableau.cache_tableau_auth_tokens",
-    ),
     # Description: Communicate with external database to update the `Program`
     #   entries data.
     # Execution time: Everyday at 5:00 AM.
@@ -605,6 +611,24 @@ CRONJOBS = [
     (
         "0 */4 * * *",
         "program_review_tool.models.ProgramMember.utils.ingest_program_member_data",
+    ),
+    # Description: Send weekly summary email to superusers with all pending requests.
+    # Execution time: Every Monday at 8:00 AM.
+    (
+        "0 8 * * 1",
+        "portal.mail.helpers.request_queue_email.queue_superuser_weekly_summary_emails",
+    ),
+    # Description: Send daily reminder emails for pending directory resource requests.
+    # Execution time: Weekdays at 9:00 AM (Monday through Friday).
+    (
+        "0 9 * * 1-5",
+        "portal.mail.helpers.request_queue_email.check_and_queue_request_emails",
+    ),
+    # Description: Send reminder email if needed.
+    # Execution time: Every day at 8:00 AM.
+    (
+        "0 8 * * *",
+        "portal.mail.helpers.ppr_queue_email.check_and_queue_email",
     ),
 ]
 

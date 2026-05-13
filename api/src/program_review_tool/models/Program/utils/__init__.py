@@ -7,7 +7,7 @@ database operations that may affect the `Program` model.
 import logging
 import numpy as np
 import pandas as pd
-import pyodbc as mssqldb  # type: ignore[import-not-found]
+# import pyodbc as mssqldb  # type: ignore[import-not-found]
 from sqlalchemy import create_engine
 from typing import cast, List, Union
 
@@ -151,16 +151,17 @@ def query_programs_from_axis(pa_numbers: List[str] | None = None) -> List[dict]:
         """
 
         if pa_numbers:
+            # Build a safe IN‑list: each PA number is quoted and any internal
+            # single‑quote is doubled (Oracle escaping rule).
+            in_list = ", ".join("'" + pa.replace("'", "''") + "'" for pa in pa_numbers)
             sql = f"""
-                SELECT *
-                FROM ({base_sql}) sub
-                WHERE sub.pa_number IN {tuple(pa_numbers)}
+                {base_sql}
+                WHERE sub.pa_number IN ({in_list})
             """
             df = conn.query_db(sql=sql)
         else:
             df = conn.query_db(sql=base_sql)
 
-        df = conn.query_db(sql=sql)
         df["segment"] = df["segment"].apply(transform_segments)
         df["contract_value"] = df["contract_value"].apply(transform_contract_value)
         records: List[dict] = df.to_dict("records")
@@ -206,22 +207,37 @@ def query_programs_from_fdw(pa_numbers: List[str] | None = None) -> List[dict]:
         df = pd.DataFrame()
         if pa_numbers:
             if len(pa_numbers) < FDW_WHERE_IN_LIMIT:
+                # Short list – build the IN list in one go
+                in_list = ", ".join("'" + pa.replace("'", "''") + "'" for pa in pa_numbers)
                 sql = f"""
-                {base_sql}
-                WHERE ppv.PA_NUMBER IN {tuple(pa_numbers)}
+                    {base_sql}
+                    WHERE ppv.PA_NUMBER IN ({in_list})
                 """
                 df = conn.query_db(sql=sql)
             else:
+                # Chunked list – build an IN list for each chunk
                 i, j = 0, FDW_WHERE_IN_LIMIT
-                while i < len(pa_numbers):
+                result_chunks = []
+                total = len(pa_numbers)
+                while i < total:
+                    chunk = pa_numbers[i:j]
+                    in_list = ", ".join("'" + pa.replace("'", "''") + "'" for pa in chunk)
                     sql = f"""
                         {base_sql}
-                        WHERE ppv.PA_NUMBER IN {tuple(pa_numbers[i:j])}
+                        WHERE ppv.PA_NUMBER IN ({in_list})
                         """
                     query_df = conn.query_db(sql=sql)
-                    df = pd.concat([df, query_df])
-
+                    if not query_df.empty:
+                        result_chunks.append(query_df)
+                        
+                    percent = min(100, int((j / total) * 100))
+                    LOGGER.info(f"Update Programs Progress: {percent}% | {j}:{total}")
                     i, j = j, j + FDW_WHERE_IN_LIMIT
+
+                if result_chunks:
+                    df = pd.concat(result_chunks, ignore_index=True)
+                else:
+                    df = pd.DataFrame()
         else:
             df = conn.query_db(sql=base_sql)
 

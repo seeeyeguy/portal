@@ -19,6 +19,9 @@ class FetchProgramRequestQueryParams(serializers.Serializer):
     tiers = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=True, default=[]
     )
+    segments = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=True, default=[]
+    )
     page = serializers.IntegerField(allow_null=True, default=None)
     limit = serializers.IntegerField(allow_null=True, default=None)
     active_only = serializers.BooleanField(default=True)

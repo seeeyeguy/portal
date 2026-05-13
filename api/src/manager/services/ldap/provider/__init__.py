@@ -30,7 +30,7 @@ def search_ldap(body: dict) -> http.JsonResponse:
         "LDAP search endpoint is not defined.", status=500
     )
 
-    LOGGER.info("Querying LDAP Search service...")
+    LOGGER.info(f"Querying LDAP Search service: {LDAP_SEARCH_ENDPOINT}")
     res = requests.post(LDAP_SEARCH_ENDPOINT, json=body, timeout=480)
     res.raise_for_status()
     data = res.json()

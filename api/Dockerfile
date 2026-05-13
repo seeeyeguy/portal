@@ -3,6 +3,7 @@ FROM python:3.12-bullseye AS base
 # Add needed env variables.
 ARG APP_NAME
 ARG CA_CERTIFICATE_FOR_API
+ARG DOCKER_GROUP_ID
 
 # Construct path to project.
 # Need to change PROJECT to app name.
@@ -55,11 +56,9 @@ ADD entrypoint.sh /apps/entrypoint.sh
 RUN chmod +x /apps/init.sh
 RUN chmod +x /apps/entrypoint.sh
 
-
 #
 #   DEVELOPMENT BUILD SPECIFICATION
 #
-
 
 # From the base build, build development
 # container.
@@ -70,14 +69,20 @@ RUN apt install sudo
 
 # Install dev dependencies.
 ADD requirements.dev.txt .
+
 RUN pip install -r requirements.dev.txt && \
     rm -f requirements.*
+
+# Add debug wrapper script for debugpy support.
+ADD debug-wrapper.sh /apps/debug-wrapper.sh
+RUN chmod +x /apps/debug-wrapper.sh
 
 # Configure user.
 ARG USER
 ARG UID
 ARG PASSWORD
-RUN useradd --create-home --shell /bin/bash -u $UID -G users,sudo,root $USER && \
+RUN groupadd docker -g ${DOCKER_GROUP_ID} && \
+    useradd --create-home --shell /bin/bash -u $UID -G users,sudo,root,docker $USER && \
     mkdir -p /home/$USER/.ssh/ && \
     chown $USER:users /home/$USER/.ssh/ && \
     echo $USER:$PASSWORD | chpasswd
@@ -88,29 +93,28 @@ ENV HOME /home/$USER
 # Run api service.
 ENTRYPOINT [ "/apps/entrypoint.sh" ]
 
-
 #
 #   WSGI DEVELOPMENT
 #
-
 FROM development AS wsgi-development
 
 EXPOSE 8080
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8080"]
+EXPOSE 5678
+CMD ["/apps/debug-wrapper.sh", "5678", "django", "runserver", "--noreload", "0.0.0.0:8080", "--settings=manager.settings"]
 
 #
 #   ASGI DEVELOPMENT
 #
-
 FROM development AS asgi-development
 
 EXPOSE 8080
-CMD [ "python", "-m", "uvicorn", "manager.asgi:application", "--host", "0.0.0.0", "--port", "8080", "--reload", "--reload-include", "*.*"]
+EXPOSE 5678
+# Enable hot reload with --reload
+CMD ["/apps/debug-wrapper.sh", "5678", "uvicorn", "manager.asgi:application", "--host", "0.0.0.0", "--port", "8080", "--reload"]
 
 #
 #   PRODUCTION BUILD SPECIFICATION
 #
-
 
 # From the base build, build production
 # container.
@@ -121,7 +125,6 @@ RUN rm -f requirements.*
 ADD src/ ${APPDIR}
 
 ENTRYPOINT ["/apps/entrypoint.sh"]
-
 
 #
 #   WSGI PRODUCTION

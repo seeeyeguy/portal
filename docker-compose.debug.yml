@@ -1,0 +1,19 @@
+# docker-compose.debug.yml
+# 
+# Debug mode override for BI Portal
+# 
+# Usage:
+#   Normal development:  docker compose up
+#   Debug mode:          docker compose -f docker-compose.yml -f docker-compose.debug.yml up
+
+include:
+    # Database and infrastructure (same as base)
+    - ./docker/services/db/axis/axis.db.docker-compose.yml
+    
+    # DEBUG API instead of development API
+    - ./docker/services/api/debug/api.docker-compose.yml
+    
+    # Web, Storybook, Swagger remain unchanged
+    - ./docker/services/web/development/web.docker-compose.yml
+    - ./docker/services/storybook/development/storybook.docker-compose.yml
+    - ./docker/services/swagger/common/swagger.docker-compose.yml
