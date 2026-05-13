@@ -7,4 +7,4 @@ TODO: Update
     metrics to our stakeholders.
 """
 
-from program_review_tool.models.JobRun import JobRun
+from program_review_tool.models.JobRun.JobRun import JobRun

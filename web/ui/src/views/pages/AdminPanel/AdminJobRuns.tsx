@@ -19,4 +19,5 @@ export default function AdminJobRuns() {
         </main>
     </AdminPanel>
   );
+}
 

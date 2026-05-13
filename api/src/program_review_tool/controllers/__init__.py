@@ -12,3 +12,4 @@ from .Record import Record
 from .ReportingPeriod import ReportingPeriod
 from .Task import Task
 from .Usage import Usage
+from .JobRun import JobRun

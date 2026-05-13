@@ -2048,6 +2048,85 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/FetchRecordProgramDoesNotExistResponse"
+  /program-review-tool/job-run:
+    post:
+      tags:
+        - "program_review_tool.job_run.create"
+      summary: "Create a `JobRun` record."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobRunRequest"
+      responses:
+        "201":
+          description: "CREATED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateJobRunResponse"
+        "400":
+          description: "BAD REQUEST"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateJobRunInvalidParamsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CreateJobRunUnauthorizedResponse"
+    get:
+      tags:
+        - "program_review_tool.job_run.fetch"
+      summary: "Fetch `JobRun` records."
+      parameters:
+
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: "Page number to select from a paginated response of `JobRun` records."
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: "Maximum number of `JobRun` records to return."
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: ["RUNNING", "SUCCESS", "FAILED"]
+          description: "Filter `JobRun` records by status."
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchJobRunResponse"
+        "400":
+          description: "Invalid parameters"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchJobRunInvalidParamsResponse"
+        "401":
+          description: "UNAUTHORIZED"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FetchJobRunUnauthorizedResponse"	  
   /program-review-tool/reporting-period:
     get:
       tags:
@@ -2700,6 +2779,81 @@ paths:
 
 components:
   schemas:
+    CreateJobRunRequest:
+      title: "Create `JobRun` request."
+      type: object
+      required:
+        - job_name
+      properties:
+        job_name:
+          type: string
+          description: "Name of the job to run."
+          default: "example_job"
+
+    CreateJobRunResponse:
+      title: "Create `JobRun` response."
+      type: object
+      properties:
+        data:
+
+          type: object
+          example:
+            {
+              "id": 1,
+              "job_name": "example_job",
+              "status": "RUNNING",
+              "user": 1,
+              "started_at": "2026-05-08T12:00:00-04:00",
+              "completed_at": null,
+              "duration": null,
+              "error_message": null,
+              "created": "2026-05-08T12:00:00-04:00",
+            }
+
+    CreateJobRunInvalidParamsResponse:
+      title: "Create `JobRun` invalid params."
+      type: string
+      example: "Job name is required."
+
+    CreateJobRunUnauthorizedResponse:
+      title: "Create `JobRun` unauthorized."
+      type: string
+      example: ""
+
+    FetchJobRunResponse:
+      title: "Fetch `JobRun` response."
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            [
+              {
+                "id": 1,
+                "job_name": "example_job",
+                "status": "SUCCESS",
+                "user": 1,
+                "started_at": "2026-05-08T12:00:00-04:00",
+                "completed_at": "2026-05-08T12:05:00-04:00",
+                "duration": 300,
+                "error_message": null,
+
+                "created": "2026-05-08T12:00:00-04:00",
+              },
+            ]
+
+    FetchJobRunInvalidParamsResponse:
+      title: "Fetch `JobRun` invalid params."
+      type: string
+      example: "Page must be a positive integer."
+
+    FetchJobRunUnauthorizedResponse:
+      title: "Fetch `JobRun` unauthorized."
+      type: string
+      example: ""
+
     CreateQueryRequest:
       title: "Create `Query` request."
       type: object

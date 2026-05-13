@@ -9,7 +9,7 @@ import AdminRequestApprovals from "views/pages/AdminPanel/AdminRequestApprovals"
 import AdminResources from "views/pages/AdminPanel/AdminResources";
 import AdminSubFunctions from "views/pages/AdminPanel/AdminSubFunctions";
 import AdminTags from "views/pages/AdminPanel/AdminTags";
-
+import AdminJobRuns from "views/pages/AdminPanel/AdminJobRuns";
 export {
   AdminAccesses,
   AdminApprovals,
@@ -22,4 +22,5 @@ export {
   AdminResources,
   AdminSubFunctions,
   AdminTags,
+  AdminJobRuns,
 };
