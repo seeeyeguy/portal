@@ -13,6 +13,7 @@ import {
     AdminResources,
     AdminSubFunctions,
     AdminTags,
+    AdminJobRuns,
 } from "views/pages/AdminPanel";
 import Home from "views/pages/Home/Home";
 import ProgramReviewTool from "views/pages/ProgramReviewTool/ProgramReviewTool";
