@@ -126,3 +126,20 @@ export interface IRecord extends Omit<IProgram, TOmitIProgramProps> {
   user: IUser;
   tasks: ITask[];
 }
+
+export interface IJobRun {
+    id: number;
+    jobName: string;
+    status: "PENDING" | "RUNNING" | "SUCCESS" | "FAILURE"
+    user: string;
+    started_at: string | null;
+    finished_at: string | null;
+    duration: string | null;
+    error_msg: string | null;
+    created_at: string | null;
+}
+
+export interface IJobRegistryJob {
+    name: string;
+    description: string;
+}
