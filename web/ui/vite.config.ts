@@ -66,7 +66,12 @@ export const SHARED = {
       changeOrigin: true,
       secure: false,
     },
-    "/ws": {
+    "/v1/program-review-tool": {
+      target: "http://api:8080",
+      changeOrigin: true,
+      secure: false,
+    },
+   "/ws": {
       target: "http://api:8080",
       ws: true,
       changeOrigin: true,
