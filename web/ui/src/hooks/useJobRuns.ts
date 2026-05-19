@@ -1,21 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
-import { IJobRun, IJobRegistryJob } from "views/definitions/ProgramReviewTool.types"
 import { snakeCaseToCamelCase } from "utils/CaseTransformUtility";
+import { IJobRun, IJobRegistryJob } from "views/definitions/ProgramReviewTool.types"
 
 const BASE_URL = "/v1/program-review-tool"
 
-export function useJobRun() {
+export function useJobRuns() {
     const [jobRuns, setJobRuns] = useState<any[]>([])
     const [registry, setRegistry] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
     const fetchJobRuns = useCallback(async () => {
+        console.log("Fetching job runs")
         try {
             setLoading(true);
             const res = await fetch(`${BASE_URL}/job-run`);
             const data = await res.json();
+            console.log(...data)
             setJobRuns(snakeCaseToCamelCase(data) as IJobRun[]);
+            console.log("ran setJobRuns")
         } catch(err) {
             setError(err instanceof Error ? err.message : String(err))
         } finally {
@@ -33,7 +36,7 @@ export function useJobRun() {
         }
     }, [])
 
-    const useJob = useCallback(async (jobName: string) => {
+    const runJob = useCallback(async (jobName: string) => {
         const res = await fetch(`${BASE_URL}/job-run`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -46,5 +49,7 @@ export function useJobRun() {
     useEffect( () => {
         fetchJobRuns();
         fetchRegistry();
-    }, [fetchJobRuns, fetchRegistry()])
+    }, [fetchJobRuns, fetchRegistry])
+
+    return {jobRuns, registry, loading, error, runJob, refresh: fetchJobRuns };
 }
