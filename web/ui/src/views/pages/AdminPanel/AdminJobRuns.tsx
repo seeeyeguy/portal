@@ -25,14 +25,19 @@ export default function AdminJobRuns() {
                     <h1>Server Jobs</h1>
                 </header>
             </main>
-            <Dropdown
-                value={selectedJob}
-                options={registry}
-                optionLabel="name"
-                placeholder="Select a job"
-                onChange={(e: DropdownChangeEvent) => setSelectedJob(e.value)}
-                className={styles["admin-dropdown-filter"]}
-            />
+            <div
+                className={styles["admin-controls"]}
+                aria-description="job run admin controls"
+            >
+                <Dropdown
+                    value={selectedJob}
+                    options={registry}
+                    optionLabel="name"
+                    placeholder="Select a job"
+                    onChange={(e: DropdownChangeEvent) => setSelectedJob(e.value)}
+                    className={styles["admin-dropdown-filter"]}
+                />
+            </div>
         </AdminPanel>
     );
 }
