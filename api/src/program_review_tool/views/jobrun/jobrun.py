@@ -88,7 +88,7 @@ class JobRunRegistry(View):
             from jobs import REGISTRY
             
             try:
-                data = [{"name": name, "function": func} for name, func in REGISTRY]
+                data = [{"job_name": name, "function_name": func} for name, func in REGISTRY]
 
                 return http.JsonResponse(data, status=status.HTTP_200_OK, safe=False)
             except exceptions.AnalyticsError as exc:

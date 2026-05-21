@@ -138,8 +138,3 @@ export interface IJobRun {
     error_msg: string | null;
     created_at: string | null;
 }
-
-export interface IJobRegistryJob {
-    name: string;
-    description: string;
-}
